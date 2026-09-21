@@ -45,7 +45,9 @@ is a missing section and one line in `data.notices`.
 
 Calendar: today from 00:00 to 24:00 in the exec's timezone, and tomorrow for context (a prep item today can come
 from tomorrow's meeting). Mail and chat since yesterday 18:00 (48 hours on the first run), from the exec's side.
-Meetings of yesterday when a recorder is connected. Only today's events are drawn.
+Meetings of yesterday when a recorder is connected; names in transcripts are resolved against the store's
+people and entities (their `aka` carry the notetaker's mis-hearings), never written as heard. Only today's
+events are drawn.
 
 ## 2. Build
 
