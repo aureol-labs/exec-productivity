@@ -173,7 +173,7 @@
   function credit(){
     var p=el('p','by');
     add(p, L('by')+' ', outLink('https://www.linkedin.com/in/paul-rousselle/', L('by_name')), ' '+L('by_tail')+' ',
-        glyph('i-mark','mark','2 30 92 48'));
+        glyph('i-mark','mark','3 17 90 58'));
     return p;
   }
   /* a quiet mark on a row, in pine, for a moment: "Saved". Or in brick: "Not saved". */

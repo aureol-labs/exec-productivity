@@ -30,7 +30,7 @@ PAGES = [
     ('daily-brief', 'brief'),
     ('inbox', 'inbox'),
 ]
-EM_DASH = '—'
+EM_DASH = chr(0x2014)  # the em dash, never written literally here
 
 
 def read(path):
