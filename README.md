@@ -15,7 +15,7 @@ In the Claude desktop app:
 
 1. Plugins, add a marketplace from the repo `paul-r-92/aureol-exec-productivity`, install **Aureol exec
    productivity**.
-2. Type `/aureol-exec-productivity:make-me-productive` and answer its questions. About ten minutes. It ends on your first
+2. Type `/`, choose **Make me productive**, and answer its questions. About ten minutes. It ends on your first
    brief.
 3. Pin the three pages.
 

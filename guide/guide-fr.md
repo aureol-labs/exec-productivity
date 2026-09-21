@@ -11,8 +11,8 @@ Dans l'application Claude : **Plugins**, puis **Ajouter une marketplace** et col
 
 ## 2. Lancer l'installation
 
-Dans une nouvelle conversation, taper `/` puis choisir **aureol-exec-productivity:make-me-productive**. Répondre aux
-questions. Dix minutes. Ça se termine sur votre premier brief.
+Dans une nouvelle conversation, taper `/` puis choisir **Make me productive**. Répondre aux questions. Dix
+minutes. Ça se termine sur votre premier brief.
 
 [capture : le menu / avec la commande install]
 
