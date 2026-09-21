@@ -192,7 +192,10 @@ brief's choice. Write `connections/preferences.notify`. What each answer means, 
 - nothing (`none`): the pinned page, always current.
 
 Create three tasks from the files next to this skill, verbatim except the placeholders `{{LANGUAGE}}`,
-`{{CONTEXT_URL}}`, `{{FIRST_NAME}}`:
+`{{CONTEXT_URL}}`, `{{FIRST_NAME}}`, `{{TIMEZONE}}` (the exec's zone, read off the calendar at step 2 and
+written to `connections/preferences.timezone`). Every time in this skill and in the tasks is the exec's local
+time; the task tools take local times, never convert to UTC, and the habits run in the cloud where the clock
+is not the exec's, which is why the prompts carry the zone.
 
 | Task | File | Schedule |
 |---|---|---|
