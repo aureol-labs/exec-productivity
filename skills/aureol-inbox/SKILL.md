@@ -45,6 +45,8 @@ Probe mail and chat with one real call each.
 ## 1. Read since the last run
 
 Mail and chat since the last inbox run (48 hours on the first run), both directions, the exec's threads only.
+Every time on the page is the exec's local time (`connections/preferences.timezone`); the run may execute in
+another zone.
 Open every candidate thread once to check rule 3. Nothing new since the last run: publish nothing, write a
 `runs` document, end with one line.
 
