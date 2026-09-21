@@ -5,7 +5,7 @@ Trois gestes dans l'application Claude sur votre ordinateur. Un abonnement Claud
 ## 1. Installer
 
 Dans l'application Claude : **Plugins**, puis **Ajouter une marketplace** et coller
-`paul-r-92/aureol-exec-productivity`. Installer **Aureol exec productivity**.
+`paul-r-92/aureol-exec-productivity`. Installer **Make me productive**.
 
 [capture : la carte du plugin, bouton Installer]
 
@@ -56,4 +56,4 @@ le permet et selon des règles écrites dans vos mots, chacune listée sur la pa
 
 ## Une question, un problème
 
-Taper `/aureol-exec-productivity:help` et dire ce que vous avez vu.
+Taper `/make-me-productive:help` et dire ce que vous avez vu.
