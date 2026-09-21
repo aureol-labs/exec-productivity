@@ -28,10 +28,23 @@
   and Keep, Drop and Decline copy a one-line briefing and mark the row "waiting for
   Claude". The page never claims a save that did not happen.
   What the editor writes: priorities/<id> with order, say, ahead and confirmed
-  (update on a line that exists, set on a new one, status dropped and dropped_at on
-  a line the exec removed). Keep writes decisions/<id> {status: kept, kept_at};
-  Drop {status: dropped, dropped_at}; Decline writes suggestions/<id>
-  {status: declined}. Dates are the day of the click, ISO.
+  (update on a line that exists, set on a new one, status dropped, dropped_at and
+  dropped_reason on a line the exec removed). Keep writes decisions/<id> {status:
+  kept, kept_at}; Drop {status: dropped, dropped_at, reason}; Decline writes
+  suggestions/<id> {status: declined}. Dates are the day of the click, ISO.
+
+  DROP, WITH A REASON
+  Every drop on this page asks why first, inline, in place of the word that asked.
+  A topic carries Drop at the end of its sources row after Ask Claude (Done, Not
+  important) and writes dismissals/<slug of ref> {page: "context", kind: "topic",
+  ref: the topic id, say: its name, reason: done|not_important, date}; the row greys
+  where it stands and says "remembered". Drop on a proposed decision asks Not a
+  decision or Not important and writes reason: not_a_decision|not_important beside
+  status: dropped. Drop in the priorities editor asks Done or Not a priority before
+  the line goes, and the saved update carries dropped_reason: done|not_a_priority.
+  Decline on a suggestion asks nothing. Published with the db capability
+  (capabilities: {db: {}}) so Drop is remembered; without it Drop copies a line for
+  Claude and the row says "waiting for Claude".
 
   HOW IT RENDERS
   The routine never hand-writes rows. It builds one JSON document and puts it in the
@@ -48,13 +61,15 @@
                       history: [{date, event}], go: [ref], sources, briefing } ]
                   five at most; short is the name the Serves column uses and never
                   equals a topic or entity name; ahead is what the line comes before
-    topics        [ { id, name, state, serves: priority id | null, last: date | null,
+    topics        [ { id, ref, name, state, serves: priority id | null, last: date | null,
                       lede, argument: [p], who: [{ref, name, note}], so_far: [{date,
                       move}], next: [{when, today, late, event, decision}] | null,
                       go: [ref], sources, briefing, gesture: ask|add_priority|none,
                       proposal } ]
                   ordered by the priority served, then the ones that serve none;
-                  a late next entry needs a decision id or a "you" source behind it
+                  a late next entry needs a decision id or a "you" source behind it;
+                  ref is an optional string, the key Drop is remembered under, and
+                  the topic id when absent
     entities      [ { id, kind: person|entity, name, role, type: company|team|board|
                       product|other, label, relationship: customer|prospect|investor|
                       partner|supplier, state, last, lede, argument: [p],
@@ -108,6 +123,10 @@ var DICT={{DICT}};
 
   /* ================ SUPER CONTEXT ================ */
   var MAX=5, FILE=[], LIST=[], DRAFT=null, made=0;
+  /* the reason the exec gave for each line dropped in the editor, by id: done or
+     not_a_priority. Cleared on a save; kept after a copy, since the file has not
+     moved and the next edit still has to say why the line went. */
+  var DROPPED={};
   var TOPICS=[], ENTS=[], DECS=[], SUGG=[], BY={};
 
   function tidy(s){ return (s||'').replace(/\s+/g,' ').trim(); }
@@ -208,7 +227,8 @@ var DICT={{DICT}};
     FILE.forEach(function(f){
       if(kept.indexOf(f.id)>=0) return;
       any=true;
-      add(box, priorityRow(f,0, marks ? L('dropped_m')+', '+L('waiting') : '', true));
+      var why=DROPPED[f.id] ? ', '+reasonWord(DROPPED[f.id]) : '';
+      add(box, priorityRow(f,0, marks ? L('dropped_m')+why+', '+L('waiting') : '', true));
     });
     $('pending').classList.toggle('on', !!(marks && any));
     var hb=$('pcount'); if(hb) hb.textContent=String(LIST.length);
@@ -311,7 +331,18 @@ var DICT={{DICT}};
     }
   }
   function mv(i,d,k){ var p=DRAFT.splice(i,1)[0]; DRAFT.splice(i+d,0,p); draw([i+d,k]); }
+  /* a line from the file goes only once the exec has said why, in place of the
+     controls; a line added in this edit and never saved just goes */
   function dropLine(i){
+    var p=DRAFT[i];
+    if(!find(p.id)) return cut(i);
+    var c=$('ed').children[i].querySelector('.ectl'),
+        btn=c.querySelector('[data-k="drop"]'),
+        others=Array.prototype.slice.call(c.querySelectorAll('button')).filter(function(b){ return b!==btn; });
+    askReason(btn, [['done',L('drop_done')],['not_a_priority',L('drop_not_priority')]],
+      function(reason){ DROPPED[p.id]=reason; cut(i); }, others);
+  }
+  function cut(i){
     DRAFT.splice(i,1); draw();
     var r=$('ed').children[Math.min(i,DRAFT.length-1)];
     if(r) r.querySelector('.e-say').focus(); else $('eadd').querySelector('button').focus();
@@ -325,7 +356,11 @@ var DICT={{DICT}};
       kept.push(f.id);
       if(!same(f,p)) out.push(F(L('ch_reworded'),{a:line(f),b:line(p)}));
     });
-    FILE.forEach(function(f){ if(kept.indexOf(f.id)<0) out.push(F(L('ch_dropped'),{l:line(f)})); });
+    FILE.forEach(function(f){
+      if(kept.indexOf(f.id)>=0) return;
+      var why=DROPPED[f.id];
+      out.push(why ? F(L('ch_dropped_r'),{r:reasonWord(why), l:line(f)}) : F(L('ch_dropped'),{l:line(f)}));
+    });
     var was=FILE.map(function(f){ return f.id; }).filter(function(id){ return kept.indexOf(id)>=0; });
     if(was.join()!==kept.join()) out.push(L('ch_reordered'));
     return out;
@@ -343,7 +378,9 @@ var DICT={{DICT}};
       : P('changes_n',ch.length);
   }
   function shut(){ DRAFT=null; document.body.classList.remove('editing'); }
-  function discard(){ shut(); $('edit').focus(); }
+  /* a discarded edit forgets the reasons it collected: every line it dropped is
+     still on the page, so those are the ones with ids in LIST */
+  function discard(){ LIST.forEach(function(p){ delete DROPPED[p.id]; }); shut(); $('edit').focus(); }
   document.addEventListener('keydown',function(e){ if(e.key==='Escape' && DRAFT) discard(); });
 
   /* Save writes the store when this view can; Copy for Claude is the fallback */
@@ -394,14 +431,18 @@ var DICT={{DICT}};
     });
     FILE.forEach(function(f){
       if(keptIds.indexOf(f.id)>=0) return;
-      ops.push(function(){ return DB.doc('priorities/'+f.id).update({status:'dropped', dropped_at:today}); });
+      ops.push(function(){
+        var body={status:'dropped', dropped_at:today};
+        if(DROPPED[f.id]) body.dropped_reason=DROPPED[f.id];
+        return DB.doc('priorities/'+f.id).update(body);
+      });
     });
     $('ego').disabled=true;
     var run=Promise.resolve();
     ops.forEach(function(op){ run=run.then(op); });
     run.then(function(){
       FILE=draft.map(function(p){ var s=p.src; s.say=p.say; s.ahead=p.ahead; s.id=p.id; return cloneP(s); });
-      LIST=FILE.map(cloneP);
+      LIST=FILE.map(cloneP); DROPPED={};
       shut(); renderPriorities(false);
       touched.forEach(function(id){ var r=document.getElementById(id); if(r) flash(r,L('saved')); });
       $('edit').focus();
@@ -438,6 +479,7 @@ var DICT={{DICT}};
     }
     add(w, srcRow(tp.sources, tp.gesture==='ask' ? tp.briefing : null, null, extra));
     add(r,w);
+    dropUI(r, {page:'context', kind:'topic', ref: tp.ref || tp.id, say:tp.name||''});
     return r;
   }
 
@@ -483,7 +525,7 @@ var DICT={{DICT}};
     Array.prototype.slice.call(dec.querySelectorAll('.rel')).forEach(function(x){ dec.removeChild(x); });
     if(dc.status==='proposed') add(dec, el('span','rel nw',L('proposed_m')));
     else if(dc.status==='kept' && withinDays(dc.kept_at,DATA.today,7)) add(dec, el('span','rel nw',L('added_week')));
-    else if(dc.status==='dropped') add(dec, el('span','rel nw',L('dropped_m')));
+    else if(dc.status==='dropped') add(dec, el('span','rel nw',L('dropped_m')+(dc.reason ? ', '+reasonWord(dc.reason) : '')));
     if(dc.conflicts_with) add(dec, el('span','rel cf',F(L('conflicts_with'),{x:dc.conflicts_with.name||''})));
     if(dc.replaced_by) add(dec, el('span','rel',F(L('replaced_by'),{x:dc.replaced_by.name||''})));
     if(dc.replaces) add(dec, el('span','rel',F(L('replaces'),{x:dc.replaces.name||''})));
@@ -494,16 +536,18 @@ var DICT={{DICT}};
     var text = F(L(key),{x: tg ? (tg.when||'')+' · '+(tg.say||'') : (rel.name||'')});
     add(box, goRow({id:rel.id, text:text}));
   }
-  function decide(dc,row,keep){
+  /* Keep writes at once. Drop has asked why first, and `reason` is the answer:
+     not_a_decision or not_important, written beside the status and named on the row. */
+  function decide(dc,row,keep,reason){
     var act=row.querySelector('.act'), note=act.querySelector('.note'),
         btns=Array.prototype.slice.call(act.querySelectorAll('button'));
     var setNote=function(s,bad){ note.textContent=s; note.className='note'+(bad?' bad':''); };
     var lock=function(on){ btns.forEach(function(x){ x.disabled=on; }); };
     if(DB){
-      var today=isoToday(), body = keep ? {status:'kept', kept_at:today} : {status:'dropped', dropped_at:today};
+      var today=isoToday(), body = keep ? {status:'kept', kept_at:today} : {status:'dropped', dropped_at:today, reason:reason};
       lock(true);
       DB.doc('decisions/'+dc.id).update(body).then(function(){
-        dc.status=body.status; if(keep) dc.kept_at=today; else dc.dropped_at=today;
+        dc.status=body.status; if(keep) dc.kept_at=today; else { dc.dropped_at=today; dc.reason=reason; }
         decisionFace(dc,row.querySelector('.dec'));
         if(!keep) row.classList.add('gone');
         act.parentNode.removeChild(act);
@@ -512,11 +556,13 @@ var DICT={{DICT}};
         lock(false); setNote(L('not_saved')+(err && err.message ? ' · '+err.message : ''), true);
       });
     } else {
-      var q=F(L(keep?'keep_briefing':'drop_briefing'),{say:dc.say, when:dc.when, by:decidedBy(dc)});
+      var q = keep ? F(L('keep_briefing'),{say:dc.say, when:dc.when, by:decidedBy(dc)})
+                   : F(L('drop_decision_briefing'),{say:dc.say, when:dc.when, by:decidedBy(dc), reason:reasonWord(reason)});
       copyText(q, function(){
         lock(true); setNote(L('copied'));
         var dec=row.querySelector('.dec'), old=dec.querySelector('.rel.nw'); if(old) dec.removeChild(old);
-        dec.insertBefore(el('span','rel nw',L(keep?'kept_m':'dropped_m')+', '+L('waiting')), dec.querySelector('.rel'));
+        var mark = keep ? L('kept_m') : L('dropped_m')+', '+reasonWord(reason);
+        dec.insertBefore(el('span','rel nw',mark+', '+L('waiting')), dec.querySelector('.rel'));
       }, function(){ setNote(L('blocked'),true); });
     }
   }
@@ -538,7 +584,12 @@ var DICT={{DICT}};
     if(dc.status==='proposed'){
       var act=el('div','act'), k=el('button',null,L('keep')), d=el('button','quiet',L('drop'));
       k.type='button'; d.type='button';
-      k.onclick=function(){ decide(dc,r,true); }; d.onclick=function(){ decide(dc,r,false); };
+      k.onclick=function(){ decide(dc,r,true); };
+      /* Drop asks why in its own place; Keep stays beside the question */
+      d.onclick=function(){
+        askReason(d, [['not_a_decision',L('drop_not_decision')],['not_important',L('drop_unimportant')]],
+          function(reason,q,restore){ restore(); decide(dc,r,false,reason); });
+      };
       add(act,k,d, el('span','note','')); add(w,act);
     }
     add(w, srcRow(dc.sources,dc.briefing,L('draft')));

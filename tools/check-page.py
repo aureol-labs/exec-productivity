@@ -218,6 +218,15 @@ def row_types(rows, path, r, decision_ids=None):
             r.bad(p, 'no sentence')
         if not row.get('lede'):
             r.bad(p, 'no lede: every reveal opens on the ask')
+        check_ref(p, row, r)
+
+
+def check_ref(path, row, r):
+    """`ref` is the key a Drop is remembered under. Optional; when present, a non-empty
+    string (a thread id, a link, "brief:<id>"), never a number or an object."""
+    if 'ref' in row and row['ref'] is not None:
+        if not isinstance(row['ref'], str) or not row['ref'].strip():
+            r.bad(path + '.ref', 'ref is a string, the stable key of the line, or absent')
 
 
 # ---------- the brief ----------
@@ -442,6 +451,7 @@ def check_context(d, r, others):
             r.bad(tp + '.gesture', 'ask, add_priority or none')
         if t.get('gesture') == 'ask' and not t.get('briefing'):
             r.bad(tp + '.briefing', 'Ask Claude needs a briefing')
+        check_ref(tp, t, r)
         check_who(tp + '.who', t.get('who'))
         check_dated(tp + '.so_far', t.get('so_far'))
         check_dated(tp + '.next', t.get('next'), allow_today=True, allow_late=True)
@@ -624,6 +634,9 @@ def selftest():
     broken('brief', 'late without a decision or a you source', lambda d: d['jobs'][1].__setitem__('meta', {'kind': 'late', 'value': '10:00'}))
     broken('brief', 'time_label missing', lambda d: d.pop('time_label'))
     broken('brief', 'a count spelled out in the footer', lambda d: d.__setitem__('footer', ['Three replies drafted']))
+    broken('brief', 'ref that is not a string', lambda d: d['decisions'][0].__setitem__('ref', 17))
+    broken('inbox', 'ref that is not a string', lambda d: d['queue'][0].__setitem__('ref', {'id': 'x'}))
+    broken('context', 'ref that is not a string on a topic', lambda d: d['topics'][0].__setitem__('ref', ''))
     broken('inbox', 'untyped queue row', lambda d: d['queue'][8].__setitem__('type', None))
     broken('inbox', 'filed label without its rule', lambda d: d['filed'][1].pop('rule'))
     broken('inbox', 'To archive briefing missing a rule', lambda d: d['filed'][6].__setitem__('briefing', 'Nothing here.'))

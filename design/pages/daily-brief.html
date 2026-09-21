@@ -14,6 +14,16 @@
   Nothing else. No board, no tabs, no dashboard. Reads mail, calendar and messaging.
   Delivered at 06:50, thrown away at 18:00.
 
+  DROP
+  Every decision and job carries one gesture of the exec's own, Drop, at the end of
+  its sources row after Ask Claude. It asks why, inline (Done, Not important), and
+  writes dismissals/<slug of ref> {page: "brief", kind: decision|job, ref, say,
+  reason: done|not_important, date} to this artifact's store; the row greys where it
+  stands and says "remembered". The morning routine reads that collection before it
+  ranks and never brings a dropped line back. Published with the db capability
+  (capabilities: {db: {}}) so Drop is remembered; without it Drop copies a line for
+  Claude and the row says "waiting for Claude".
+
   HOW IT RENDERS
   The routine never hand-writes rows. It builds one JSON document and puts it in the
   <script id="data" type="application/json"> element in place of the DATA_JSON placeholder, with
@@ -41,8 +51,11 @@
                     to_land, in_mind, sources, briefing }
     decisions     [ row ]   "Decisions to land", three at most
     jobs          [ row ]   "Jobs to do", three at most
-      a row       { id, say, type, meta, lede, argument: [p], plain: [p], go: [ref],
+      a row       { id, ref, say, type, meta, lede, argument: [p], plain: [p], go: [ref],
                     sources: [src], briefing }
+      ref         optional string, the stable key Drop is remembered under: the
+                  source thread when there is one, else "brief:" + id, which is what
+                  the page falls back to when ref is absent
       type        precedent | knock_on | pattern | history      never absent
       meta        { kind: "time" | "before" | "asked" | "late" | "none", value }
                   a time or a date read off the calendar or a message, never an
@@ -100,8 +113,9 @@ var DICT={{DICT}};
     return s;
   }
 
-  /* a list row: the sentence, the time, and a reveal that opens on the ask */
-  function row(it,i){
+  /* a list row: the sentence, the time, and a reveal that opens on the ask and ends
+     on its sources, Ask Claude and Drop. `kind` is decision or job, for the store. */
+  function row(it,i,kind){
     var r=el('div','row'); r.id=it.id;
     var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
     b.onclick=function(){ t(b); };
@@ -115,10 +129,11 @@ var DICT={{DICT}};
     goRows(w,it.go);
     add(w, srcRow(it.sources,it.briefing));
     add(r,w);
+    dropUI(r, {page:'brief', kind:kind, ref: it.ref || ('brief:'+it.id), say:it.say||''});
     return r;
   }
-  function list(items){
-    var l=el('div','list'); (items||[]).forEach(function(it,i){ add(l,row(it,i)); }); return l;
+  function list(items,kind){
+    var l=el('div','list'); (items||[]).forEach(function(it,i){ add(l,row(it,i,kind)); }); return l;
   }
 
   /* a tagged cell of a brief card */
@@ -242,10 +257,11 @@ var DICT={{DICT}};
     briefs.forEach(function(c){ add(page,c); });
 
     /* ---- the two lists ---- */
-    add(page, h2(L('decisions_to_land'),String(decisions.length)), list(decisions));
-    add(page, h2(L('jobs_to_do'),String(jobs.length)), list(jobs));
+    add(page, h2(L('decisions_to_land'),String(decisions.length)), list(decisions,'decision'));
+    add(page, h2(L('jobs_to_do'),String(jobs.length)), list(jobs,'job'));
 
     add(page, footer(d.footer||[]), credit());
+    dbInit();
   }
   render();
 </script>

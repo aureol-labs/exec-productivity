@@ -25,6 +25,17 @@
   page shows "The rest, grouped" instead, without rules, and the footer says
   nothing was written.
 
+  DROP
+  Every queue row carries one gesture of the exec's own, Drop, at the end of its
+  sources row after Ask Claude. It asks why, inline (Done, Not important), and
+  writes dismissals/<slug of ref> {page: "inbox", kind: "queue", ref, say, reason:
+  done|not_important, date} to this artifact's store; the row greys where it stands
+  and says "remembered". The inbox routine reads that collection before it ranks
+  and never brings a dropped thread back (a done thread also keeps its follow-ups
+  out for 7 days). Nothing is written to the mailbox. Published with the db
+  capability (capabilities: {db: {}}) so Drop is remembered; without it Drop copies
+  a line for Claude and the row says "waiting for Claude".
+
   HOW IT RENDERS
   The routine never hand-writes rows. It builds one JSON document and puts it in the
   <script id="data" type="application/json"> element in place of the DATA_JSON placeholder, with
@@ -38,9 +49,12 @@
     lang, date_label, time_label, today, sub, gesture, links   as on every page
     counts        { mail: 61, chat: 41 }      unread, read off the connectors
     queue         [ row ]   ordered: tier, then oldest first inside a tier
-      a row       { id, tier: now|today|week, channel: mail|slack|teams, say,
+      a row       { id, ref, tier: now|today|week, channel: mail|slack|teams, say,
                     label: { name, tint }, meta: { kind: "time" | "date", value },
                     lede, type, argument: [p], plain: [p], go: [ref], sources, briefing }
+      ref         optional string, the stable key Drop is remembered under: the
+                  thread id ("thread:...") or its link; absent, the page falls back
+                  to the first source href, then to the row id
       type        precedent | knock_on | pattern | history      never absent
       meta        when the message arrived: a clock for today, a date before that
     filed         [ label ]  only where the mail role could write labels
@@ -108,6 +122,8 @@ var DICT={{DICT}};
     goRows(w,it.go);
     add(w, srcRow(it.sources,it.briefing));
     add(r,w);
+    var first=(it.sources||[])[0];
+    dropUI(r, {page:'inbox', kind:'queue', ref: it.ref || (first && first.href) || it.id, say:it.say||''});
     return r;
   }
 
@@ -179,6 +195,7 @@ var DICT={{DICT}};
 
     var right = d.wrote ? L('labels_only') : L('nothing_written');
     add(page, footer([d.next_run ? F(L('next_run'),{t:d.next_run}) : '', right]), credit());
+    dbInit();
   }
   render();
 </script>

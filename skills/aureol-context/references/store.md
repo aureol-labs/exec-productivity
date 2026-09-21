@@ -171,6 +171,25 @@ Seven at most, `tint` one of `sales | product | board | customers | hiring | lat
 suggestion is never proposed again. The page's "Connections and skills to add" list renders `status: proposed`,
 three at most.
 
+### `dismissals`, one per line the exec dropped, in each page's own store
+
+Every page is published with `capabilities: {db: {}}`, and a page can only write its own artifact's store. So a
+Drop on the Daily brief lands in the brief artifact's store, a Drop on the Priority inbox in the inbox's, a
+Drop on a topic in Super Context's. Each routine reads `dismissals` from the page it is about to publish
+(`read_db` on `connections/current.pages.<page>`) before ranking, and never brings a dropped line back.
+
+```json
+{ "page": "inbox", "kind": "queue", "ref": "thread:18f2a...", "say": "Tomas needs the migration date in writing.",
+  "reason": "done", "date": "2026-09-22" }
+```
+
+`kind` is `queue | decision | job | topic`; `ref` is the stable key the routine gave the line (a thread id or
+link for the inbox, `brief:<id>` or the source thread for the brief, the topic id on Super Context); `reason`
+is `done | not_important`. A `done` on an inbox thread also excludes its follow-ups for 7 days. The routine that
+reads a `done` records it as a fact where it can: a `so_far` entry on the topic the line served. A priority
+dropped in the editor carries `dropped_reason` on its own document (`done | not_a_priority`); a decision dropped
+on the page carries `reason` (`not_a_decision | not_important`).
+
 ### `runs`, one per run
 
 ```json
