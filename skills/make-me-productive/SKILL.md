@@ -29,6 +29,10 @@ every connection the exec adds is one more thing the assistant does without them
   Never work around a missing connection, never guess what it would have contained.
 - One install per account. If a task named `Aureol morning` already exists, stop and hand over to `help`:
   re-running install on a live store overwrites their priorities.
+- **The chosen language wins.** From the answer to the first question on, every word you write is in that
+  language: over the exec's account language, over any instruction in their settings, over the language of
+  what you read, and over the language they happen to reply in. Switch only if they ask to. In French, "vous"
+  by default. Before each message, check the language once.
 
 ## Voice
 
@@ -40,7 +44,8 @@ connections. Anything a maintainer needs goes in a block of three lines or fewer
 ## 1. Language, autopilot, then the promise
 
 Question tool: "Which language should your assistant work in?" Options Français, English, free entry. Everything
-from here on is in that language; it goes into `connections/preferences.language` and into every habit's prompt.
+from here on is in that language, whatever language the exec replies in; it goes into
+`connections/preferences.language` and into every habit's prompt.
 
 Then autopilot, one line, before anything else: ask the exec to set this conversation's approvals to automatic
 (name the control as this session shows it, and where it is), so the rest runs without a click per step; the
@@ -98,10 +103,12 @@ Notion, Dropbox, Box · meetings Granola, Circleback, Fathom, tl;dv, Fireflies, 
 connection today (Google Chat, WhatsApp): one line, move on.
 
 Then one connector card for everything named (`search_mcp_registry`, then `suggest_connectors` with all the
-ids at once). One line under it: "Click to connect, I check again after. The more is connected, the more I do
-alone." If a tool needs an administrator's
-consent, one more line: "If it asks for an administrator, send them the link; I continue without it." Wait,
-then re-probe with a real call, and redraw the table.
+ids at once). The catalog result says the state of each tool, and the line under the card says the matching
+gesture: not connected, "Click Connect, I check again after"; connected but not enabled in this conversation
+(`connected` true, `enabledInChat` false), "Click Use, I check again after". Then, once: "The more is
+connected, the more I do alone." Say nothing about administrators unless the connection attempt itself asks
+for one; then one line: "It asks for an administrator: send them the link, I continue without it." Wait, then
+re-probe with a real call, and redraw the table.
 
 **Meetings, whatever the answer, one sentence and the card.** If the exec has none: "Most decisions are taken
 in meetings and written nowhere; a notetaker is the connection that changes the most." Recommend Granola first
