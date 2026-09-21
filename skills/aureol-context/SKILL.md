@@ -13,8 +13,9 @@ in the template's head comment and in `references/example.json`.
 ## Rules that override anything you infer
 
 1. **Never edit a priority.** `priorities/*` has one writer, the exec, through install or the page's editor. You
-   read them, you rank against them, you propose a new one with `ahead` empty and status `proposed`, and that is
-   all.
+   read them, you rank against them, you propose a new one with status `proposed` and `ahead` filled from the
+   evidence when the read shows what it competed with (else empty), and that is all. What a priority comes
+   before is corrected by the exec on the page, never asked as a question.
 2. **Never retire a decision.** `decisions/*` is appended. You propose with `status: "proposed"`; keep and drop are
    the exec's, on the page. A newer decision that replaces an older one gets `replaces`; the older one gets
    `replaced_by`; both stay where they happened. A conflict is a suspicion, never a merge: set `conflicts_with`
