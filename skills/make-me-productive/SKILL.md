@@ -149,6 +149,12 @@ else. Write it to `connections/current.pages.brief`.
 
 ## 6. The inbox: its rules where mail can take a label, then the first page, now
 
+First the scope, one question, on every mailbox: probe whether the mailbox splits its inbox (Gmail's Primary
+against Promotions, Social and Updates; Outlook's Focused against Other) and ask: "Your assistant reads your
+main inbox only, N unread there today; Promotions, Social, Updates and the like stay out. Right?" Options: "Yes,
+main inbox only" (first), "No, read everything". Write `preferences.mail_scope`. If the exec's other addresses
+show up in the read (a signature, a forwarded account) and are not connected, one line names them as not read.
+
 `connections/current.roles.mail.can` without `label`: one line, "Your inbox page sorts; it writes nothing to your
 mailbox." Then straight to the first page below.
 

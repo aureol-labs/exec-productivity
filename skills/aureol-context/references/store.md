@@ -59,7 +59,13 @@ notification only when something is Now), `email` (one message to the exec's own
 only where the mail role can send, never for the inbox), or `none` (the pinned page). Chosen at install, per
 habit, after a test notification. Nothing is automatic: the run decides from this value.
 
-`inbox` is `"hourly"` (weekdays 08:00 to 18:00, the default) or a list of times. `metrics` is `null` until a business metric source is named and proven by a real call; the brief renders no
+`inbox` is `"hourly"` (weekdays 08:00 to 18:00, the default) or a list of times. `mail_scope` is `"main"` (the
+default) or `"all"`: every skill that reads mail, context, brief, inbox and review, reads the mailbox's main
+inbox only under `main`, Gmail's Primary category, Outlook's Focused inbox where it exists, and leaves the
+mailbox's own bulk categories out (Promotions, Social, Updates, Forums, Other, Junk, Clutter): not read, not
+counted, not ranked. An exec who runs inbox zero on their main inbox must never see 4,182 unread on the page.
+`mailboxes` lists the connected mail accounts read; the page names any address the exec uses that is not
+connected. `metrics` is `null` until a business metric source is named and proven by a real call; the brief renders no
 metrics block while it is `null`.
 
 `gesture` is `copy` (the briefing is copied to the clipboard) or `link` (a `https://claude.ai/new?q=` link); install
