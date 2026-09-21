@@ -97,7 +97,8 @@ must not equal any topic or entity name. A dropped priority keeps its document w
 ```
 
 `aka` holds the shorthand the exec and their colleagues use for the topic, read off the threads, so a chat
-that says "the Aviva thing" resolves; same on people and entities. `serves` is a priority id or `null` (rendered as None). `next` is a list or `null` (rendered "Nothing booked").
+that says "the Aviva thing" resolves; same on people and entities, where it also holds the mis-hearings a
+notetaker produces ("Men in Black" for Mailinblack), so a transcript resolves to the entity the mail spells. `serves` is a priority id or `null` (rendered as None). `next` is a list or `null` (rendered "Nothing booked").
 `late: true` on a `next` entry renders in brick with "Was due <date>" and is allowed only when the date comes from
 a decision or a promise the routine can point at. `gesture` is `ask`, `add_priority` or `none`.
 

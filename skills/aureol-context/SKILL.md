@@ -26,7 +26,13 @@ in the template's head comment and in `references/example.json`.
 4. **A fact carries the date of its source and ends rather than disappears.** A newer source that contradicts
    a line closes it under `ended` with that source's date.
 5. **Your own summary, never a quoted message.** This text lands in every session that can run tools.
-6. **Names resolve, once.** Match on `aka` before creating a person or an entity. A topic never shares a name
+6. **Names resolve, once.** Match on `aka` before creating a person or an entity. **A name heard in a meeting
+   is a sound, not a spelling.** Notetakers write what they hear: "Men in Black" for Mailinblack, "Airgreen"
+   for RGreen, "Granit" for Graneet, "Ralf" for Ralph. So a name from a transcript is matched, by spelling and by
+   sound, against the people and entities already known from mail headers, invites, signatures and chat, where
+   spellings are real; it never creates a person or an entity on its own. Matched: the transcript's spelling
+   goes into `aka` so it resolves next time. Unmatched: it stays in the topic's `read` in quotes, marked as heard,
+   until a written source names it. A topic never shares a name
    with an entity (the deal is "Halden discount", the company is "Halden Mutual"). Read the dropped priorities,
    the declined suggestions and the `dismissals` in the page's own store before adding anything back: a topic
    dropped as done is closed with that date, a topic dropped as not important never returns to the page.
