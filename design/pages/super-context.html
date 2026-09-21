@@ -88,7 +88,7 @@
                   conflict requires land, the open question; a replaced decision
                   stays where it happened, greyed; "Added this week" is computed from
                   kept_at within 7 days of today; dropped rows are not rendered
-    suggestions   [ { id, kind: connection|skill, say, state, proposed_label, lede,
+    suggestions   [ { id, kind: connection|plugin|skill|routine, say, state, proposed_label, lede,
                       evidence: [{date, text}], path, pattern, sources, briefing,
                       status } ]   proposed ones only, three at most
       ref         { id } same page (opens the target) or { page, id } another page
@@ -621,7 +621,7 @@ var DICT={{DICT}};
     var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
     b.onclick=function(){ t(b); };
     var dec=el('span','dec'); add(dec, el('span','say',sg.say), el('span','state',sg.state||''));
-    add(b, dec, el('span','role',L(sg.kind==='skill'?'skill':'connection')), el('span','last',sg.proposed_label||''));
+    add(b, dec, el('span','role',L(sg.kind==='skill'?'skill':sg.kind==='routine'?'routine':sg.kind==='plugin'?'plugin':'connection')), el('span','last',sg.proposed_label||''));
     add(r,b);
     var w=el('div','why');
     if(sg.lede) add(w, el('p','lede',sg.lede));
@@ -631,12 +631,12 @@ var DICT={{DICT}};
       var ol=el('ol'); sg.evidence.forEach(function(x){ var li=el('li'); add(li, el('b',null,x.date||''), el('span',null,x.text||'')); add(ol,li); });
       add(c,ol); add(w,c);
     }
-    if(sg.kind==='skill' && sg.pattern) add(w, el('p','plain',sg.pattern));
-    if(sg.kind!=='skill' && sg.path) add(w, el('p','plain',sg.path));
+    if((sg.kind==='skill'||sg.kind==='routine') && sg.pattern) add(w, el('p','plain',sg.pattern));
+    if((sg.kind==='connection'||sg.kind==='plugin') && sg.path) add(w, el('p','plain',sg.path));
     var act=el('div','act'), d=el('button','quiet',L('decline')); d.type='button';
     d.onclick=function(){ decline(sg,r); };
     add(act,d, el('span','note','')); add(w,act);
-    add(w, srcRow(sg.sources, sg.kind==='skill' ? sg.briefing : null, L('draft_skill')));
+    add(w, srcRow(sg.sources, (sg.kind==='connection'||sg.kind==='plugin') ? null : sg.briefing, L(sg.kind==='routine'?'create_routine':'draft_skill')));
     add(r,w);
     return r;
   }

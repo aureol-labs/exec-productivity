@@ -111,7 +111,7 @@
     "live_topics": "Live topics",
     "people_orgs": "People and organisations",
     "decisions": "Decisions",
-    "suggestions": "Connections and skills to add",
+    "suggestions": "Connections, plugins, skills and routines to add",
     "c_topic": "Topic",
     "c_serves": "Serves",
     "c_last": "Last from you",
@@ -232,7 +232,10 @@
     "q_open": "“",
     "q_close": "”",
     "hist_page": "Changed on the page",
-    "drop_decision_briefing": "In my Super Context, mark this proposed decision as dropped: “{say}” ({when}, {by}). Reason: {reason}. Change nothing else."
+    "drop_decision_briefing": "In my Super Context, mark this proposed decision as dropped: “{say}” ({when}, {by}). Reason: {reason}. Change nothing else.",
+    "routine": "Routine",
+    "create_routine": "Create the routine",
+    "plugin": "Plugin"
   },
   "fr": {
     "page_brief": "Brief du jour",
@@ -345,7 +348,7 @@
     "live_topics": "Sujets en cours",
     "people_orgs": "Personnes et organisations",
     "decisions": "Décisions",
-    "suggestions": "Connexions et compétences à ajouter",
+    "suggestions": "Connexions, plugins, compétences et routines à ajouter",
     "c_topic": "Sujet",
     "c_serves": "Sert",
     "c_last": "Dernier de vous",
@@ -466,6 +469,9 @@
     "q_open": "« ",
     "q_close": " »",
     "hist_page": "Modifié sur la page",
-    "drop_decision_briefing": "Dans mon Super Context, marque cette décision proposée comme écartée : « {say} » ({when}, {by}). Raison : {reason}. Ne change rien d’autre."
+    "drop_decision_briefing": "Dans mon Super Context, marque cette décision proposée comme écartée : « {say} » ({when}, {by}). Raison : {reason}. Ne change rien d’autre.",
+    "routine": "Routine",
+    "create_routine": "Créer la routine",
+    "plugin": "Plugin"
   }
 }

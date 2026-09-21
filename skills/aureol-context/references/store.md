@@ -167,9 +167,13 @@ Seven at most, `tint` one of `sales | product | board | customers | hiring | lat
   "evidence": ["a-2026-09-17-julien"], "status": "proposed", "proposed_at": "2026-09-19" }
 ```
 
-`kind` is `connection` or `skill`; a skill suggestion carries `name` and `pattern` instead of `system`. A declined
-suggestion is never proposed again. The page's "Connections and skills to add" list renders `status: proposed`,
-three at most.
+`kind` is `connection`, `plugin`, `skill` or `routine`. A plugin suggestion names an off-the-shelf plugin or
+skill from the Claude catalog that already covers the ask (`name`, `path`: where to add it, the marketplace or
+the card); it comes before a custom skill whenever one exists. A skill suggestion carries `name` and `pattern`
+(the ask that repeats, reached for on demand, and nothing on the shelf covers it). A routine suggestion carries `name`, `pattern` (the cadence and what it
+produces: "every Monday before 09:00, the pipeline numbers as a page") and a `briefing` that lets Claude create
+the scheduled task with its prompt drafted. A declined suggestion is never proposed again. The page's
+"Connections, skills and routines to add" list renders `status: proposed`, three at most.
 
 ### `dismissals`, one per line the exec dropped, in each page's own store
 

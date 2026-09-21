@@ -536,14 +536,16 @@ def check_context(d, r, others):
         r.bad('$.suggestions', 'three at most')
     for i, s in enumerate(sugg):
         sp = '$.suggestions[%d]' % i
-        if s.get('kind') not in ('connection', 'skill'):
-            r.bad(sp + '.kind', 'connection or skill')
+        if s.get('kind') not in ('connection', 'plugin', 'skill', 'routine'):
+            r.bad(sp + '.kind', 'connection, plugin, skill or routine')
         if not s.get('say') or not s.get('lede'):
             r.bad(sp, 'a suggestion has a sentence and a lede')
         if not s.get('evidence'):
             r.bad(sp + '.evidence', 'a suggestion carries its evidence')
-        if s.get('kind') == 'connection' and not s.get('path'):
-            r.bad(sp + '.path', 'a connection carries the settings path sentence')
+        if s.get('kind') in ('connection', 'plugin') and not s.get('path'):
+            r.bad(sp + '.path', 'a connection or a plugin carries the sentence that says where to add it')
+        if s.get('kind') == 'routine' and not (s.get('briefing') and s.get('pattern')):
+            r.bad(sp, 'a routine carries its cadence in pattern and a briefing that creates it')
         if s.get('kind') == 'skill' and not s.get('briefing'):
             r.bad(sp + '.briefing', 'a skill carries the Draft the skill briefing')
     check_refs(d, r, 'context', own, others)
