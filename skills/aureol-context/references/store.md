@@ -49,13 +49,15 @@ is connected but answered nothing is `null` with a `note`.
   "morning": "06:50", "inbox": "hourly", "weekly": "Fri 16:30",
   "caps": { "decisions": 3, "jobs": 3 }, "tiers": ["Now", "Today", "This week"],
   "gesture": "copy", "metrics": null,
-  "notify": { "brief": "app", "inbox": "none", "weekly": "app" },
+  "notify": { "brief": "push", "inbox": "none", "weekly": "push" },
   "installed": "2026-09-22", "plugin_version": "0.1.0" }
 ```
 
-`notify.<habit>` is `app` (the exec relies on the app's own notifications for scheduled runs, which are theirs to
-set), `email` (the habit ends by sending one message to the exec's own address with the page's link, only where
-the mail role can send, never for the inbox), or `none` (the pinned page). Chosen at install, per habit.
+`notify.<habit>` is `push` (the run ends by sending one notification with the session's notification tool, one
+line under 200 characters, desktop and phone when the Claude app is on the phone), `push_now` (inbox only: a
+notification only when something is Now), `email` (one message to the exec's own address with the page's link,
+only where the mail role can send, never for the inbox), or `none` (the pinned page). Chosen at install, per
+habit, after a test notification. Nothing is automatic: the run decides from this value.
 
 `inbox` is `"hourly"` (weekdays 08:00 to 18:00, the default) or a list of times. `metrics` is `null` until a business metric source is named and proven by a real call; the brief renders no
 metrics block while it is `null`.

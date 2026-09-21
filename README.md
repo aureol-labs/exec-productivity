@@ -36,9 +36,10 @@ archives or marks as read.
 | inbox | weekdays, every hour 08:00 to 18:00 by default | Priority inbox, and what it learned into Super Context |
 | weekly | Friday 16:30 | the review, on Super Context |
 
-Each habit runs in the cloud, so it runs with the laptop shut. Its result is the pinned page; how the exec is
-told is their choice at install, per habit: the app's own notification, an email to their own address (where
-their mailbox can send), or nothing.
+Each habit runs in the cloud, so it runs with the laptop shut. Its result is the pinned page. How the exec is
+told is their choice at install, per habit, after a test notification: a one-line notification (desktop, and
+phone when the Claude app is there), an email to their own address where their mailbox can send, or nothing. The
+inbox can notify only when something is urgent. Nothing is automatic: each run decides from that choice.
 
 ## How the habits fit together
 

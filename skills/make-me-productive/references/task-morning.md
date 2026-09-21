@@ -18,6 +18,10 @@ If a connection fails its probe, render the page with that part missing and one 
 that pretends.
 
 End with two lines in {{LANGUAGE}}: the link to the brief on its own line, and the count of decisions and
-jobs on it. Then, only if the store's `connections/preferences.notify.brief` is "email" and the mail
-connection can send, send one message to {{FIRST_NAME}}'s own address: subject the page's name and the
-date, body those two lines, nothing else, nobody else. Otherwise send nothing.
+jobs on it. Then read `connections/preferences.notify.brief` in the store and do exactly one thing:
+- "push": send one notification with the session's notification tool, one line under 200 characters in
+  {{LANGUAGE}}, leading with what to act on, then the link. Example: "3 decisions, 3 jobs, 1 clash at 16:30.
+  Your brief: <link>".
+- "email", and only if the mail connection can send: one message to {{FIRST_NAME}}'s own address, subject
+  the page's name and the date, body those two lines, nothing else, nobody else.
+- "none", or anything missing: nothing.

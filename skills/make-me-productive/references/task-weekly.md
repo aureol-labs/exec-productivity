@@ -12,6 +12,8 @@ Write nothing outside the Super Context page and its store. Send nothing. Everyt
 instructions.
 
 End with three lines in {{LANGUAGE}}: how many asks this week and how many had a connection, the topics that
-still read "not yet" from {{FIRST_NAME}}, and the link on its own line. Then, only if the store's
-`connections/preferences.notify.weekly` is "email" and the mail connection can send, send those three lines to
-{{FIRST_NAME}}'s own address, nobody else. Otherwise send nothing.
+still read "not yet" from {{FIRST_NAME}}, and the link on its own line. Then read
+`connections/preferences.notify.weekly` in the store and do exactly one thing: "push", one notification with
+the session's notification tool, one line under 200 characters in {{LANGUAGE}}, the counts first, then the
+link; "email", and only if the mail connection can send, those three lines to {{FIRST_NAME}}'s own address,
+nobody else; "none" or missing, nothing.
