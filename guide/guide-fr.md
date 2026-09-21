@@ -5,13 +5,13 @@ Trois gestes dans l'application Claude sur votre ordinateur. Un abonnement Claud
 ## 1. Installer
 
 Dans l'application Claude : **Plugins**, puis **Ajouter une marketplace** et coller
-`aureol-labs/exec-productivity`. Installer **Make me productive**.
+`aureol-labs/exec-productivity`. Installer **Exec productivity**.
 
 [capture : la carte du plugin, bouton Installer]
 
 ## 2. Lancer l'installation
 
-Dans une nouvelle conversation, taper `/` puis choisir **Make me productive**. Répondre aux questions. Dix
+Dans une nouvelle conversation, taper `/` puis choisir **make-me-productive**. Répondre aux questions. Dix
 minutes. Ça se termine sur votre premier brief.
 
 [capture : le menu / avec la commande install]
@@ -56,4 +56,4 @@ le permet et selon des règles écrites dans vos mots, chacune listée sur la pa
 
 ## Une question, un problème
 
-Taper `/make-me-productive:help` et dire ce que vous avez vu.
+Taper `/exec-productivity:help` et dire ce que vous avez vu.

@@ -7,9 +7,9 @@
   },
   "plugins": [
     {
-      "name": "make-me-productive",
+      "name": "exec-productivity",
       "source": "./",
-      "description": "Guided install, Super Context, daily brief, priority inbox, Friday review. Reads mail, calendar, chat, documents and meetings; writes only its own pages."
+      "description": "Make me productive: guided install, Super Context, daily brief, priority inbox, Friday review. Reads mail, calendar, chat, documents and meetings; writes only its own pages."
     }
   ]
 }
