@@ -27,7 +27,11 @@ ones that bite are below.
 5. **Caps.** `preferences.caps`, three and three by default. The day is whatever the calendar says.
 6. **Three sources per reveal.** Your own summary in the briefing, never a message body, and every briefing
    that drafts something ends "do not send".
-7. **Ranking is against the priorities.** Left alone you rank by mail volume, which is always new business.
+7. **A dropped line stays dropped.** Read `dismissals` from the brief page's own store
+   (`connections/current.pages.brief`) before selecting. A job or decision dropped as done or not important is
+   not proposed again; a `done` becomes a `so_far` fact on the topic it served. Give every decision and job a
+   stable `ref` (the source thread, or `brief:<slug>`).
+8. **Ranking is against the priorities.** Left alone you rank by mail volume, which is always new business.
    Rank against `priorities` in their order, and take topic names and roles from the store so every page says
    the same words.
 
@@ -62,6 +66,6 @@ Meetings of yesterday when a recorder is connected. Only today's events are draw
 ## 3. Check, publish, record
 
 Run `tools/check-page.py brief` on the JSON when a shell exists, else apply its list by hand. Fill
-`{{DATA_JSON}}`, read the page at `connections/current.pages.brief` then publish to its `url`; no link yet,
-publish new and write the link. Write a `runs` document. The task prompt says how the run ends: the link on its
+`{{DATA_JSON}}`, read the page at `connections/current.pages.brief` then publish to its `url` with
+`capabilities: {db: {}}`; no link yet, publish new the same way and write the link. Write a `runs` document. The task prompt says how the run ends: the link on its
 own line, and the counts.

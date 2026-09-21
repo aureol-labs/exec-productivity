@@ -19,15 +19,22 @@ document (shape in its head comment and `references/example.json`).
    A label without a rule is not applied.
 3. **The test for the queue is stated on the page**: someone is blocked, a promise is late, or only the exec can
    answer. A group ask anyone could answer is not the exec's. A thread the exec already replied to or reacted to
-   is out. Check the thread before ranking it, not the snippet.
-4. **Now is a clock the exec does not control**: an offer that lapses tonight, a deck that locks tomorrow, a
+   is out. Check the thread before ranking it, not the snippet. **Unread first**: the queue is built from unread
+   mail and unread messages; a thread the exec has read but not answered enters only when someone is visibly
+   still waiting (a follow-up, a question with no reply), and the h1's counts are the real unread counts from
+   the tools, never estimated.
+4. **A dropped line stays dropped.** Read `dismissals` from the inbox page's store before ranking (the store is
+   the page's own, at `connections/current.pages.inbox`). A thread dropped as done or not important never comes
+   back, and a `done` also covers its follow-ups for 7 days. Give every queue line a stable `ref` (the thread id
+   or link) so the page can record the drop.
+5. **Now is a clock the exec does not control**: an offer that lapses tonight, a deck that locks tomorrow, a
    build that starts after lunch. Importance is not a tier. Then Today, then This week. Inside a tier, oldest
    first.
-5. **The right column is when it arrived.** A time if today, a date otherwise. No due time you invented, no
+6. **The right column is when it arrived.** A time if today, a date otherwise. No due time you invented, no
    computed lateness, no brick on this page.
-6. **Every reveal leads with the ask**, one line, then the type, then the reason, three sources, and a briefing
+7. **Every reveal leads with the ask**, one line, then the type, then the reason, three sources, and a briefing
    that is your summary plus pointers and ends "do not send" when it drafts.
-7. **The lead is a count, not a claim.** "61 unread mails, 41 unread messages. 9 need you." Filing is not
+8. **The lead is a count, not a claim.** "61 unread mails, 41 unread messages. 9 need you." Filing is not
    judging, so the filed list is "labelled, still unread".
 
 ## 0. Read, probe
@@ -68,6 +75,7 @@ render mode so the Super Context page shows it.
 ## 5. Check, publish, record
 
 `tools/check-page.py inbox` when a shell exists. Fill `{{DATA_JSON}}`, read the page at
-`connections/current.pages.inbox`, publish to its `url`, or publish new and write the link. Write a `runs`
+`connections/current.pages.inbox`, publish to its `url` with `capabilities: {db: {}}`, or publish new the same
+way and write the link. Write a `runs`
 document with the counts read and the writes made. The task prompt says how the run ends: the Now count
 first, so whatever preview the exec sees says what matters.

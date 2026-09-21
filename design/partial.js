@@ -94,7 +94,7 @@
   }
 
   /* ---------- shared pieces ---------- */
-  var DATA=null, LINKS={};
+  var DATA=null, LINKS={}, PAGE_KEY='';
   function loadData(){
     var d=null;
     try{ d=JSON.parse($('data').textContent); }catch(e){ d=null; }
@@ -107,6 +107,7 @@
   }
   /* the header: the notebook page, the date and the time in the hand, the count, the sub */
   function header(page,pageKey,h1){
+    PAGE_KEY=pageKey;
     add(page, el('div','book',L(pageKey)));
     var top=el('div','top');
     add(top, el('span','eyebrow',DATA.date_label||''), el('span','eyebrow',DATA.time_label||''));
@@ -277,4 +278,101 @@
       if(b && !el_.classList.contains('flat') && !el_.classList.contains('open')) t(b);
     }
     el_.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  /* a row closed from code: the toggle's state follows */
+  function closeRow(r){
+    r.classList.remove('open');
+    var b=r.querySelector('button'); if(b) b.setAttribute('aria-expanded','false');
+  }
+
+  /* ---------- drop, with a reason ----------
+     The one gesture the exec has on a line they did not write: Drop, then why. The
+     word at the end of the sources row becomes the reasons, inline. A choice writes
+     dismissals/<slug of ref> when this view can run the store, and otherwise copies
+     a one-line briefing and marks the row "waiting for Claude". The row stays where
+     it was, greyed: never moved, never hidden. */
+  /* the document id: lowercase, anything not a letter or a digit as "-", 80 at most */
+  function slug(s){
+    return String(s==null?'':s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80);
+  }
+  /* a reason as the word the exec chose, for a marker or a briefing: "done" */
+  var REASON_KEY={done:'drop_done', not_important:'drop_unimportant',
+                  not_a_priority:'drop_not_priority', not_a_decision:'drop_not_decision'};
+  function reasonWord(reason){
+    var w=L(REASON_KEY[reason]||reason); return w.charAt(0).toLowerCase()+w.slice(1);
+  }
+  /* the reasons in place of the gesture that asked. `anchor` and `hideAlso` hide
+     while the question is up; Cancel brings them back. `pick(reason, q, restore)`
+     runs on a choice with the question still up, so a failure can be said beside
+     it, and `restore` is the way out. Returns the question element. */
+  function askReason(anchor,choices,pick,hideAlso){
+    var next=anchor.nextSibling;
+    if(next && next.classList && next.classList.contains('dropq')) return next;
+    var q=el('span','dropq'), hid=[anchor].concat(hideAlso||[]);
+    var restore=function(){
+      hid.forEach(function(x){ x.style.display=''; });
+      if(q.parentNode) q.parentNode.removeChild(q);
+    };
+    hid.forEach(function(x){ x.style.display='none'; });
+    choices.forEach(function(c){
+      var b=el('button',null,c[1]); b.type='button';
+      b.onclick=function(){ pick(c[0],q,restore); };
+      add(q,b);
+    });
+    var x=el('button','x',L('cancel')); x.type='button';
+    x.onclick=function(){ restore(); if(anchor.focus) anchor.focus(); };
+    add(q, x, el('span','note',''));
+    anchor.parentNode.insertBefore(q,anchor.nextSibling);
+    q.firstChild.focus();
+    return q;
+  }
+  /* the shared gesture: Drop at the end of the row's sources line, after Ask Claude.
+     spec = {page, kind, ref, say}: page is the store's word (brief, inbox, context),
+     kind is queue | decision | job | topic, ref the stable key of the line. The
+     dictionary lookup can be passed as the third argument; the page's own is used
+     otherwise. */
+  function dropUI(row,spec,L_){
+    var T=L_||L, src=row.querySelector('.src'); if(!src) return null;
+    var a=el('a','drop',T('drop_line')); a.setAttribute('href','#');
+    a.onclick=function(e){
+      e.preventDefault();
+      askReason(a, [['done',T('drop_done')],['not_important',T('drop_unimportant')]],
+        function(reason,q,restore){ dismiss(row,spec,reason,q,restore); });
+      return false;
+    };
+    add(src,a);
+    return a;
+  }
+  /* the write, or the briefing. With the store: one document, the row closes and
+     says "remembered". Without it: the briefing is copied, the row stays open on
+     "Copied" so the exec knows to paste, and says "waiting for Claude". A failed
+     write or a blocked copy says so and leaves the line as it was. */
+  function dismiss(row,spec,reason,q,restore){
+    var btns=Array.prototype.slice.call(q.querySelectorAll('button')), note=q.querySelector('.note');
+    var lock=function(on){ btns.forEach(function(b){ b.disabled=on; }); };
+    var setNote=function(s,bad){ note.textContent=s; note.className='note'+(bad?' bad':''); };
+    var mark=function(text){
+      row.classList.add('gone');
+      var dec=row.querySelector('.dec'); if(dec) add(dec, el('span','rel nw',text));
+    };
+    lock(true); setNote('');
+    if(DB){
+      var id=slug(spec.ref)||slug(row.id)||'line';
+      var body={page:spec.page, kind:spec.kind, ref:String(spec.ref==null?'':spec.ref),
+                say:spec.say||'', reason:reason, date:DATA.today||isoToday()};
+      DB.doc('dismissals/'+id).set(body).then(function(){
+        restore(); var a=row.querySelector('.src .drop'); if(a) a.parentNode.removeChild(a);
+        closeRow(row);
+        mark(L(reason==='done' ? 'dropped_done_m' : 'dropped_unimportant_m'));
+      }, function(err){
+        lock(false); setNote(L('not_saved')+(err && err.message ? ' · '+err.message : ''), true);
+      });
+    } else {
+      /* the sentence loses its full stop inside the quotes, so the line has one stop */
+      var text=F(L('drop_briefing'),{page:L(PAGE_KEY||('page_'+spec.page)), say:String(spec.say||'').replace(/[.\s]+$/,''), reason:reasonWord(reason)});
+      copyText(text, function(){
+        setNote(L('copied'));
+        mark(L('dropped_m')+', '+reasonWord(reason)+', '+L('waiting'));
+      }, function(){ lock(false); setNote(L('blocked'),true); });
+    }
   }

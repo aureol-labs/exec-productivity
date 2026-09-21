@@ -12,7 +12,7 @@
   "counts": { "mail": 61, "chat": 41 },
   "queue": [
     {
-      "id": "r1", "tier": "now", "channel": "slack",
+      "id": "r1", "ref": "thread:slack-elena-renewal-playbook", "tier": "now", "channel": "slack",
       "say": "Elena’s renewal playbook is still unsigned.",
       "label": { "name": "Customers", "tint": "customers" },
       "meta": { "kind": "date", "value": "8 Sept" },
@@ -29,7 +29,7 @@
       "briefing": "I have not signed Elena’s renewal playbook. At our 1:1 at 10:00 today I said I would sign it before the end of the day. That is the fourth date she has been given.\n\nOpen the Slack thread with Elena from 6 September, her message from Friday 17:40, and the playbook doc itself. Then:\n1. Tell me what is actually still unresolved in the doc, if anything.\n2. Draft two Slack replies for me to pick from. One signs it today. One tells her to ship without me and says why."
     },
     {
-      "id": "r2", "tier": "now", "channel": "mail",
+      "id": "r2", "ref": "thread:mail-julien-cohort-numbers", "tier": "now", "channel": "mail",
       "say": "Julien has no cohort numbers for the 14:00 board prep.",
       "label": { "name": "Board", "tint": "board" },
       "meta": { "kind": "time", "value": "09:31" },
@@ -46,7 +46,7 @@
       "briefing": "Julien needs net revenue retention by cohort for the retention slide in the board pack. Board prep is at 14:00 today and the pack is due Thursday. He asked at 09:10 and again at 11:35 and I have not replied.\n\nOpen both of his mails and the cohort view I used for last quarter’s pack. Then:\n1. Pull the numbers he needs and show me the source for each one.\n2. Draft the reply.\n3. Tell me whether the slide can be dropped instead, and what the pack loses if it is."
     },
     {
-      "id": "r3", "tier": "now", "channel": "slack",
+      "id": "r3", "ref": "thread:slack-nadia-halden-76k", "tier": "now", "channel": "slack",
       "say": "Nadia needs a yes or no on Halden Mutual at 76k.",
       "label": { "name": "Sales", "tint": "sales" },
       "meta": { "kind": "time", "value": "11:02" },
@@ -63,7 +63,7 @@
       "briefing": "Nadia needs a yes or no on Halden Mutual today. List is 84k. Halden Mutual came back at 76k on a 14-month term. In July, Bergen asked for the same discount, I held, and it closed at 79k eleven days later.\n\nOpen Nadia’s Slack message from 11:02, the Halden Mutual procurement mail from 10 September, and the Bergen thread from 14 July. Then:\n1. Tell me what is genuinely different about Halden Mutual compared with Bergen, if anything.\n2. Give me the case for holding at 78k on 14 months, and the case for taking 76k.\n3. Draft the Slack reply to Nadia for whichever I pick."
     },
     {
-      "id": "r4", "tier": "today", "channel": "slack",
+      "id": "r4", "ref": "thread:slack-priya-q4-roadmap", "tier": "today", "channel": "slack",
       "say": "Priya cannot order the Q4 roadmap until you answer Nadia.",
       "label": { "name": "Product", "tint": "product" },
       "meta": { "kind": "date", "value": "6 Sept" },
@@ -79,7 +79,7 @@
       "briefing": "Priya has held the Q4 roadmap order since 3 September. She is blocked on my answer to Nadia about Halden Mutual at 76k, because that deal decides which two features are committed in Q4.\n\nOpen Priya’s Slack thread from 3 September and her message this morning at 08:40. Then:\n1. Tell me which two features are in question and what changes under each outcome.\n2. Draft a Slack reply that gives Priya the part of the order she can start on now, and names the one thing still open."
     },
     {
-      "id": "r5", "tier": "today", "channel": "mail",
+      "id": "r5", "ref": "thread:mail-bergen-extend-early", "tier": "today", "channel": "mail",
       "say": "Bergen want to extend early. Nobody has replied.",
       "label": { "name": "Sales", "tint": "sales" },
       "meta": { "kind": "date", "value": "9 Sept" },
@@ -95,7 +95,7 @@
       "briefing": "Bergen mailed on 9 September asking to extend their contract early. Nobody has replied. They closed at 79k in July after I held the line on discount.\n\nOpen the Bergen mail from 9 September and the July thread. Then:\n1. Tell me what they are asking for and what it is worth at list.\n2. Draft two replies. One from me. One handing it to Nadia with the context she needs."
     },
     {
-      "id": "r6", "tier": "today", "channel": "mail",
+      "id": "r6", "ref": "thread:mail-marc-board-pack-owners", "tier": "today", "channel": "mail",
       "say": "Marc has no owners for three board pack sections.",
       "label": { "name": "Board", "tint": "board" },
       "meta": { "kind": "date", "value": "10 Sept" },
@@ -111,7 +111,7 @@
       "briefing": "Marc mailed on 10 September saying three sections of the Q3 board pack have no owner. I have not replied. The same three sections were unowned last quarter and I wrote them myself the night before. The pack is due Thursday.\n\nOpen Marc’s mail and the board pack doc. Then:\n1. List the three unowned sections and who wrote each one last quarter.\n2. Suggest an owner for each, and draft the reply to Marc."
     },
     {
-      "id": "r7", "tier": "today", "channel": "mail",
+      "id": "r7", "ref": "thread:mail-halden-security-review", "tier": "today", "channel": "mail",
       "say": "Halden Mutual asked where their data sits. Only you can answer.",
       "label": { "name": "Sales", "tint": "sales" },
       "meta": { "kind": "date", "value": "11 Sept" },
@@ -127,7 +127,7 @@
       "briefing": "Halden Mutual asked on 11 September where their data sits. It is the last open item on their security review, and the review gates the 76k pricing decision. I have not replied. This is the third data residency question this quarter and all three came to me.\n\nOpen the Halden Mutual security review mail and our subprocessor list. Then:\n1. Confirm the region, and whether any US subprocessor is involved.\n2. Draft a short reply I can send as it is.\n3. Tell me what would have to be written down once for this not to reach me a fourth time."
     },
     {
-      "id": "r8", "tier": "week", "channel": "teams",
+      "id": "r8", "ref": "thread:teams-corvid-term-sheet", "tier": "week", "channel": "teams",
       "say": "Corvid Capital want the term sheet redline and a new slot.",
       "label": { "name": "Board", "tint": "board" },
       "meta": { "kind": "date", "value": "12 Sept" },
@@ -144,7 +144,7 @@
       "briefing": "Corvid Capital want the term sheet redline and a new meeting slot. They asked on 9 September and again on 12 September. I moved them twice already, on 2 September and on 8 September.\n\nOpen both Teams messages and term sheet v3 with my comments. Then:\n1. Summarise where my comments and their draft still disagree.\n2. Draft the reply that sends the redline and asks Marc to book the slot."
     },
     {
-      "id": "r9", "tier": "week", "channel": "slack",
+      "id": "r9", "ref": "thread:slack-tomas-migration-date", "tier": "week", "channel": "slack",
       "say": "Tomas needs the migration date in writing.",
       "label": { "name": "Product", "tint": "product" },
       "meta": { "kind": "time", "value": "11:38" },

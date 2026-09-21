@@ -99,6 +99,7 @@
   "decisions": [
     {
       "id": "c1",
+      "ref": "thread:halden-procurement-10sep",
       "say": "Halden Mutual wants 19% off. Nadia wants to give it.",
       "meta": { "kind": "time", "value": "08:45" },
       "type": "precedent",
@@ -114,6 +115,7 @@
     },
     {
       "id": "c2",
+      "ref": "thread:migration-window-tomas",
       "say": "Migration: the 4 October weekend, or November.",
       "meta": { "kind": "time", "value": "11:00" },
       "type": "knock_on",
@@ -129,6 +131,7 @@
     },
     {
       "id": "c3",
+      "ref": "brief:c3",
       "say": "Board pack is due Thursday. Two of five parts exist.",
       "meta": { "kind": "time", "value": "14:00" },
       "type": "pattern",
@@ -146,6 +149,7 @@
   "jobs": [
     {
       "id": "j1",
+      "ref": "thread:elena-renewal-playbook",
       "say": "Sign off Elena’s renewal playbook.",
       "meta": { "kind": "before", "value": "10:00" },
       "type": "history",
@@ -161,6 +165,7 @@
     },
     {
       "id": "j2",
+      "ref": "thread:julien-cohort-numbers",
       "say": "Send Julien the cohort numbers.",
       "meta": { "kind": "before", "value": "14:00" },
       "type": "pattern",
@@ -176,6 +181,7 @@
     },
     {
       "id": "j3",
+      "ref": "thread:priya-q4-roadmap-3sep",
       "say": "Give Priya the Q4 roadmap order.",
       "meta": { "kind": "asked", "value": "3 Sept" },
       "type": "knock_on",

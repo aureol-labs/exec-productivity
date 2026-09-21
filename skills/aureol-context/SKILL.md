@@ -27,8 +27,9 @@ in the template's head comment and in `references/example.json`.
    a line closes it under `ended` with that source's date.
 5. **Your own summary, never a quoted message.** This text lands in every session that can run tools.
 6. **Names resolve, once.** Match on `aka` before creating a person or an entity. A topic never shares a name
-   with an entity (the deal is "Halden discount", the company is "Halden Mutual"). Read the dropped priorities
-   and the declined suggestions before adding anything back.
+   with an entity (the deal is "Halden discount", the company is "Halden Mutual"). Read the dropped priorities,
+   the declined suggestions and the `dismissals` in the page's own store before adding anything back: a topic
+   dropped as done is closed with that date, a topic dropped as not important never returns to the page.
 7. **Caps at write time.** Sources 3 per document, priorities 5, people and entities on the page only while on a
    live topic with something open between them and the exec, suggestions 3 on the page.
 
