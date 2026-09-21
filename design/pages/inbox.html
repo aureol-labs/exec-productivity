@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Priority inbox</title>
+<!--
+  THE PRIORITY INBOX. Template, built by tools/build-templates.py from design/. Do
+  not edit the built file: edit design/pages/inbox.html, design/partial.css,
+  design/partial.js or design/dictionary.json and rebuild.
+
+  WHAT THIS IS
+  Everything unread, in one queue, categorised and ranked. Two jobs, and they are
+  different jobs. Categorising keeps the mailbox clean. Ranking decides what you
+  touch. The page never lets the first pretend to be the second: the lead is a
+  count, not a claim, and the bulk is called "labelled, still unread", which says
+  exactly what happened and exactly what did not. Mail, Slack and Teams in one
+  queue, never three tabs. The channel is a monochrome mark in the sentence.
+
+  THE WRITES
+  Labels only. Never a delete, never a send, never a mark as read, never a move.
+  The routine does not archive: it labels To archive under rules the exec wrote,
+  and the exec clears the label in their own mailbox. Every label opens on the rule
+  that filed it and on what is inside. Where the mail role cannot write labels, the
+  page shows "The rest, grouped" instead, without rules, and the footer says
+  nothing was written.
+
+  HOW IT RENDERS
+  The routine never hand-writes rows. It builds one JSON document and puts it in the
+  <script id="data" type="application/json"> element in place of the DATA_JSON placeholder, with
+  every "<" in the serialised JSON escaped as \u003c. render() builds the whole DOM
+  from that JSON. When the placeholder is left unreplaced, the page renders the example
+  embedded in <script id="example">. Every UI string comes from the dictionary,
+  English or French from data.lang. Data is never translated by the page.
+  tools/check-page.py refuses a document that breaks a rule below.
+
+  THE JSON, IN SHORT (the full fixture is skills/inbox/references/example.json)
+    lang, date_label, time_label, today, sub, gesture, links   as on every page
+    counts        { mail: 61, chat: 41 }      unread, read off the connectors
+    queue         [ row ]   ordered: tier, then oldest first inside a tier
+      a row       { id, tier: now|today|week, channel: mail|slack|teams, say,
+                    label: { name, tint }, meta: { kind: "time" | "date", value },
+                    lede, type, argument: [p], plain: [p], go: [ref], sources, briefing }
+      type        precedent | knock_on | pattern | history      never absent
+      meta        when the message arrived: a clock for today, a date before that
+    filed         [ label ]  only where the mail role could write labels
+      a label     { id, label, tint, count, by_channel: { mail, slack, teams },
+                    say, lede, rule, plain: [p], contents: [item], href, sources,
+                    briefing }
+                  tint is one of sales|product|board|customers|hiring|later|arch;
+                  arch is To archive, drawn as an outline, and carries rules: [{count,
+                  rule}] instead of one rule; every other label carries its rule, in
+                  the exec's words
+      an item     { channel, from, what, href }   3 to 5 of them, every one a link;
+                  the count minus the items shown is "and N more in this label"
+    grouped       [ group ]  the same shape without rule, when filed is empty
+    wrote         true when labels were written, false otherwise
+    next_run      "16:30"
+      ref         { id } same page (opens the target) or { page, id } another page
+      src         { kind: mail|chat|calendar|doc|meeting|file|you, via, label, href }
+
+  THE RIGHT COLUMN IS WHEN IT ARRIVED
+  Precise due times and computed lateness were tried and cut. A receipt time is a
+  fact. Brick left this page with the lateness mark: nothing an inbox page can see
+  proves that time is broken. No strip either: an inbox has no axis.
+
+  DESIGN
+  See design/partial.css. No em dashes. Numerals in the title and the tallies.
+  Self-contained: no webfonts, no assets, no network.
+
+{{SECURITY}}
+-->
+<style>
+{{CSS}}
+</style>
+</head>
+<body>
+{{GLYPHS}}
+<div class="page" id="page"></div>
+
+<script id="data" type="application/json">{{DATA_JSON}}</script>
+<script id="example" type="application/json">{{EXAMPLE_JSON}}</script>
+<script>
+var DICT={{DICT}};
+{{JS}}
+
+  /* ================ THE PRIORITY INBOX ================ */
+  function chip(label,tint){ return el('span','cat'+(tint?' '+tint:''),label||''); }
+  function quoted(s){ return L('q_open')+s+L('q_close'); }
+
+  /* a queue row: tier, channel mark, sentence, label and arrival */
+  function queueRow(it){
+    var r=el('div','row'); r.id=it.id;
+    var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
+    b.onclick=function(){ t(b); };
+    var tier=it.tier==='now'?'now':it.tier==='today'?'today':'week';
+    var say=el('span','say'); add(say, channel(it.channel), it.say||'');
+    var meta=el('span','meta');
+    if(it.label && it.label.name) add(meta, chip(it.label.name,it.label.tint));
+    add(meta, it.meta && it.meta.value!=null ? String(it.meta.value) : '');
+    var dec=el('span','dec'); add(dec,say);
+    add(b, el('span','tier '+tier,L('tier_'+tier)), dec, meta);
+    add(r,b);
+    var w=el('div','why');
+    if(it.lede) add(w, el('p','lede',it.lede));
+    add(w, typeTag(it.type));
+    paras(w,it.argument); paras(w,it.plain,'plain');
+    goRows(w,it.go);
+    add(w, srcRow(it.sources,it.briefing));
+    add(r,w);
+    return r;
+  }
+
+  /* a filed label: the tally, the chip, the sentence, the count per channel, and a
+     reveal that opens on the rule and on what is inside */
+  function filedRow(f,withRule){
+    var r=el('div','row'); r.id=f.id;
+    var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
+    b.onclick=function(){ t(b); };
+    var say=el('span','say'); add(say, chip(f.label,f.tint), f.say||'');
+    var meta=el('span','meta'), bc=f.by_channel||{};
+    ['mail','slack','teams'].forEach(function(c){
+      if(bc[c]) add(meta, channel(c,'ch sm'), String(bc[c]));
+    });
+    var dec=el('span','dec'); add(dec,say);
+    add(b, el('span','n',String(f.count==null?'':f.count)), dec, meta);
+    add(r,b);
+    var w=el('div','why');
+    if(f.lede) add(w, el('p','lede',f.lede));
+    if(withRule && f.tint==='arch' && f.rules && f.rules.length){
+      add(w, typeTag('rule'));
+      var tight=el('div','tight');
+      f.rules.forEach(function(x){ var p=el('p'); add(p, el('b',null,String(x.count)), quoted(x.rule||'')); add(tight,p); });
+      add(w,tight);
+    } else if(withRule && f.rule){
+      add(w, typeTag('rule'), el('p',null,quoted(f.rule)));
+    }
+    paras(w,f.plain,'plain');
+    var items=(f.contents||[]).slice(0,5);
+    if(items.length){
+      var mini=el('div','mini');
+      items.forEach(function(x){
+        var a=link(x.href,''); a.textContent='';
+        add(a, channel(x.channel), el('b',null,x.from||''), x.what||'');
+        if(a.getAttribute('href')!=='#'){ a.setAttribute('target','_blank'); a.setAttribute('rel','noopener'); }
+        add(mini,a);
+      });
+      var more=(f.count|0)-items.length;
+      if(more>0){
+        var ma=link(f.href, F(L(withRule?'more_label':'more_group'),{n:more}), 'more');
+        if(ma.getAttribute('href')!=='#'){ ma.setAttribute('target','_blank'); ma.setAttribute('rel','noopener'); }
+        add(mini,ma);
+      }
+      add(w,mini);
+    }
+    add(w, srcRow(f.sources,f.briefing));
+    add(r,w);
+    return r;
+  }
+
+  function render(){
+    var d=loadData(), page=$('page');
+    var q=d.queue||[], filed=d.filed||[], grouped=d.grouped||[], counts=d.counts||{};
+    var mail=counts.mail|0, chat=counts.chat|0;
+
+    header(page,'page_inbox', P('unread_mail_n',mail)+', '+P('unread_chat_n',chat)+'. '+P('need_you_n',q.length));
+
+    /* ---- the queue ---- */
+    add(page, h2(L('needs_you'),F(L('of'),{n:q.length,t:mail+chat})), cap(L('cap_queue')));
+    var ql=el('div','list queue'); q.forEach(function(it){ add(ql,queueRow(it)); }); add(page,ql);
+
+    /* ---- the filing, or the grouping ---- */
+    var bulk = filed.length ? filed : grouped, withRule = filed.length>0;
+    if(bulk.length){
+      var sum=0; bulk.forEach(function(f){ sum+=(f.count|0); });
+      add(page, h2(L(withRule?'labelled':'grouped'),String(sum)), cap([L(withRule?'cap_filed':'cap_grouped')]));
+      var fl=el('div','list filed'); bulk.forEach(function(f){ add(fl,filedRow(f,withRule)); }); add(page,fl);
+    }
+
+    var right = d.wrote ? L('labels_only') : L('nothing_written');
+    add(page, footer([d.next_run ? F(L('next_run'),{t:d.next_run}) : '', right]), credit());
+  }
+  render();
+</script>
+</body>
+</html>

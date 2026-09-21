@@ -1,0 +1,12 @@
+{
+  "name": "aureol-exec-productivity",
+  "version": "0.1.0",
+  "description": "An executive's daily operating routines, run by Claude in Cowork: a guided install that ends on your first brief, a Super Context your assistant starts every session from (priorities, live topics, people, decisions), a daily brief at 06:50, a priority inbox across mail and chat at midday and late afternoon, and a Friday review that finds the asks a connection would have answered. Reads your mail, calendar, chat, documents and meetings. Sends nothing, deletes nothing.",
+  "author": {
+    "name": "Paul Rousselle, Aureol",
+    "url": "https://aureol.co"
+  },
+  "repository": "https://github.com/paul-r-92/aureol-exec-productivity",
+  "keywords": ["executive", "daily-brief", "inbox", "decisions", "super-context", "cowork", "routines"],
+  "skills": "./skills"
+}

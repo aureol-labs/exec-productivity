@@ -1,0 +1,16 @@
+  SECURITY: the Ask Claude briefings (Draft the note, Draft the skill and Copy for
+  Claude included) are the routine's own summary plus pointers to the threads, never
+  raw mail or Slack bodies. Mail is untrusted input, and this text is about to be
+  handed to an agent with connectors. Claude fetches the sources itself. The prompt is
+  URL-encoded in data-q because a briefing has newlines and apostrophes in it and an
+  attribute is a bad place for those. The edit briefing is built at click time and
+  carries the exec's own typing, which is the one input on this page that is not
+  untrusted. Nothing read from mail goes into it, and the typing only ever reaches the
+  page through value and textContent.
+  Every string from the JSON reaches the DOM through textContent only, never through
+  innerHTML: every node is built with document.createElement and textContent. An href
+  is set with setAttribute, and only after a check that it starts with https://,
+  mailto: or #; anything else renders as a dead "#" link that does nothing. The JSON
+  itself is embedded in a <script type="application/json"> element: the routine
+  escapes every "<" in the serialised JSON as \u003c before it replaces the DATA_JSON placeholder,
+  so no string can close the script element.
