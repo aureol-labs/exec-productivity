@@ -11,7 +11,7 @@ Dans l'application Claude : **Plugins**, puis **Ajouter une marketplace** et col
 
 ## 2. Lancer l'installation
 
-Dans une nouvelle conversation, taper `/` puis choisir **aureol-exec-productivity:install**. Répondre aux
+Dans une nouvelle conversation, taper `/` puis choisir **aureol-exec-productivity:make-me-productive**. Répondre aux
 questions. Dix minutes. Ça se termine sur votre premier brief.
 
 [capture : le menu / avec la commande install]
@@ -43,7 +43,7 @@ quand une habitude tourne.
 | Habitude | Quand |
 |---|---|
 | le brief | en semaine à 06:50, ou l'heure choisie |
-| l'inbox | en semaine à 12:30 et 16:30 |
+| l'inbox | en semaine, chaque heure de 08:00 à 18:00, ou le rythme choisi |
 | la revue | le vendredi à 16:30 |
 
 L'ordinateur peut être fermé : les habitudes tournent dans le cloud.

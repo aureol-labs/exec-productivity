@@ -25,11 +25,13 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 DESIGN = os.path.join(ROOT, 'design')
 PAGES = [
-    # page name, skill folder
+    # page name, page kind (as check-page knows it)
     ('super-context', 'context'),
     ('daily-brief', 'brief'),
     ('inbox', 'inbox'),
 ]
+# the skill folder that ships each kind's template and example
+FOLDER = {'context': 'aureol-context', 'brief': 'aureol-brief', 'inbox': 'aureol-inbox'}
 EM_DASH = chr(0x2014)  # the em dash, never written literally here
 
 
@@ -53,7 +55,7 @@ def load_checker():
 
 def build_one(page, skill, parts, checker, examples):
     src = read(os.path.join(DESIGN, 'pages', page + '.html'))
-    example_path = os.path.join(ROOT, 'skills', skill, 'references', 'example.json')
+    example_path = os.path.join(ROOT, 'skills', FOLDER[skill], 'references', 'example.json')
     example = examples[skill]
     others = {k: set(checker.ids_of(v, k)) for k, v in examples.items() if k != skill}
     report = checker.check(example, skill, others)
@@ -96,7 +98,7 @@ def build_all():
     checker = load_checker()
     examples = {}
     for page, skill in PAGES:
-        examples[skill] = json.loads(read(os.path.join(ROOT, 'skills', skill, 'references', 'example.json')))
+        examples[skill] = json.loads(read(os.path.join(ROOT, 'skills', FOLDER[skill], 'references', 'example.json')))
     built = {}
     for page, skill in PAGES:
         built[(page, skill)] = build_one(page, skill, parts, checker, examples)
@@ -104,7 +106,7 @@ def build_all():
 
 
 def target(page, skill):
-    return os.path.join(ROOT, 'skills', skill, 'references', page + '.html')
+    return os.path.join(ROOT, 'skills', FOLDER[skill], 'references', page + '.html')
 
 
 def main(argv):

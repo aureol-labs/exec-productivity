@@ -21,9 +21,9 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 EXAMPLES = {
-    'brief': os.path.join(ROOT, 'skills', 'brief', 'references', 'example.json'),
-    'inbox': os.path.join(ROOT, 'skills', 'inbox', 'references', 'example.json'),
-    'context': os.path.join(ROOT, 'skills', 'context', 'references', 'example.json'),
+    'brief': os.path.join(ROOT, 'skills', 'aureol-brief', 'references', 'example.json'),
+    'inbox': os.path.join(ROOT, 'skills', 'aureol-inbox', 'references', 'example.json'),
+    'context': os.path.join(ROOT, 'skills', 'aureol-context', 'references', 'example.json'),
 }
 
 EM_DASH = chr(0x2014)  # the em dash, never written literally here

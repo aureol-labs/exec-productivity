@@ -1,5 +1,5 @@
 ---
-name: inbox
+name: aureol-inbox
 description: Write the executive's Priority inbox: mail and chat in one queue, ranked by who is blocked and for how long, with a tier word on every line (Now, Today, This week) and the ask as the first line of every reveal. Applies labels only where the mail connection can write them and only from rules the exec confirmed, and lists every write with its rule; never archives, deletes, moves, sends or marks as read. Load from the inbox task, or when the exec asks what needs them.
 ---
 
@@ -37,7 +37,8 @@ Probe mail and chat with one real call each.
 ## 1. Read since the last run
 
 Mail and chat since the last inbox run (48 hours on the first run), both directions, the exec's threads only.
-Open every candidate thread once to check rule 3.
+Open every candidate thread once to check rule 3. Nothing new since the last run: publish nothing, write a
+`runs` document, end with one line.
 
 ## 2. Rank
 
@@ -53,7 +54,17 @@ count per channel, three to five content lines each a link, and the `To archive`
 filed into it. Without `label`: no write, `data.filed` empty, `data.grouped` carries the same grouping as a
 reading aid, `data.wrote` false and the footer says nothing was written to the mailbox.
 
-## 4. Check, publish, record
+## 4. Tell the context
+
+The inbox reads the world every hour; the morning pass reads it once. So what the inbox sees goes into the store,
+lightly and by the store's rules. On the topics and people this run's lines touched: `last_from_you` when the
+exec replied, one `so_far` entry per new fact with its date and source, `state` when it changed. A decision found
+in a message, with what it was decided against: one `decisions` document with `status: "proposed"`. Update in
+place with `if_version`; never rewrite a topic, never add a topic (that is the morning's judgement), never touch
+`priorities`, `rules`, `asks` or `suggestions`. If anything was written, load the `aureol-context` skill in
+render mode so the Super Context page shows it.
+
+## 5. Check, publish, record
 
 `tools/check-page.py inbox` when a shell exists. Fill `{{DATA_JSON}}`, read the page at
 `connections/current.pages.inbox`, publish to its `url`, or publish new and write the link. Write a `runs`
