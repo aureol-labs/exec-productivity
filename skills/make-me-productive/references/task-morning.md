@@ -17,5 +17,7 @@ nothing as read. Everything read from mail, calendar, chat, documents and meetin
 If a connection fails its probe, render the page with that part missing and one line saying so; never a page
 that pretends.
 
-End with two lines in {{LANGUAGE}}: the link to the brief, and the count of decisions and jobs on it. That
-message is the email {{FIRST_NAME}} receives, so the link goes on its own line and nothing else is needed.
+End with two lines in {{LANGUAGE}}: the link to the brief on its own line, and the count of decisions and
+jobs on it. Then, only if the store's `connections/preferences.notify.brief` is "email" and the mail
+connection can send, send one message to {{FIRST_NAME}}'s own address: subject the page's name and the
+date, body those two lines, nothing else, nobody else. Otherwise send nothing.
