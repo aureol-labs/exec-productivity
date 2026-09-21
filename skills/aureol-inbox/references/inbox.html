@@ -35,6 +35,14 @@
   out for 7 days). Nothing is written to the mailbox. Published with the db
   capability (capabilities: {db: {}}) so Drop is remembered; without it Drop copies
   a line for Claude and the row says "waiting for Claude".
+  At load the page reads its store and applies what the exec did since publish, so
+  a drop or a save survives a reload; the next routine run publishes a page without
+  those rows. Once the store resolves, every dismissals document whose page is
+  "inbox" and whose ref is a queue row's ref leaves that row as a fresh drop does:
+  closed, greyed, "remembered", no Drop word. Recounted from the rows still
+  standing: the h1's "N need you" and the queue tally "N of T". The unread counts
+  are the connectors' and stay: a drop marks nothing read. A read that fails, or a
+  store that is null, changes nothing and shows nothing.
 
   HOW IT RENDERS
   The routine never hand-writes rows. It builds one JSON document and puts it in the
@@ -1014,6 +1022,7 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
      kind is queue | decision | job | topic, ref the stable key of the line. The
      dictionary lookup can be passed as the third argument; the page's own is used
      otherwise. */
+  var DROP_ROWS=[];
   function dropUI(row,spec,L_){
     var T=L_||L, src=row.querySelector('.src'); if(!src) return null;
     var a=el('a','drop',T('drop_line')); a.setAttribute('href','#');
@@ -1024,7 +1033,20 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
       return false;
     };
     add(src,a);
+    DROP_ROWS.push({row:row, spec:spec});
     return a;
+  }
+  /* the state a remembered drop leaves on its row: closed, greyed, the Drop word
+     gone, the marker. The same whether the drop was made now or read back from the
+     store. A row already gone is left as it is, so applying it twice is harmless. */
+  function dropped(row,reason){
+    if(row.classList.contains('gone')) return false;
+    var a=row.querySelector('.src .drop'); if(a) a.parentNode.removeChild(a);
+    closeRow(row);
+    row.classList.add('gone');
+    var dec=row.querySelector('.dec');
+    if(dec) add(dec, el('span','rel nw',L(reason==='done' ? 'dropped_done_m' : 'dropped_unimportant_m')));
+    return true;
   }
   /* the write, or the briefing. With the store: one document, the row closes and
      says "remembered". Without it: the briefing is copied, the row stays open on
@@ -1044,9 +1066,7 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
       var body={page:spec.page, kind:spec.kind, ref:String(spec.ref==null?'':spec.ref),
                 say:spec.say||'', reason:reason, date:DATA.today||isoToday()};
       DB.doc('dismissals/'+id).set(body).then(function(){
-        restore(); var a=row.querySelector('.src .drop'); if(a) a.parentNode.removeChild(a);
-        closeRow(row);
-        mark(L(reason==='done' ? 'dropped_done_m' : 'dropped_unimportant_m'));
+        restore(); dropped(row,reason);
       }, function(err){
         lock(false); setNote(L('not_saved')+(err && err.message ? ' · '+err.message : ''), true);
       });
@@ -1058,6 +1078,43 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
         mark(L('dropped_m')+', '+reasonWord(reason)+', '+L('waiting'));
       }, function(){ lock(false); setNote(L('blocked'),true); });
     }
+  }
+
+  /* ---------- what the exec did since publish ----------
+     A drop writes the store, and nothing republishes the page until the next
+     routine run. So once the store resolves, the page reads `dismissals` and applies
+     each document to the row it names, page and ref both matching the spec dropUI
+     registered: the same state a fresh drop leaves, without the write. The rows are
+     listened to, so a drop made in another open tab lands here too; where the store
+     cannot subscribe, one read. A document this tab is still writing is skipped, so
+     the write's own confirmation is the only hand on that row. A read that fails, or
+     a store that is null, changes nothing: the page stays as rendered from its JSON
+     and no error is shown, since only writes have feedback. `then` runs after every
+     delivery so the page can recount what it shows. */
+  var DROP_SUB=null;
+  function hydrateDrops(then){
+    if(!DB || DROP_SUB || !DROP_ROWS.length) return;
+    var apply=function(snap){
+      (snap && snap.docs || []).forEach(function(ds){
+        if(!ds.exists || (ds.metadata && ds.metadata.hasPendingWrites)) return;
+        var d=ds.data()||{}, ref=String(d.ref==null?'':d.ref);
+        if(!ref) return;
+        DROP_ROWS.forEach(function(x){
+          if(x.spec.page!==d.page || String(x.spec.ref==null?'':x.spec.ref)!==ref) return;
+          dropped(x.row, d.reason==='done' ? 'done' : 'not_important');
+        });
+      });
+      if(then) then();
+    };
+    var safe=function(snap){ try{ apply(snap); }catch(e){} };
+    var col;
+    try{ col=DB.collection('dismissals'); }catch(e){ return; }
+    var once=function(){ try{ col.get().then(safe, function(){}); }catch(e){} };
+    if(typeof col.onSnapshot!=='function'){ once(); return; }
+    var got=false;
+    try{
+      DROP_SUB=col.onSnapshot(function(s){ got=true; safe(s); }, function(){ if(!got) once(); });
+    }catch(e){ once(); }
   }
 
   /* ================ THE PRIORITY INBOX ================ */
@@ -1136,16 +1193,28 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
     return r;
   }
 
+  /* the counts that depend on the queue rows: the h1's "N need you" and the tally.
+     Recounted from the rows still standing once the store has said what was dropped. */
+  var H1=null, QT=null, QL=null, MAIL=0, CHAT=0;
+  function recount(){
+    var n=QL.querySelectorAll('.row:not(.gone)').length;
+    H1.textContent=P('unread_mail_n',MAIL)+', '+P('unread_chat_n',CHAT)+'. '+P('need_you_n',n);
+    QT.textContent=F(L('of'),{n:n,t:MAIL+CHAT});
+  }
+
   function render(){
     var d=loadData(), page=$('page');
     var q=d.queue||[], filed=d.filed||[], grouped=d.grouped||[], counts=d.counts||{};
     var mail=counts.mail|0, chat=counts.chat|0;
+    MAIL=mail; CHAT=chat;
 
     header(page,'page_inbox', P('unread_mail_n',mail)+', '+P('unread_chat_n',chat)+'. '+P('need_you_n',q.length));
+    H1=page.querySelector('h1');
 
     /* ---- the queue ---- */
-    add(page, h2(L('needs_you'),F(L('of'),{n:q.length,t:mail+chat})), cap(L('cap_queue')));
-    var ql=el('div','list queue'); q.forEach(function(it){ add(ql,queueRow(it)); }); add(page,ql);
+    var hq=h2(L('needs_you'),F(L('of'),{n:q.length,t:mail+chat})); QT=hq.querySelector('b');
+    add(page, hq, cap(L('cap_queue')));
+    var ql=el('div','list queue'); q.forEach(function(it){ add(ql,queueRow(it)); }); add(page,ql); QL=ql;
 
     /* ---- the filing, or the grouping ---- */
     var bulk = filed.length ? filed : grouped, withRule = filed.length>0;
@@ -1157,7 +1226,7 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
 
     var right = d.wrote ? L('labels_only') : L('nothing_written');
     add(page, footer([d.next_run ? F(L('next_run'),{t:d.next_run}) : '', right]), credit());
-    dbInit();
+    dbInit(function(){ hydrateDrops(recount); });
   }
   render();
 </script>

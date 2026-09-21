@@ -68,7 +68,8 @@ events are drawn.
 
 ## 3. Check, publish, record
 
-Run `tools/check-page.py brief` on the JSON when a shell exists, else apply its list by hand. Fill
-`{{DATA_JSON}}`, read the page at `connections/current.pages.brief` then publish to its `url` with
+Run `tools/fill-page.py --kind brief references/daily-brief.html DATA.json OUT.html --links context=<link>
+inbox=<link>` when a shell exists (it checks the data, then fills the template with every `<` escaped); without a
+shell, apply check-page's list by hand and replace the single `{{DATA_JSON}}` yourself. Read the page at `connections/current.pages.brief` then publish to its `url` with
 `capabilities: {db: {}}`; no link yet, publish new the same way and write the link. Write a `runs` document. The task prompt says how the run ends: the link on its
 own line, and the counts.

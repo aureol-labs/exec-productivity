@@ -80,7 +80,9 @@ render mode so the Super Context page shows it.
 
 ## 5. Check, publish, record
 
-`tools/check-page.py inbox` when a shell exists. Fill `{{DATA_JSON}}`, read the page at
+`tools/fill-page.py --kind inbox references/inbox.html DATA.json OUT.html --links brief=<link> context=<link>`
+when a shell exists (it checks the data and fills the template); without a shell, apply check-page's list by
+hand and replace the single `{{DATA_JSON}}` with every `<` written as `\u003c`. Read the page at
 `connections/current.pages.inbox`, publish to its `url` with `capabilities: {db: {}}`, or publish new the same
 way and write the link. Write a `runs`
 document with the counts read and the writes made. The task prompt says how the run ends: the Now count

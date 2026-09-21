@@ -331,6 +331,7 @@
      kind is queue | decision | job | topic, ref the stable key of the line. The
      dictionary lookup can be passed as the third argument; the page's own is used
      otherwise. */
+  var DROP_ROWS=[];
   function dropUI(row,spec,L_){
     var T=L_||L, src=row.querySelector('.src'); if(!src) return null;
     var a=el('a','drop',T('drop_line')); a.setAttribute('href','#');
@@ -341,7 +342,20 @@
       return false;
     };
     add(src,a);
+    DROP_ROWS.push({row:row, spec:spec});
     return a;
+  }
+  /* the state a remembered drop leaves on its row: closed, greyed, the Drop word
+     gone, the marker. The same whether the drop was made now or read back from the
+     store. A row already gone is left as it is, so applying it twice is harmless. */
+  function dropped(row,reason){
+    if(row.classList.contains('gone')) return false;
+    var a=row.querySelector('.src .drop'); if(a) a.parentNode.removeChild(a);
+    closeRow(row);
+    row.classList.add('gone');
+    var dec=row.querySelector('.dec');
+    if(dec) add(dec, el('span','rel nw',L(reason==='done' ? 'dropped_done_m' : 'dropped_unimportant_m')));
+    return true;
   }
   /* the write, or the briefing. With the store: one document, the row closes and
      says "remembered". Without it: the briefing is copied, the row stays open on
@@ -361,9 +375,7 @@
       var body={page:spec.page, kind:spec.kind, ref:String(spec.ref==null?'':spec.ref),
                 say:spec.say||'', reason:reason, date:DATA.today||isoToday()};
       DB.doc('dismissals/'+id).set(body).then(function(){
-        restore(); var a=row.querySelector('.src .drop'); if(a) a.parentNode.removeChild(a);
-        closeRow(row);
-        mark(L(reason==='done' ? 'dropped_done_m' : 'dropped_unimportant_m'));
+        restore(); dropped(row,reason);
       }, function(err){
         lock(false); setNote(L('not_saved')+(err && err.message ? ' · '+err.message : ''), true);
       });
@@ -375,4 +387,41 @@
         mark(L('dropped_m')+', '+reasonWord(reason)+', '+L('waiting'));
       }, function(){ lock(false); setNote(L('blocked'),true); });
     }
+  }
+
+  /* ---------- what the exec did since publish ----------
+     A drop writes the store, and nothing republishes the page until the next
+     routine run. So once the store resolves, the page reads `dismissals` and applies
+     each document to the row it names, page and ref both matching the spec dropUI
+     registered: the same state a fresh drop leaves, without the write. The rows are
+     listened to, so a drop made in another open tab lands here too; where the store
+     cannot subscribe, one read. A document this tab is still writing is skipped, so
+     the write's own confirmation is the only hand on that row. A read that fails, or
+     a store that is null, changes nothing: the page stays as rendered from its JSON
+     and no error is shown, since only writes have feedback. `then` runs after every
+     delivery so the page can recount what it shows. */
+  var DROP_SUB=null;
+  function hydrateDrops(then){
+    if(!DB || DROP_SUB || !DROP_ROWS.length) return;
+    var apply=function(snap){
+      (snap && snap.docs || []).forEach(function(ds){
+        if(!ds.exists || (ds.metadata && ds.metadata.hasPendingWrites)) return;
+        var d=ds.data()||{}, ref=String(d.ref==null?'':d.ref);
+        if(!ref) return;
+        DROP_ROWS.forEach(function(x){
+          if(x.spec.page!==d.page || String(x.spec.ref==null?'':x.spec.ref)!==ref) return;
+          dropped(x.row, d.reason==='done' ? 'done' : 'not_important');
+        });
+      });
+      if(then) then();
+    };
+    var safe=function(snap){ try{ apply(snap); }catch(e){} };
+    var col;
+    try{ col=DB.collection('dismissals'); }catch(e){ return; }
+    var once=function(){ try{ col.get().then(safe, function(){}); }catch(e){} };
+    if(typeof col.onSnapshot!=='function'){ once(); return; }
+    var got=false;
+    try{
+      DROP_SUB=col.onSnapshot(function(s){ got=true; safe(s); }, function(){ if(!got) once(); });
+    }catch(e){ once(); }
   }

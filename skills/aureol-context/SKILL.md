@@ -95,7 +95,9 @@ the language with the real time of this run, `today`, the four lists, `suggestio
 `notices`. Titles are numerals: "4 priorities, 9 live topics. 2 serve none of them." Run
 `tools/check-page.py context` on the JSON when a shell exists; otherwise apply its list by hand.
 
-Publish: fill `{{DATA_JSON}}` in `references/super-context.html`. In bootstrap mode publish new with
+Publish: fill the template with `tools/fill-page.py --kind context references/super-context.html DATA.json
+OUT.html --links brief=<link> inbox=<link>` when a shell exists (it checks the data and escapes the JSON);
+without a shell, replace the single `{{DATA_JSON}}` by hand with every `<` written as `\u003c`. In bootstrap mode publish new with
 `capabilities: {db: {}}` and return the link. Otherwise read the page at `connections/current.pages.context`
 first, then publish to its `url` so the link holds; if the publish is refused because the page changed, re-read
 and publish again, never force.

@@ -23,6 +23,14 @@
   ranks and never brings a dropped line back. Published with the db capability
   (capabilities: {db: {}}) so Drop is remembered; without it Drop copies a line for
   Claude and the row says "waiting for Claude".
+  At load the page reads its store and applies what the exec did since publish, so
+  a drop or a save survives a reload; the next routine run publishes a page without
+  those rows. Once the store resolves, every dismissals document whose page is
+  "brief" and whose ref is a decision's or a job's ref leaves that row as a fresh
+  drop does: closed, greyed, "remembered", no Drop word. Recounted from the rows
+  still standing: the h1's decisions and jobs counts and the two list tallies. The
+  meetings, the clashes and the strip are the calendar's and stay. A read that
+  fails, or a store that is null, changes nothing and shows nothing.
 
   HOW IT RENDERS
   The routine never hand-writes rows. It builds one JSON document and puts it in the
@@ -146,17 +154,30 @@ var DICT={{DICT}};
     if(v.text) add(box, el('p',cls,v.text));
   }
 
+  /* the title: numerals, computed from the rows so they cannot disagree. The meetings
+     and clashes are the calendar's; the decisions and jobs are counted again from the
+     rows still standing once the store has said what was dropped. */
+  var H1=null, DT=null, JT=null, DL=null, JL=null, N_MEET=0, N_CLASH=0;
+  function title(nDec,nJobs){
+    var parts=[P('meetings_n',N_MEET)];
+    if(N_CLASH) parts.push(P('clashes_n',N_CLASH));
+    parts.push(P('decisions_n',nDec), P('jobs_n',nJobs));
+    return parts.join(', ');
+  }
+  function recount(){
+    var nd=DL.querySelectorAll('.row:not(.gone)').length, nj=JL.querySelectorAll('.row:not(.gone)').length;
+    H1.textContent=title(nd,nj); DT.textContent=String(nd); JT.textContent=String(nj);
+  }
+
   function render(){
     var d=loadData(), page=$('page');
     var strip=d.strip||{}, meetings=strip.meetings||[], decisions=d.decisions||[], jobs=d.jobs||[];
 
-    /* the title: numerals, computed from the rows so they cannot disagree */
     var nMeet=0, nClash=0;
     meetings.forEach(function(mt){ if(mt.clash){ nClash++; nMeet+=(mt.meetings||[]).length; } else nMeet++; });
-    var parts=[P('meetings_n',nMeet)];
-    if(nClash) parts.push(P('clashes_n',nClash));
-    parts.push(P('decisions_n',decisions.length), P('jobs_n',jobs.length));
-    header(page,'page_brief',parts.join(', '));
+    N_MEET=nMeet; N_CLASH=nClash;
+    header(page,'page_brief',title(decisions.length,jobs.length));
+    H1=page.querySelector('h1');
 
     /* metrics, only when the routine has a source */
     if(d.metrics && d.metrics.tiles && d.metrics.tiles.length){
@@ -257,11 +278,13 @@ var DICT={{DICT}};
     briefs.forEach(function(c){ add(page,c); });
 
     /* ---- the two lists ---- */
-    add(page, h2(L('decisions_to_land'),String(decisions.length)), list(decisions,'decision'));
-    add(page, h2(L('jobs_to_do'),String(jobs.length)), list(jobs,'job'));
+    var hd=h2(L('decisions_to_land'),String(decisions.length)), hj=h2(L('jobs_to_do'),String(jobs.length));
+    DT=hd.querySelector('b'); JT=hj.querySelector('b');
+    DL=list(decisions,'decision'); JL=list(jobs,'job');
+    add(page, hd, DL, hj, JL);
 
     add(page, footer(d.footer||[]), credit());
-    dbInit();
+    dbInit(function(){ hydrateDrops(recount); });
   }
   render();
 </script>

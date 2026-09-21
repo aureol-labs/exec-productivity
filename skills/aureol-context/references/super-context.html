@@ -45,6 +45,22 @@
   Decline on a suggestion asks nothing. Published with the db capability
   (capabilities: {db: {}}) so Drop is remembered; without it Drop copies a line for
   Claude and the row says "waiting for Claude".
+  At load the page reads its store and applies what the exec did since publish, so
+  a drop or a save survives a reload; the next routine run publishes a page without
+  those rows. Once the store resolves the page reads four collections, one get
+  each, never a write: priorities (say, ahead and order over the embedded line;
+  status dropped greys the line at the foot with its reason, the way a copy leaves
+  it; a live document the page was not built with is appended as a row, the way a
+  save leaves a new line), decisions (kept or dropped overrides an embedded
+  proposed row: kept loses the marker and the buttons and reads "Added this week"
+  when kept_at is within 7 days of today; dropped is not rendered), suggestions
+  (declined removes the row, and the list and its heading go when empty) and
+  dismissals (page "context", ref the topic's ref: the row closes, greys, says
+  "remembered"). Recounted from what stands: the h1's priorities, live topics and
+  serve-none counts, the priorities, topics, decisions and suggestions tallies, the
+  footer's kept count. The editor's draft is never overwritten: a priorities read
+  that lands while the editor is open leaves the list as rendered. A read that
+  fails, or a store that is null, changes nothing and shows nothing.
 
   HOW IT RENDERS
   The routine never hand-writes rows. It builds one JSON document and puts it in the
@@ -1037,6 +1053,7 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
      kind is queue | decision | job | topic, ref the stable key of the line. The
      dictionary lookup can be passed as the third argument; the page's own is used
      otherwise. */
+  var DROP_ROWS=[];
   function dropUI(row,spec,L_){
     var T=L_||L, src=row.querySelector('.src'); if(!src) return null;
     var a=el('a','drop',T('drop_line')); a.setAttribute('href','#');
@@ -1047,7 +1064,20 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
       return false;
     };
     add(src,a);
+    DROP_ROWS.push({row:row, spec:spec});
     return a;
+  }
+  /* the state a remembered drop leaves on its row: closed, greyed, the Drop word
+     gone, the marker. The same whether the drop was made now or read back from the
+     store. A row already gone is left as it is, so applying it twice is harmless. */
+  function dropped(row,reason){
+    if(row.classList.contains('gone')) return false;
+    var a=row.querySelector('.src .drop'); if(a) a.parentNode.removeChild(a);
+    closeRow(row);
+    row.classList.add('gone');
+    var dec=row.querySelector('.dec');
+    if(dec) add(dec, el('span','rel nw',L(reason==='done' ? 'dropped_done_m' : 'dropped_unimportant_m')));
+    return true;
   }
   /* the write, or the briefing. With the store: one document, the row closes and
      says "remembered". Without it: the briefing is copied, the row stays open on
@@ -1067,9 +1097,7 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
       var body={page:spec.page, kind:spec.kind, ref:String(spec.ref==null?'':spec.ref),
                 say:spec.say||'', reason:reason, date:DATA.today||isoToday()};
       DB.doc('dismissals/'+id).set(body).then(function(){
-        restore(); var a=row.querySelector('.src .drop'); if(a) a.parentNode.removeChild(a);
-        closeRow(row);
-        mark(L(reason==='done' ? 'dropped_done_m' : 'dropped_unimportant_m'));
+        restore(); dropped(row,reason);
       }, function(err){
         lock(false); setNote(L('not_saved')+(err && err.message ? ' · '+err.message : ''), true);
       });
@@ -1083,12 +1111,52 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
     }
   }
 
+  /* ---------- what the exec did since publish ----------
+     A drop writes the store, and nothing republishes the page until the next
+     routine run. So once the store resolves, the page reads `dismissals` and applies
+     each document to the row it names, page and ref both matching the spec dropUI
+     registered: the same state a fresh drop leaves, without the write. The rows are
+     listened to, so a drop made in another open tab lands here too; where the store
+     cannot subscribe, one read. A document this tab is still writing is skipped, so
+     the write's own confirmation is the only hand on that row. A read that fails, or
+     a store that is null, changes nothing: the page stays as rendered from its JSON
+     and no error is shown, since only writes have feedback. `then` runs after every
+     delivery so the page can recount what it shows. */
+  var DROP_SUB=null;
+  function hydrateDrops(then){
+    if(!DB || DROP_SUB || !DROP_ROWS.length) return;
+    var apply=function(snap){
+      (snap && snap.docs || []).forEach(function(ds){
+        if(!ds.exists || (ds.metadata && ds.metadata.hasPendingWrites)) return;
+        var d=ds.data()||{}, ref=String(d.ref==null?'':d.ref);
+        if(!ref) return;
+        DROP_ROWS.forEach(function(x){
+          if(x.spec.page!==d.page || String(x.spec.ref==null?'':x.spec.ref)!==ref) return;
+          dropped(x.row, d.reason==='done' ? 'done' : 'not_important');
+        });
+      });
+      if(then) then();
+    };
+    var safe=function(snap){ try{ apply(snap); }catch(e){} };
+    var col;
+    try{ col=DB.collection('dismissals'); }catch(e){ return; }
+    var once=function(){ try{ col.get().then(safe, function(){}); }catch(e){} };
+    if(typeof col.onSnapshot!=='function'){ once(); return; }
+    var got=false;
+    try{
+      DROP_SUB=col.onSnapshot(function(s){ got=true; safe(s); }, function(){ if(!got) once(); });
+    }catch(e){ once(); }
+  }
+
   /* ================ SUPER CONTEXT ================ */
   var MAX=5, FILE=[], LIST=[], DRAFT=null, made=0;
   /* the reason the exec gave for each line dropped in the editor, by id: done or
      not_a_priority. Cleared on a save; kept after a copy, since the file has not
      moved and the next edit still has to say why the line went. */
   var DROPPED={};
+  /* the lines the store says were dropped since publish, {p, reason}: greyed at the
+     foot of the list, outside FILE so the editor never counts them as a change */
+  var STORE_GONE=[];
   var TOPICS=[], ENTS=[], DECS=[], SUGG=[], BY={};
 
   function tidy(s){ return (s||'').replace(/\s+/g,' ').trim(); }
@@ -1191,6 +1259,9 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
       any=true;
       var why=DROPPED[f.id] ? ', '+reasonWord(DROPPED[f.id]) : '';
       add(box, priorityRow(f,0, marks ? L('dropped_m')+why+', '+L('waiting') : '', true));
+    });
+    STORE_GONE.forEach(function(g){
+      add(box, priorityRow(g.p,0, L('dropped_m')+(g.reason ? ', '+reasonWord(g.reason) : ''), true));
     });
     $('pending').classList.toggle('on', !!(marks && any));
     var hb=$('pcount'); if(hb) hb.textContent=String(LIST.length);
@@ -1612,6 +1683,111 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
     var l=el('div','list '+cls); rows.forEach(function(r){ add(l,r); }); add(s,l);
     return s;
   }
+
+  /* ================ WHAT THE EXEC DID SINCE PUBLISH ================
+     The page paints from its JSON first. Once the store resolves, four reads, each
+     applied on its own and each followed by a recount; a read that fails leaves its
+     list as rendered. Nothing here writes, and nothing here says anything. */
+  var H1=null, TSEC=null, DSEC=null, SSEC=null, FOOT_R=null;
+  /* the counts that depend on the rows: the h1, the tallies, the footer's kept count */
+  function recount(){
+    var live=0, none=0;
+    Array.prototype.forEach.call(TSEC.querySelectorAll('.row'),function(r){
+      if(r.classList.contains('gone')) return;
+      live++; if(r.querySelector('.serves.none')) none++;
+    });
+    H1.textContent=P('priorities_n',LIST.length)+', '+P('topics_n',live)+'.'+(none ? ' '+P('serve_none_n',none) : '');
+    var hb=$('pcount'); if(hb) hb.textContent=String(LIST.length);
+    TSEC.querySelector('h2 b').textContent=String(live);
+    DSEC.querySelector('h2 b').textContent=String(DSEC.querySelectorAll('.row').length);
+    if(SSEC){
+      var ns=SSEC.querySelectorAll('.row').length;
+      if(ns) SSEC.querySelector('h2 b').textContent=String(ns);
+      else { SSEC.parentNode.removeChild(SSEC); SSEC=null; }
+    }
+    var nPri=TOPICS.filter(function(tp){ return tp.gesture==='add_priority'; }).length;
+    var week=(DATA.decisions||[]).filter(function(x){ return withinDays(x.proposed_at,DATA.today,7); });
+    var kept=week.filter(function(x){ return x.status==='kept'; }).length;
+    var right=[]; if(nPri) right.push(P('proposed_pri_n',nPri));
+    if(week.length) right.push(F(L('proposed_dec'),{n:week.length,k:kept}));
+    FOOT_R.textContent=right.join(' · ');
+  }
+  /* the documents of a collection, by id, existing ones only */
+  function byId(docs){
+    var out={};
+    (docs||[]).forEach(function(ds){ if(ds && ds.exists) out[ds.id]=ds.data()||{}; });
+    return out;
+  }
+  /* priorities: say, ahead and order over the embedded line; a dropped line goes to
+     the foot with its reason; a live document the page was not built with is
+     appended, the way a save leaves a new line. While the editor is open the draft
+     is the exec's and the list is left as it is. */
+  function applyPriorities(docs){
+    if(DRAFT) return;
+    var store=byId(docs), live=[], gone=[], seen={};
+    FILE.forEach(function(f,i){
+      var d=store[f.id];
+      if(d){
+        seen[f.id]=true;
+        if(d.status==='dropped'){ gone.push({p:f, reason: typeof d.dropped_reason==='string' ? d.dropped_reason : ''}); return; }
+        if(typeof d.say==='string'){ f.say=d.say; f.src.say=d.say; }
+        if(typeof d.ahead==='string'){ f.ahead=d.ahead; f.src.ahead=d.ahead; }
+      }
+      live.push({p:f, order: d && typeof d.order==='number' ? d.order : i+1, at:i});
+    });
+    var at=FILE.length;
+    for(var id in store){
+      var d=store[id]; if(seen[id] || d.status==='dropped') continue;
+      var src={}; for(var k in d) src[k]=d[k]; src.id=id;
+      live.push({p:cloneP(src), order: typeof d.order==='number' ? d.order : MAX+at, at:at}); at++;
+    }
+    live.sort(function(a,b){ return a.order-b.order || a.at-b.at; });
+    FILE=live.slice(0,MAX).map(function(x){ return x.p; }); LIST=FILE.map(cloneP);
+    STORE_GONE=gone;
+    FILE.forEach(function(p){ if(!BY[p.id]) BY[p.id]=p.src; });
+    renderPriorities(false);
+  }
+  /* decisions: kept or dropped in the store overrides a row the page shows as
+     proposed. Kept: the face changes, the buttons go. Dropped: the row goes. */
+  function applyDecisions(docs){
+    var store=byId(docs);
+    for(var i=DECS.length-1;i>=0;i--){
+      var dc=DECS[i], d=store[dc.id];
+      if(!d || dc.status!=='proposed') continue;
+      var row=document.getElementById(dc.id); if(!row) continue;
+      if(d.status==='kept'){
+        dc.status='kept'; dc.kept_at = typeof d.kept_at==='string' ? d.kept_at : '';
+        decisionFace(dc,row.querySelector('.dec'));
+        var act=row.querySelector('.act'); if(act) act.parentNode.removeChild(act);
+      } else if(d.status==='dropped'){
+        dc.status='dropped'; DECS.splice(i,1);
+        row.parentNode.removeChild(row);
+      }
+    }
+  }
+  /* suggestions: a declined one goes */
+  function applySuggestions(docs){
+    var store=byId(docs);
+    for(var i=SUGG.length-1;i>=0;i--){
+      var sg=SUGG[i], d=store[sg.id];
+      if(!d || d.status!=='declined') continue;
+      var row=document.getElementById(sg.id); if(row) row.parentNode.removeChild(row);
+      sg.status='declined'; SUGG.splice(i,1);
+    }
+  }
+  function hydrate(){
+    if(!DB) return;
+    var read=function(name,apply){
+      try{
+        DB.collection(name).get().then(function(s){ try{ apply(s && s.docs || []); recount(); }catch(e){} }, function(){});
+      }catch(e){}
+    };
+    read('priorities',applyPriorities);
+    read('decisions',applyDecisions);
+    read('suggestions',applySuggestions);
+    hydrateDrops(recount);
+  }
+
   function render(){
     var d=loadData(), page=$('page');
     FILE=(d.priorities||[]).slice(0,MAX).map(cloneP); LIST=FILE.map(cloneP);
@@ -1626,6 +1802,7 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
     var none=TOPICS.filter(function(tp){ return !tp.serves; }).length;
     var h1=P('priorities_n',LIST.length)+', '+P('topics_n',TOPICS.length)+'.'+(none ? ' '+P('serve_none_n',none) : '');
     header(page,'page_context',h1);
+    H1=page.querySelector('h1');
 
     /* priorities, with the editor */
     var sec=el('section','sec pri'), eb=el('button','edit',L('edit')); eb.type='button'; eb.id='edit';
@@ -1643,18 +1820,21 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
     renderPriorities(false);
 
     /* topics */
-    add(page, section('tt', h2(L('live_topics'),String(TOPICS.length)),
-        cols(L('c_topic'),L('c_serves'),L('c_last')), TOPICS.map(topicRow)));
+    TSEC=section('tt', h2(L('live_topics'),String(TOPICS.length)),
+        cols(L('c_topic'),L('c_serves'),L('c_last')), TOPICS.map(topicRow));
+    add(page,TSEC);
     /* people and organisations */
     add(page, section('tt', h2(L('people_orgs'),String(ENTS.length)),
         cols(L('c_name'),L('c_role'),L('c_last')), ENTS.map(entityRow)));
     /* decisions */
-    add(page, section('dl', h2(L('decisions'),String(DECS.length)),
-        cols(L('c_decision'),L('c_by'),L('c_when')), DECS.map(decisionRow)));
+    DSEC=section('dl', h2(L('decisions'),String(DECS.length)),
+        cols(L('c_decision'),L('c_by'),L('c_when')), DECS.map(decisionRow));
+    add(page,DSEC);
     /* connections and skills, only when the review found something */
     if(SUGG.length){
-      add(page, section('tt', h2(L('suggestions'),String(SUGG.length)),
-          cols(L('c_name'),L('c_kind'),''), SUGG.map(suggestionRow)));
+      SSEC=section('tt', h2(L('suggestions'),String(SUGG.length)),
+          cols(L('c_name'),L('c_kind'),''), SUGG.map(suggestionRow));
+      add(page,SSEC);
     }
 
     /* the footer: what the run proposed, and what the exec did with it */
@@ -1663,9 +1843,11 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
     var kept=week.filter(function(x){ return x.status==='kept'; }).length;
     var right=[]; if(nPri) right.push(P('proposed_pri_n',nPri));
     if(week.length) right.push(F(L('proposed_dec'),{n:week.length,k:kept}));
-    add(page, footer([F(L('rewritten'),{t:d.time_label||''}), right.join(' · ')]), credit());
+    var ft=footer([F(L('rewritten'),{t:d.time_label||''}), right.join(' · ')]);
+    FOOT_R=ft.lastChild;
+    add(page, ft, credit());
 
-    dbInit(function(){ $('ego').textContent = DB ? L('save') : L('copy_for_claude'); });
+    dbInit(function(){ $('ego').textContent = DB ? L('save') : L('copy_for_claude'); hydrate(); });
   }
   render();
 </script>
