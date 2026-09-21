@@ -1,9 +1,9 @@
 {
   "name": "aureol",
-  "description": "Aureol's Claude plugins for executives.",
+  "description": "Aureol Labs' Claude plugins for executives.",
   "owner": {
-    "name": "Aureol",
-    "url": "https://aureol.co"
+    "name": "Aureol Labs",
+    "url": "https://github.com/aureol-labs"
   },
   "plugins": [
     {
