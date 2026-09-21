@@ -1,6 +1,6 @@
 ---
 name: make-me-productive
-description: Set up the executive's assistant in one session, ending on a real page from their own data. Asks the language, checks every connection by a real call (mail, calendar, chat, documents, meetings) and shows one card for what is missing, builds the Super Context from the last 30 days and lets the exec confirm their priorities on questions, publishes the first daily brief now, scans a month of asks for connections worth adding, then creates the three habits (morning, inbox, Friday review) and stops with a verdict. Invoke on first use, on a new account, or to re-check after changing connections. To change one preference, use `help`.
+description: Make me productive. Sets up the executive's assistant in one session, ending on a real page from their own data. Asks the language, checks every connection by a real call (mail, calendar, chat, documents, meetings) and shows one card for what is missing, builds the Super Context from the last 30 days and lets the exec confirm their priorities on questions, publishes the first daily brief now, scans a month of asks for connections worth adding, then creates the three habits (morning, inbox, Friday review) and stops with a verdict. Invoke on first use, on a new account, or to re-check after changing connections. To change one preference, use `help`.
 ---
 
 # Install
