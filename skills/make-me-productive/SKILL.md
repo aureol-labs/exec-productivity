@@ -222,7 +222,9 @@ have answered, the asks that repeat. It writes `asks` and `suggestions` and repu
 "connections and skills to add" list. Then, if it found anything: one line, "Your assistant read a month of your
 own asks. These would have been answered by a connection:" and one connector card for the systems with a
 connection (three at most), each with one line of evidence in the exec's terms: "Julien, 3 times this month, the
-cohort numbers: that is Power BI." Nothing found: one line, "Nothing you asked this month needed a new
+cohort numbers: that is Power BI." Where the review found an off-the-shelf plugin that covers a pattern, the
+plugin suggestion card the app's own setup uses, one line above it. Routines and skills it proposed are on
+the Super Context page, one line says so. Nothing found: one line, "Nothing you asked this month needed a new
 connection," and go on.
 
 ## 9. Verdict, then stop
