@@ -64,7 +64,7 @@ Then one line and one table, translated, and start at once without waiting:
 |---|---|
 | 1 | Your connections: mail, calendar, chat, documents, meetings |
 | 2 | Your Super Context, from the last 30 days. You confirm your priorities. |
-| 3 | Your first brief, now |
+| 3 | Your first brief and your first inbox, now |
 | 4 | The habits: every morning, every hour for your inbox, Friday for the review |
 
 Nothing is sent, nothing is deleted. That last sentence is the only reassurance, and the verdict at step 9 has to
@@ -147,10 +147,10 @@ what each priority comes before."
 Load the `aureol-brief` skill for today if before 14:00 local, tomorrow otherwise. The link, on its own line. Nothing
 else. Write it to `connections/current.pages.brief`.
 
-## 6. Inbox rules, only where mail can take a label
+## 6. The inbox: its rules where mail can take a label, then the first page, now
 
 `connections/current.roles.mail.can` without `label`: one line, "Your inbox page sorts; it writes nothing to your
-mailbox." Then step 7.
+mailbox." Then straight to the first page below.
 
 With `label`: read 30 days by counterparty and subject (never by the most frequent word, which catches
 everything and files nothing). Propose seven at most: five work labels that cut across the work, `Read later`,
@@ -163,6 +163,11 @@ below"; "No label for this". A label that already exists in the mailbox is reuse
 renamed and never deleted, and its card says "already in your mailbox". The rule is written in the exec's
 words when they reword it, else in yours as shown. `To archive` is a label, never an archive: its card says so.
 Write `rules`.
+
+**Then the first Priority inbox, now, on every mailbox.** Load the `aureol-inbox` skill and run it once on the
+last 48 hours: it publishes the page (with the labels applied where rules exist, sorting only otherwise),
+writes the link to `connections/current.pages.inbox`. The link, on its own line, and one line: "N need you." A
+page the exec was just asked about has to exist before the next question.
 
 ## 7. The habits
 
