@@ -1,5 +1,5 @@
 ---
-name: install
+name: make-me-productive
 description: Make me productive: sets up the executive's assistant in one session, ending on a real page from their own data. Asks the language, checks every connection by a real call (mail, calendar, chat, documents, meetings) and shows one card for what is missing, builds the Super Context from the last 30 days and lets the exec confirm their priorities on questions, publishes the first daily brief now, scans a month of asks for connections worth adding, then creates the three habits (morning, inbox, Friday review) and stops with a verdict. Invoke on first use, on a new account, or to re-check after changing connections. To change one preference, use `help`.
 ---
 
@@ -111,7 +111,7 @@ connected" where meetings would be, and never guess what a meeting decided.
 
 ## 4. Super Context
 
-Load the `aureol-context` skill (installed spelling `make-me-productive:aureol-context`) in **bootstrap mode**: 30 days
+Load the `aureol-context` skill (installed spelling `exec-productivity:aureol-context`) in **bootstrap mode**: 30 days
 across every connected role, meetings first; it publishes the Super Context artifact with `capabilities: {db:
 {}}` and returns the link. Write it to `connections/current.pages.context`.
 
@@ -202,7 +202,7 @@ Then this table, translated, nothing added, then stop:
 | **Pin** | Super Context · Daily brief · Priority inbox |
 | **Habits** | Weekdays 06:50 brief · inbox every hour, or the rhythm you chose · Friday 16:30 review |
 | **Never** | Send, delete, move, mark as read. Labels only, each listed with its rule. |
-| **Something off** | `/make-me-productive:help` |
+| **Something off** | `/exec-productivity:help` |
 
 Write a `runs` document with `task: "install"`. A maintainer's fact, if any: "Technical note", three lines or
 fewer, at the very bottom.

@@ -12,7 +12,7 @@ its connections; no plugin, skill, task, connector or artifact in the exec's hal
 
 | The exec says | Read | Then |
 |---|---|---|
-| No brief this morning | the last `runs` with `task: morning`; the scheduled tasks list; `connections/current` | A run failed: say what failed in one line, re-run the aureol-brief skill now, hand the link. No task: recreate it from `../install/references/task-morning.md` (install step 8, that step only). A connection failed: one connector card. |
+| No brief this morning | the last `runs` with `task: morning`; the scheduled tasks list; `connections/current` | A run failed: say what failed in one line, re-run the aureol-brief skill now, hand the link. No task: recreate it from `../make-me-productive/references/task-morning.md` (install step 8, that step only). A connection failed: one connector card. |
 | The page is wrong about X | the store document behind X, its `sources` | Say where it came from with the source, and fix the document with `if_version`. A person's `cares_about` correction is written with `yours: true` and the date. |
 | Change the morning time, the inbox times | `connections/preferences` | Update the task's schedule with the task tools and the preference. One line back. |
 | Change my priorities | `priorities` | Point at the page's Edit button. Or take it on the question tool, keep, reword, drop, ahead of what, and write the store; a dropped one gets a proposed decision. |
@@ -21,7 +21,7 @@ its connections; no plugin, skill, task, connector or artifact in the exec's hal
 | What do you know about my work | `context/summary` | The Super Context link and three lines. |
 | Update the assistant | nothing | The plugin card's menu, Check for updates, keep Sync automatically on. If the update changed a habit's prompt (the release note says so), delete the three tasks and recreate them from the reference files. |
 | Stop everything | the scheduled tasks | Delete the three tasks. The pages stay; say so. To remove the pages too, the exec deletes them from their pages list. |
-| Is it reading my mail | `connections/current`, the register entry | The register entry `../install/references/register-fr.md`, filled, in one message. |
+| Is it reading my mail | `connections/current`, the register entry | The register entry `../make-me-productive/references/register-fr.md`, filled, in one message. |
 
 ## Who fixes what
 

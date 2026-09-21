@@ -1,4 +1,4 @@
-# make-me-productive, maintainer notes
+# exec-productivity, maintainer notes
 
 Built for Claude Cowork and the desktop app chat. The exec never opens Claude Code; a clone is for changing the
 procedure, the plugin is how it reaches a session. Read `README.md` first, then `skills/aureol-context/references/store.md`.
@@ -25,7 +25,7 @@ procedure, the plugin is how it reaches a session. Read `README.md` first, then 
   `python3 tools/build-templates.py` after any change in `design/` and commit both.
 - **A habit's prompt lives in two places**, the reference file and the task. Keep prompts thin (language, link,
   the skills to load, the stop rules) so a plugin update changes behaviour without recreating tasks. A commit
-  that touches `skills/install/references/task-*.md` says so in its first line.
+  that touches `skills/make-me-productive/references/task-*.md` says so in its first line.
 - **Never document a value that lives in the store.** Shapes and reasons here, values there.
 
 ## Writing
