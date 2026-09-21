@@ -26,7 +26,7 @@ EXAMPLES = {
     'context': os.path.join(ROOT, 'skills', 'context', 'references', 'example.json'),
 }
 
-EM_DASH = '—'
+EM_DASH = chr(0x2014)  # the em dash, never written literally here
 TYPES = {'precedent', 'knock_on', 'pattern', 'history'}
 SRC_KINDS = {'mail', 'chat', 'calendar', 'doc', 'meeting', 'file', 'you'}
 TINTS = {'sales', 'product', 'board', 'customers', 'hiring', 'later', 'arch'}
@@ -551,7 +551,8 @@ def load_page(path):
         text = f.read()
     if path.lower().endswith('.json'):
         return json.loads(text), None
-    m = re.search(r'<script id="data" type="application/json">(.*?)</script>', text, re.S)
+    # the element itself starts a line; the head comment's mention of it is indented
+    m = re.search(r'^<script id="data" type="application/json">(.*?)</script>', text, re.S | re.M)
     if not m:
         return None, 'no <script id="data"> in the page'
     raw = m.group(1).strip()
@@ -612,7 +613,7 @@ def selftest():
         else:
             fails += 1
 
-    broken('brief', 'em dash in a sentence', lambda d: d['decisions'][0].__setitem__('say', 'A — B'))
+    broken('brief', 'em dash in a sentence', lambda d: d['decisions'][0].__setitem__('say', 'A ' + EM_DASH + ' B'))
     broken('brief', 'untyped job', lambda d: d['jobs'][0].pop('type'))
     broken('brief', 'four sources', lambda d: d['decisions'][0]['sources'].extend([{'kind': 'doc', 'label': 'x', 'href': ''}] * 2))
     broken('brief', 'lateness arithmetic in a briefing', lambda d: d['jobs'][0].__setitem__('briefing', 'It is six days late.'))

@@ -395,7 +395,7 @@
      signature rather than as another row of the page. */
   .by{margin-top:20px;display:flex;align-items:center;gap:9px;
       font-size:11px;letter-spacing:.3px;color:var(--ink-3)}
-  .by .mark{width:20px;height:auto;color:var(--pine);flex:none;
+  .by .mark{width:22px;height:auto;color:var(--pine);flex:none;
       position:relative;top:-1px}
   .by a{color:var(--ink-3);text-decoration:none;border-bottom:1px solid var(--hair)}
   .by a:hover{color:var(--pine);border-bottom-color:var(--pine-pale)}

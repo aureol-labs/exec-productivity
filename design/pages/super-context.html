@@ -152,10 +152,12 @@ var DICT={{DICT}};
   function withList(items,typed){
     var ol=el('ol','with');
     (items||[]).forEach(function(x){
-      var li=el('li'), a=nameOf(x.ref,x.name), s=el('span');
-      if(typed && x.type){ add(s, el('i',null,L('r_'+x.type)+' ')); }
-      add(s, x.note||'');
-      add(li, a, s); add(ol,li);
+      /* the type word runs ahead of the name, so the line reads from this row's side:
+         "contact for Bergen · owns the account" on Nadia, "contact Nadia" on Bergen */
+      var li=el('li'), wn=el('span','wn');
+      if(typed && x.type) add(wn, el('i',null,L('r_'+x.type)), ' ');
+      add(wn, nameOf(x.ref,x.name));
+      add(li, wn, el('span',null,x.note||'')); add(ol,li);
     });
     return ol;
   }

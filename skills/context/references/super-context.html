@@ -411,9 +411,9 @@
   .ctx a{color:var(--pine-ink);text-decoration:none;border-bottom:1px solid rgba(46,107,98,.30)}
   .ctx a:hover{color:var(--pine);border-bottom-color:var(--pine)}
   .ctx a:focus-visible{outline:2px solid var(--pine);outline-offset:2px;border-radius:2px}
-  .ctx ol.with>li>b,.ctx ol.with>li>a{font-weight:500;white-space:nowrap;justify-self:start}
-  .ctx ol.with i{font-style:normal;font-size:11px;letter-spacing:.3px;color:var(--ink-3);
-     margin-right:6px}
+  .ctx ol.with .wn{font-weight:500;white-space:nowrap;justify-self:start}
+  .ctx ol.with .wn i{font-style:normal;font-weight:400;font-size:11px;letter-spacing:.3px;
+     color:var(--ink-3)}
   /* the exec's own words about a person. Ink, and it says so in words as well. */
   .ctx .said{font-size:12px;color:var(--ink-3);white-space:nowrap;margin-left:3px}
   /* the one brick mark on the page: a promise the routine can see */
@@ -505,7 +505,7 @@
      signature rather than as another row of the page. */
   .by{margin-top:20px;display:flex;align-items:center;gap:9px;
       font-size:11px;letter-spacing:.3px;color:var(--ink-3)}
-  .by .mark{width:20px;height:auto;color:var(--pine);flex:none;
+  .by .mark{width:22px;height:auto;color:var(--pine);flex:none;
       position:relative;top:-1px}
   .by a{color:var(--ink-3);text-decoration:none;border-bottom:1px solid var(--hair)}
   .by a:hover{color:var(--pine);border-bottom-color:var(--pine-pale)}
@@ -643,14 +643,12 @@
       d="M3.6 1.9h8.8a1.7 1.7 0 0 1 1.7 1.7v8.8a1.7 1.7 0 0 1-1.7 1.7H3.6a1.7 1.7 0 0 1-1.7-1.7V3.6a1.7 1.7 0 0 1 1.7-1.7Z
          M4.5 5h6.9v1.7H8.9V12H7.1V6.7H4.5Z"/>
   </symbol>
-  <!-- the Aureol mark, from resources/icons/aureol-mark-ink.svg. viewBox cropped to
-       the ink and stroke set to currentColor, nothing else touched: the three arc
-       paths, their widths and their opacities are the file's own. -->
-  <symbol id="i-mark" viewBox="2 30 92 48">
+  <!-- the Aureol mark, the site's own: two bold arcs, stroke set to currentColor so
+       it stays pine in .by .mark. viewBox cropped to the ink. -->
+  <symbol id="i-mark" viewBox="3 17 90 58">
     <g fill="none" stroke="currentColor" stroke-linecap="round">
-      <path d="M28.7 72.8 A20 20 0 0 1 67.3 72.8" stroke-width="7.5"/>
-      <path d="M17.1 69.7 A32 32 0 0 1 78.9 69.7" stroke-width="5" opacity="0.55"/>
-      <path d="M5.5 66.6 A44 44 0 0 1 90.5 66.6" stroke-width="3.4" opacity="0.26"/>
+      <path d="M24.8 67.8 A24 24 0 0 1 71.2 67.8" stroke-width="12"/>
+      <path d="M9.4 63.7 A40 40 0 0 1 86.6 63.7" stroke-width="9" opacity="0.5"/>
     </g>
   </symbol>
 </defs></svg>
@@ -835,7 +833,7 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
   function credit(){
     var p=el('p','by');
     add(p, L('by')+' ', outLink('https://www.linkedin.com/in/paul-rousselle/', L('by_name')), ' '+L('by_tail')+' ',
-        glyph('i-mark','mark','2 30 92 48'));
+        glyph('i-mark','mark','3 17 90 58'));
     return p;
   }
   /* a quiet mark on a row, in pine, for a moment: "Saved". Or in brick: "Not saved". */
@@ -987,10 +985,12 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
   function withList(items,typed){
     var ol=el('ol','with');
     (items||[]).forEach(function(x){
-      var li=el('li'), a=nameOf(x.ref,x.name), s=el('span');
-      if(typed && x.type){ add(s, el('i',null,L('r_'+x.type)+' ')); }
-      add(s, x.note||'');
-      add(li, a, s); add(ol,li);
+      /* the type word runs ahead of the name, so the line reads from this row's side:
+         "contact for Bergen · owns the account" on Nadia, "contact Nadia" on Bergen */
+      var li=el('li'), wn=el('span','wn');
+      if(typed && x.type) add(wn, el('i',null,L('r_'+x.type)), ' ');
+      add(wn, nameOf(x.ref,x.name));
+      add(li, wn, el('span',null,x.note||'')); add(ol,li);
     });
     return ol;
   }
