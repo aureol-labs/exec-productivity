@@ -151,18 +151,22 @@ inbox rhythm, options "every hour, 08:00 to 18:00" (first), "twice a day, 12:30 
 at 12:30", free entry. The page is always current whatever the rhythm; the rhythm only decides how
 fresh.
 
-Then how to be reached, one question per habit, and the answer is the exec's, never a default they
-discover later. For the brief: "a notification from the Claude app" (first), "an email to me with the
-link", "nothing, I open the page". For the inbox: "nothing, I open the page" (first), "a notification
-from the Claude app". The Friday review follows the brief's choice. Write `connections/preferences.notify`.
-What each answer means, done by you:
-- notification: the app notifies on scheduled runs by its own settings, which are the exec's; say in
-  one line where that setting is as this session shows it, and nothing more.
+Then how to be reached. Nothing is automatic: each run decides, from the exec's answer, whether to
+send a notification with the session's notification tool (one line, under 200 characters, desktop and
+phone when the Claude app is on the phone). First send one test notification, "Your assistant can reach
+you here", then one question: "Did that reach you?" with "on my computer", "on my phone too", "nothing
+came" as options. Nothing came: one line on where the app's notification setting is, as this session
+shows it, and go on. Then one question per habit. For the brief: "a notification" (first), "an email to
+me with the link", "nothing, I open the page". For the inbox: "nothing, I open the page" (first), "a
+notification only when something is urgent", "a notification every run". The Friday review follows the
+brief's choice. Write `connections/preferences.notify`. What each answer means, done by the runs:
+- notification (`push`): the run ends by sending one line leading with what to act on and the page's
+  link. For the inbox, `push_now` sends only when something is Now, and says what.
 - email: only where the mail role can send (`can` contains `send`, proven by the tool having a send call
-  the exec's own account can use). The habit then ends by sending one message to the exec's own address
-  with the page's link, to nobody else, and the register entry says so. Where the mail role cannot send,
-  one line, and fall back to the notification.
-- nothing: the pinned page, always current.
+  the exec's own account can use). The habit ends by sending one message to the exec's own address with
+  the page's link, to nobody else, and the register entry says so. Where the mail role cannot send, one
+  line, and fall back to the notification.
+- nothing (`none`): the pinned page, always current.
 
 Create three tasks from the files next to this skill, verbatim except the placeholders `{{LANGUAGE}}`,
 `{{CONTEXT_URL}}`, `{{FIRST_NAME}}`:

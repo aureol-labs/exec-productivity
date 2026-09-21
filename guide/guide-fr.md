@@ -34,7 +34,8 @@ Si une connexion demande un administrateur, envoyez-lui le lien ; l'assistant co
 ## 3. Épingler les trois pages
 
 **Super Context**, **Brief du jour**, **Inbox prioritaire**. Elles sont toujours à jour. À l'installation, vous
-choisissez pour chaque habitude comment être prévenu : notification de l'app Claude, mail à vous-même, ou rien.
+choisissez pour chaque habitude comment être prévenu : une notification (ordinateur, et téléphone si l'app Claude
+y est), un mail à vous-même, ou rien. L'inbox peut ne prévenir que quand quelque chose est urgent.
 
 [capture : les trois pages épinglées]
 
