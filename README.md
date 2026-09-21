@@ -1,4 +1,4 @@
-# aureol-exec-productivity
+# make-me-productive
 
 A Claude plugin that runs a time-poor executive's daily operating routines in Claude Cowork and produces three
 pages: a Super Context the assistant starts every conversation from, a Daily brief every weekday morning, and a
@@ -13,8 +13,7 @@ says "you refused this exact shape in July".
 
 In the Claude desktop app:
 
-1. Plugins, add a marketplace from the repo `paul-r-92/aureol-exec-productivity`, install **Aureol exec
-   productivity**.
+1. Plugins, add a marketplace from the repo `paul-r-92/aureol-exec-productivity`, install **Make me productive**.
 2. Type `/`, choose **Make me productive**, and answer its questions. About ten minutes. It ends on your first
    brief.
 3. Pin the three pages.
@@ -65,7 +64,7 @@ suggestion. The routines propose; the exec decides.
 
 | Skill | Does |
 |---|---|
-| `make-me-productive` | the guided setup, ending on the first brief and the three habits |
+| `install` | the guided setup, ending on the first brief and the three habits |
 | `aureol-context` | Super Context: topics, people, entities, proposed decisions, the summary, the page |
 | `aureol-brief` | the Daily brief |
 | `aureol-inbox` | the Priority inbox |

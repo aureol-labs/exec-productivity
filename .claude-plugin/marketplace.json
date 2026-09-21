@@ -7,7 +7,7 @@
   },
   "plugins": [
     {
-      "name": "aureol-exec-productivity",
+      "name": "make-me-productive",
       "source": "./",
       "description": "Guided install, Super Context, daily brief, priority inbox, Friday review. Reads mail, calendar, chat, documents and meetings; writes only its own pages."
     }
