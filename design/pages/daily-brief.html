@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daily brief</title>
+<!--
+  THE DAILY BRIEF. Template, built by tools/build-templates.py from design/. Do not
+  edit the built file: edit design/pages/daily-brief.html, design/partial.css,
+  design/partial.js or design/dictionary.json and rebuild.
+
+  WHAT THIS IS
+  One page, three parts. The shape of the day, the decisions to land, the jobs to do.
+  Nothing else. No board, no tabs, no dashboard. Reads mail, calendar and messaging.
+  Delivered at 06:50, thrown away at 18:00.
+
+  HOW IT RENDERS
+  The routine never hand-writes rows. It builds one JSON document and puts it in the
+  <script id="data" type="application/json"> element in place of the DATA_JSON placeholder, with
+  every "<" in the serialised JSON escaped as \u003c. render() builds the whole DOM
+  from that JSON. When the placeholder is left unreplaced, the page renders the example
+  embedded in <script id="example">, so an unfilled template still looks right. Every
+  UI string comes from the dictionary, English or French from data.lang. Data is never
+  translated by the page. tools/check-page.py refuses a document that breaks a rule
+  below before it is ever rendered.
+
+  THE JSON, IN SHORT (the full fixture is skills/brief/references/example.json)
+    lang          "en" | "fr"
+    date_label    "Monday 14 September"      already localised by the routine
+    time_label    "07:00"                    when the page was generated
+    today         "2026-09-14"               ISO
+    sub           one sentence, the thing the page cannot show
+    gesture       "copy" (default) | "link"  Ask Claude copies, or opens claude.ai
+    links         { context: "https://...", inbox: "https://..." } the other pages
+    caps          { decisions: 3, jobs: 3 }  the lists never exceed them
+    metrics       null, or { tiles: [{value, label}], source } rendered above the strip
+    strip         { start: "08:00", end: "18:00", meetings: [...] }
+      a meeting   { id, start, end, label, key, brief: { title, note, who, before,
+                    to_land: { text } | { go }, in_mind: { text, go }, sources, briefing } }
+      a clash     { id, clash: true, meetings: [{ start, end, title, text, cost }],
+                    to_land, in_mind, sources, briefing }
+    decisions     [ row ]   "Decisions to land", three at most
+    jobs          [ row ]   "Jobs to do", three at most
+      a row       { id, say, type, meta, lede, argument: [p], plain: [p], go: [ref],
+                    sources: [src], briefing }
+      type        precedent | knock_on | pattern | history      never absent
+      meta        { kind: "time" | "before" | "asked" | "late" | "none", value }
+                  a time or a date read off the calendar or a message, never an
+                  interval the routine worked out; "late" carries the word and needs a
+                  decision or a "you" source behind it
+      ref         { id } same page (opens the target) or { page, id } another page
+      src         { kind: mail|chat|calendar|doc|meeting|file|you, via, label, href }
+                  three at most; via is the tool's name when kind is chat
+    footer        [ "left", "right" ]
+
+  THE RIGHT COLUMN IS A TIME ON THE STRIP
+  On a decision, a bare time: when this lands on you. On a job, "Before 14:00", the
+  wall you have to beat, and that time is always a block on today's strip. If nothing
+  on the strip forces the job, the column carries the date it was asked. If neither
+  exists it is empty. Brick means a time that has gone by, and it carries a word.
+
+  THE DAY STRIP
+  One horizontal track, to scale: percent = minutes since the strip start divided by
+  a hundredth of the strip's length. Filled block means a decision is waiting. Clear
+  blocks of an hour or more are named inside the track. Double booking is one block
+  across the pair's whole span, split into stacked lanes at their true offsets, one
+  label that reads "Two at once", one brief whose columns each end on what it costs
+  to move that one. "4 h 15 booked" is wall clock, so an overlap is counted once.
+
+  DESIGN
+  See design/partial.css. Iowan Old Style for the voice, Avenir Next for the work,
+  Bradley Hand for the one line in a hand. Pine is the agent's hand. Brick means time
+  is broken. Ink is the exec's own world. No em dashes. Numerals in the title and the
+  tallies. Self-contained: no webfonts, no assets, no network.
+
+{{SECURITY}}
+-->
+<style>
+{{CSS}}
+</style>
+</head>
+<body>
+{{GLYPHS}}
+<div class="page" id="page"></div>
+
+<script id="data" type="application/json">{{DATA_JSON}}</script>
+<script id="example" type="application/json">{{EXAMPLE_JSON}}</script>
+<script>
+var DICT={{DICT}};
+{{JS}}
+
+  /* ================ THE DAILY BRIEF ================ */
+  function metaEl(mt){
+    var s=el('span','meta'); if(!mt || !mt.kind || mt.kind==='none') return s;
+    var v=mt.value==null?'':String(mt.value);
+    if(mt.kind==='time' || mt.kind==='date') s.textContent=v;
+    else if(mt.kind==='before') s.textContent=F(L('m_before'),{v:v});
+    else if(mt.kind==='asked') s.textContent=F(L('m_asked'),{v:v});
+    else if(mt.kind==='late'){ s.textContent=F(L('m_late'),{v:v}); s.classList.add('late'); }
+    return s;
+  }
+
+  /* a list row: the sentence, the time, and a reveal that opens on the ask */
+  function row(it,i){
+    var r=el('div','row'); r.id=it.id;
+    var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
+    b.onclick=function(){ t(b); };
+    var dec=el('span','dec'); add(dec, el('span','say',it.say));
+    add(b, el('span','n',String(i+1)), dec, metaEl(it.meta));
+    add(r,b);
+    var w=el('div','why');
+    if(it.lede) add(w, el('p','lede',it.lede));
+    add(w, typeTag(it.type));
+    paras(w,it.argument); paras(w,it.plain,'plain');
+    goRows(w,it.go);
+    add(w, srcRow(it.sources,it.briefing));
+    add(r,w);
+    return r;
+  }
+  function list(items){
+    var l=el('div','list'); (items||[]).forEach(function(it,i){ add(l,row(it,i)); }); return l;
+  }
+
+  /* a tagged cell of a brief card */
+  function cell(tag,cls){
+    var d=el('div',cls); add(d, el('span','tag',tag)); return d;
+  }
+  function pOrGo(box,v,cls){
+    if(!v) return;
+    if(v.go) add(box, goRow(v.go));
+    if(v.text) add(box, el('p',cls,v.text));
+  }
+
+  function render(){
+    var d=loadData(), page=$('page');
+    var strip=d.strip||{}, meetings=strip.meetings||[], decisions=d.decisions||[], jobs=d.jobs||[];
+
+    /* the title: numerals, computed from the rows so they cannot disagree */
+    var nMeet=0, nClash=0;
+    meetings.forEach(function(mt){ if(mt.clash){ nClash++; nMeet+=(mt.meetings||[]).length; } else nMeet++; });
+    var parts=[P('meetings_n',nMeet)];
+    if(nClash) parts.push(P('clashes_n',nClash));
+    parts.push(P('decisions_n',decisions.length), P('jobs_n',jobs.length));
+    header(page,'page_brief',parts.join(', '));
+
+    /* metrics, only when the routine has a source */
+    if(d.metrics && d.metrics.tiles && d.metrics.tiles.length){
+      var mx=el('div','metrics');
+      d.metrics.tiles.forEach(function(tile){
+        var tl=el('div','tile'); add(tl, el('b',null,String(tile.value)), el('span',null,tile.label||'')); add(mx,tl);
+      });
+      if(d.metrics.source) add(mx, el('div','from',d.metrics.source));
+      add(page,mx);
+    }
+
+    /* ---- the day ---- */
+    var start=minutes(strip.start||'08:00'), end=minutes(strip.end||'18:00'), total=Math.max(end-start,1);
+    var pct=function(mins){ return (mins-start)/(total/100); };
+    var busy=[];
+    meetings.forEach(function(mt){
+      if(mt.clash) (mt.meetings||[]).forEach(function(x){ busy.push([minutes(x.start),minutes(x.end)]); });
+      else busy.push([minutes(mt.start),minutes(mt.end)]);
+    });
+    busy=busy.filter(function(iv){ return !isNaN(iv[0]) && !isNaN(iv[1]); });
+    busy.sort(function(a,b){ return a[0]-b[0]; });
+    var merged=[];
+    busy.forEach(function(iv){
+      var last=merged[merged.length-1];
+      if(last && iv[0]<=last[1]) last[1]=Math.max(last[1],iv[1]); else merged.push([iv[0],iv[1]]);
+    });
+    var booked=0; merged.forEach(function(iv){ booked+=iv[1]-iv[0]; });
+    var gaps=[], cursor=start;
+    merged.forEach(function(iv){ if(iv[0]-cursor>=60) gaps.push([cursor,iv[0]]); cursor=Math.max(cursor,iv[1]); });
+    if(end-cursor>=60) gaps.push([cursor,end]);
+
+    var tally=el('b',null,F(L('booked'),{t:span(booked)}));
+    if(nClash) add(tally, ' ', el('em',null,'· '+P('clashes_n',nClash)));
+    add(page, h2(L('your_day'),tally));
+    var ends=el('div','ends'); add(ends, el('span',null,strip.start||'08:00'), el('span',null,strip.end||'18:00'));
+    add(page,ends);
+
+    var st=el('div','strip'); add(st, el('div','track'));
+    gaps.forEach(function(g){
+      var w=pct(g[1])-pct(g[0]), f=el('div','free', w>=14 ? F(L('clear'),{t:span(g[1]-g[0])}) : span(g[1]-g[0]));
+      f.style.setProperty('--l',pct(g[0])+'%'); f.style.setProperty('--w',w+'%');
+      add(st,f);
+    });
+    var briefs=[];
+    meetings.forEach(function(mt){
+      var b=el('button'), lbl=el('span','lbl'), bid='b-'+mt.id;
+      b.type='button'; b.id=mt.id; b.dataset.b=bid; b.setAttribute('aria-expanded','false');
+      b.onclick=function(){ m(b); };
+      var card=el('div','why brief mbrief'); card.id=bid;
+      if(mt.clash){
+        var inner=(mt.meetings||[]), s0=Infinity, e0=-Infinity;
+        inner.forEach(function(x){ s0=Math.min(s0,minutes(x.start)); e0=Math.max(e0,minutes(x.end)); });
+        var n=inner.length, sp=Math.max(e0-s0,1);
+        b.className='mt clash'+(n>=3?' three':'');
+        b.style.setProperty('--l',pct(s0)+'%'); b.style.setProperty('--w',(sp/(total/100))+'%');
+        inner.slice(0,3).forEach(function(x,k){
+          var blk=el('span','blk');
+          blk.style.setProperty('--l',((minutes(x.start)-s0)/(sp/100))+'%');
+          blk.style.setProperty('--w',((minutes(x.end)-minutes(x.start))/(sp/100))+'%');
+          blk.style.setProperty('--lane',String(k));
+          add(b,blk);
+        });
+        add(lbl, el('b',null,inner[0]?inner[0].start:''), n===2 ? L('two_at_once') : F(L('n_at_once'),{n:n}));
+        add(b,lbl);
+        /* the clash brief: a column per meeting, each ending on what it costs to move
+           that one, then the choice, then the read */
+        card.classList.add('clash');
+        var a=inner[0]?inner[0].start:'', z='';
+        inner.forEach(function(x){ if(minutes(x.end)===e0) z=x.end; });
+        add(card, el('div','bhead',F(L('clash_head'),{a:a,b:z,what: n===2 ? L('two_meetings_one') : F(L('n_meetings_one'),{n:n})})));
+        inner.forEach(function(x){
+          var c=cell(x.start+' · '+(x.title||''));
+          if(x.text) add(c, el('p',null,x.text));
+          if(x.cost) add(c, el('p','plain',x.cost));
+          add(card,c);
+        });
+        var tl=cell(L('to_land'),'wide'); pOrGo(tl,mt.to_land); add(card,tl);
+        var im=cell(L('in_mind'),'wide'); pOrGo(im,mt.in_mind,'plain'); add(card,im);
+        add(card, srcRow(mt.sources,mt.briefing));
+      } else {
+        b.className='mt'+(mt.key?' key':'');
+        b.style.setProperty('--l',pct(minutes(mt.start))+'%');
+        b.style.setProperty('--w',((minutes(mt.end)-minutes(mt.start))/(total/100))+'%');
+        add(b, el('span','blk'));
+        add(lbl, el('b',null,mt.start), mt.label||''); add(b,lbl);
+        var br=mt.brief||{};
+        var head=mt.start+' · '+(br.title||mt.label||'')+' · '+span(minutes(mt.end)-minutes(mt.start))+(br.note?' · '+br.note:'');
+        add(card, el('div','bhead',head));
+        var who=cell(L('who')); add(who, el('p',null,br.who||'')); add(card,who);
+        var bef=cell(L('before')); add(bef, el('p',null,br.before||'')); add(card,bef);
+        var tl2=cell(L('to_land'),'wide'); pOrGo(tl2,br.to_land); add(card,tl2);
+        var im2=cell(L('in_mind'),'wide'); pOrGo(im2,br.in_mind,'plain'); add(card,im2);
+        add(card, srcRow(br.sources,br.briefing));
+      }
+      add(st,b); briefs.push(card);
+    });
+    add(page, st, cap(L('cap_strip')));
+    briefs.forEach(function(c){ add(page,c); });
+
+    /* ---- the two lists ---- */
+    add(page, h2(L('decisions_to_land'),String(decisions.length)), list(decisions));
+    add(page, h2(L('jobs_to_do'),String(jobs.length)), list(jobs));
+
+    add(page, footer(d.footer||[]), credit());
+  }
+  render();
+</script>
+</body>
+</html>

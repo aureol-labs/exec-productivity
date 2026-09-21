@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Super Context</title>
+<!--
+  SUPER CONTEXT. Template, built by tools/build-templates.py from design/. Do not
+  edit the built file: edit design/pages/super-context.html, design/partial.css,
+  design/partial.js or design/dictionary.json and rebuild.
+
+  WHAT THIS IS
+  The page every other routine reads before it runs, and the page every Claude
+  session starts from. Four lists, two owners, one routine. The priorities are the
+  exec's, in their words and their order: the routine proposes and never edits a
+  line. The live topics, the people and organisations on them, and the decisions
+  are the routine's, from the store. A fifth list, connections and skills to add,
+  appears only when the weekly review found something.
+
+  THE STORE
+  The page is a projection of the plugin's database (skills/context/references/
+  store.md). It writes three things back from the browser, through claude.use("db"):
+  the priorities editor, Keep and Drop on a proposed decision, Decline on a
+  suggestion. Nothing else on any page writes. `window.claude` carries `use` and
+  nothing else; the namespace arrives through the promise, never at first paint, and
+  null means this view cannot run it. The page renders without it and lights the
+  writes up when it resolves. Without it, the editor falls back to Copy for Claude,
+  and Keep, Drop and Decline copy a one-line briefing and mark the row "waiting for
+  Claude". The page never claims a save that did not happen.
+  What the editor writes: priorities/<id> with order, say, ahead and confirmed
+  (update on a line that exists, set on a new one, status dropped and dropped_at on
+  a line the exec removed). Keep writes decisions/<id> {status: kept, kept_at};
+  Drop {status: dropped, dropped_at}; Decline writes suggestions/<id>
+  {status: declined}. Dates are the day of the click, ISO.
+
+  HOW IT RENDERS
+  The routine never hand-writes rows. It builds one JSON document and puts it in the
+  <script id="data" type="application/json"> element in place of the DATA_JSON placeholder, with
+  every "<" in the serialised JSON escaped as \u003c. render() builds the whole DOM
+  from that JSON. When the placeholder is left unreplaced, the page renders the example
+  embedded in <script id="example">. Every UI string comes from the dictionary,
+  English or French from data.lang. Data is never translated by the page.
+  tools/check-page.py refuses a document that breaks a rule below.
+
+  THE JSON, IN SHORT (the full fixture is skills/context/references/example.json)
+    lang, date_label, time_label, today, sub, gesture, links   as on every page
+    priorities    [ { id, say, ahead, short, confirmed, lede, argument: [p], yours,
+                      history: [{date, event}], go: [ref], sources, briefing } ]
+                  five at most; short is the name the Serves column uses and never
+                  equals a topic or entity name; ahead is what the line comes before
+    topics        [ { id, name, state, serves: priority id | null, last: date | null,
+                      lede, argument: [p], who: [{ref, name, note}], so_far: [{date,
+                      move}], next: [{when, today, late, event, decision}] | null,
+                      go: [ref], sources, briefing, gesture: ask|add_priority|none,
+                      proposal } ]
+                  ordered by the priority served, then the ones that serve none;
+                  a late next entry needs a decision id or a "you" source behind it
+    entities      [ { id, kind: person|entity, name, role, type: company|team|board|
+                      product|other, label, relationship: customer|prospect|investor|
+                      partner|supplier, state, last, lede, argument: [p],
+                      cares_about: { text, yours, date }, with: [{ref, type, note}],
+                      so_far, ended, next, go: [ref], sources, briefing } ]
+                  on the page only while on a live topic with something open; a
+                  relation is written on both rows with the same note, and the type
+                  on each side is the other's inverse: contact_for / contact,
+                  member_of / member, leads / led_by, sits_on / seat
+    decisions     [ { id, say, decided_by: ["you", "Tomas"], when, when_iso, against,
+                      argument: [p], plain: [p], land, replaces: {id, name},
+                      replaced_by: {id, name}, conflicts_with: {id, name}, status:
+                      proposed|kept|dropped, proposed_at, kept_at, go: [ref], sources,
+                      briefing } ]
+                  newest first; every one says what it was decided against; a
+                  conflict requires land, the open question; a replaced decision
+                  stays where it happened, greyed; "Added this week" is computed from
+                  kept_at within 7 days of today; dropped rows are not rendered
+    suggestions   [ { id, kind: connection|skill, say, state, proposed_label, lede,
+                      evidence: [{date, text}], path, pattern, sources, briefing,
+                      status } ]   proposed ones only, three at most
+      ref         { id } same page (opens the target) or { page, id } another page
+      src         { kind: mail|chat|calendar|doc|meeting|file|you, via, label, href }
+
+  THE RULES ON THE FACE
+  A priority says what it comes before. Serves carries the priority's name, never
+  its number. None is ink, not brick. The right columns are dates, read off, never
+  worked out: "Not yet" when nothing has. Brick only on a promise the routine can
+  see. A topic never shares a name with an entity. Markers name the other decision,
+  never its date. A conflict is not a supersede, and the routine never merges them.
+
+  DESIGN
+  See design/partial.css. No em dashes. Numerals in the title and the tallies.
+  Self-contained: no webfonts, no assets, no network.
+
+{{SECURITY}}
+-->
+<style>
+{{CSS}}
+</style>
+</head>
+<body>
+{{GLYPHS}}
+<div class="page" id="page"></div>
+
+<script id="data" type="application/json">{{DATA_JSON}}</script>
+<script id="example" type="application/json">{{EXAMPLE_JSON}}</script>
+<script>
+var DICT={{DICT}};
+{{JS}}
+
+  /* ================ SUPER CONTEXT ================ */
+  var MAX=5, FILE=[], LIST=[], DRAFT=null, made=0;
+  var TOPICS=[], ENTS=[], DECS=[], SUGG=[], BY={};
+
+  function tidy(s){ return (s||'').replace(/\s+/g,' ').trim(); }
+  function cloneP(p){ return {id:p.id, say:p.say, ahead:p.ahead, note:p.note, src:p}; }
+  function find(id){ for(var i=0;i<FILE.length;i++){ if(FILE[i].id===id) return FILE[i]; } }
+  function same(a,b){ return tidy(a.say)===tidy(b.say) && tidy(a.ahead)===tidy(b.ahead); }
+  function line(p){
+    return tidy(p.say).replace(/[.\s]*$/,'.')+' '+F(L('ahead_of'),{x:tidy(p.ahead).replace(/[.\s]*$/,'')})+'.';
+  }
+  function shortOf(pid){
+    var p=BY[pid]; return p && p.short ? p.short : L('none');
+  }
+  /* a name inside a reveal: a link to its row when the row is on the page */
+  function nameOf(ref,name){
+    var target=ref && BY[ref];
+    var text = name || (target ? (target.name||target.say) : '') || '';
+    if(target && document.getElementById(ref)){
+      var a=el('a',null,text); a.setAttribute('href','#'+ref); a.onclick=function(e){ jump(e,ref); }; return a;
+    }
+    return el('b',null,text);
+  }
+  function decidedBy(dc){
+    var names=(dc.decided_by||[]).map(function(x){ return x==='you' ? L('you') : x; });
+    if(!names.length) return '';
+    if(names.length===1) return names[0];
+    return names.slice(0,-1).join(', ')+' '+L('and')+' '+names[names.length-1];
+  }
+
+  /* ---- the typed rows of a reveal ---- */
+  function ctxTag(box,key){ add(box, el('span','tag',L(key))); }
+  function datedList(items,late){
+    var ol=el('ol');
+    (items||[]).forEach(function(x){
+      var li=el('li'), when=x.when||x.date||'';
+      if(x.today) when=F(L('today_at'),{t:when});
+      if(x.late){ when=F(L('was_due'),{d:when}); li.classList.add('late'); }
+      add(li, el('b',null,when), el('span',null,x.event||x.move||''));
+      add(ol,li);
+    });
+    return ol;
+  }
+  function withList(items,typed){
+    var ol=el('ol','with');
+    (items||[]).forEach(function(x){
+      var li=el('li'), a=nameOf(x.ref,x.name), s=el('span');
+      if(typed && x.type){ add(s, el('i',null,L('r_'+x.type)+' ')); }
+      add(s, x.note||'');
+      add(li, a, s); add(ol,li);
+    });
+    return ol;
+  }
+
+  /* ================ PRIORITIES ================ */
+  function priorityRow(p,i,mark,gone){
+    var src=p.src||{}, fresh=!src.id;
+    var r=el('div','row'+(gone?' gone':'')+(fresh?' flat':'')); r.id=p.id;
+    var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
+    if(fresh) b.tabIndex=-1; else b.onclick=function(){ t(b); };
+    var dec=el('span','dec');
+    add(dec, el('span','say',p.say), el('span','ahead',F(L('ahead_of'),{x:p.ahead||''})));
+    if(mark) add(dec, el('span','rel nw',mark));
+    add(b, el('span','n', gone?'':String(i+1)), dec,
+        el('span','meta', src.confirmed ? F(L('confirmed'),{d:src.confirmed}) : ''));
+    add(r,b);
+    if(!fresh){
+      var w=el('div','why');
+      if(src.lede) add(w, el('p','lede',src.lede));
+      paras(w,src.argument); paras(w,src.plain,'plain');
+      if(src.yours || (src.history&&src.history.length)){
+        var c=el('div','ctx');
+        if(src.yours){ ctxTag(c,'in_your_words'); add(c, el('p','yours',L('q_open')+src.yours+L('q_close'))); }
+        if(src.history&&src.history.length){ ctxTag(c,'history'); add(c, datedList(src.history)); }
+        add(w,c);
+      }
+      goRows(w,src.go);
+      add(w, srcRow(src.sources,src.briefing));
+      add(r,w);
+    }
+    return r;
+  }
+  /* the list as it now reads, marked against the file. A dropped line stays greyed at
+     the foot, the way the log keeps a replaced decision where it was. */
+  function renderPriorities(marks){
+    var box=$('pri'); while(box.firstChild) box.removeChild(box.firstChild);
+    var kept=[], any=false;
+    LIST.forEach(function(p){ if(find(p.id)) kept.push(p.id); });
+    var was=FILE.map(function(f){ return f.id; }).filter(function(id){ return kept.indexOf(id)>=0; });
+    LIST.forEach(function(p,i){
+      var f=find(p.id), mk='';
+      if(marks){
+        mk = !f ? L('added_m') : !same(f,p) ? L('changed_m') : was.indexOf(p.id)!==kept.indexOf(p.id) ? L('moved_m') : '';
+        if(mk){ mk+=', '+L('waiting'); any=true; }
+      }
+      add(box, priorityRow(p,i,mk,false));
+    });
+    FILE.forEach(function(f){
+      if(kept.indexOf(f.id)>=0) return;
+      any=true;
+      add(box, priorityRow(f,0, marks ? L('dropped_m')+', '+L('waiting') : '', true));
+    });
+    $('pending').classList.toggle('on', !!(marks && any));
+    var hb=$('pcount'); if(hb) hb.textContent=String(LIST.length);
+  }
+
+  /* ---- the editor ----
+     FILE  the store as this page was built from it. Changes only after a save.
+     LIST  what the page shows. Differs from FILE only after a copy.
+     DRAFT exists only while the editor is open.
+     Typing reaches the page through value and textContent only, never as markup. */
+  function field(cls,value,label,write){
+    var f=el('textarea',cls);
+    f.rows=1; f.value=value||''; f.setAttribute('aria-label',label);
+    f.oninput=function(){
+      if(/\n/.test(f.value)) f.value=f.value.replace(/\n+/g,' ');
+      write(f.value); grow(f); state();
+    };
+    f.onkeydown=function(e){ if(e.key==='Enter') e.preventDefault(); };
+    return f;
+  }
+  function grow(f){ f.style.height='auto'; f.style.height=f.scrollHeight+'px'; }
+  window.addEventListener('resize',function(){
+    if(DRAFT) Array.prototype.forEach.call($('ed').querySelectorAll('textarea'),grow);
+  });
+
+  /* open the editor. With a line, it is the routine proposing one: the wording is
+     filled in and what it comes before is left for the exec. */
+  function edit(say,note){
+    if(!DRAFT){ DRAFT=LIST.map(cloneP); document.body.classList.add('editing'); }
+    var at=-1, full=false;
+    if(say){
+      DRAFT.forEach(function(p,k){ if(p.note) at=k; });
+      if(at<0){
+        if(DRAFT.length<MAX){ DRAFT.push({id:null, say:say, ahead:'', note:note, src:{}}); at=DRAFT.length-1; }
+        else full=true;
+      }
+    }
+    draw();
+    var box=$('ed').children;
+    if(at>=0){
+      box[at].scrollIntoView({behavior:'smooth',block:'center'});
+      box[at].querySelector('.e-ahead textarea').focus({preventScroll:true});
+    } else if(full){
+      $('emsg').textContent=L('full_this');
+      $('edbox').scrollIntoView({behavior:'smooth',block:'center'});
+    } else if(box.length){
+      box[0].querySelector('.e-say').focus();
+    }
+  }
+  function propose(e,tp){
+    e.preventDefault();
+    edit(tp.proposal||tp.name, F(L('propose_note'),{t:tp.name}));
+  }
+
+  function draw(focus){
+    var ed=$('ed'), addBox=$('eadd');
+    while(ed.firstChild) ed.removeChild(ed.firstChild);
+    DRAFT.forEach(function(p,i){
+      var n=i+1, row=el('div','erow'), f=el('div','ef'), c=el('div','ectl');
+      row.appendChild(el('span','n',String(n)));
+      f.appendChild(field('e-say',p.say,F(L('pri_label'),{n:n}),function(v){ p.say=v; }));
+      var a=el('label','e-ahead'),
+          ai=field('',p.ahead,F(L('ahead_aria'),{n:n}),function(v){ p.ahead=v; });
+      ai.placeholder=L('ahead_ph');
+      a.appendChild(el('span',null,L('ahead_label')));
+      a.appendChild(ai); f.appendChild(a);
+      /* the note asks for the one field the routine left empty, so it goes once that
+         field has been written */
+      if(p.note && !tidy(p.ahead)) f.appendChild(el('span','e-note',p.note));
+      row.appendChild(f);
+      [['up','↑',F(L('up_aria'),{n:n}),i===0,function(){ mv(i,-1,'up'); }],
+       ['down','↓',F(L('down_aria'),{n:n}),i===DRAFT.length-1,function(){ mv(i,1,'down'); }],
+       ['drop',L('drop'),F(L('drop_aria'),{n:n}),false,function(){ dropLine(i); }]
+      ].forEach(function(d){
+        var b=el('button',null,d[1]);
+        b.type='button'; b.dataset.k=d[0]; b.setAttribute('aria-label',d[2]);
+        b.disabled=d[3]; b.onclick=d[4];
+        c.appendChild(b);
+      });
+      row.appendChild(c);
+      ed.appendChild(row);
+      Array.prototype.forEach.call(row.querySelectorAll('textarea'),grow);
+    });
+    while(addBox.firstChild) addBox.removeChild(addBox.firstChild);
+    if(DRAFT.length<MAX){
+      var b=el('button',null,L('add_priority'));
+      b.type='button';
+      b.onclick=function(){
+        DRAFT.push({id:null, say:'', ahead:'', src:{}}); draw();
+        $('ed').lastChild.querySelector('.e-say').focus();
+      };
+      addBox.appendChild(b);
+    } else {
+      addBox.appendChild(el('span',null,L('full')));
+    }
+    state();
+    if(focus){
+      var r=$('ed').children[focus[0]], k=r && r.querySelector('[data-k="'+focus[1]+'"]');
+      if(k && !k.disabled) k.focus(); else if(r) r.querySelector('.e-say').focus();
+    }
+  }
+  function mv(i,d,k){ var p=DRAFT.splice(i,1)[0]; DRAFT.splice(i+d,0,p); draw([i+d,k]); }
+  function dropLine(i){
+    DRAFT.splice(i,1); draw();
+    var r=$('ed').children[Math.min(i,DRAFT.length-1)];
+    if(r) r.querySelector('.e-say').focus(); else $('eadd').querySelector('button').focus();
+  }
+  /* what changed, against the file rather than against what the page shows */
+  function changes(){
+    var out=[], kept=[];
+    DRAFT.forEach(function(p){
+      var f=find(p.id);
+      if(!f){ out.push(F(L('ch_added'),{l:line(p)})); return; }
+      kept.push(f.id);
+      if(!same(f,p)) out.push(F(L('ch_reworded'),{a:line(f),b:line(p)}));
+    });
+    FILE.forEach(function(f){ if(kept.indexOf(f.id)<0) out.push(F(L('ch_dropped'),{l:line(f)})); });
+    var was=FILE.map(function(f){ return f.id; }).filter(function(id){ return kept.indexOf(id)>=0; });
+    if(was.join()!==kept.join()) out.push(L('ch_reordered'));
+    return out;
+  }
+  function state(){
+    var blank=DRAFT.some(function(p){ return !tidy(p.say); }),
+        open=DRAFT.some(function(p){ return !tidy(p.ahead); }),
+        ch=changes();
+    $('ego').disabled = blank || open || !DRAFT.length || !ch.length;
+    $('emsg').className='emsg';
+    $('emsg').textContent = !DRAFT.length ? L('empty_list')
+      : blank ? L('one_empty')
+      : open ? L('needs_ahead')
+      : !ch.length ? L('no_change')
+      : P('changes_n',ch.length);
+  }
+  function shut(){ DRAFT=null; document.body.classList.remove('editing'); }
+  function discard(){ shut(); $('edit').focus(); }
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && DRAFT) discard(); });
+
+  /* Save writes the store when this view can; Copy for Claude is the fallback */
+  function send(){
+    if(!DRAFT || $('ego').disabled) return;
+    if(DB) return saveDb();
+    var num=function(p,i){ return (i+1)+'. '+line(p); };
+    var q=L('edit_head')+'\n\n'
+      + DRAFT.map(num).join('\n')
+      + '\n\n'+L('edit_changed')+'\n' + changes().map(function(c){ return '- '+c; }).join('\n')
+      + '\n\n'+L('edit_was')+'\n' + FILE.map(num).join('\n')
+      + '\n\n'+L('edit_ask');
+    copyText(q, function(){
+      LIST=DRAFT.map(function(p){
+        var c=cloneP(p); c.say=tidy(c.say); c.ahead=tidy(c.ahead);
+        if(!c.id) c.id='pn'+(++made);
+        return c;
+      });
+      shut(); renderPriorities(true);
+      $('edit').focus();
+    }, function(){ $('emsg').textContent=L('blocked'); $('emsg').className='emsg bad'; });
+  }
+  function saveDb(){
+    var today=isoToday(), ops=[], touched=[], keptIds=[];
+    var draft=DRAFT.map(function(p){ var c=cloneP(p); c.say=tidy(c.say); c.ahead=tidy(c.ahead); return c; });
+    draft.forEach(function(p,i){
+      var f=find(p.id);
+      if(!f){
+        ops.push(function(){
+          var ref=DB.collection('priorities').doc();
+          p.id=ref.id; p.src={id:ref.id, confirmed:today};
+          touched.push(p.id);
+          return ref.set({order:i+1, say:p.say, ahead:p.ahead, short:null, confirmed:today,
+                          yours:'', history:[{date:today, event:L('hist_page')}], status:'live'});
+        });
+        return;
+      }
+      keptIds.push(f.id);
+      var moved = FILE.indexOf(f)!==i, changed=!same(f,p);
+      if(moved || changed){
+        ops.push(function(){
+          touched.push(p.id);
+          var body={order:i+1};
+          if(changed){ body.say=p.say; body.ahead=p.ahead; body.confirmed=today; p.src.confirmed=today; }
+          return DB.doc('priorities/'+p.id).update(body);
+        });
+      }
+    });
+    FILE.forEach(function(f){
+      if(keptIds.indexOf(f.id)>=0) return;
+      ops.push(function(){ return DB.doc('priorities/'+f.id).update({status:'dropped', dropped_at:today}); });
+    });
+    $('ego').disabled=true;
+    var run=Promise.resolve();
+    ops.forEach(function(op){ run=run.then(op); });
+    run.then(function(){
+      FILE=draft.map(function(p){ var s=p.src; s.say=p.say; s.ahead=p.ahead; s.id=p.id; return cloneP(s); });
+      LIST=FILE.map(cloneP);
+      shut(); renderPriorities(false);
+      touched.forEach(function(id){ var r=document.getElementById(id); if(r) flash(r,L('saved')); });
+      $('edit').focus();
+    }, function(err){
+      $('ego').disabled=false;
+      $('emsg').textContent=L('not_saved')+(err && err.message ? ' · '+err.message : '');
+      $('emsg').className='emsg bad';
+    });
+  }
+
+  /* ================ TOPICS ================ */
+  function topicRow(tp){
+    var r=el('div','row'); r.id=tp.id;
+    var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
+    b.onclick=function(){ t(b); };
+    var dec=el('span','dec'); add(dec, el('span','say',tp.name), el('span','state',tp.state||''));
+    var sv=el('span','serves'+(tp.serves?'':' none'), tp.serves ? shortOf(tp.serves) : L('none'));
+    add(b, dec, sv, el('span','last', tp.last || L('not_yet')));
+    add(r,b);
+    var w=el('div','why');
+    if(tp.lede) add(w, el('p','lede',tp.lede));
+    paras(w,tp.argument); paras(w,tp.plain,'plain');
+    var c=el('div','ctx');
+    if(tp.who&&tp.who.length){ ctxTag(c,'who'); add(c, withList(tp.who,false)); }
+    if(tp.so_far&&tp.so_far.length){ ctxTag(c,'so_far'); add(c, datedList(tp.so_far)); }
+    ctxTag(c,'next');
+    if(tp.next&&tp.next.length) add(c, datedList(tp.next)); else add(c, el('p',null,L('nothing_booked')));
+    add(w,c);
+    goRows(w,tp.go);
+    var extra=null;
+    if(tp.gesture==='add_priority'){
+      extra=el('a','ask',L('add_as_priority')); extra.setAttribute('href','#priorities');
+      extra.onclick=function(e){ propose(e,tp); };
+    }
+    add(w, srcRow(tp.sources, tp.gesture==='ask' ? tp.briefing : null, null, extra));
+    add(r,w);
+    return r;
+  }
+
+  /* ================ PEOPLE AND ORGANISATIONS ================ */
+  function roleOf(en){
+    if(en.kind==='person') return en.role||'';
+    if(en.type==='company') return en.relationship ? L(en.relationship) : L('company');
+    if(en.type==='other') return en.label||L('other');
+    return L(en.type||'other');
+  }
+  function entityRow(en){
+    var r=el('div','row'); r.id=en.id;
+    var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
+    b.onclick=function(){ t(b); };
+    var dec=el('span','dec'); add(dec, el('span','say',en.name), el('span','state',en.state||''));
+    add(b, dec, el('span','role',roleOf(en)), el('span','last', en.last || L('not_yet')));
+    add(r,b);
+    var w=el('div','why');
+    if(en.lede) add(w, el('p','lede',en.lede));
+    paras(w,en.argument); paras(w,en.plain,'plain');
+    var c=el('div','ctx'), ca=en.cares_about;
+    if(ca && ca.text){
+      ctxTag(c,'cares_about');
+      if(ca.yours){
+        var p=el('p','yours',L('q_open')+ca.text+L('q_close'));
+        add(p, ' ', el('span','said',F(L('your_words'),{d:ca.date||''}))); add(c,p);
+      } else add(c, el('p',null,ca.text));
+    }
+    if(en.with&&en.with.length){ ctxTag(c,'with'); add(c, withList(en.with,true)); }
+    if(en.so_far&&en.so_far.length){ ctxTag(c,'so_far'); add(c, datedList(en.so_far)); }
+    if(en.ended&&en.ended.length){ ctxTag(c,'ended'); add(c, datedList(en.ended)); }
+    ctxTag(c,'next');
+    if(en.next&&en.next.length) add(c, datedList(en.next)); else add(c, el('p',null,L('nothing_booked')));
+    add(w,c);
+    goRows(w,en.go);
+    add(w, srcRow(en.sources,en.briefing));
+    add(r,w);
+    return r;
+  }
+
+  /* ================ DECISIONS ================ */
+  function decisionFace(dc,dec){
+    Array.prototype.slice.call(dec.querySelectorAll('.rel')).forEach(function(x){ dec.removeChild(x); });
+    if(dc.status==='proposed') add(dec, el('span','rel nw',L('proposed_m')));
+    else if(dc.status==='kept' && withinDays(dc.kept_at,DATA.today,7)) add(dec, el('span','rel nw',L('added_week')));
+    else if(dc.status==='dropped') add(dec, el('span','rel nw',L('dropped_m')));
+    if(dc.conflicts_with) add(dec, el('span','rel cf',F(L('conflicts_with'),{x:dc.conflicts_with.name||''})));
+    if(dc.replaced_by) add(dec, el('span','rel',F(L('replaced_by'),{x:dc.replaced_by.name||''})));
+    if(dc.replaces) add(dec, el('span','rel',F(L('replaces'),{x:dc.replaces.name||''})));
+  }
+  function relGo(box,key,rel){
+    if(!rel || !rel.id) return;
+    var tg=BY[rel.id];
+    var text = F(L(key),{x: tg ? (tg.when||'')+' · '+(tg.say||'') : (rel.name||'')});
+    add(box, goRow({id:rel.id, text:text}));
+  }
+  function decide(dc,row,keep){
+    var act=row.querySelector('.act'), note=act.querySelector('.note'),
+        btns=Array.prototype.slice.call(act.querySelectorAll('button'));
+    var setNote=function(s,bad){ note.textContent=s; note.className='note'+(bad?' bad':''); };
+    var lock=function(on){ btns.forEach(function(x){ x.disabled=on; }); };
+    if(DB){
+      var today=isoToday(), body = keep ? {status:'kept', kept_at:today} : {status:'dropped', dropped_at:today};
+      lock(true);
+      DB.doc('decisions/'+dc.id).update(body).then(function(){
+        dc.status=body.status; if(keep) dc.kept_at=today; else dc.dropped_at=today;
+        decisionFace(dc,row.querySelector('.dec'));
+        if(!keep) row.classList.add('gone');
+        act.parentNode.removeChild(act);
+        flash(row,L('saved'));
+      }, function(err){
+        lock(false); setNote(L('not_saved')+(err && err.message ? ' · '+err.message : ''), true);
+      });
+    } else {
+      var q=F(L(keep?'keep_briefing':'drop_briefing'),{say:dc.say, when:dc.when, by:decidedBy(dc)});
+      copyText(q, function(){
+        lock(true); setNote(L('copied'));
+        var dec=row.querySelector('.dec'), old=dec.querySelector('.rel.nw'); if(old) dec.removeChild(old);
+        dec.insertBefore(el('span','rel nw',L(keep?'kept_m':'dropped_m')+', '+L('waiting')), dec.querySelector('.rel'));
+      }, function(){ setNote(L('blocked'),true); });
+    }
+  }
+  function decisionRow(dc){
+    var r=el('div','row'+(dc.replaced_by?' gone':'')); r.id=dc.id;
+    var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
+    b.onclick=function(){ t(b); };
+    var dec=el('span','dec'); add(dec, el('span','say',dc.say)); decisionFace(dc,dec);
+    add(b, dec, el('span','who',decidedBy(dc)), el('span','when',dc.when||''));
+    add(r,b);
+    var w=el('div','why');
+    add(w, el('p','lede',F(L('against'),{x:dc.against||''})));
+    paras(w,dc.argument); paras(w,dc.plain,'plain');
+    if(dc.land) add(w, el('p','land',F(L('land'),{q:dc.land})));
+    relGo(w,'conflicts_with',dc.conflicts_with);
+    relGo(w,'replaces',dc.replaces);
+    relGo(w,'replaced_by',dc.replaced_by);
+    goRows(w,dc.go);
+    if(dc.status==='proposed'){
+      var act=el('div','act'), k=el('button',null,L('keep')), d=el('button','quiet',L('drop'));
+      k.type='button'; d.type='button';
+      k.onclick=function(){ decide(dc,r,true); }; d.onclick=function(){ decide(dc,r,false); };
+      add(act,k,d, el('span','note','')); add(w,act);
+    }
+    add(w, srcRow(dc.sources,dc.briefing,L('draft')));
+    add(r,w);
+    return r;
+  }
+
+  /* ================ CONNECTIONS AND SKILLS ================ */
+  function decline(sg,row){
+    var act=row.querySelector('.act'), note=act.querySelector('.note'), btn=act.querySelector('button');
+    var setNote=function(s,bad){ note.textContent=s; note.className='note'+(bad?' bad':''); };
+    if(DB){
+      btn.disabled=true;
+      DB.doc('suggestions/'+sg.id).update({status:'declined'}).then(function(){
+        sg.status='declined'; row.classList.add('gone');
+        var dec=row.querySelector('.dec'); add(dec, el('span','rel',L('declined_m')));
+        act.parentNode.removeChild(act);
+        flash(row,L('saved'));
+      }, function(err){ btn.disabled=false; setNote(L('not_saved')+(err && err.message ? ' · '+err.message : ''), true); });
+    } else {
+      copyText(F(L('decline_briefing'),{say:sg.say}), function(){
+        btn.disabled=true; setNote(L('copied'));
+        add(row.querySelector('.dec'), el('span','rel nw',L('declined_m')+', '+L('waiting')));
+      }, function(){ setNote(L('blocked'),true); });
+    }
+  }
+  function suggestionRow(sg){
+    var r=el('div','row'); r.id=sg.id;
+    var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
+    b.onclick=function(){ t(b); };
+    var dec=el('span','dec'); add(dec, el('span','say',sg.say), el('span','state',sg.state||''));
+    add(b, dec, el('span','role',L(sg.kind==='skill'?'skill':'connection')), el('span','last',sg.proposed_label||''));
+    add(r,b);
+    var w=el('div','why');
+    if(sg.lede) add(w, el('p','lede',sg.lede));
+    paras(w,sg.argument);
+    if(sg.evidence&&sg.evidence.length){
+      var c=el('div','ctx'); ctxTag(c,'evidence');
+      var ol=el('ol'); sg.evidence.forEach(function(x){ var li=el('li'); add(li, el('b',null,x.date||''), el('span',null,x.text||'')); add(ol,li); });
+      add(c,ol); add(w,c);
+    }
+    if(sg.kind==='skill' && sg.pattern) add(w, el('p','plain',sg.pattern));
+    if(sg.kind!=='skill' && sg.path) add(w, el('p','plain',sg.path));
+    var act=el('div','act'), d=el('button','quiet',L('decline')); d.type='button';
+    d.onclick=function(){ decline(sg,r); };
+    add(act,d, el('span','note','')); add(w,act);
+    add(w, srcRow(sg.sources, sg.kind==='skill' ? sg.briefing : null, L('draft_skill')));
+    add(r,w);
+    return r;
+  }
+
+  /* ================ THE PAGE ================ */
+  function cols(a,b,c){
+    var d=el('div','cols'); add(d, el('span',null,a), el('span',null,b), el('span',null,c)); return d;
+  }
+  function section(cls,head,colsEl,rows){
+    var s=el('section',cls); add(s,head); if(colsEl) add(s,colsEl);
+    var l=el('div','list '+cls); rows.forEach(function(r){ add(l,r); }); add(s,l);
+    return s;
+  }
+  function render(){
+    var d=loadData(), page=$('page');
+    FILE=(d.priorities||[]).slice(0,MAX).map(cloneP); LIST=FILE.map(cloneP);
+    TOPICS=d.topics||[]; ENTS=d.entities||[];
+    DECS=(d.decisions||[]).filter(function(x){ return x.status!=='dropped'; });
+    DECS.sort(function(a,b){ return (b.when_iso||'')<(a.when_iso||'') ? -1 : (b.when_iso||'')>(a.when_iso||'') ? 1 : 0; });
+    SUGG=(d.suggestions||[]).filter(function(x){ return !x.status || x.status==='proposed'; }).slice(0,3);
+    BY={};
+    FILE.forEach(function(p){ BY[p.id]=p.src; });
+    TOPICS.concat(ENTS,DECS,SUGG).forEach(function(x){ BY[x.id]=x; });
+
+    var none=TOPICS.filter(function(tp){ return !tp.serves; }).length;
+    var h1=P('priorities_n',LIST.length)+', '+P('topics_n',TOPICS.length)+'.'+(none ? ' '+P('serve_none_n',none) : '');
+    header(page,'page_context',h1);
+
+    /* priorities, with the editor */
+    var sec=el('section','sec pri'), eb=el('button','edit',L('edit')); eb.type='button'; eb.id='edit';
+    eb.onclick=function(){ edit(); };
+    var hp=h2(L('your_priorities'),String(LIST.length),eb); hp.id='priorities'; hp.querySelector('b').id='pcount';
+    var pri=el('div','list pri'); pri.id='pri';
+    var pend=el('p','pending',L('pending')); pend.id='pending';
+    var edbox=el('div','edbox'); edbox.id='edbox';
+    var ed=el('div','elist'); ed.id='ed'; var eadd=el('div','eadd'); eadd.id='eadd';
+    var ebar=el('div','ebar'), emsg=el('span','emsg'); emsg.id='emsg'; emsg.setAttribute('aria-live','polite');
+    var ex=el('button','e-x',L('discard')); ex.type='button'; ex.onclick=discard;
+    var ego=el('button','e-go',L('copy_for_claude')); ego.type='button'; ego.id='ego'; ego.onclick=send;
+    add(ebar,emsg,ex,ego); add(edbox,ed,eadd,ebar);
+    add(sec,hp,pri,pend,edbox); add(page,sec);
+    renderPriorities(false);
+
+    /* topics */
+    add(page, section('tt', h2(L('live_topics'),String(TOPICS.length)),
+        cols(L('c_topic'),L('c_serves'),L('c_last')), TOPICS.map(topicRow)));
+    /* people and organisations */
+    add(page, section('tt', h2(L('people_orgs'),String(ENTS.length)),
+        cols(L('c_name'),L('c_role'),L('c_last')), ENTS.map(entityRow)));
+    /* decisions */
+    add(page, section('dl', h2(L('decisions'),String(DECS.length)),
+        cols(L('c_decision'),L('c_by'),L('c_when')), DECS.map(decisionRow)));
+    /* connections and skills, only when the review found something */
+    if(SUGG.length){
+      add(page, section('tt', h2(L('suggestions'),String(SUGG.length)),
+          cols(L('c_name'),L('c_kind'),''), SUGG.map(suggestionRow)));
+    }
+
+    /* the footer: what the run proposed, and what the exec did with it */
+    var nPri=TOPICS.filter(function(tp){ return tp.gesture==='add_priority'; }).length;
+    var week=(d.decisions||[]).filter(function(x){ return withinDays(x.proposed_at,d.today,7); });
+    var kept=week.filter(function(x){ return x.status==='kept'; }).length;
+    var right=[]; if(nPri) right.push(P('proposed_pri_n',nPri));
+    if(week.length) right.push(F(L('proposed_dec'),{n:week.length,k:kept}));
+    add(page, footer([F(L('rewritten'),{t:d.time_label||''}), right.join(' · ')]), credit());
+
+    dbInit(function(){ $('ego').textContent = DB ? L('save') : L('copy_for_claude'); });
+  }
+  render();
+</script>
+</body>
+</html>

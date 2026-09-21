@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Priority inbox</title>
+<!--
+  THE PRIORITY INBOX. Template, built by tools/build-templates.py from design/. Do
+  not edit the built file: edit design/pages/inbox.html, design/partial.css,
+  design/partial.js or design/dictionary.json and rebuild.
+
+  WHAT THIS IS
+  Everything unread, in one queue, categorised and ranked. Two jobs, and they are
+  different jobs. Categorising keeps the mailbox clean. Ranking decides what you
+  touch. The page never lets the first pretend to be the second: the lead is a
+  count, not a claim, and the bulk is called "labelled, still unread", which says
+  exactly what happened and exactly what did not. Mail, Slack and Teams in one
+  queue, never three tabs. The channel is a monochrome mark in the sentence.
+
+  THE WRITES
+  Labels only. Never a delete, never a send, never a mark as read, never a move.
+  The routine does not archive: it labels To archive under rules the exec wrote,
+  and the exec clears the label in their own mailbox. Every label opens on the rule
+  that filed it and on what is inside. Where the mail role cannot write labels, the
+  page shows "The rest, grouped" instead, without rules, and the footer says
+  nothing was written.
+
+  HOW IT RENDERS
+  The routine never hand-writes rows. It builds one JSON document and puts it in the
+  <script id="data" type="application/json"> element in place of the DATA_JSON placeholder, with
+  every "<" in the serialised JSON escaped as \u003c. render() builds the whole DOM
+  from that JSON. When the placeholder is left unreplaced, the page renders the example
+  embedded in <script id="example">. Every UI string comes from the dictionary,
+  English or French from data.lang. Data is never translated by the page.
+  tools/check-page.py refuses a document that breaks a rule below.
+
+  THE JSON, IN SHORT (the full fixture is skills/inbox/references/example.json)
+    lang, date_label, time_label, today, sub, gesture, links   as on every page
+    counts        { mail: 61, chat: 41 }      unread, read off the connectors
+    queue         [ row ]   ordered: tier, then oldest first inside a tier
+      a row       { id, tier: now|today|week, channel: mail|slack|teams, say,
+                    label: { name, tint }, meta: { kind: "time" | "date", value },
+                    lede, type, argument: [p], plain: [p], go: [ref], sources, briefing }
+      type        precedent | knock_on | pattern | history      never absent
+      meta        when the message arrived: a clock for today, a date before that
+    filed         [ label ]  only where the mail role could write labels
+      a label     { id, label, tint, count, by_channel: { mail, slack, teams },
+                    say, lede, rule, plain: [p], contents: [item], href, sources,
+                    briefing }
+                  tint is one of sales|product|board|customers|hiring|later|arch;
+                  arch is To archive, drawn as an outline, and carries rules: [{count,
+                  rule}] instead of one rule; every other label carries its rule, in
+                  the exec's words
+      an item     { channel, from, what, href }   3 to 5 of them, every one a link;
+                  the count minus the items shown is "and N more in this label"
+    grouped       [ group ]  the same shape without rule, when filed is empty
+    wrote         true when labels were written, false otherwise
+    next_run      "16:30"
+      ref         { id } same page (opens the target) or { page, id } another page
+      src         { kind: mail|chat|calendar|doc|meeting|file|you, via, label, href }
+
+  THE RIGHT COLUMN IS WHEN IT ARRIVED
+  Precise due times and computed lateness were tried and cut. A receipt time is a
+  fact. Brick left this page with the lateness mark: nothing an inbox page can see
+  proves that time is broken. No strip either: an inbox has no axis.
+
+  DESIGN
+  See design/partial.css. No em dashes. Numerals in the title and the tallies.
+  Self-contained: no webfonts, no assets, no network.
+
+  SECURITY: the Ask Claude briefings (Draft the note, Draft the skill and Copy for
+  Claude included) are the routine's own summary plus pointers to the threads, never
+  raw mail or Slack bodies. Mail is untrusted input, and this text is about to be
+  handed to an agent with connectors. Claude fetches the sources itself. The prompt is
+  URL-encoded in data-q because a briefing has newlines and apostrophes in it and an
+  attribute is a bad place for those. The edit briefing is built at click time and
+  carries the exec's own typing, which is the one input on this page that is not
+  untrusted. Nothing read from mail goes into it, and the typing only ever reaches the
+  page through value and textContent.
+  Every string from the JSON reaches the DOM through textContent only, never through
+  innerHTML: every node is built with document.createElement and textContent. An href
+  is set with setAttribute, and only after a check that it starts with https://,
+  mailto: or #; anything else renders as a dead "#" link that does nothing. The JSON
+  itself is embedded in a <script type="application/json"> element: the routine
+  escapes every "<" in the serialised JSON as \u003c before it replaces the DATA_JSON placeholder,
+  so no string can close the script element.
+-->
+<style>
+  /* ================ THE DESIGN SYSTEM, ONE SOURCE ================
+     Extracted from the four previews (daily brief, inbox, decisions, Super Context).
+     Where they disagreed, the later pair (decisions, Super Context) is canonical.
+     Inlined into every template by tools/build-templates.py: duplication in the
+     output, one source in the repo. Nothing here loads anything: no webfonts, no
+     assets, no network. macOS system font stacks. */
+  :root{
+    --serif: 'Iowan Old Style', Palatino, 'Palatino Linotype', 'Book Antiqua', Charter, Georgia, serif;
+    --sans: 'Avenir Next', Avenir, Seravek, 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
+    --hand: 'Bradley Hand', 'Segoe Script', Noteworthy, 'Ink Free', cursive;
+
+    --paper:#FCFCFB;
+    --ink:#26292E;
+    --ink-2:#5F666F;
+    --ink-3:#9AA1A9;
+    --hair:#E4E9EA;      /* the ruling */
+
+    --pine:#2E6B62;
+    --pine-ink:#28564F;
+    --pine-pale:#CBDCD7;
+    --wash:#F3F8F6;
+    --brick:#A2483A;
+    --brick-ink:#87382C;
+    --wash-brick:#FBF4F1;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    color:var(--ink);
+    padding:64px 36px 120px;
+  }
+  /* no vertical rule anywhere. the pad reads through the horizontal ruling, the
+     paper tone and the hand at the top. a margin line was tried and cut. */
+  .page{--num:26px;--gap:20px;--serves:112px;--last:96px;--who:132px;--when:66px;
+        max-width:820px;margin:0 auto}
+
+  /* ---------- head ---------- */
+  /* one line naming which page of the notebook this is */
+  .book{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;
+        color:var(--pine);margin-bottom:18px}
+  .top{display:flex;justify-content:space-between;align-items:baseline;gap:20px}
+  /* the one line in a hand, the way you write the date at the top of a pad */
+  .eyebrow{font-family:var(--hand);font-size:18px;font-weight:400;
+           letter-spacing:.2px;color:var(--ink-2)}
+  h1{font-family:var(--serif);font-size:34px;line-height:1.22;font-weight:400;margin:16px 0 0}
+  .sub{font-size:15px;line-height:1.55;color:var(--ink-2);margin-top:13px;max-width:72ch}
+
+  /* ---------- section head: label, rule, count ---------- */
+  h2{display:flex;align-items:center;gap:14px;margin:52px 0 6px;
+     font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;color:var(--pine)}
+  h2 i{flex:1;height:1px;background:var(--hair);display:block}
+  h2 b{font-weight:400;color:var(--ink-3);letter-spacing:.3px;white-space:nowrap;
+       text-transform:none;font-size:12px}
+  h2 em{font-style:normal;font-weight:600;color:var(--brick)}
+  /* Edit is a gesture, so it is set the way every gesture in the notebook is: pine,
+     semibold, and never in capitals. It hides while the editor is open, because the
+     editor carries its own way out. */
+  h2 .edit{all:unset;cursor:pointer;font-size:12.5px;font-weight:600;letter-spacing:.2px;
+     text-transform:none;color:var(--pine);border-bottom:1px solid transparent}
+  h2 .edit:hover{border-bottom-color:var(--pine)}
+  h2 .edit:focus-visible{outline:2px solid var(--pine);outline-offset:3px;border-radius:2px}
+  .editing h2 .edit{visibility:hidden}
+
+  /* the quiet lines under a head. they say how to read the list, so they belong to
+     the list and not to a legend somewhere else. */
+  .cap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+       font-size:11px;color:var(--ink-3);margin:12px 0 4px}
+
+  /* ================ METRICS ================
+     Above the day strip, so the number is read before the meetings. A short row of
+     numeral tiles and one line saying where they came from. Rendered only when the
+     routine has a source; nothing otherwise. */
+  .metrics{display:flex;flex-wrap:wrap;gap:16px 40px;align-items:baseline;margin-top:44px}
+  .metrics .tile b{display:block;font-family:var(--serif);font-size:30px;line-height:1.1;
+     font-weight:400;color:var(--ink);font-variant-numeric:tabular-nums}
+  .metrics .tile span{display:block;margin-top:5px;font-size:11px;letter-spacing:.4px;
+     color:var(--ink-3)}
+  .metrics .from{flex-basis:100%;font-size:11px;color:var(--ink-3)}
+
+  /* ================ THE DAY STRIP ================ */
+  .ends{display:flex;justify-content:space-between;margin-top:18px;
+        font-size:10.5px;letter-spacing:.4px;color:var(--ink-3)}
+  .strip{position:relative;height:84px;margin-top:5px}
+  .track{position:absolute;top:0;left:0;right:0;height:40px;
+         background:#F2F4F4;border-radius:4px}
+
+  /* a free block wide enough to name. sits in the track, not interactive. */
+  .free{position:absolute;top:0;height:40px;display:flex;align-items:center;
+        justify-content:center;left:var(--l);width:var(--w);
+        font-size:11px;color:var(--ink-3);white-space:nowrap;overflow:hidden}
+
+  /* one button per meeting. its box is the block; the label hangs below it and is
+     still part of the button, so either half is a hit target. */
+  .mt{all:unset;box-sizing:border-box;position:absolute;top:0;height:100%;
+      left:var(--l);width:var(--w);cursor:pointer;overflow:visible}
+  .mt .blk{position:absolute;top:0;left:0;right:0;height:40px;border-radius:3px;
+     background:var(--pine-pale);transition:background .14s,box-shadow .14s}
+  .mt.key .blk{background:var(--pine)}
+  .mt:hover .blk{background:var(--pine-ink)}
+  .mt.on .blk{background:var(--pine-ink);box-shadow:0 0 0 2px #fff, 0 0 0 3.5px var(--pine)}
+  .mt:focus-visible .blk{box-shadow:0 0 0 2px #fff, 0 0 0 3.5px var(--pine)}
+
+  .mt .lbl{position:absolute;top:50px;left:50%;transform:translateX(-50%);
+     white-space:nowrap;text-align:center;font-size:11.5px;line-height:1.35;color:var(--ink-3)}
+  .mt .lbl b{display:block;font-weight:600;color:var(--ink-2);letter-spacing:.2px}
+  .mt:hover .lbl,.mt.on .lbl,.mt:hover .lbl b,.mt.on .lbl b{color:var(--pine)}
+
+  /* ---- double booking ----
+     Two meetings at once is not a drawing problem, it is a decision. So the pair is
+     ONE block spanning both, ONE label, ONE brief. Inside the block the two meetings
+     are stacked lanes at their true offsets. Lanes split the track: 2 at 18px, 3 at
+     11px. Four or more still draws 3 lanes and the label carries the real count. */
+  .mt.clash{--lh:18px;--ls:22px}
+  .mt.clash.three{--lh:11px;--ls:14.5px}
+  .mt.clash .blk{left:var(--l);right:auto;width:var(--w);height:var(--lh);
+     top:calc(var(--lane) * var(--ls));background:var(--brick)}
+  .mt.clash:hover .blk{background:var(--brick-ink)}
+  .mt.clash.on .blk{background:var(--brick-ink);
+     box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--brick)}
+  .mt.clash:focus-visible .blk{box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--brick)}
+  .mt.clash .lbl,.mt.clash .lbl b{color:var(--brick)}
+  .mt.clash:hover .lbl,.mt.clash.on .lbl,
+  .mt.clash:hover .lbl b,.mt.clash.on .lbl b{color:var(--brick-ink)}
+
+  /* ================ THE LISTS ================
+     The notepad part. The ruling is generated by the rows rather than painted
+     behind them, so a line can never fall out of register with the type. Closed
+     top and bottom like a pad. Horizontal only. */
+  .list{border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+  /* the queue's left column holds a tier word, so it is wide and set in the sans.
+     the filed list's left column holds a tally, so it is narrow and set in the
+     serif like every other quantity in the notebook. */
+  .queue{--num:74px}
+  .filed{--num:38px;--chip:84px}
+
+  .row+.row>button{border-top:1px solid var(--hair)}
+  .row>button{all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:grid;
+     grid-template-columns:var(--num) 1fr auto;column-gap:var(--gap);align-items:baseline;
+     padding:16px 6px 16px 0;transition:background .14s}
+  .row>button:hover{background:#F5F8F8}
+  .row>button:focus-visible{outline:2px solid var(--pine);outline-offset:-2px}
+  .row.flat>button{cursor:default}
+  .row.flat>button:hover{background:none}
+  /* the button carries the same tint as the reveal, so an open row is one block */
+  .row.open>button,.row.open>button:hover{background:var(--wash);padding-bottom:12px}
+
+  .n{font-family:var(--serif);font-size:20px;line-height:1.4;color:var(--ink-3);
+     text-align:right;transition:color .14s}
+  .row>button:hover .n,.row.open .n{color:var(--pine)}
+  .say{display:block;font-size:16px;line-height:1.5;font-weight:500}
+  .filed .say{font-size:15.5px;font-weight:400;color:var(--ink-2)}
+  /* the second line. On a priority it is what it comes before, which is the entry
+     test, so it is on the face and not in the reveal. On a topic it is where the
+     thread stands this morning. Same register for both. */
+  .ahead,.state{display:block;margin-top:3px;font-size:13.5px;line-height:1.45;
+     color:var(--ink-2)}
+  /* ---- the marker ----
+     The second line of the first column, on the rows that have a relationship. Grey
+     for a fact, brick for a conflict, pine for the routine's own hand, and it says
+     which in words either way. */
+  .rel{display:block;margin-top:5px;font-size:11.5px;line-height:1.4;
+       letter-spacing:.2px;color:var(--ink-3)}
+  .rel.cf{color:var(--brick);font-weight:600}
+  .rel.nw{color:var(--pine);font-weight:600}
+
+  /* the right column. Every mark in it is a time or a date the routine read off a
+     calendar, a message or the file, never a number it worked out. */
+  .meta{font-size:12.5px;line-height:1.7;color:var(--ink-3);
+     white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+  .row>button:hover .meta,.row.open .meta{color:var(--pine)}
+  .meta .cat{margin:0 10px 0 0;vertical-align:0}
+  /* brick, and only once the time has gone by: "Was due 10:00". It carries a word. */
+  .meta.late,.row>button:hover .meta.late,.row.open .meta.late{color:var(--brick);font-weight:600}
+  .meta.late:before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;
+     background:var(--brick);margin-right:7px;vertical-align:1px}
+
+  /* the rank, as a word. NOW is the only one drawn as an object rather than set as
+     type, and Today and This week stay quiet because they are not the point. */
+  .tier{font-size:9.5px;letter-spacing:1.1px;text-transform:uppercase;font-weight:600;
+     white-space:nowrap;color:var(--ink-3)}
+  .tier.today{color:var(--ink-2)}
+  .tier.now{color:#fff;background:var(--pine);border-radius:3px;
+     padding:4px 8px 3px;margin-left:-1px;display:inline-block;letter-spacing:1.2px}
+
+  /* ---- the label palette ----
+     The label the routine wrote, drawn as the tinted chip a mail label actually is.
+     Label tints are BACKGROUNDS, and pine and brick are only ever TYPE. To archive is
+     the exception, drawn as an outline rather than a fill, because nothing has
+     happened to it yet. On a filed line the chip runs ahead of the sentence, so it
+     is given a fixed width. */
+  .cat{font-size:9.5px;letter-spacing:1.1px;text-transform:uppercase;font-weight:600;
+     display:inline-block;padding:3px 7px 2px;border-radius:3px;margin-right:11px;
+     vertical-align:1.5px;background:#EDEEEC;color:var(--ink-2)}
+  .filed .say .cat{min-width:var(--chip)}
+  .cat.sales    {background:#E3EDF7;color:#33587A}
+  .cat.product  {background:#ECE7F6;color:#54467C}
+  .cat.board    {background:#EFE9DF;color:#6A5941}
+  .cat.customers{background:#E0EFED;color:#2C5F5B}
+  .cat.hiring   {background:#F6E7EB;color:#7B4557}
+  .cat.later    {background:#EAEBE7;color:#6A6A61}
+  .cat.arch     {background:none;box-shadow:inset 0 0 0 1px #D8DAD5;color:#6A6A61}
+
+  /* ---- the channel mark ----
+     Monochrome, inline, in ink, from <symbol> defs at the top of the body. Every
+     glyph is the same box, so the sentences after them stay aligned. */
+  .ch{width:15px;height:15px;flex:none;vertical-align:-2px;margin-right:9px;
+      color:var(--ink-2)}
+  /* the same marks at tally size, counting a category across channels */
+  .ch.sm{width:12.5px;height:12.5px;margin:0 5px 0 14px;vertical-align:-1.5px;
+      color:var(--ink-3)}
+  .meta .ch.sm:first-child{margin-left:0}
+
+  /* ---- the tables ----
+     Live topics, people and organisations, decisions: a grid rather than a <table>
+     because every row opens. Aligned columns, a header row, one rule per line. */
+  .cols{display:grid;grid-template-columns:1fr var(--serves) var(--last);
+        column-gap:var(--gap);padding:14px 6px 9px 0;
+        font-size:9.5px;letter-spacing:1.3px;text-transform:uppercase;font-weight:600;
+        color:var(--ink-3)}
+  .cols span+span{text-align:right}
+  .tt .row>button{grid-template-columns:1fr var(--serves) var(--last)}
+  .dl .cols,.dl .row>button{grid-template-columns:1fr var(--who) var(--when)}
+  .serves,.role,.last,.who,.when{font-size:12.5px;line-height:1.7;color:var(--ink-3);
+     text-align:right;white-space:nowrap}
+  .last,.when{font-variant-numeric:tabular-nums}
+  .row>button:hover .last,.row.open .last,
+  .row>button:hover .when,.row.open .when{color:var(--pine)}
+  /* None is ink and semibold, never brick. It is a question the reveal answers, not
+     a time that broke. The word carries it, so it would survive a laser printer. */
+  .serves.none{color:var(--ink);font-weight:600}
+  /* a decision that no longer holds, or a priority dropped on the page: greyed, and
+     left exactly where it happened. Never moved into an archive section. */
+  .row.gone .say{color:var(--ink-3);font-weight:400}
+  .row.gone .ahead{color:var(--ink-3)}
+
+  /* ================ THE REVEAL ================
+     Two kinds. A brief hangs off the strip and stays a card. A row reveal hangs off
+     its line, so an open row is ONE block: no radius, no inset, and the measure sits
+     on the content, which is the only reason max-width is on the children and not on
+     the box. A numbered list's reveal starts in the sentence column, past the number.
+     A table's starts flush, because there is no number to indent past. */
+  .why{display:none;background:var(--wash);
+       padding:1px 6px 24px calc(var(--num) + var(--gap))}
+  .tt .why,.dl .why{padding-left:0}
+  .row.open>.why{display:block}
+  .why>*{max-width:620px}
+  .why.mbrief{border-radius:5px;padding:24px 34px 26px;margin-top:16px;max-width:none}
+  /* .brief must not set `display` outside a guard, or it beats .why{display:none} */
+  .why.brief{grid-template-columns:1fr 1fr;gap:16px 28px}
+  .mbrief.on{display:grid}
+  .why.brief>*{max-width:none}
+  .brief .wide{grid-column:1/-1}
+  .brief p{font-size:14px}
+  .bhead{grid-column:1/-1;font-size:14.5px;font-weight:600;color:var(--pine-ink);padding-bottom:2px}
+  /* the ask. first line of every reveal, so the decision is legible before the
+     reason is read. */
+  .lede{font-size:16px;line-height:1.4;font-weight:600;color:var(--pine-ink);
+     margin-bottom:13px}
+  .tag{font-size:9.5px;letter-spacing:1.3px;text-transform:uppercase;font-weight:600;
+       color:var(--pine);display:block;margin:15px 0 6px}
+  .lede+.tag,.why>.tag:first-child{margin-top:0}
+  .brief .tag{margin:0 0 6px}
+  .why p{font-size:14.5px;line-height:1.6;color:var(--pine-ink)}
+  .why p+p{margin-top:9px}
+  .why .plain{color:var(--ink-2)}
+  /* a counted stack: the rules, one line each. the paragraph gap is a reading gap,
+     and these are a tally rather than prose. */
+  .why .tight p+p{margin-top:5px}
+  .why .tight+.plain{margin-top:12px}
+  .why .tight b{font-weight:600;font-variant-numeric:tabular-nums;
+     display:inline-block;min-width:26px}
+  /* the question a conflict leaves open. It is a question and not an answer,
+     because the routine noticing is not the routine ruling. */
+  .why .land{margin-top:12px;color:var(--brick);font-weight:600}
+
+  /* a clash reveal is the same component in brick, so you know before you read it
+     that this one is about time being broken rather than about a decision */
+  .why.clash{background:var(--wash-brick)}
+  .why.clash .tag{color:var(--brick)}
+  .why.clash .bhead{color:var(--brick-ink)}
+  .why.clash p:not(.plain){color:var(--brick-ink)}
+
+  /* ---- what the routine knows about it ----
+     Typed rows under the argument, built the way a meeting brief is: a small pine tag,
+     then the substance. On a topic, Who, So far and Next. On a priority, the exec's
+     own reason and the line's history. Every date is read off a thread, an invite or
+     the file, never worked out. */
+  .ctx{display:grid;grid-template-columns:88px 1fr;column-gap:16px;row-gap:13px;
+     margin-top:17px}
+  .ctx .tag{margin:3px 0 0}
+  .why .ctx p,.ctx li{font-size:13.5px;line-height:1.55;color:var(--ink-2)}
+  .ctx ol{list-style:none;display:grid;grid-template-columns:max-content 1fr;
+     column-gap:14px;row-gap:3px}
+  .ctx li{display:contents}
+  .ctx li b{font-weight:500;color:var(--pine-ink);font-variant-numeric:tabular-nums;
+     white-space:nowrap}
+  /* a relation or a person named inside a reveal jumps to its row, already open */
+  .ctx a{color:var(--pine-ink);text-decoration:none;border-bottom:1px solid rgba(46,107,98,.30)}
+  .ctx a:hover{color:var(--pine);border-bottom-color:var(--pine)}
+  .ctx a:focus-visible{outline:2px solid var(--pine);outline-offset:2px;border-radius:2px}
+  .ctx ol.with>li>b,.ctx ol.with>li>a{font-weight:500;white-space:nowrap;justify-self:start}
+  .ctx ol.with i{font-style:normal;font-size:11px;letter-spacing:.3px;color:var(--ink-3);
+     margin-right:6px}
+  /* the exec's own words about a person. Ink, and it says so in words as well. */
+  .ctx .said{font-size:12px;color:var(--ink-3);white-space:nowrap;margin-left:3px}
+  /* the one brick mark on the page: a promise the routine can see */
+  .ctx li.late b{color:var(--brick);font-weight:600}
+  /* the exec's own reason, recorded when they wrote the line. Ink, because it is
+     their world and not the routine's argument. */
+  .why .ctx .yours{color:var(--ink);font-size:14.5px;line-height:1.6}
+
+  /* ---- what is actually in the label ----
+     Shorter rows than the queue, quieter type, no reveal of their own. Five lines
+     and a count, never the whole label. Every line is a link to its own thread, and
+     the count is a link to the label. */
+  .mini{margin-top:15px}
+  .mini>a{display:flex;align-items:baseline;padding:7px 0;font-size:13.5px;
+     line-height:1.45;color:var(--ink-2);text-decoration:none;
+     border-bottom:1px solid rgba(46,107,98,.11);transition:color .12s}
+  .mini>a:first-child{border-top:1px solid rgba(46,107,98,.11)}
+  .mini>a:hover{color:var(--ink)}
+  .mini>a:focus-visible{outline:2px solid var(--pine);outline-offset:2px;
+     border-radius:2px}
+  .mini b{font-weight:600;color:var(--ink);margin-right:9px;white-space:nowrap;
+     transition:color .12s}
+  .mini>a:hover b{color:var(--pine)}
+  .mini .ch{width:13px;height:13px;margin-right:10px;color:var(--ink-3);
+     vertical-align:-1.5px}
+  .mini .more{border-bottom:none;color:var(--ink-3);font-size:12.5px;padding-top:9px}
+  .mini .more:hover{color:var(--pine)}
+
+  /* ---- where it came from ----
+     Every reveal ends with its sources, so a claim can be checked and the thing it
+     is about can be opened. Provenance first, convenience second. Cap of three. If
+     a fourth source would help, the reveal itself is too long. */
+  .src{display:flex;flex-wrap:wrap;gap:7px 20px;margin-top:15px;padding-top:12px;
+       border-top:1px solid rgba(46,107,98,.16)}
+  .brief .src{grid-column:1/-1}
+  .src a{font-size:12.5px;color:var(--pine);text-decoration:none;
+         border-bottom:1px solid rgba(46,107,98,.22);padding-bottom:1px}
+  .src a i{font-style:normal;font-weight:600;font-size:9.5px;letter-spacing:1px;
+           text-transform:uppercase;color:var(--ink-3);margin-right:8px}
+  .src a:hover{color:var(--pine-ink);border-bottom-color:var(--pine)}
+  .src a:hover i{color:var(--pine)}
+  .src a:focus-visible{outline:2px solid var(--pine);outline-offset:3px;border-radius:2px}
+  .why.clash .src{border-top-color:rgba(162,72,58,.16)}
+  .why.clash .src a{color:var(--brick);border-bottom-color:rgba(162,72,58,.22)}
+  .why.clash .src a:hover{color:var(--brick-ink);border-bottom-color:var(--brick)}
+  .why.clash .src a:hover i{color:var(--brick)}
+
+  /* ---- ask claude ----
+     One gesture, the same two words on every reveal. It COPIES the briefing (or, when
+     the exec chose the link gesture at install, opens claude.ai with it). It lives at
+     the right end of the sources row, so it adds no height, and it is the only
+     semibold thing in that row, which is how you tell go from look. */
+  .src .ask{margin-left:auto;font-weight:600;white-space:nowrap;
+     border-bottom-color:transparent}
+  .src .ask:hover{border-bottom-color:var(--pine)}
+  .why.clash .src .ask:hover{border-bottom-color:var(--brick)}
+  /* a.ask.ok, not .ask.ok: `.why.clash .src a` carries an element selector and would
+     otherwise repaint the spent state brick. Spent is grey in both variants. */
+  .src a.ask.ok{font-weight:400;color:var(--ink-3);cursor:default;
+     border-bottom-color:transparent}
+
+  /* a cross-reference always carries the thing itself, and jumps to it */
+  .go{margin-top:11px}
+  .go a{display:inline-block;font-size:14.5px;line-height:1.5;color:var(--pine);
+        text-decoration:none;border-bottom:1px solid rgba(46,107,98,.30);padding-bottom:1px}
+  .go a:before{content:"\2192";margin-right:9px;opacity:.6}
+  .go a:hover{color:var(--pine-ink);border-bottom-color:var(--pine)}
+  .go a:focus-visible{outline:2px solid var(--pine);outline-offset:3px;border-radius:2px}
+
+  /* ---- keep, drop, decline ----
+     The page's own writes, on a proposed decision and on a suggestion. Set like every
+     gesture: pine, semibold, never capitals. Drop and Decline stay quiet. The note
+     beside them says what happened, and only what happened. */
+  .act{display:flex;align-items:baseline;gap:18px;margin-top:16px}
+  .act button{all:unset;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--pine);
+     border-bottom:1px solid transparent}
+  .act button:hover{border-bottom-color:var(--pine)}
+  .act button.quiet{font-weight:400;color:var(--ink-3)}
+  .act button.quiet:hover{color:var(--ink);border-bottom-color:var(--ink-3)}
+  .act button:focus-visible{outline:2px solid var(--pine);outline-offset:3px;border-radius:2px}
+  .act .note{font-size:12px;font-weight:600;color:var(--pine)}
+  .act .note.bad{color:var(--brick)}
+
+  /* ---------- foot ---------- */
+  footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--hair);
+     font-size:12px;color:var(--ink-3);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+  /* the credit line. Small, last, and outside the footer rule so it reads as a
+     signature rather than as another row of the page. */
+  .by{margin-top:20px;display:flex;align-items:center;gap:9px;
+      font-size:11px;letter-spacing:.3px;color:var(--ink-3)}
+  .by .mark{width:20px;height:auto;color:var(--pine);flex:none;
+      position:relative;top:-1px}
+  .by a{color:var(--ink-3);text-decoration:none;border-bottom:1px solid var(--hair)}
+  .by a:hover{color:var(--pine);border-bottom-color:var(--pine-pale)}
+  .by a:focus-visible{outline:2px solid var(--pine);outline-offset:2px;border-radius:2px}
+
+  /* ================ THE EDITOR ================
+     The priority lines become fields in place, in the exec's ink rather than the
+     routine's pine, because this is the one place on the page they write. */
+  .pending{display:none;margin-top:11px;font-size:12px;color:var(--ink-3)}
+  .pending.on{display:block}
+  .editing .pending.on{display:none}
+  .edbox{display:none}
+  .editing .edbox{display:block}
+  .editing #pri{display:none}
+  .elist{border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+  .erow{display:grid;grid-template-columns:var(--num) 1fr auto;column-gap:var(--gap);
+     align-items:baseline;padding:15px 6px 15px 0}
+  .erow+.erow{border-top:1px solid var(--hair)}
+  .erow .n{color:var(--pine)}
+  .erow textarea{all:unset;display:block;box-sizing:border-box;width:100%;min-width:0;
+     resize:none;overflow:hidden;white-space:pre-wrap;overflow-wrap:break-word;
+     font-family:var(--sans);color:var(--ink);padding:1px 0 3px;
+     border-bottom:1px solid var(--hair);transition:border-color .14s}
+  .erow textarea:focus{border-bottom-color:var(--pine)}
+  .erow textarea::placeholder{color:var(--ink-3);opacity:1}
+  .e-say{font-size:16px;line-height:1.5;font-weight:500}
+  .e-ahead{display:flex;align-items:baseline;gap:8px;margin-top:7px;
+     font-size:13.5px;line-height:1.45;color:var(--ink-2)}
+  .e-ahead span{white-space:nowrap}
+  .erow .e-ahead textarea{flex:1;font-size:13.5px;line-height:1.45;color:var(--ink-2)}
+  .e-note{display:block;margin-top:8px;font-size:11.5px;line-height:1.4;
+     font-weight:600;color:var(--pine)}
+  .ectl{display:flex;gap:2px;align-self:center}
+  .ectl button,.eadd button,.ebar button{all:unset;cursor:pointer;font-size:12.5px;
+     border-radius:3px}
+  .ectl button{color:var(--ink-3);padding:4px 8px;min-width:12px;text-align:center}
+  .ectl button:hover{color:var(--pine);background:var(--wash)}
+  .ectl button:disabled{opacity:.3;cursor:default;background:none;color:var(--ink-3)}
+  .eadd{padding:12px 0 0 calc(var(--num) + var(--gap));font-size:12px;color:var(--ink-3)}
+  .eadd button{font-weight:600;color:var(--pine)}
+  .ebar{display:flex;align-items:baseline;gap:20px;margin-top:14px;padding-top:12px;
+     border-top:1px solid var(--hair)}
+  .emsg{flex:1;font-size:12px;color:var(--ink-3)}
+  .emsg.bad{color:var(--brick)}
+  .ebar .e-x{color:var(--ink-3)}
+  .ebar .e-x:hover{color:var(--ink)}
+  .ebar .e-go{font-weight:600;color:var(--pine)}
+  .ebar .e-go:disabled{font-weight:400;color:var(--ink-3);cursor:default}
+  .ectl button:focus-visible,.eadd button:focus-visible,.ebar button:focus-visible{
+     outline:2px solid var(--pine);outline-offset:2px}
+
+  @media (max-width:660px){
+    body{padding:32px 20px 64px}
+    .page{--num:22px;--gap:14px}
+    .queue{--num:66px}
+    .filed{--num:30px}
+    h1{font-size:27px}
+    .eyebrow{font-size:16px}
+    .strip{height:78px}
+    .mt .lbl{font-size:10.5px;top:47px}
+    .free{font-size:9.5px}
+    .why.brief{grid-template-columns:1fr}
+    /* on a phone the sentence and the reveal are stacked inside one tinted block, so
+       they share a right edge. Both get the same inset: right padding stays on the
+       button because a line touching the tint edge reads as clipped, and it matches
+       on the reveal because 4px of difference between two stacked paragraphs is the
+       kind of ragged edge you see without being able to name. */
+    .why{padding-right:10px;padding-bottom:22px}
+    .row>button{grid-template-columns:var(--num) 1fr;row-gap:3px;padding-right:10px}
+    .meta{grid-column:2;text-align:left}
+    .meta .ch.sm:first-child{margin-left:0}
+    /* on a phone the mini row stops being two columns and becomes one sentence */
+    .mini>a{display:block}
+    .mini .ch{margin-right:7px}
+    /* the tables: the first column takes the full width, and the right columns share
+       the line under it. Serves carries its own word there, because on its own under
+       a topic it could be read as a second name. */
+    .cols{padding-top:10px}
+    .cols span:nth-child(2){display:none}
+    .cols,.tt .row>button{grid-template-columns:1fr var(--last)}
+    .dl .cols,.dl .row>button{grid-template-columns:1fr var(--when)}
+    .tt .row>button,.dl .row>button{row-gap:3px;padding-right:0}
+    .tt .dec,.dl .dec{grid-column:1 / -1}
+    .serves,.role,.who{grid-column:1;text-align:left}
+    .serves:before{content:"Serves ";font-weight:400;color:var(--ink-3)}
+    html[lang="fr"] .serves:before{content:"Sert ";}
+    .tt .why,.dl .why{padding-left:0;padding-right:8px}
+    .ctx{grid-template-columns:1fr;row-gap:4px}
+    .ctx .tag{margin-top:12px}
+    .ctx .tag:first-child{margin-top:0}
+    .erow{grid-template-columns:var(--num) 1fr}
+    .ectl{grid-column:2;margin:8px 0 0 -8px}
+  }
+  @media print{
+    body{padding:0;background:#fff}
+    .why{display:block!important;background:none;padding-top:2px;padding-bottom:16px}
+    .why.brief{display:grid!important}
+    /* the card's own padding and the clash tint both have to be named again, not just
+       overridden by .why above, because .why.mbrief and .why.clash are the more
+       specific selectors and would each keep what they set. A tint that is gone does
+       not need padding holding it off the type, and a brick wash on a laser is a grey
+       box. The clash still says "two meetings, one of you" in brick type, which is
+       where the meaning was anyway. */
+    .why.mbrief{padding:6px 0 0}
+    .why.clash{background:none}
+    .row.open>button{background:none}
+    .cap,.src .ask,h2 .edit,.edbox,.act,.pending{display:none!important}
+    .editing #pri{display:block}
+    .go a,.src a,.by a,.ctx a{border-bottom:none}
+    .src{border-top:none;padding-top:2px;margin-top:8px}
+    /* a chip printed on a laser is a grey box, so the label goes back to being type */
+    .cat{background:none!important;box-shadow:none;padding:0;color:var(--ink)}
+    .tier.now{background:none;color:var(--pine);padding:0}
+  }
+</style>
+</head>
+<body>
+<!-- the channel marks and the Aureol mark. one hidden defs block, referenced by
+     <use>, so a glyph is written once and the file still needs nothing from the
+     network. Monochrome, currentColor: a shape is read faster than a word. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="i-mail" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" fill="currentColor"
+      d="M2.3 3.5h11.4a1.6 1.6 0 0 1 1.6 1.6v6.8a1.6 1.6 0 0 1-1.6 1.6H2.3a1.6 1.6 0 0 1-1.6-1.6V5.1a1.6 1.6 0 0 1 1.6-1.6Z
+         M2.6 5.1 8 9.1l5.4-4v1.6L8 10.7 2.6 6.7Z"/>
+  </symbol>
+  <symbol id="i-slack" viewBox="0 0 16 16">
+    <rect x="4.5" y="0.7" width="3.3" height="7.1" rx="1.65" fill="currentColor"/>
+    <rect x="8.2" y="4.4" width="7.1" height="3.3" rx="1.65" fill="currentColor"/>
+    <rect x="8.2" y="8.2" width="3.3" height="7.1" rx="1.65" fill="currentColor"/>
+    <rect x="0.7" y="8.2" width="7.1" height="3.3" rx="1.65" fill="currentColor"/>
+  </symbol>
+  <symbol id="i-teams" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" fill="currentColor"
+      d="M3.6 1.9h8.8a1.7 1.7 0 0 1 1.7 1.7v8.8a1.7 1.7 0 0 1-1.7 1.7H3.6a1.7 1.7 0 0 1-1.7-1.7V3.6a1.7 1.7 0 0 1 1.7-1.7Z
+         M4.5 5h6.9v1.7H8.9V12H7.1V6.7H4.5Z"/>
+  </symbol>
+  <!-- the Aureol mark, from resources/icons/aureol-mark-ink.svg. viewBox cropped to
+       the ink and stroke set to currentColor, nothing else touched: the three arc
+       paths, their widths and their opacities are the file's own. -->
+  <symbol id="i-mark" viewBox="2 30 92 48">
+    <g fill="none" stroke="currentColor" stroke-linecap="round">
+      <path d="M28.7 72.8 A20 20 0 0 1 67.3 72.8" stroke-width="7.5"/>
+      <path d="M17.1 69.7 A32 32 0 0 1 78.9 69.7" stroke-width="5" opacity="0.55"/>
+      <path d="M5.5 66.6 A44 44 0 0 1 90.5 66.6" stroke-width="3.4" opacity="0.26"/>
+    </g>
+  </symbol>
+</defs></svg>
+<div class="page" id="page"></div>
+
+<script id="data" type="application/json">{{DATA_JSON}}</script>
+<script id="example" type="application/json">{"lang":"en","date_label":"Monday 14 September","time_label":"12:40","today":"2026-09-14","sub":"The 9 are here because someone is waiting on you, not because they are recent.","gesture":"copy","links":{"brief":"https://claude.ai/code/artifact/example-daily-brief","context":"https://claude.ai/code/artifact/example-super-context"},"counts":{"mail":61,"chat":41},"queue":[{"id":"r1","tier":"now","channel":"slack","say":"Elena’s renewal playbook is still unsigned.","label":{"name":"Customers","tint":"customers"},"meta":{"kind":"date","value":"8 Sept"},"lede":"Sign it today, or tell her to ship without you.","type":"history","argument":["At 10:00 you promised it by tonight. That is the fourth date she has been given."],"plain":["On Friday she said it ships without you. After today it will."],"go":[{"page":"brief","id":"j1","text":"Daily brief: sign off Elena’s renewal playbook, before 10:00"}],"sources":[{"kind":"chat","via":"Slack","label":"Elena, 6 Sept","href":""},{"kind":"chat","via":"Slack","label":"Elena, Friday 17:40","href":""},{"kind":"calendar","label":"1:1 today, 10:00","href":""}],"briefing":"I have not signed Elena’s renewal playbook. At our 1:1 at 10:00 today I said I would sign it before the end of the day. That is the fourth date she has been given.\n\nOpen the Slack thread with Elena from 6 September, her message from Friday 17:40, and the playbook doc itself. Then:\n1. Tell me what is actually still unresolved in the doc, if anything.\n2. Draft two Slack replies for me to pick from. One signs it today. One tells her to ship without me and says why."},{"id":"r2","tier":"now","channel":"mail","say":"Julien has no cohort numbers for the 14:00 board prep.","label":{"name":"Board","tint":"board"},"meta":{"kind":"time","value":"09:31"},"lede":"Send the four numbers before 14:00, or drop the slide.","type":"knock_on","argument":["No retention slide without net revenue retention by cohort. The pack is due Thursday."],"plain":["He asked at 09:10 and 11:35. The numbers are in last quarter’s cohort view."],"go":[{"page":"brief","id":"j2","text":"Daily brief: send Julien the cohort numbers, before 14:00"}],"sources":[{"kind":"mail","label":"Julien, 09:10","href":""},{"kind":"mail","label":"Julien, 11:35","href":""},{"kind":"calendar","label":"Board prep, 14:00","href":""}],"briefing":"Julien needs net revenue retention by cohort for the retention slide in the board pack. Board prep is at 14:00 today and the pack is due Thursday. He asked at 09:10 and again at 11:35 and I have not replied.\n\nOpen both of his mails and the cohort view I used for last quarter’s pack. Then:\n1. Pull the numbers he needs and show me the source for each one.\n2. Draft the reply.\n3. Tell me whether the slide can be dropped instead, and what the pack loses if it is."},{"id":"r3","tier":"now","channel":"slack","say":"Nadia needs a yes or no on Halden Mutual at 76k.","label":{"name":"Sales","tint":"sales"},"meta":{"kind":"time","value":"11:02"},"lede":"Hold at 78k on 14 months, or let it go at 76k.","type":"precedent","argument":["You refused this exact shape in July. Bergen asked for the same discount, you held, and it closed at 79k eleven days later."],"plain":["List is 84k. 78k gives Nadia something to trade and keeps the July line."],"go":[{"page":"brief","id":"c1","text":"Daily brief: Halden Mutual wants 19% off. Nadia wants to give it."}],"sources":[{"kind":"chat","via":"Slack","label":"Nadia, 11:02","href":""},{"kind":"mail","label":"Halden Mutual procurement, 10 Sept","href":""},{"kind":"mail","label":"Bergen, 14 July","href":""}],"briefing":"Nadia needs a yes or no on Halden Mutual today. List is 84k. Halden Mutual came back at 76k on a 14-month term. In July, Bergen asked for the same discount, I held, and it closed at 79k eleven days later.\n\nOpen Nadia’s Slack message from 11:02, the Halden Mutual procurement mail from 10 September, and the Bergen thread from 14 July. Then:\n1. Tell me what is genuinely different about Halden Mutual compared with Bergen, if anything.\n2. Give me the case for holding at 78k on 14 months, and the case for taking 76k.\n3. Draft the Slack reply to Nadia for whichever I pick."},{"id":"r4","tier":"today","channel":"slack","say":"Priya cannot order the Q4 roadmap until you answer Nadia.","label":{"name":"Product","tint":"product"},"meta":{"kind":"date","value":"6 Sept"},"lede":"Answer Nadia and Priya unblocks.","type":"knock_on","argument":["Halden Mutual at 76k decides which two features are committed in Q4. Priya has held the order since 3 September."],"plain":[],"go":[{"id":"r3","text":"Nadia needs a yes or no on Halden Mutual at 76k"}],"sources":[{"kind":"chat","via":"Slack","label":"Priya, 3 Sept","href":""},{"kind":"chat","via":"Slack","label":"Priya, today 08:40","href":""}],"briefing":"Priya has held the Q4 roadmap order since 3 September. She is blocked on my answer to Nadia about Halden Mutual at 76k, because that deal decides which two features are committed in Q4.\n\nOpen Priya’s Slack thread from 3 September and her message this morning at 08:40. Then:\n1. Tell me which two features are in question and what changes under each outcome.\n2. Draft a Slack reply that gives Priya the part of the order she can start on now, and names the one thing still open."},{"id":"r5","tier":"today","channel":"mail","say":"Bergen want to extend early. Nobody has replied.","label":{"name":"Sales","tint":"sales"},"meta":{"kind":"date","value":"9 Sept"},"lede":"Reply yourself, or hand it to Nadia today.","type":"precedent","argument":["Bergen closed at 79k in July after you held. An early extension is what that line was for."],"plain":["No reply since 9 September. It sat in Sales because nobody is named on the thread."],"go":[],"sources":[{"kind":"mail","label":"Bergen, 9 Sept","href":""},{"kind":"mail","label":"Bergen, 14 July","href":""}],"briefing":"Bergen mailed on 9 September asking to extend their contract early. Nobody has replied. They closed at 79k in July after I held the line on discount.\n\nOpen the Bergen mail from 9 September and the July thread. Then:\n1. Tell me what they are asking for and what it is worth at list.\n2. Draft two replies. One from me. One handing it to Nadia with the context she needs."},{"id":"r6","tier":"today","channel":"mail","say":"Marc has no owners for three board pack sections.","label":{"name":"Board","tint":"board"},"meta":{"kind":"date","value":"10 Sept"},"lede":"Name three owners. Marc will chase them.","type":"pattern","argument":["The same three sections were unowned last quarter and you wrote them yourself the night before. The pack is due Thursday."],"plain":[],"go":[{"page":"brief","id":"c3","text":"Daily brief: board pack is due Thursday. Two of five parts exist."}],"sources":[{"kind":"mail","label":"Marc, 10 Sept","href":""},{"kind":"doc","label":"Board pack Q3, two of five parts","href":""}],"briefing":"Marc mailed on 10 September saying three sections of the Q3 board pack have no owner. I have not replied. The same three sections were unowned last quarter and I wrote them myself the night before. The pack is due Thursday.\n\nOpen Marc’s mail and the board pack doc. Then:\n1. List the three unowned sections and who wrote each one last quarter.\n2. Suggest an owner for each, and draft the reply to Marc."},{"id":"r7","tier":"today","channel":"mail","say":"Halden Mutual asked where their data sits. Only you can answer.","label":{"name":"Sales","tint":"sales"},"meta":{"kind":"date","value":"11 Sept"},"lede":"One line back: Frankfurt, and no US subprocessor.","type":"pattern","argument":["Third residency question this quarter. All three came to you: nobody else will put it in writing."],"plain":["It is the last item on their security review, which gates Halden Mutual at 76k."],"go":[{"page":"context","id":"d1","text":"Data residency answers go out in writing, from you, inside a day, decided 11 Sept"}],"sources":[{"kind":"mail","label":"Halden Mutual security review, 11 Sept","href":""},{"kind":"doc","label":"Subprocessor list","href":""}],"briefing":"Halden Mutual asked on 11 September where their data sits. It is the last open item on their security review, and the review gates the 76k pricing decision. I have not replied. This is the third data residency question this quarter and all three came to me.\n\nOpen the Halden Mutual security review mail and our subprocessor list. Then:\n1. Confirm the region, and whether any US subprocessor is involved.\n2. Draft a short reply I can send as it is.\n3. Tell me what would have to be written down once for this not to reach me a fourth time."},{"id":"r8","tier":"week","channel":"teams","say":"Corvid Capital want the term sheet redline and a new slot.","label":{"name":"Board","tint":"board"},"meta":{"kind":"date","value":"12 Sept"},"lede":"Send the redline. Marc can find the slot.","type":"history","argument":["You moved them on 2 and 8 September. This is their third ask."],"plain":["The redline is the blocker. The slot is Marc’s once they have it."],"go":[],"sources":[{"kind":"chat","via":"Teams","label":"Corvid Capital, 9 Sept","href":""},{"kind":"chat","via":"Teams","label":"Corvid Capital, 12 Sept","href":""},{"kind":"doc","label":"Term sheet v3, your comments","href":""}],"briefing":"Corvid Capital want the term sheet redline and a new meeting slot. They asked on 9 September and again on 12 September. I moved them twice already, on 2 September and on 8 September.\n\nOpen both Teams messages and term sheet v3 with my comments. Then:\n1. Summarise where my comments and their draft still disagree.\n2. Draft the reply that sends the redline and asks Marc to book the slot."},{"id":"r9","tier":"week","channel":"slack","say":"Tomas needs the migration date in writing.","label":{"name":"Product","tint":"product"},"meta":{"kind":"time","value":"11:38"},"lede":"Give him the date in writing today, whichever the 11:00 picked.","type":"history","argument":["Three standups running asked for it. The team has stopped asking in the channel and started asking Priya."],"plain":["The last date he had in writing was the 28 August weekend, and it came and went."],"go":[{"page":"brief","id":"c2","text":"Daily brief: Migration, the 4 October weekend or November"}],"sources":[{"kind":"chat","via":"Slack","label":"Tomas, 11:38","href":""},{"kind":"chat","via":"Slack","label":"#infra-migration, standup","href":""},{"kind":"doc","label":"Migration plan v3","href":""}],"briefing":"Tomas asked at 11:38 for the migration date in writing. Three standups running asked for it, and the team has started asking Priya instead of the channel. The go or no go was at 11:00 today.\n\nOpen Tomas’s message, the #infra-migration standup thread and migration plan v3. Then:\n1. Tell me what date the 11:00 settled on, from the notes or the thread, or say plainly that it did not settle.\n2. Draft the one-line message to Tomas that fixes the date in writing, and the line to Elena that tells her the same day."}],"filed":[{"id":"f1","label":"Sales","tint":"sales","count":22,"by_channel":{"mail":15,"slack":7},"say":"Nadia’s deal threads, two inbound, one lost-reason write-up.","lede":"Nothing left in here is waiting on you.","rule":"Anything on a deal Nadia owns goes to Sales, unless it names me and asks a question.","plain":["Three name you, all in recaps. Nadia has answered the two pricing asks. The three real asks are in the queue above."],"contents":[{"channel":"slack","from":"Nadia","what":"Bergen asked about a multi-year price","href":""},{"channel":"mail","from":"Halden Mutual procurement","what":"DPA redlines, third round","href":""},{"channel":"mail","from":"Marlow Group","what":"Inbound, 20 seats, wants a demo","href":""},{"channel":"slack","from":"Nadia","what":"Lost-reason write-up on Wexley","href":""},{"channel":"mail","from":"Vestra","what":"Inbound, sent the security questionnaire","href":""}],"href":"","sources":[{"kind":"you","label":"Your rules, in your words","href":""},{"kind":"mail","label":"Labels applied, 12:40","href":""}],"briefing":"My inbox routine filed 22 unread items under Sales this morning, 15 mails and 7 Slack threads, under a rule I wrote: anything on a deal Nadia owns goes to Sales unless it names me and asks a question. The routine judged that none of the 22 needs me.\n\nCheck that judgement. Open the 22 threads and tell me whether any of them is actually waiting on a decision from me. If one is, tell me which, and why the rule missed it."},{"id":"f2","label":"Product","tint":"product","count":15,"by_channel":{"mail":5,"slack":10},"say":"Migration standup and Priya’s roadmap doc comments.","lede":"Fifteen threads, none of them a decision.","rule":"Standups, doc comments and shares from Tomas’s and Priya’s teams go to Product, unless one asks me for a date or a decision.","plain":[],"contents":[{"channel":"slack","from":"Tomas","what":"Migration standup, three days of it","href":""},{"channel":"slack","from":"Priya","what":"Six comments on the roadmap doc","href":""},{"channel":"mail","from":"Priya","what":"Q4 roadmap shared with the exec team","href":""},{"channel":"slack","from":"Tomas","what":"Staging cutover rehearsal ran clean","href":""}],"href":"","sources":[{"kind":"you","label":"Your rules, in your words","href":""},{"kind":"chat","via":"Slack","label":"#product, 12:40","href":""}],"briefing":"My inbox routine labelled 15 unread items Product this morning, 5 mails and 10 Slack threads, under a rule I wrote: standups, doc comments and shares from Tomas’s and Priya’s teams go to Product unless one asks me for a date or a decision. It judged that none of them needs a decision from me. The visible ones are the migration standup, Priya’s roadmap doc comments, the Q4 roadmap share, and a staging cutover rehearsal.\n\nRead the 15 and tell me two things. Whether any of them is actually waiting on me, and whether anything in the migration thread contradicts the date I am about to give Tomas."},{"id":"f3","label":"Board","tint":"board","count":13,"by_channel":{"mail":9,"teams":4},"say":"Pack drafts and Corvid Capital’s data room questions.","lede":"Thirteen threads. Marc is holding all of them.","rule":"Pack drafts, agendas and the investor data room go to Board. Marc runs them.","plain":[],"contents":[{"channel":"mail","from":"Marc","what":"Board pack draft 3, sections 1 and 2","href":""},{"channel":"teams","from":"Corvid Capital","what":"Data room questions, second batch","href":""},{"channel":"mail","from":"Julien","what":"Cohort model, working file","href":""},{"channel":"mail","from":"Marc","what":"Thursday agenda, for comment","href":""}],"href":"","sources":[{"kind":"you","label":"Your rules, in your words","href":""},{"kind":"mail","label":"Board, 12:40","href":""}],"briefing":"My inbox routine labelled 13 unread items Board this morning, 9 mails and 4 Teams messages, under a rule I wrote: pack drafts, agendas and the investor data room go to Board, Marc runs them. Visible: board pack draft 3 covering sections 1 and 2, Corvid Capital’s second batch of data room questions, Julien’s cohort model working file, and Thursday’s agenda for comment.\n\nRead them and give me a list of what is still missing from the pack before Thursday, and who owns each gap. Flag anything Corvid Capital asked that nobody has answered."},{"id":"f4","label":"Customers","tint":"customers","count":10,"by_channel":{"mail":4,"slack":6},"say":"Renewal notices and two escalations Elena is running.","lede":"Ten threads. Elena owns every one.","rule":"Renewal notices and escalations Elena runs go to Customers, unless an account names me.","plain":[],"contents":[{"channel":"slack","from":"Elena","what":"Renewal notices going out this week","href":""},{"channel":"slack","from":"Elena","what":"Two escalations, both have owners","href":""},{"channel":"mail","from":"Renewals","what":"Marlow, 60 days out","href":""},{"channel":"mail","from":"Renewals","what":"Tarn Logistics, 90 days out","href":""}],"href":"","sources":[{"kind":"you","label":"Your rules, in your words","href":""},{"kind":"chat","via":"Slack","label":"#customers, 12:40","href":""}],"briefing":"My inbox routine labelled 10 unread items Customers this morning, 4 mails and 6 Slack threads, under a rule I wrote: renewal notices and escalations Elena runs go to Customers unless an account names me. Elena owns all of them. Visible: renewal notices going out this week, two escalations that already have owners, and renewal notices for Marlow at 60 days out and Tarn Logistics at 90 days out.\n\nRead them and tell me whether any renewal in here is at risk without me, and whether either escalation is heading towards something I will have to take."},{"id":"f5","label":"Hiring","tint":"hiring","count":7,"by_channel":{"mail":5,"teams":2},"say":"Two offers out, four candidate schedules.","lede":"Seven threads. Two offers are live.","rule":"Offers, candidate schedules and recruiting threads go to Hiring, unless the signature is mine.","plain":[],"contents":[{"channel":"mail","from":"Offers","what":"VP Marketing, stage two done","href":""},{"channel":"mail","from":"Offers","what":"Senior PM, verbal accepted","href":""},{"channel":"teams","from":"Recruiting","what":"Four candidate slots for next week","href":""}],"href":"","sources":[{"kind":"you","label":"Your rules, in your words","href":""},{"kind":"mail","label":"Hiring, 12:40","href":""}],"briefing":"My inbox routine labelled 7 unread items Hiring this morning, 5 mails and 2 Teams messages, under a rule I wrote: offers, candidate schedules and recruiting threads go to Hiring unless the signature is mine. Two offers are live: VP Marketing past stage two, and a Senior PM who accepted verbally. Four candidate slots were proposed for next week.\n\nRead them and tell me what is waiting on my signature or my calendar, and by when. Nothing else."},{"id":"f6","label":"Read later","tint":"later","count":8,"by_channel":{"mail":8},"say":"Newsletters and product updates, none addressed to you.","lede":"Eight things nobody is waiting on.","rule":"Newsletters and product updates go to Read later, unless I subscribed to it this month.","plain":[],"contents":[{"channel":"mail","from":"Stratechery","what":"Weekly","href":""},{"channel":"mail","from":"Linear","what":"Changelog, September","href":""},{"channel":"mail","from":"Figma","what":"What shipped this month","href":""}],"href":"","sources":[{"kind":"you","label":"Your rules, in your words","href":""},{"kind":"mail","label":"Labels applied, 12:40","href":""}],"briefing":"My inbox routine filed 8 unread mails under Read later this morning, under a rule I wrote: newsletters and product updates go to Read later unless I subscribed to it this month. Nothing was deleted and all 8 are still unread.\n\nOpen them and tell me whether that rule is still right, or whether it should be tightened or loosened. Give me the new wording if so."},{"id":"f7","label":"To archive","tint":"arch","count":18,"by_channel":{"mail":11,"slack":7},"say":"Under three rules you wrote. Waiting on you, not gone.","lede":"Eighteen labelled. Nothing archived.","rules":[{"count":11,"rule":"Zendesk alerts with no mention of me"},{"count":5,"rule":"Event invites from vendors I have never bought from"},{"count":2,"rule":"Calendar accepts with no message"}],"plain":["Clear the label in your mailbox and all eighteen go at once. Ignore it and they stay."],"contents":[{"channel":"slack","from":"#alerts-prod","what":"Zendesk 4412 updated, you are not on it","href":""},{"channel":"slack","from":"#alerts-prod","what":"Zendesk 4418 updated, you are not on it","href":""},{"channel":"mail","from":"Zendesk","what":"Ticket 4390, status change","href":""},{"channel":"mail","from":"Datastack","what":"You are invited to our Paris breakfast","href":""},{"channel":"mail","from":"Calendar","what":"Priya accepted: Q4 roadmap review","href":""}],"href":"","sources":[{"kind":"you","label":"Your rules, in your words","href":""},{"kind":"mail","label":"Label applied, 12:40","href":""}],"briefing":"My inbox routine labelled 18 unread items \"To archive\" this morning, under three rules I wrote:\n11 under \"Zendesk alerts with no mention of me\"\n5 under \"Event invites from vendors I have never bought from\"\n2 under \"Calendar accepts with no message\"\nNothing was archived. Nothing was deleted, sent or marked read. All 18 are still sitting in my inbox carrying the label.\n\nFind them, list them so I can see exactly what is queued to go, and tell me which of the three rules is the one worth changing. Do not archive anything yourself."}],"grouped":[],"wrote":true,"next_run":"16:30"}</script>
+<script>
+var DICT={"_":"Every UI string on the three pages, in English and French. Data (names, decisions, topics) is never translated by a page. Plural entries are pairs, singular first. French keeps the no-break space before : ? ! as U+00A0. No em dash anywhere. Curly apostrophes.","en":{"page_brief":"Daily brief","page_inbox":"Priority inbox","page_context":"Super Context","by":"Built by","by_name":"Paul","by_tail":"from Aureol Labs","ask":"Ask Claude","draft":"Draft the note","draft_skill":"Draft the skill","copied":"Copied, paste in a new session","blocked":"Copy blocked here","k_mail":"Mail","k_chat":"Chat","k_calendar":"Calendar","k_doc":"Doc","k_meeting":"Meeting","k_file":"File","k_you":"You","t_precedent":"Precedent","t_knock_on":"Knock-on","t_pattern":"Pattern","t_history":"History","t_rule":"Rule","meetings_n":["{n} meeting","{n} meetings"],"clashes_n":["{n} clash","{n} clashes"],"decisions_n":["{n} decision","{n} decisions"],"jobs_n":["{n} job","{n} jobs"],"your_day":"Your day","booked":"{t} booked","cap_strip":["Tap a block for the brief","Filled means a decision is waiting","Stacked in red means two at once"],"two_at_once":"Two at once","n_at_once":"{n} at once","clash_head":"{a} to {b} · {what}","two_meetings_one":"two meetings, one of you","n_meetings_one":"{n} meetings, one of you","clear":"{t} clear","who":"Who","before":"Before","to_land":"To land","in_mind":"In mind","decisions_to_land":"Decisions to land","jobs_to_do":"Jobs to do","m_before":"Before {v}","m_asked":"Asked {v}","m_late":"Was due {v}","unread_mail_n":["{n} unread mail","{n} unread mails"],"unread_chat_n":["{n} unread message","{n} unread messages"],"need_you_n":["{n} needs you.","{n} need you."],"needs_you":"Needs you","of":"{n} of {t}","cap_queue":["Tap a line for the ask","Now, then today, then this week","Oldest first inside a tier"],"tier_now":"Now","tier_today":"Today","tier_week":"This week","labelled":"Labelled, still unread","grouped":"The rest, grouped","cap_filed":"Tap a label to see what is in it","cap_grouped":"Tap a group to see what is in it","more_label":"and {n} more in this label","more_group":"and {n} more in this group","to_archive":"To archive","next_run":"Next run {t}","labels_only":"Labels only · nothing moved, deleted, sent or marked read","nothing_written":"Nothing written to the mailbox · grouped here, not labelled","priorities_n":["{n} priority","{n} priorities"],"topics_n":["{n} live topic","{n} live topics"],"serve_none_n":["{n} serves none of them.","{n} serve none of them."],"your_priorities":"Your priorities","edit":"Edit","live_topics":"Live topics","people_orgs":"People and organisations","decisions":"Decisions","suggestions":"Connections and skills to add","c_topic":"Topic","c_serves":"Serves","c_last":"Last from you","c_name":"Name","c_role":"Role","c_decision":"Decision","c_by":"Decided by","c_when":"When","c_kind":"Kind","ahead_of":"Ahead of {x}","confirmed":"Confirmed {d}","not_yet":"Not yet","none":"None","in_your_words":"In your words","history":"History","so_far":"So far","next":"Next","cares_about":"Cares about","with":"With","ended":"Ended","evidence":"Evidence","nothing_booked":"Nothing booked.","your_words":"Your words, {d}","today_at":"Today {t}","was_due":"Was due {d}","r_contact_for":"contact for","r_contact":"contact","r_member_of":"member of","r_member":"member","r_leads":"leads","r_led_by":"led by","r_sits_on":"sits on","r_seat":"seat","customer":"Customer","prospect":"Prospect","investor":"Investor","partner":"Partner","supplier":"Supplier","company":"Company","team":"Team","board":"Board","product":"Product","other":"Other","connection":"Connection","skill":"Skill","against":"Decided against {x}.","land":"To land: {q}","replaces":"Replaces {x}","replaced_by":"Replaced by {x}","conflicts_with":"Conflicts with {x}","added_week":"Added this week","proposed_m":"Proposed, keep or drop","you":"You","and":"and","keep":"Keep","drop":"Drop","decline":"Decline","saved":"Saved","not_saved":"Not saved","waiting":"waiting for Claude","kept_m":"Kept","dropped_m":"Dropped","declined_m":"Declined","added_m":"Added","changed_m":"Changed","moved_m":"Moved","save":"Save","copy_for_claude":"Copy for Claude","discard":"Discard","add_priority":"Add a priority","full":"5 is the most the list holds. Drop one to add one.","full_this":"5 is the most the list holds. Drop one to add this.","empty_list":"The list cannot be empty.","one_empty":"One line is empty.","needs_ahead":"Every priority says what it comes before.","no_change":"Nothing changed yet.","changes_n":["{n} change","{n} changes"],"ahead_label":"Ahead of","ahead_ph":"what it comes before","pending":"Copied, paste in a new session.","saved_list":"Saved. Tomorrow’s brief ranks against this list.","propose_note":"Proposed from the {t} topic. What it comes before is yours.","add_as_priority":"Add it as a priority","pri_label":"Priority {n}","ahead_aria":"What priority {n} comes before","up_aria":"Move priority {n} up","down_aria":"Move priority {n} down","drop_aria":"Drop priority {n}","ch_added":"Added: {l}","ch_reworded":"Reworded: \"{a}\" now reads \"{b}\"","ch_dropped":"Dropped: {l}","ch_reordered":"Reordered.","edit_head":"I have changed my priorities. Update my Super Context so the priorities read exactly like this, in this order. Keep my wording, and change nothing else.","edit_changed":"What changed:","edit_was":"It was:","edit_ask":"Before you write, tell me:\n- what this moves on tomorrow’s brief, and which decisions or jobs leave it\n- which live topics now serve none of the list\n- for anything I dropped, the decision you would add to the log, with what it was decided against. Ask me before adding it.\n\nThen write it, and set the confirmed date on every line I touched to that day.","keep_briefing":"In my Super Context, mark this proposed decision as kept: “{say}” ({when}, {by}). Change nothing else.","drop_briefing":"In my Super Context, mark this proposed decision as dropped: “{say}” ({when}, {by}). Change nothing else.","decline_briefing":"In my Super Context, decline this suggestion and do not propose it again: {say}","rewritten":"Rewritten {t}","proposed_pri_n":["{n} proposed as a priority","{n} proposed as priorities"],"proposed_dec":"{n} proposed this week · you kept {k}","q_open":"“","q_close":"”","hist_page":"Changed on the page"},"fr":{"page_brief":"Brief du jour","page_inbox":"Boîte prioritaire","page_context":"Super Context","by":"Conçu par","by_name":"Paul","by_tail":"chez Aureol Labs","ask":"Demander à Claude","draft":"Rédiger la note","draft_skill":"Rédiger la compétence","copied":"Copié, à coller dans une nouvelle session","blocked":"Copie bloquée ici","k_mail":"Mail","k_chat":"Chat","k_calendar":"Agenda","k_doc":"Doc","k_meeting":"Réunion","k_file":"Fichier","k_you":"Vous","t_precedent":"Précédent","t_knock_on":"Répercussion","t_pattern":"Récurrence","t_history":"Historique","t_rule":"Règle","meetings_n":["{n} réunion","{n} réunions"],"clashes_n":["{n} conflit","{n} conflits"],"decisions_n":["{n} décision","{n} décisions"],"jobs_n":["{n} tâche","{n} tâches"],"your_day":"Votre journée","booked":"{t} de réunions","cap_strip":["Touchez un bloc pour le brief","Plein : une décision attend","Empilé en rouge : deux à la fois"],"two_at_once":"Deux à la fois","n_at_once":"{n} à la fois","clash_head":"{a} à {b} · {what}","two_meetings_one":"deux réunions, un seul vous","n_meetings_one":"{n} réunions, un seul vous","clear":"{t} libres","who":"Qui","before":"Avant","to_land":"À trancher","in_mind":"En tête","decisions_to_land":"Décisions à trancher","jobs_to_do":"À faire","m_before":"Avant {v}","m_asked":"Demandé le {v}","m_late":"Attendu {v}","unread_mail_n":["{n} mail non lu","{n} mails non lus"],"unread_chat_n":["{n} message non lu","{n} messages non lus"],"need_you_n":["{n} vous attend.","{n} vous attendent."],"needs_you":"Vous attendent","of":"{n} sur {t}","cap_queue":["Touchez une ligne pour la demande","Maintenant, puis aujourd’hui, puis cette semaine","Le plus ancien d’abord dans chaque niveau"],"tier_now":"Maintenant","tier_today":"Aujourd’hui","tier_week":"Cette semaine","labelled":"Étiquetés, toujours non lus","grouped":"Le reste, regroupé","cap_filed":"Touchez une étiquette pour voir ce qu’elle contient","cap_grouped":"Touchez un groupe pour voir ce qu’il contient","more_label":"et {n} de plus sous cette étiquette","more_group":"et {n} de plus dans ce groupe","to_archive":"À archiver","next_run":"Prochain passage {t}","labels_only":"Étiquettes seulement · rien de déplacé, supprimé, envoyé ni marqué lu","nothing_written":"Rien d’écrit dans la boîte · regroupé ici, pas étiqueté","priorities_n":["{n} priorité","{n} priorités"],"topics_n":["{n} sujet en cours","{n} sujets en cours"],"serve_none_n":["{n} ne sert aucune.","{n} ne servent aucune."],"your_priorities":"Vos priorités","edit":"Modifier","live_topics":"Sujets en cours","people_orgs":"Personnes et organisations","decisions":"Décisions","suggestions":"Connexions et compétences à ajouter","c_topic":"Sujet","c_serves":"Sert","c_last":"Dernier de vous","c_name":"Nom","c_role":"Rôle","c_decision":"Décision","c_by":"Décidé par","c_when":"Quand","c_kind":"Type","ahead_of":"Avant {x}","confirmed":"Confirmé le {d}","not_yet":"Pas encore","none":"Aucune","in_your_words":"Vos mots","history":"Historique","so_far":"Jusqu’ici","next":"Ensuite","cares_about":"Tient à","with":"Avec","ended":"Terminé","evidence":"Indices","nothing_booked":"Rien de prévu.","your_words":"Vos mots, {d}","today_at":"Aujourd’hui {t}","was_due":"Attendu {d}","r_contact_for":"contact pour","r_contact":"contact","r_member_of":"membre de","r_member":"membre","r_leads":"dirige","r_led_by":"dirigé par","r_sits_on":"siège à","r_seat":"siège","customer":"Client","prospect":"Prospect","investor":"Investisseur","partner":"Partenaire","supplier":"Fournisseur","company":"Entreprise","team":"Équipe","board":"Conseil","product":"Produit","other":"Autre","connection":"Connexion","skill":"Compétence","against":"Écarté : {x}.","land":"À trancher : {q}","replaces":"Remplace {x}","replaced_by":"Remplacé par {x}","conflicts_with":"En conflit avec {x}","added_week":"Ajouté cette semaine","proposed_m":"Proposé, à garder ou écarter","you":"Vous","and":"et","keep":"Garder","drop":"Écarter","decline":"Refuser","saved":"Enregistré","not_saved":"Non enregistré","waiting":"en attente de Claude","kept_m":"Gardé","dropped_m":"Écarté","declined_m":"Refusé","added_m":"Ajouté","changed_m":"Modifié","moved_m":"Déplacé","save":"Enregistrer","copy_for_claude":"Copier pour Claude","discard":"Abandonner","add_priority":"Ajouter une priorité","full":"La liste tient 5 lignes au plus. Écartez-en une pour en ajouter une.","full_this":"La liste tient 5 lignes au plus. Écartez-en une pour ajouter celle-ci.","empty_list":"La liste ne peut pas être vide.","one_empty":"Une ligne est vide.","needs_ahead":"Chaque priorité dit ce qu’elle précède.","no_change":"Rien n’a changé.","changes_n":["{n} changement","{n} changements"],"ahead_label":"Avant","ahead_ph":"ce qu’elle précède","pending":"Copié, à coller dans une nouvelle session.","saved_list":"Enregistré. Le brief de demain se classe sur cette liste.","propose_note":"Proposé depuis le sujet {t}. Ce qu’elle précède est à vous.","add_as_priority":"L’ajouter comme priorité","pri_label":"Priorité {n}","ahead_aria":"Ce que la priorité {n} précède","up_aria":"Monter la priorité {n}","down_aria":"Descendre la priorité {n}","drop_aria":"Écarter la priorité {n}","ch_added":"Ajouté : {l}","ch_reworded":"Reformulé : « {a} » devient « {b} »","ch_dropped":"Écarté : {l}","ch_reordered":"Réordonné.","edit_head":"J’ai changé mes priorités. Mets à jour mon Super Context pour que les priorités se lisent exactement ainsi, dans cet ordre. Garde mes mots et ne change rien d’autre.","edit_changed":"Ce qui a changé :","edit_was":"C’était :","edit_ask":"Avant d’écrire, dis-moi :\n- ce que cela déplace sur le brief de demain, et quelles décisions ou tâches en sortent\n- quels sujets en cours ne servent plus aucune priorité\n- pour chaque ligne écartée, la décision que tu ajouterais au journal, avec ce qu’elle écarte. Demande-moi avant de l’ajouter.\n\nPuis écris, et mets la date de confirmation de chaque ligne touchée à ce jour.","keep_briefing":"Dans mon Super Context, marque cette décision proposée comme gardée : « {say} » ({when}, {by}). Ne change rien d’autre.","drop_briefing":"Dans mon Super Context, marque cette décision proposée comme écartée : « {say} » ({when}, {by}). Ne change rien d’autre.","decline_briefing":"Dans mon Super Context, refuse cette suggestion et ne la propose plus : {say}","rewritten":"Réécrit à {t}","proposed_pri_n":["{n} proposée comme priorité","{n} proposées comme priorités"],"proposed_dec":"{n} proposées cette semaine · {k} gardées","q_open":"« ","q_close":" »","hist_page":"Modifié sur la page"}};
+  /* ================ THE DESIGN SYSTEM, ONE SOURCE: BEHAVIOUR ================
+     Inlined into every template by tools/build-templates.py, after `var DICT`.
+     Every page builds its whole DOM from the JSON in <script id="data"> with the
+     helpers below. Strings reach the DOM through textContent only. */
+
+  /* ---------- the dictionary ---------- */
+  var LANG='en';
+  function L(k){
+    var d=DICT[LANG]||DICT.en, v=d[k];
+    if(v==null) v=DICT.en[k];
+    return v==null ? k : v;
+  }
+  /* fill {name} slots. Values are inserted as text, never parsed. */
+  function F(s,vars){
+    return String(s).replace(/\{(\w+)\}/g,function(m,k){ return vars && vars[k]!=null ? String(vars[k]) : m; });
+  }
+  /* a plural entry is a pair, singular first. Numerals stay numerals. */
+  function P(k,n,vars){
+    var v=L(k); if(Object.prototype.toString.call(v)==='[object Array]') v = n===1 ? v[0] : v[1];
+    var o={n:n}; if(vars) for(var x in vars) o[x]=vars[x];
+    return F(v,o);
+  }
+
+  /* ---------- DOM ---------- */
+  function $(id){ return document.getElementById(id); }
+  function el(tag,cls,text){
+    var n=document.createElement(tag);
+    if(cls) n.className=cls;
+    if(text!=null) n.textContent=text;
+    return n;
+  }
+  function add(parent){
+    for(var i=1;i<arguments.length;i++){
+      var c=arguments[i];
+      if(c==null) continue;
+      parent.appendChild(typeof c==='string' ? document.createTextNode(c) : c);
+    }
+    return parent;
+  }
+  var SVGNS='http://www.w3.org/2000/svg';
+  function glyph(id,cls,viewBox){
+    var s=document.createElementNS(SVGNS,'svg'), u=document.createElementNS(SVGNS,'use');
+    if(cls) s.setAttribute('class',cls);
+    if(viewBox) s.setAttribute('viewBox',viewBox);
+    u.setAttribute('href','#'+id);
+    s.appendChild(u);
+    return s;
+  }
+  /* the channel mark for a source or a message: mail, slack, teams */
+  function channel(c,cls){
+    var id = c==='slack' ? 'i-slack' : c==='teams' ? 'i-teams' : 'i-mail';
+    return glyph(id, cls||'ch');
+  }
+  /* an href is set only after a check. Anything else is a dead link that does nothing. */
+  function safeHref(a,href){
+    var h=(href==null?'':String(href)).trim();
+    if(/^(https:\/\/|mailto:|#)/.test(h) && h!=='#'){ a.setAttribute('href',h); return true; }
+    a.setAttribute('href','#');
+    a.onclick=function(e){ e.preventDefault(); };
+    return false;
+  }
+  function link(href,text,cls){
+    var a=el('a',cls,text); safeHref(a,href); return a;
+  }
+  /* an outside link opens in its own tab, so the page stays where the exec left it */
+  function outLink(href,text,cls){
+    var a=link(href,text,cls);
+    if(a.getAttribute('href')!=='#'){ a.setAttribute('target','_blank'); a.setAttribute('rel','noopener'); }
+    return a;
+  }
+
+  /* ---------- dates ---------- */
+  function isoToday(){
+    var d=new Date(), p=function(n){ return (n<10?'0':'')+n; };
+    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+  }
+  /* true when `iso` is within the last `days` days of `today`, both ISO YYYY-MM-DD */
+  function withinDays(iso,today,days){
+    if(!iso || !today) return false;
+    var a=Date.parse(iso+'T00:00:00Z'), b=Date.parse(today+'T00:00:00Z');
+    if(isNaN(a)||isNaN(b)) return false;
+    var diff=(b-a)/86400000;
+    return diff>=0 && diff<days;
+  }
+  function minutes(hhmm){
+    var m=/^(\d{1,2}):(\d{2})$/.exec(hhmm||''); if(!m) return NaN;
+    return parseInt(m[1],10)*60+parseInt(m[2],10);
+  }
+  /* "30 min", "1 h", "1 h 30": the same shape in both languages */
+  function span(mins){
+    var h=Math.floor(mins/60), m=mins%60;
+    if(h===0) return m+' min';
+    return m ? h+' h '+(m<10?'0':'')+m : h+' h';
+  }
+
+  /* ---------- shared pieces ---------- */
+  var DATA=null, LINKS={};
+  function loadData(){
+    var d=null;
+    try{ d=JSON.parse($('data').textContent); }catch(e){ d=null; }
+    if(!d || typeof d!=='object'){
+      try{ d=JSON.parse($('example').textContent); }catch(e2){ d={}; }
+    }
+    DATA=d; LANG=(d.lang==='fr')?'fr':'en'; LINKS=d.links||{};
+    document.documentElement.setAttribute('lang',LANG);
+    return d;
+  }
+  /* the header: the notebook page, the date and the time in the hand, the count, the sub */
+  function header(page,pageKey,h1){
+    add(page, el('div','book',L(pageKey)));
+    var top=el('div','top');
+    add(top, el('span','eyebrow',DATA.date_label||''), el('span','eyebrow',DATA.time_label||''));
+    add(page, top, el('h1',null,h1), el('p','sub',DATA.sub||''));
+    document.title=L(pageKey);
+  }
+  /* a section head: label, rule, tally. `extra` is an optional element at the end. */
+  function h2(label,tally,extra){
+    var h=el('h2'); add(h, label, el('i'));
+    if(tally!=null){ var b=el('b'); if(typeof tally==='string') b.textContent=tally; else add(b,tally); add(h,b); }
+    if(extra) add(h,extra);
+    return h;
+  }
+  function cap(lines){
+    var c=el('div','cap'); (lines||[]).forEach(function(s){ add(c, el('span',null,s)); }); return c;
+  }
+  /* the sources row: three at most, then the gesture at the right end */
+  function srcRow(sources,briefing,gestureLabel,extra){
+    var d=el('div','src'), list=(sources||[]).slice(0,3);
+    list.forEach(function(s){
+      var a=link(s.href,''); a.textContent='';
+      add(a, el('i',null, s.via || L('k_'+(s.kind||'doc'))), s.label||'');
+      if(a.getAttribute('href')!=='#'){ a.setAttribute('target','_blank'); a.setAttribute('rel','noopener'); }
+      add(d,a);
+    });
+    if(extra) add(d,extra);
+    if(briefing){
+      var a2=el('a','ask',gestureLabel||L('ask'));
+      if(DATA.gesture==='link'){
+        safeHref(a2,'https://claude.ai/new?q='+encodeURIComponent(briefing)+'&surface=cowork&composer=mini');
+        a2.setAttribute('target','_blank'); a2.setAttribute('rel','noopener');
+      } else {
+        a2.setAttribute('href','#');
+        a2.dataset.q=encodeURIComponent(briefing);
+        a2.onclick=function(e){ return ask(e,a2); };
+      }
+      add(d,a2);
+    }
+    return d;
+  }
+  /* a cross-reference carries its whole substance as link text. Same page: opens the
+     target. Another page: a plain link to that page's artefact plus the id. */
+  function goRow(g){
+    var d=el('div','go'), a;
+    if(g.page){
+      var base=LINKS[g.page]||'';
+      a=link(base ? base+'#'+g.id : '', g.text);
+    } else {
+      a=el('a',null,g.text); a.setAttribute('href','#'+g.id);
+      a.onclick=function(e){ jump(e,g.id); };
+    }
+    add(d,a);
+    return d;
+  }
+  function goRows(box,list){ (list||[]).forEach(function(g){ add(box,goRow(g)); }); }
+  function paras(box,list,cls){
+    (list||[]).forEach(function(s){ if(s) add(box, el('p',cls,s)); });
+  }
+  /* the type, as a tag: precedent, knock_on, pattern, history, rule */
+  function typeTag(type){ return el('span','tag',L('t_'+type)); }
+  function footer(spans){
+    var f=el('footer'); (spans||[]).forEach(function(s){ add(f, el('span',null,s||'')); }); return f;
+  }
+  function credit(){
+    var p=el('p','by');
+    add(p, L('by')+' ', outLink('https://www.linkedin.com/in/paul-rousselle/', L('by_name')), ' '+L('by_tail')+' ',
+        glyph('i-mark','mark','2 30 92 48'));
+    return p;
+  }
+  /* a quiet mark on a row, in pine, for a moment: "Saved". Or in brick: "Not saved". */
+  function flash(row,text,bad){
+    var dec=row.querySelector('.dec')||row.querySelector('button');
+    var old=row.querySelector('.rel.tmp'); if(old) old.parentNode.removeChild(old);
+    var s=el('span','rel tmp '+(bad?'cf':'nw'),text);
+    add(dec,s);
+    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); },2000);
+  }
+
+  /* ---------- the database, when this view can run it ----------
+     `window.claude` carries `use` and nothing else. The namespace arrives through the
+     promise, never at first paint, and `null` means this view cannot run it: a plain
+     browser, a saved file, a host that never answers. Every page renders without it
+     and lights the writes up when it resolves. */
+  var DB=null, DB_KNOWN=false, onDb=function(){};
+  function dbInit(cb){
+    onDb=cb||function(){};
+    try{
+      if(window.claude && typeof window.claude.use==='function'){
+        window.claude.use('db').then(function(d){ DB=d||null; DB_KNOWN=true; onDb(); },
+                                     function(){ DB=null; DB_KNOWN=true; onDb(); });
+        return;
+      }
+    }catch(e){}
+    DB=null; DB_KNOWN=true; onDb();
+  }
+
+  /* ---------- interaction ---------- */
+  /* the lists: one row open at a time, so the page never becomes a wall */
+  function t(b){
+    var r=b.parentNode, was=r.classList.contains('open');
+    document.querySelectorAll('.row.open').forEach(function(o){
+      o.classList.remove('open');
+      var ob=o.querySelector('button'); if(ob) ob.setAttribute('aria-expanded','false');
+    });
+    if(!was){ r.classList.add('open'); b.setAttribute('aria-expanded','true'); }
+  }
+
+  /* the strip: one brief at a time, so the day never grows a second page */
+  function m(btn){
+    var brief=document.getElementById(btn.dataset.b); if(!brief) return false;
+    var wasOpen=brief.classList.contains('on');
+    document.querySelectorAll('.mt').forEach(function(b){
+      b.classList.remove('on'); b.setAttribute('aria-expanded','false');
+    });
+    document.querySelectorAll('.mbrief').forEach(function(b){ b.classList.remove('on'); });
+    if(!wasOpen){
+      brief.classList.add('on');
+      btn.classList.add('on');
+      btn.setAttribute('aria-expanded','true');
+    }
+    return !wasOpen;
+  }
+
+  /* copying, shared by Ask Claude, Draft the note, Keep, Drop and Copy for Claude.
+     execCommand stays as the fallback because it is the one that still works inside a
+     sandboxed iframe without allow-same-origin, which is exactly the published-artefact
+     case. A silent execCommand failure is a failure: `fail` runs, `done` does not. */
+  function copyText(q,done,fail){
+    var fb=function(){
+      var ta=document.createElement('textarea'), ok=false;
+      ta.value=q; ta.style.cssText='position:fixed;top:0;left:0;opacity:0';
+      document.body.appendChild(ta); ta.select();
+      try{ ok=document.execCommand('copy'); }catch(x){ ok=false; }
+      document.body.removeChild(ta);
+      if(ok) done(); else fail();
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(q).then(done,fb);
+    } else { fb(); }
+  }
+
+  /* Ask Claude copies a standalone briefing. A second click while it still says
+     Copied does nothing, so the label can never be captured as the confirmation. The
+     real label is captured and restored. A blocked copy says so, and the page goes on. */
+  function ask(e,a){
+    e.preventDefault();
+    if(a.classList.contains('ok')) return false;
+    var label=a.textContent, say=function(s){
+      a.textContent=s; a.classList.add('ok');
+      setTimeout(function(){ a.textContent=label; a.classList.remove('ok'); },2600);
+    };
+    copyText(decodeURIComponent(a.dataset.q||''),
+      function(){ say(L('copied')); },
+      function(){ say(L('blocked')); });
+    return false;
+  }
+
+  /* a cross-reference lands on its target already open, so you never arrive at a
+     closed line and have to guess which one was meant. A block on the strip opens its
+     brief; a flat row has nothing to open. */
+  function jump(e,id){
+    if(e && e.preventDefault) e.preventDefault();
+    var el_=document.getElementById(id); if(!el_) return;
+    if(el_.classList.contains('mt')){
+      if(!el_.classList.contains('on')) m(el_);
+    } else {
+      var b=el_.querySelector('button');
+      if(b && !el_.classList.contains('flat') && !el_.classList.contains('open')) t(b);
+    }
+    el_.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+
+  /* ================ THE PRIORITY INBOX ================ */
+  function chip(label,tint){ return el('span','cat'+(tint?' '+tint:''),label||''); }
+  function quoted(s){ return L('q_open')+s+L('q_close'); }
+
+  /* a queue row: tier, channel mark, sentence, label and arrival */
+  function queueRow(it){
+    var r=el('div','row'); r.id=it.id;
+    var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
+    b.onclick=function(){ t(b); };
+    var tier=it.tier==='now'?'now':it.tier==='today'?'today':'week';
+    var say=el('span','say'); add(say, channel(it.channel), it.say||'');
+    var meta=el('span','meta');
+    if(it.label && it.label.name) add(meta, chip(it.label.name,it.label.tint));
+    add(meta, it.meta && it.meta.value!=null ? String(it.meta.value) : '');
+    var dec=el('span','dec'); add(dec,say);
+    add(b, el('span','tier '+tier,L('tier_'+tier)), dec, meta);
+    add(r,b);
+    var w=el('div','why');
+    if(it.lede) add(w, el('p','lede',it.lede));
+    add(w, typeTag(it.type));
+    paras(w,it.argument); paras(w,it.plain,'plain');
+    goRows(w,it.go);
+    add(w, srcRow(it.sources,it.briefing));
+    add(r,w);
+    return r;
+  }
+
+  /* a filed label: the tally, the chip, the sentence, the count per channel, and a
+     reveal that opens on the rule and on what is inside */
+  function filedRow(f,withRule){
+    var r=el('div','row'); r.id=f.id;
+    var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
+    b.onclick=function(){ t(b); };
+    var say=el('span','say'); add(say, chip(f.label,f.tint), f.say||'');
+    var meta=el('span','meta'), bc=f.by_channel||{};
+    ['mail','slack','teams'].forEach(function(c){
+      if(bc[c]) add(meta, channel(c,'ch sm'), String(bc[c]));
+    });
+    var dec=el('span','dec'); add(dec,say);
+    add(b, el('span','n',String(f.count==null?'':f.count)), dec, meta);
+    add(r,b);
+    var w=el('div','why');
+    if(f.lede) add(w, el('p','lede',f.lede));
+    if(withRule && f.tint==='arch' && f.rules && f.rules.length){
+      add(w, typeTag('rule'));
+      var tight=el('div','tight');
+      f.rules.forEach(function(x){ var p=el('p'); add(p, el('b',null,String(x.count)), quoted(x.rule||'')); add(tight,p); });
+      add(w,tight);
+    } else if(withRule && f.rule){
+      add(w, typeTag('rule'), el('p',null,quoted(f.rule)));
+    }
+    paras(w,f.plain,'plain');
+    var items=(f.contents||[]).slice(0,5);
+    if(items.length){
+      var mini=el('div','mini');
+      items.forEach(function(x){
+        var a=link(x.href,''); a.textContent='';
+        add(a, channel(x.channel), el('b',null,x.from||''), x.what||'');
+        if(a.getAttribute('href')!=='#'){ a.setAttribute('target','_blank'); a.setAttribute('rel','noopener'); }
+        add(mini,a);
+      });
+      var more=(f.count|0)-items.length;
+      if(more>0){
+        var ma=link(f.href, F(L(withRule?'more_label':'more_group'),{n:more}), 'more');
+        if(ma.getAttribute('href')!=='#'){ ma.setAttribute('target','_blank'); ma.setAttribute('rel','noopener'); }
+        add(mini,ma);
+      }
+      add(w,mini);
+    }
+    add(w, srcRow(f.sources,f.briefing));
+    add(r,w);
+    return r;
+  }
+
+  function render(){
+    var d=loadData(), page=$('page');
+    var q=d.queue||[], filed=d.filed||[], grouped=d.grouped||[], counts=d.counts||{};
+    var mail=counts.mail|0, chat=counts.chat|0;
+
+    header(page,'page_inbox', P('unread_mail_n',mail)+', '+P('unread_chat_n',chat)+'. '+P('need_you_n',q.length));
+
+    /* ---- the queue ---- */
+    add(page, h2(L('needs_you'),F(L('of'),{n:q.length,t:mail+chat})), cap(L('cap_queue')));
+    var ql=el('div','list queue'); q.forEach(function(it){ add(ql,queueRow(it)); }); add(page,ql);
+
+    /* ---- the filing, or the grouping ---- */
+    var bulk = filed.length ? filed : grouped, withRule = filed.length>0;
+    if(bulk.length){
+      var sum=0; bulk.forEach(function(f){ sum+=(f.count|0); });
+      add(page, h2(L(withRule?'labelled':'grouped'),String(sum)), cap([L(withRule?'cap_filed':'cap_grouped')]));
+      var fl=el('div','list filed'); bulk.forEach(function(f){ add(fl,filedRow(f,withRule)); }); add(page,fl);
+    }
+
+    var right = d.wrote ? L('labels_only') : L('nothing_written');
+    add(page, footer([d.next_run ? F(L('next_run'),{t:d.next_run}) : '', right]), credit());
+  }
+  render();
+</script>
+</body>
+</html>

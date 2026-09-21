@@ -1,0 +1,15 @@
+{
+  "name": "aureol",
+  "description": "Aureol's Claude plugins for executives.",
+  "owner": {
+    "name": "Aureol",
+    "url": "https://aureol.co"
+  },
+  "plugins": [
+    {
+      "name": "aureol-exec-productivity",
+      "source": "./",
+      "description": "Guided install, Super Context, daily brief, priority inbox, Friday review. Reads mail, calendar, chat, documents and meetings; writes only its own pages."
+    }
+  ]
+}
