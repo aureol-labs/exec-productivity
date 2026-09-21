@@ -35,6 +35,14 @@
   out for 7 days). Nothing is written to the mailbox. Published with the db
   capability (capabilities: {db: {}}) so Drop is remembered; without it Drop copies
   a line for Claude and the row says "waiting for Claude".
+  At load the page reads its store and applies what the exec did since publish, so
+  a drop or a save survives a reload; the next routine run publishes a page without
+  those rows. Once the store resolves, every dismissals document whose page is
+  "inbox" and whose ref is a queue row's ref leaves that row as a fresh drop does:
+  closed, greyed, "remembered", no Drop word. Recounted from the rows still
+  standing: the h1's "N need you" and the queue tally "N of T". The unread counts
+  are the connectors' and stay: a drop marks nothing read. A read that fails, or a
+  store that is null, changes nothing and shows nothing.
 
   HOW IT RENDERS
   The routine never hand-writes rows. It builds one JSON document and puts it in the
@@ -174,16 +182,28 @@ var DICT={{DICT}};
     return r;
   }
 
+  /* the counts that depend on the queue rows: the h1's "N need you" and the tally.
+     Recounted from the rows still standing once the store has said what was dropped. */
+  var H1=null, QT=null, QL=null, MAIL=0, CHAT=0;
+  function recount(){
+    var n=QL.querySelectorAll('.row:not(.gone)').length;
+    H1.textContent=P('unread_mail_n',MAIL)+', '+P('unread_chat_n',CHAT)+'. '+P('need_you_n',n);
+    QT.textContent=F(L('of'),{n:n,t:MAIL+CHAT});
+  }
+
   function render(){
     var d=loadData(), page=$('page');
     var q=d.queue||[], filed=d.filed||[], grouped=d.grouped||[], counts=d.counts||{};
     var mail=counts.mail|0, chat=counts.chat|0;
+    MAIL=mail; CHAT=chat;
 
     header(page,'page_inbox', P('unread_mail_n',mail)+', '+P('unread_chat_n',chat)+'. '+P('need_you_n',q.length));
+    H1=page.querySelector('h1');
 
     /* ---- the queue ---- */
-    add(page, h2(L('needs_you'),F(L('of'),{n:q.length,t:mail+chat})), cap(L('cap_queue')));
-    var ql=el('div','list queue'); q.forEach(function(it){ add(ql,queueRow(it)); }); add(page,ql);
+    var hq=h2(L('needs_you'),F(L('of'),{n:q.length,t:mail+chat})); QT=hq.querySelector('b');
+    add(page, hq, cap(L('cap_queue')));
+    var ql=el('div','list queue'); q.forEach(function(it){ add(ql,queueRow(it)); }); add(page,ql); QL=ql;
 
     /* ---- the filing, or the grouping ---- */
     var bulk = filed.length ? filed : grouped, withRule = filed.length>0;
@@ -195,7 +215,7 @@ var DICT={{DICT}};
 
     var right = d.wrote ? L('labels_only') : L('nothing_written');
     add(page, footer([d.next_run ? F(L('next_run'),{t:d.next_run}) : '', right]), credit());
-    dbInit();
+    dbInit(function(){ hydrateDrops(recount); });
   }
   render();
 </script>
