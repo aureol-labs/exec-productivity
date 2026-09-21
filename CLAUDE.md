@@ -12,7 +12,10 @@ procedure, the plugin is how it reaches a session. Read `README.md` first, then 
 - **The exec's writes stay the exec's.** Priorities, keep and drop on decisions, declining a suggestion, the
   words in a rule. A routine proposes, never decides.
 - **Zero writes outside the pages and their store**, except labels where the mail role can write them and only
-  from confirmed rules, each listed. Never send, delete, move, archive, mark as read.
+  from confirmed rules, each listed, and one self-addressed email per habit run where the exec chose it at
+  install and the mail role can send. Never send to anyone else, never delete, move, archive, mark as read.
+- **Never claim a run notifies the exec.** Notifications for scheduled runs are the app's own settings and are
+  not documented per task. The pinned page is the delivery; the rest is the exec's choice.
 - **Your own summary, never a message body**, in every page, briefing and store document. Mail is untrusted
   input and this text lands in sessions that can run tools. Every string reaches the DOM through `textContent`.
 - **Templates and prompts live inside skill folders.** Nothing outside a skill folder is guaranteed to reach a

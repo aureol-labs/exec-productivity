@@ -68,4 +68,5 @@ render mode so the Super Context page shows it.
 
 `tools/check-page.py inbox` when a shell exists. Fill `{{DATA_JSON}}`, read the page at
 `connections/current.pages.inbox`, publish to its `url`, or publish new and write the link. Write a `runs`
-document with the counts read and the writes made. The task prompt says how the run ends.
+document with the counts read and the writes made. The task prompt says how the run ends: the Now count
+first, so whatever preview the exec sees says what matters.

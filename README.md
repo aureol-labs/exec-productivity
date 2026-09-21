@@ -36,7 +36,9 @@ archives or marks as read.
 | inbox | weekdays, every hour 08:00 to 18:00 by default | Priority inbox, and what it learned into Super Context |
 | weekly | Friday 16:30 | the review, on Super Context |
 
-Each habit runs in the cloud, so it runs with the laptop shut, and its message arrives by email with the link.
+Each habit runs in the cloud, so it runs with the laptop shut. Its result is the pinned page; how the exec is
+told is their choice at install, per habit: the app's own notification, an email to their own address (where
+their mailbox can send), or nothing.
 
 ## How the habits fit together
 
@@ -46,7 +48,7 @@ ranks against it. Then:
 1. **Morning, 06:50**: the deep harvest. `aureol-context` reads the night and the last seven days across every
    connection, meetings first, rewrites the live topics, the people and organisations and the summary, proposes
    decisions, republishes Super Context. Then `aureol-brief` reads that store and today's calendar and writes the
-   Daily brief. One session, one email.
+   Daily brief. One session, one message.
 2. **Inbox, every hour 08:00 to 18:00** (or the rhythm chosen at install): the light pass. `aureol-inbox` reads
    what arrived since the last run, ranks what needs the exec, publishes the Priority inbox, and writes what it
    learned into the store: a reply from the exec, a new fact on a topic, a decision taken in a thread. It never

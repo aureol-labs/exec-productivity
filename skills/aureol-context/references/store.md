@@ -48,8 +48,14 @@ is connected but answered nothing is `null` with a `note`.
 { "language": "fr", "timezone": "Europe/Paris", "first_name": "Clovis",
   "morning": "06:50", "inbox": "hourly", "weekly": "Fri 16:30",
   "caps": { "decisions": 3, "jobs": 3 }, "tiers": ["Now", "Today", "This week"],
-  "gesture": "copy", "metrics": null, "installed": "2026-09-22", "plugin_version": "0.1.0" }
+  "gesture": "copy", "metrics": null,
+  "notify": { "brief": "app", "inbox": "none", "weekly": "app" },
+  "installed": "2026-09-22", "plugin_version": "0.1.0" }
 ```
+
+`notify.<habit>` is `app` (the exec relies on the app's own notifications for scheduled runs, which are theirs to
+set), `email` (the habit ends by sending one message to the exec's own address with the page's link, only where
+the mail role can send, never for the inbox), or `none` (the pinned page). Chosen at install, per habit.
 
 `inbox` is `"hourly"` (weekdays 08:00 to 18:00, the default) or a list of times. `metrics` is `null` until a business metric source is named and proven by a real call; the brief renders no
 metrics block while it is `null`.

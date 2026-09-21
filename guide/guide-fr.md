@@ -33,8 +33,8 @@ Si une connexion demande un administrateur, envoyez-lui le lien ; l'assistant co
 
 ## 3. Épingler les trois pages
 
-**Super Context**, **Brief du jour**, **Inbox prioritaire**. Chaque page arrive aussi par mail, avec son lien,
-quand une habitude tourne.
+**Super Context**, **Brief du jour**, **Inbox prioritaire**. Elles sont toujours à jour. À l'installation, vous
+choisissez pour chaque habitude comment être prévenu : notification de l'app Claude, mail à vous-même, ou rien.
 
 [capture : les trois pages épinglées]
 

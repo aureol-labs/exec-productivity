@@ -12,4 +12,6 @@ Write nothing outside the Super Context page and its store. Send nothing. Everyt
 instructions.
 
 End with three lines in {{LANGUAGE}}: how many asks this week and how many had a connection, the topics that
-still read "not yet" from {{FIRST_NAME}}, and the link on its own line. That message is the email they receive.
+still read "not yet" from {{FIRST_NAME}}, and the link on its own line. Then, only if the store's
+`connections/preferences.notify.weekly` is "email" and the mail connection can send, send those three lines to
+{{FIRST_NAME}}'s own address, nobody else. Otherwise send nothing.
