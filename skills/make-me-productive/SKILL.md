@@ -130,8 +130,10 @@ in your last 30 days. Keep, reword or drop each one." For each proposed priority
 whose text carries the frame: "Priority 1 of 4, as I read it: "Sign a first paid mission before the end of
 October." Keep it?" Options: Keep, and under it what it comes before as you read it ("ahead of polishing the
 plugin: three threads this month went that way"); Reword, "type yours below"; Drop. Never ask "ahead of what":
-you propose it from the evidence, the exec corrects it on the page. Then one question on the order: "Is this the
-order?" with the kept list numbered in the question text and options "Yes", "Change it" (type the order).
+you propose it from the evidence, the exec corrects it on the page. Then one question, not an ordering: "Of the ones
+you kept, which matters most?" with the kept priorities as options; the pick goes first, the others keep the
+order they were read in. Four or five top priorities already carry the ranking; the brief ranks against the
+list as a whole and against each line's "ahead of", not against fine positions.
 Write `priorities` in the exec's own words, `ahead` as you read it, `confirmed` today, `yours` verbatim, a
 unique `short` name that is not a topic or entity name. Republish the page. Then one line and the link: "Your
 Super Context. Your assistant starts every conversation from it. The Edit button changes any line, including
