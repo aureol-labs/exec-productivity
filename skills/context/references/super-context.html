@@ -944,7 +944,7 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
   var TOPICS=[], ENTS=[], DECS=[], SUGG=[], BY={};
 
   function tidy(s){ return (s||'').replace(/\s+/g,' ').trim(); }
-  function cloneP(p){ return {id:p.id, say:p.say, ahead:p.ahead, note:p.note, src:p}; }
+  function cloneP(p){ return {id:p.id, say:p.say, ahead:p.ahead, note:p.note, src:p.src||p}; }
   function find(id){ for(var i=0;i<FILE.length;i++){ if(FILE[i].id===id) return FILE[i]; } }
   function same(a,b){ return tidy(a.say)===tidy(b.say) && tidy(a.ahead)===tidy(b.ahead); }
   function line(p){
