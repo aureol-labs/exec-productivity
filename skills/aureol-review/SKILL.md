@@ -64,5 +64,7 @@ days, called by the Friday task.
    kinds, routines and plugins first when they exist, the rest stay `found`.
 4. Load the `aureol-context` skill in render mode so Super Context shows the list. In install mode also return the
    proposed systems and their connector ids to install, which shows the card.
-5. Write a `runs` document. The task prompt says how the run ends: the counts, the topics reading "Not yet"
-   (from `topics.last_from_you`), and the link on its own line.
+5. Write a `runs` document. The task prompt says how the run ends: one line of counts, one table with a row
+   per finding (what was asked, who and how often, what would answer it, what it would change), the topics
+   reading "Not yet" (from `topics.last_from_you`), and the link on its own line. The table is the whole
+   finding, proposed rows and the rest; the page carries only the three proposed with their gestures.
