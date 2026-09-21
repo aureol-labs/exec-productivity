@@ -126,11 +126,13 @@ Load the `aureol-context` skill (installed spelling `exec-productivity:aureol-co
 across every connected role, meetings first; it publishes the Super Context artifact with `capabilities: {db:
 {}}` and returns the link. Write it to `connections/current.pages.context`.
 
-Then the priorities, on the question tool only, introduced first by one line: "Your priorities, as I read them
-in your last 30 days. Keep, reword or drop each one." For each proposed priority (five at most), one question
-whose text carries the frame: "Priority 1 of 4, as I read it: "Sign a first paid mission before the end of
-October." Keep it?" Options: Keep, and under it what it comes before as you read it ("ahead of polishing the
-plugin: three threads this month went that way"); Reword, "type yours below"; Drop. Never ask "ahead of what":
+Then the priorities, on the question tool only, introduced first by one line: "I read your last 30 days and
+propose four priorities. Say for each whether it is one of yours." These are proposals the exec has never seen,
+so the verbs never presume they exist: no "keep", no "drop". For each proposed priority (five at most), one
+question whose text carries the frame: "Priority 1 of 4, as I read it: "Sign a first paid mission before the end
+of October." Is this one of your priorities?" Options: "Yes", and under it what it comes before as you read it
+("ahead of polishing the plugin: three threads this month went that way"); "Yes, worded differently", "type yours
+below"; "No". Never ask "ahead of what":
 you propose it from the evidence, the exec corrects it on the page. Then one question, not an ordering: "Of the ones
 you kept, which matters most?" with the kept priorities as options; the pick goes first, the others keep the
 order they were read in. Four or five top priorities already carry the ranking; the brief ranks against the
@@ -159,12 +161,14 @@ mailbox." Then step 8.
 With `label`: read 30 days by counterparty and subject (never by the most frequent word, which catches
 everything and files nothing). Propose seven at most: five work labels that cut across the work, `Read later`,
 `To archive`. Open the series with one line: "Your inbox page can file what is not for you under labels, in your
-own mailbox, never archived. Here are the labels I read in your mail; each comes with the rule that would file
-it. Keep, rename or drop." Then one question per label whose text carries the frame: "Inbox label 3 of 7:
-"Builds". I would file GitHub, Vercel and Sentry alerts under it, and it replaces your "Github" label going
-forward. Keep it with this rule?" Options: Keep; Rename or reword, "type it below"; Drop. The rule is written in
-the exec's words when they reword it, else in yours as shown. `To archive` is a label, never an archive: its
-card says so. Write `rules`.
+own mailbox, never archived. From your mail I propose these labels, each with the rule that would file it. Say
+for each whether to use it." These are proposals, so the verbs never presume the label exists. Then one
+question per label whose text carries the frame: "Label 3 of 7, new: "Builds". I would file GitHub, Vercel and
+Sentry alerts under it. Use it?" Options: "Yes, file it that way"; "Yes, with another name or rule", "type it
+below"; "No label for this". A label that already exists in the mailbox is reused under its own name, never
+renamed and never deleted, and its card says "already in your mailbox". The rule is written in the exec's
+words when they reword it, else in yours as shown. `To archive` is a label, never an archive: its card says so.
+Write `rules`.
 
 ## 8. The habits
 
