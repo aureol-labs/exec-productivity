@@ -15,7 +15,7 @@ In the Claude desktop app:
 
 1. Plugins, add a marketplace from the repo `paul-r-92/aureol-exec-productivity`, install **Aureol exec
    productivity**.
-2. Type `/aureol-exec-productivity:install` and answer its questions. About ten minutes. It ends on your first
+2. Type `/aureol-exec-productivity:make-me-productive` and answer its questions. About ten minutes. It ends on your first
    brief.
 3. Pin the three pages.
 
@@ -33,23 +33,43 @@ archives or marks as read.
 | Habit | When | Page |
 |---|---|---|
 | morning | weekdays 06:50 | Super Context refreshed, then the Daily brief |
-| inbox | weekdays 12:30 and 16:30 | Priority inbox |
+| inbox | weekdays, every hour 08:00 to 18:00 by default | Priority inbox, and what it learned into Super Context |
 | weekly | Friday 16:30 | the review, on Super Context |
 
 Each habit runs in the cloud, so it runs with the laptop shut, and its message arrives by email with the link.
+
+## How the habits fit together
+
+One store, three habits, one order. Super Context is built first, inside the install, because everything else
+ranks against it. Then:
+
+1. **Morning, 06:50**: the deep harvest. `aureol-context` reads the night and the last seven days across every
+   connection, meetings first, rewrites the live topics, the people and organisations and the summary, proposes
+   decisions, republishes Super Context. Then `aureol-brief` reads that store and today's calendar and writes the
+   Daily brief. One session, one email.
+2. **Inbox, every hour 08:00 to 18:00** (or the rhythm chosen at install): the light pass. `aureol-inbox` reads
+   what arrived since the last run, ranks what needs the exec, publishes the Priority inbox, and writes what it
+   learned into the store: a reply from the exec, a new fact on a topic, a decision taken in a thread. It never
+   adds a topic or touches the priorities; that judgement stays with the morning. Nothing new, nothing
+   published.
+3. **Friday, 16:30**: `aureol-review` reads the exec's own asks of the week and proposes connections and skills
+   on Super Context.
+
+The exec's writes come from the page: priorities in the editor, keep and drop on decisions, decline on a
+suggestion. The routines propose; the exec decides.
 
 ## Skills
 
 | Skill | Does |
 |---|---|
-| `install` | the guided setup, ending on the first brief and the three habits |
-| `context` | Super Context: topics, people, entities, proposed decisions, the summary, the page |
-| `brief` | the Daily brief |
-| `inbox` | the Priority inbox |
-| `review` | the Friday review: asks, connections, skill candidates |
+| `make-me-productive` | the guided setup, ending on the first brief and the three habits |
+| `aureol-context` | Super Context: topics, people, entities, proposed decisions, the summary, the page |
+| `aureol-brief` | the Daily brief |
+| `aureol-inbox` | the Priority inbox |
+| `aureol-review` | the Friday review: asks, connections, skill candidates |
 | `help` | the assistant explaining and fixing itself |
 
-The store every skill reads and writes: [skills/context/references/store.md](skills/context/references/store.md).
+The store every skill reads and writes: [skills/aureol-context/references/store.md](skills/aureol-context/references/store.md).
 The design system: `design/`, inlined into every page template by `tools/build-templates.py`. Every generated page
 is checked by `tools/check-page.py`.
 

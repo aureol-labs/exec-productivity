@@ -1,5 +1,5 @@
 ---
-name: context
+name: aureol-context
 description: Build or refresh the executive's Super Context, the page every conversation starts from and the store every other habit reads. Reads mail, calendar, chat, documents and meetings; rewrites the live topics, the people and organisations, the summary; proposes decisions with what each was decided against; never edits the priorities. Three modes, bootstrap (install, 30 days), morning (the daily pass) and render (republish the page from the store). Load from install, from the morning task, or when the exec asks what the assistant knows about their work.
 ---
 

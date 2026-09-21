@@ -1,5 +1,5 @@
 ---
-name: install
+name: make-me-productive
 description: Set up the executive's assistant in one session, ending on a real page from their own data. Asks the language, checks every connection by a real call (mail, calendar, chat, documents, meetings) and shows one card for what is missing, builds the Super Context from the last 30 days and lets the exec confirm their priorities on questions, publishes the first daily brief now, scans a month of asks for connections worth adding, then creates the three habits (morning, inbox, Friday review) and stops with a verdict. Invoke on first use, on a new account, or to re-check after changing connections. To change one preference, use `help`.
 ---
 
@@ -7,7 +7,7 @@ description: Set up the executive's assistant in one session, ending on a real p
 
 You are setting up one executive's assistant, in Claude Cowork or the desktop app chat, for the person in front of
 you. The deliverable is a Super Context page built from their own world, their first daily brief, three scheduled
-habits, and a verdict. The reference for everything you read and write is `../context/references/store.md`.
+habits, and a verdict. The reference for everything you read and write is `../aureol-context/references/store.md`.
 
 ## Rule one: as little text as possible, and autopilot
 
@@ -55,7 +55,7 @@ Then one line and one table, translated, and start at once without waiting:
 | 1 | Your connections: mail, calendar, chat, documents, meetings |
 | 2 | Your Super Context, from the last 30 days. You confirm your priorities. |
 | 3 | Your first brief, now |
-| 4 | The habits: every morning, twice a day for your inbox, Friday for the review |
+| 4 | The habits: every morning, every hour for your inbox, Friday for the review |
 
 Nothing is sent, nothing is deleted. That last sentence is the only reassurance, and the verdict at step 8 has to
 keep it.
@@ -110,7 +110,7 @@ connected" where meetings would be, and never guess what a meeting decided.
 
 ## 4. Super Context
 
-Load the `context` skill (installed spelling `aureol-exec-productivity:context`) in **bootstrap mode**: 30 days
+Load the `aureol-context` skill (installed spelling `aureol-exec-productivity:aureol-context`) in **bootstrap mode**: 30 days
 across every connected role, meetings first; it publishes the Super Context artifact with `capabilities: {db:
 {}}` and returns the link. Write it to `connections/current.pages.context`.
 
@@ -122,12 +122,12 @@ assistant starts every conversation from it."
 
 ## 5. The first brief
 
-Load the `brief` skill for today if before 14:00 local, tomorrow otherwise. The link, on its own line. Nothing
+Load the `aureol-brief` skill for today if before 14:00 local, tomorrow otherwise. The link, on its own line. Nothing
 else. Write it to `connections/current.pages.brief`.
 
 ## 6. Asks
 
-Load the `review` skill in **install mode** on the same 30 days. Found something: one connector card for the
+Load the `aureol-review` skill in **install mode** on the same 30 days. Found something: one connector card for the
 systems with a connection (three at most) and one line of evidence per system, in the exec's terms: "Julien, 3
 times this month, the cohort numbers: that is Power BI." Nothing: skip silently.
 
@@ -145,7 +145,10 @@ with your proposed wording as the first option. `To archive` is a label, never a
 
 List the scheduled tasks. `Aureol morning`, `Aureol inbox` or `Aureol weekly` already there: keep it, create only
 the missing ones. One question: "Anyone else run your assistant from another account?" Then one question for
-the morning time, options 06:30, 06:50, 07:30, free entry, 06:50 first.
+the morning time, options 06:30, 06:50, 07:30, free entry, 06:50 first. Then one question for the
+inbox rhythm, options "every hour, 08:00 to 18:00" (first), "twice a day, 12:30 and 16:30", "once,
+at 12:30", free entry. Say in one line that each run sends its page by mail, so hourly means an
+hourly mail.
 
 Create three tasks from the files next to this skill, verbatim except the placeholders `{{LANGUAGE}}`,
 `{{CONTEXT_URL}}`, `{{FIRST_NAME}}`:
@@ -153,7 +156,7 @@ Create three tasks from the files next to this skill, verbatim except the placeh
 | Task | File | Schedule |
 |---|---|---|
 | `Aureol morning` | `references/task-morning.md` | weekdays, the chosen time |
-| `Aureol inbox` | `references/task-inbox.md` | weekdays 12:30 and 16:30 |
+| `Aureol inbox` | `references/task-inbox.md` | weekdays, the chosen rhythm (default every hour 08:00 to 18:00) |
 | `Aureol weekly` | `references/task-weekly.md` | Friday 16:30 |
 
 Settings, decided, not asked: cloud execution ("Require this computer" off), permissions approve automatically,
@@ -179,7 +182,7 @@ Then this table, translated, nothing added, then stop:
 | | |
 |---|---|
 | **Pin** | Super Context · Daily brief · Priority inbox |
-| **Habits** | Weekdays 06:50 brief · 12:30 and 16:30 inbox · Friday 16:30 review |
+| **Habits** | Weekdays 06:50 brief · inbox every hour, or the rhythm you chose · Friday 16:30 review |
 | **Never** | Send, delete, move, mark as read. Labels only, each listed with its rule. |
 | **Something off** | `/aureol-exec-productivity:help` |
 

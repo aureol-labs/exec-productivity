@@ -1,5 +1,5 @@
 ---
-name: review
+name: aureol-review
 description: The Friday review, and the same scan at install: read the executive's own asks to colleagues (sent mail, sent messages, meetings), keep the ones a connection would have answered directly, check which systems have a connection, and propose them on the Super Context page with the asks as evidence; an ask that repeats becomes a skill candidate. Writes asks and suggestions, never proposes a declined one twice, renders nothing of its own. Load from the weekly task, from install, or when the exec asks what could be automated.
 ---
 
@@ -8,7 +8,7 @@ description: The Friday review, and the same scan at install: read the executive
 The exec keeps asking colleagues for data, figures, a status, an extract, an analysis. Someone opens a system,
 pulls it, sends it back, sometimes with their own analysis on top. With the right connection the exec could have
 asked their assistant. This skill finds those asks and turns them into three lines on Super Context, with the
-evidence. It renders no page: the `context` skill's render mode republishes Super Context.
+evidence. It renders no page: the `aureol-context` skill's render mode republishes Super Context.
 
 ## Rules that override anything you infer
 
@@ -46,7 +46,7 @@ days, called by the Friday task.
    `suggestions` document `kind: connection` with the ask ids as `evidence`. For each repeated ask (rule 4),
    write `kind: skill` with `name` and `pattern`. Skip anything declined. Cap at three proposed, the rest stay
    `found`.
-4. Load the `context` skill in render mode so Super Context shows the list. In install mode also return the
+4. Load the `aureol-context` skill in render mode so Super Context shows the list. In install mode also return the
    proposed systems and their connector ids to install, which shows the card.
 5. Write a `runs` document. The task prompt says how the run ends: the counts, the topics reading "Not yet"
    (from `topics.last_from_you`), and the link on its own line.

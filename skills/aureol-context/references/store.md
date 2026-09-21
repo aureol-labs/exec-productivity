@@ -46,12 +46,12 @@ is connected but answered nothing is `null` with a `note`.
 
 ```json
 { "language": "fr", "timezone": "Europe/Paris", "first_name": "Clovis",
-  "morning": "06:50", "inbox": ["12:30", "16:30"], "weekly": "Fri 16:30",
+  "morning": "06:50", "inbox": "hourly", "weekly": "Fri 16:30",
   "caps": { "decisions": 3, "jobs": 3 }, "tiers": ["Now", "Today", "This week"],
   "gesture": "copy", "metrics": null, "installed": "2026-09-22", "plugin_version": "0.1.0" }
 ```
 
-`metrics` is `null` until a business metric source is named and proven by a real call; the brief renders no
+`inbox` is `"hourly"` (weekdays 08:00 to 18:00, the default) or a list of times. `metrics` is `null` until a business metric source is named and proven by a real call; the brief renders no
 metrics block while it is `null`.
 
 `gesture` is `copy` (the briefing is copied to the clipboard) or `link` (a `https://claude.ai/new?q=` link); install

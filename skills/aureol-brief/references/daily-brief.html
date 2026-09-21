@@ -3,70 +3,75 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Priority inbox</title>
+<title>Daily brief</title>
 <!--
-  THE PRIORITY INBOX. Template, built by tools/build-templates.py from design/. Do
-  not edit the built file: edit design/pages/inbox.html, design/partial.css,
+  THE DAILY BRIEF. Template, built by tools/build-templates.py from design/. Do not
+  edit the built file: edit design/pages/daily-brief.html, design/partial.css,
   design/partial.js or design/dictionary.json and rebuild.
 
   WHAT THIS IS
-  Everything unread, in one queue, categorised and ranked. Two jobs, and they are
-  different jobs. Categorising keeps the mailbox clean. Ranking decides what you
-  touch. The page never lets the first pretend to be the second: the lead is a
-  count, not a claim, and the bulk is called "labelled, still unread", which says
-  exactly what happened and exactly what did not. Mail, Slack and Teams in one
-  queue, never three tabs. The channel is a monochrome mark in the sentence.
-
-  THE WRITES
-  Labels only. Never a delete, never a send, never a mark as read, never a move.
-  The routine does not archive: it labels To archive under rules the exec wrote,
-  and the exec clears the label in their own mailbox. Every label opens on the rule
-  that filed it and on what is inside. Where the mail role cannot write labels, the
-  page shows "The rest, grouped" instead, without rules, and the footer says
-  nothing was written.
+  One page, three parts. The shape of the day, the decisions to land, the jobs to do.
+  Nothing else. No board, no tabs, no dashboard. Reads mail, calendar and messaging.
+  Delivered at 06:50, thrown away at 18:00.
 
   HOW IT RENDERS
   The routine never hand-writes rows. It builds one JSON document and puts it in the
   <script id="data" type="application/json"> element in place of the DATA_JSON placeholder, with
   every "<" in the serialised JSON escaped as \u003c. render() builds the whole DOM
   from that JSON. When the placeholder is left unreplaced, the page renders the example
-  embedded in <script id="example">. Every UI string comes from the dictionary,
-  English or French from data.lang. Data is never translated by the page.
-  tools/check-page.py refuses a document that breaks a rule below.
+  embedded in <script id="example">, so an unfilled template still looks right. Every
+  UI string comes from the dictionary, English or French from data.lang. Data is never
+  translated by the page. tools/check-page.py refuses a document that breaks a rule
+  below before it is ever rendered.
 
-  THE JSON, IN SHORT (the full fixture is skills/inbox/references/example.json)
-    lang, date_label, time_label, today, sub, gesture, links   as on every page
-    counts        { mail: 61, chat: 41 }      unread, read off the connectors
-    queue         [ row ]   ordered: tier, then oldest first inside a tier
-      a row       { id, tier: now|today|week, channel: mail|slack|teams, say,
-                    label: { name, tint }, meta: { kind: "time" | "date", value },
-                    lede, type, argument: [p], plain: [p], go: [ref], sources, briefing }
+  THE JSON, IN SHORT (the full fixture is skills/aureol-brief/references/example.json)
+    lang          "en" | "fr"
+    date_label    "Monday 14 September"      already localised by the routine
+    time_label    "07:00"                    when the page was generated
+    today         "2026-09-14"               ISO
+    sub           one sentence, the thing the page cannot show
+    gesture       "copy" (default) | "link"  Ask Claude copies, or opens claude.ai
+    links         { context: "https://...", inbox: "https://..." } the other pages
+    caps          { decisions: 3, jobs: 3 }  the lists never exceed them
+    metrics       null, or { tiles: [{value, label}], source } rendered above the strip
+    strip         { start: "08:00", end: "18:00", meetings: [...] }
+      a meeting   { id, start, end, label, key, brief: { title, note, who, before,
+                    to_land: { text } | { go }, in_mind: { text, go }, sources, briefing } }
+      a clash     { id, clash: true, meetings: [{ start, end, title, text, cost }],
+                    to_land, in_mind, sources, briefing }
+    decisions     [ row ]   "Decisions to land", three at most
+    jobs          [ row ]   "Jobs to do", three at most
+      a row       { id, say, type, meta, lede, argument: [p], plain: [p], go: [ref],
+                    sources: [src], briefing }
       type        precedent | knock_on | pattern | history      never absent
-      meta        when the message arrived: a clock for today, a date before that
-    filed         [ label ]  only where the mail role could write labels
-      a label     { id, label, tint, count, by_channel: { mail, slack, teams },
-                    say, lede, rule, plain: [p], contents: [item], href, sources,
-                    briefing }
-                  tint is one of sales|product|board|customers|hiring|later|arch;
-                  arch is To archive, drawn as an outline, and carries rules: [{count,
-                  rule}] instead of one rule; every other label carries its rule, in
-                  the exec's words
-      an item     { channel, from, what, href }   3 to 5 of them, every one a link;
-                  the count minus the items shown is "and N more in this label"
-    grouped       [ group ]  the same shape without rule, when filed is empty
-    wrote         true when labels were written, false otherwise
-    next_run      "16:30"
+      meta        { kind: "time" | "before" | "asked" | "late" | "none", value }
+                  a time or a date read off the calendar or a message, never an
+                  interval the routine worked out; "late" carries the word and needs a
+                  decision or a "you" source behind it
       ref         { id } same page (opens the target) or { page, id } another page
       src         { kind: mail|chat|calendar|doc|meeting|file|you, via, label, href }
+                  three at most; via is the tool's name when kind is chat
+    footer        [ "left", "right" ]
 
-  THE RIGHT COLUMN IS WHEN IT ARRIVED
-  Precise due times and computed lateness were tried and cut. A receipt time is a
-  fact. Brick left this page with the lateness mark: nothing an inbox page can see
-  proves that time is broken. No strip either: an inbox has no axis.
+  THE RIGHT COLUMN IS A TIME ON THE STRIP
+  On a decision, a bare time: when this lands on you. On a job, "Before 14:00", the
+  wall you have to beat, and that time is always a block on today's strip. If nothing
+  on the strip forces the job, the column carries the date it was asked. If neither
+  exists it is empty. Brick means a time that has gone by, and it carries a word.
+
+  THE DAY STRIP
+  One horizontal track, to scale: percent = minutes since the strip start divided by
+  a hundredth of the strip's length. Filled block means a decision is waiting. Clear
+  blocks of an hour or more are named inside the track. Double booking is one block
+  across the pair's whole span, split into stacked lanes at their true offsets, one
+  label that reads "Two at once", one brief whose columns each end on what it costs
+  to move that one. "4 h 15 booked" is wall clock, so an overlap is counted once.
 
   DESIGN
-  See design/partial.css. No em dashes. Numerals in the title and the tallies.
-  Self-contained: no webfonts, no assets, no network.
+  See design/partial.css. Iowan Old Style for the voice, Avenir Next for the work,
+  Bradley Hand for the one line in a hand. Pine is the agent's hand. Brick means time
+  is broken. Ink is the exec's own world. No em dashes. Numerals in the title and the
+  tallies. Self-contained: no webfonts, no assets, no network.
 
   SECURITY: the Ask Claude briefings (Draft the note, Draft the skill and Copy for
   Claude included) are the routine's own summary plus pointers to the threads, never
@@ -633,7 +638,7 @@
 <div class="page" id="page"></div>
 
 <script id="data" type="application/json">{{DATA_JSON}}</script>
-<script id="example" type="application/json">{"lang":"en","date_label":"Monday 14 September","time_label":"12:40","today":"2026-09-14","sub":"The 9 are here because someone is waiting on you, not because they are recent.","gesture":"copy","links":{"brief":"https://claude.ai/code/artifact/example-daily-brief","context":"https://claude.ai/code/artifact/example-super-context"},"counts":{"mail":61,"chat":41},"queue":[{"id":"r1","tier":"now","channel":"slack","say":"Elena’s renewal playbook is still unsigned.","label":{"name":"Customers","tint":"customers"},"meta":{"kind":"date","value":"8 Sept"},"lede":"Sign it today, or tell her to ship without you.","type":"history","argument":["At 10:00 you promised it by tonight. That is the fourth date she has been given."],"plain":["On Friday she said it ships without you. After today it will."],"go":[{"page":"brief","id":"j1","text":"Daily brief: sign off Elena’s renewal playbook, before 10:00"}],"sources":[{"kind":"chat","via":"Slack","label":"Elena, 6 Sept","href":""},{"kind":"chat","via":"Slack","label":"Elena, Friday 17:40","href":""},{"kind":"calendar","label":"1:1 today, 10:00","href":""}],"briefing":"I have not signed Elena’s renewal playbook. At our 1:1 at 10:00 today I said I would sign it before the end of the day. That is the fourth date she has been given.\n\nOpen the Slack thread with Elena from 6 September, her message from Friday 17:40, and the playbook doc itself. Then:\n1. Tell me what is actually still unresolved in the doc, if anything.\n2. Draft two Slack replies for me to pick from. One signs it today. One tells her to ship without me and says why."},{"id":"r2","tier":"now","channel":"mail","say":"Julien has no cohort numbers for the 14:00 board prep.","label":{"name":"Board","tint":"board"},"meta":{"kind":"time","value":"09:31"},"lede":"Send the four numbers before 14:00, or drop the slide.","type":"knock_on","argument":["No retention slide without net revenue retention by cohort. The pack is due Thursday."],"plain":["He asked at 09:10 and 11:35. The numbers are in last quarter’s cohort view."],"go":[{"page":"brief","id":"j2","text":"Daily brief: send Julien the cohort numbers, before 14:00"}],"sources":[{"kind":"mail","label":"Julien, 09:10","href":""},{"kind":"mail","label":"Julien, 11:35","href":""},{"kind":"calendar","label":"Board prep, 14:00","href":""}],"briefing":"Julien needs net revenue retention by cohort for the retention slide in the board pack. Board prep is at 14:00 today and the pack is due Thursday. He asked at 09:10 and again at 11:35 and I have not replied.\n\nOpen both of his mails and the cohort view I used for last quarter’s pack. Then:\n1. Pull the numbers he needs and show me the source for each one.\n2. Draft the reply.\n3. Tell me whether the slide can be dropped instead, and what the pack loses if it is."},{"id":"r3","tier":"now","channel":"slack","say":"Nadia needs a yes or no on Halden Mutual at 76k.","label":{"name":"Sales","tint":"sales"},"meta":{"kind":"time","value":"11:02"},"lede":"Hold at 78k on 14 months, or let it go at 76k.","type":"precedent","argument":["You refused this exact shape in July. Bergen asked for the same discount, you held, and it closed at 79k eleven days later."],"plain":["List is 84k. 78k gives Nadia something to trade and keeps the July line."],"go":[{"page":"brief","id":"c1","text":"Daily brief: Halden Mutual wants 19% off. Nadia wants to give it."}],"sources":[{"kind":"chat","via":"Slack","label":"Nadia, 11:02","href":""},{"kind":"mail","label":"Halden Mutual procurement, 10 Sept","href":""},{"kind":"mail","label":"Bergen, 14 July","href":""}],"briefing":"Nadia needs a yes or no on Halden Mutual today. List is 84k. Halden Mutual came back at 76k on a 14-month term. In July, Bergen asked for the same discount, I held, and it closed at 79k eleven days later.\n\nOpen Nadia’s Slack message from 11:02, the Halden Mutual procurement mail from 10 September, and the Bergen thread from 14 July. Then:\n1. Tell me what is genuinely different about Halden Mutual compared with Bergen, if anything.\n2. Give me the case for holding at 78k on 14 months, and the case for taking 76k.\n3. Draft the Slack reply to Nadia for whichever I pick."},{"id":"r4","tier":"today","channel":"slack","say":"Priya cannot order the Q4 roadmap until you answer Nadia.","label":{"name":"Product","tint":"product"},"meta":{"kind":"date","value":"6 Sept"},"lede":"Answer Nadia and Priya unblocks.","type":"knock_on","argument":["Halden Mutual at 76k decides which two features are committed in Q4. Priya has held the order since 3 September."],"plain":[],"go":[{"id":"r3","text":"Nadia needs a yes or no on Halden Mutual at 76k"}],"sources":[{"kind":"chat","via":"Slack","label":"Priya, 3 Sept","href":""},{"kind":"chat","via":"Slack","label":"Priya, today 08:40","href":""}],"briefing":"Priya has held the Q4 roadmap order since 3 September. She is blocked on my answer to Nadia about Halden Mutual at 76k, because that deal decides which two features are committed in Q4.\n\nOpen Priya’s Slack thread from 3 September and her message this morning at 08:40. Then:\n1. Tell me which two features are in question and what changes under each outcome.\n2. Draft a Slack reply that gives Priya the part of the order she can start on now, and names the one thing still open."},{"id":"r5","tier":"today","channel":"mail","say":"Bergen want to extend early. Nobody has replied.","label":{"name":"Sales","tint":"sales"},"meta":{"kind":"date","value":"9 Sept"},"lede":"Reply yourself, or hand it to Nadia today.","type":"precedent","argument":["Bergen closed at 79k in July after you held. An early extension is what that line was for."],"plain":["No reply since 9 September. It sat in Sales because nobody is named on the thread."],"go":[],"sources":[{"kind":"mail","label":"Bergen, 9 Sept","href":""},{"kind":"mail","label":"Bergen, 14 July","href":""}],"briefing":"Bergen mailed on 9 September asking to extend their contract early. Nobody has replied. They closed at 79k in July after I held the line on discount.\n\nOpen the Bergen mail from 9 September and the July thread. Then:\n1. Tell me what they are asking for and what it is worth at list.\n2. Draft two replies. One from me. One handing it to Nadia with the context she needs."},{"id":"r6","tier":"today","channel":"mail","say":"Marc has no owners for three board pack sections.","label":{"name":"Board","tint":"board"},"meta":{"kind":"date","value":"10 Sept"},"lede":"Name three owners. Marc will chase them.","type":"pattern","argument":["The same three sections were unowned last quarter and you wrote them yourself the night before. The pack is due Thursday."],"plain":[],"go":[{"page":"brief","id":"c3","text":"Daily brief: board pack is due Thursday. Two of five parts exist."}],"sources":[{"kind":"mail","label":"Marc, 10 Sept","href":""},{"kind":"doc","label":"Board pack Q3, two of five parts","href":""}],"briefing":"Marc mailed on 10 September saying three sections of the Q3 board pack have no owner. I have not replied. The same three sections were unowned last quarter and I wrote them myself the night before. The pack is due Thursday.\n\nOpen Marc’s mail and the board pack doc. Then:\n1. List the three unowned sections and who wrote each one last quarter.\n2. Suggest an owner for each, and draft the reply to Marc."},{"id":"r7","tier":"today","channel":"mail","say":"Halden Mutual asked where their data sits. Only you can answer.","label":{"name":"Sales","tint":"sales"},"meta":{"kind":"date","value":"11 Sept"},"lede":"One line back: Frankfurt, and no US subprocessor.","type":"pattern","argument":["Third residency question this quarter. All three came to you: nobody else will put it in writing."],"plain":["It is the last item on their security review, which gates Halden Mutual at 76k."],"go":[{"page":"context","id":"d1","text":"Data residency answers go out in writing, from you, inside a day, decided 11 Sept"}],"sources":[{"kind":"mail","label":"Halden Mutual security review, 11 Sept","href":""},{"kind":"doc","label":"Subprocessor list","href":""}],"briefing":"Halden Mutual asked on 11 September where their data sits. It is the last open item on their security review, and the review gates the 76k pricing decision. I have not replied. This is the third data residency question this quarter and all three came to me.\n\nOpen the Halden Mutual security review mail and our subprocessor list. Then:\n1. Confirm the region, and whether any US subprocessor is involved.\n2. Draft a short reply I can send as it is.\n3. Tell me what would have to be written down once for this not to reach me a fourth time."},{"id":"r8","tier":"week","channel":"teams","say":"Corvid Capital want the term sheet redline and a new slot.","label":{"name":"Board","tint":"board"},"meta":{"kind":"date","value":"12 Sept"},"lede":"Send the redline. Marc can find the slot.","type":"history","argument":["You moved them on 2 and 8 September. This is their third ask."],"plain":["The redline is the blocker. The slot is Marc’s once they have it."],"go":[],"sources":[{"kind":"chat","via":"Teams","label":"Corvid Capital, 9 Sept","href":""},{"kind":"chat","via":"Teams","label":"Corvid Capital, 12 Sept","href":""},{"kind":"doc","label":"Term sheet v3, your comments","href":""}],"briefing":"Corvid Capital want the term sheet redline and a new meeting slot. They asked on 9 September and again on 12 September. I moved them twice already, on 2 September and on 8 September.\n\nOpen both Teams messages and term sheet v3 with my comments. Then:\n1. Summarise where my comments and their draft still disagree.\n2. Draft the reply that sends the redline and asks Marc to book the slot."},{"id":"r9","tier":"week","channel":"slack","say":"Tomas needs the migration date in writing.","label":{"name":"Product","tint":"product"},"meta":{"kind":"time","value":"11:38"},"lede":"Give him the date in writing today, whichever the 11:00 picked.","type":"history","argument":["Three standups running asked for it. The team has stopped asking in the channel and started asking Priya."],"plain":["The last date he had in writing was the 28 August weekend, and it came and went."],"go":[{"page":"brief","id":"c2","text":"Daily brief: Migration, the 4 October weekend or November"}],"sources":[{"kind":"chat","via":"Slack","label":"Tomas, 11:38","href":""},{"kind":"chat","via":"Slack","label":"#infra-migration, standup","href":""},{"kind":"doc","label":"Migration plan v3","href":""}],"briefing":"Tomas asked at 11:38 for the migration date in writing. Three standups running asked for it, and the team has started asking Priya instead of the channel. The go or no go was at 11:00 today.\n\nOpen Tomas’s message, the #infra-migration standup thread and migration plan v3. Then:\n1. Tell me what date the 11:00 settled on, from the notes or the thread, or say plainly that it did not settle.\n2. Draft the one-line message to Tomas that fixes the date in writing, and the line to Elena that tells her the same day."}],"filed":[{"id":"f1","label":"Sales","tint":"sales","count":22,"by_channel":{"mail":15,"slack":7},"say":"Nadia’s deal threads, two inbound, one lost-reason write-up.","lede":"Nothing left in here is waiting on you.","rule":"Anything on a deal Nadia owns goes to Sales, unless it names me and asks a question.","plain":["Three name you, all in recaps. Nadia has answered the two pricing asks. The three real asks are in the queue above."],"contents":[{"channel":"slack","from":"Nadia","what":"Bergen asked about a multi-year price","href":""},{"channel":"mail","from":"Halden Mutual procurement","what":"DPA redlines, third round","href":""},{"channel":"mail","from":"Marlow Group","what":"Inbound, 20 seats, wants a demo","href":""},{"channel":"slack","from":"Nadia","what":"Lost-reason write-up on Wexley","href":""},{"channel":"mail","from":"Vestra","what":"Inbound, sent the security questionnaire","href":""}],"href":"","sources":[{"kind":"you","label":"Your rules, in your words","href":""},{"kind":"mail","label":"Labels applied, 12:40","href":""}],"briefing":"My inbox routine filed 22 unread items under Sales this morning, 15 mails and 7 Slack threads, under a rule I wrote: anything on a deal Nadia owns goes to Sales unless it names me and asks a question. The routine judged that none of the 22 needs me.\n\nCheck that judgement. Open the 22 threads and tell me whether any of them is actually waiting on a decision from me. If one is, tell me which, and why the rule missed it."},{"id":"f2","label":"Product","tint":"product","count":15,"by_channel":{"mail":5,"slack":10},"say":"Migration standup and Priya’s roadmap doc comments.","lede":"Fifteen threads, none of them a decision.","rule":"Standups, doc comments and shares from Tomas’s and Priya’s teams go to Product, unless one asks me for a date or a decision.","plain":[],"contents":[{"channel":"slack","from":"Tomas","what":"Migration standup, three days of it","href":""},{"channel":"slack","from":"Priya","what":"Six comments on the roadmap doc","href":""},{"channel":"mail","from":"Priya","what":"Q4 roadmap shared with the exec team","href":""},{"channel":"slack","from":"Tomas","what":"Staging cutover rehearsal ran clean","href":""}],"href":"","sources":[{"kind":"you","label":"Your rules, in your words","href":""},{"kind":"chat","via":"Slack","label":"#product, 12:40","href":""}],"briefing":"My inbox routine labelled 15 unread items Product this morning, 5 mails and 10 Slack threads, under a rule I wrote: standups, doc comments and shares from Tomas’s and Priya’s teams go to Product unless one asks me for a date or a decision. It judged that none of them needs a decision from me. The visible ones are the migration standup, Priya’s roadmap doc comments, the Q4 roadmap share, and a staging cutover rehearsal.\n\nRead the 15 and tell me two things. Whether any of them is actually waiting on me, and whether anything in the migration thread contradicts the date I am about to give Tomas."},{"id":"f3","label":"Board","tint":"board","count":13,"by_channel":{"mail":9,"teams":4},"say":"Pack drafts and Corvid Capital’s data room questions.","lede":"Thirteen threads. Marc is holding all of them.","rule":"Pack drafts, agendas and the investor data room go to Board. Marc runs them.","plain":[],"contents":[{"channel":"mail","from":"Marc","what":"Board pack draft 3, sections 1 and 2","href":""},{"channel":"teams","from":"Corvid Capital","what":"Data room questions, second batch","href":""},{"channel":"mail","from":"Julien","what":"Cohort model, working file","href":""},{"channel":"mail","from":"Marc","what":"Thursday agenda, for comment","href":""}],"href":"","sources":[{"kind":"you","label":"Your rules, in your words","href":""},{"kind":"mail","label":"Board, 12:40","href":""}],"briefing":"My inbox routine labelled 13 unread items Board this morning, 9 mails and 4 Teams messages, under a rule I wrote: pack drafts, agendas and the investor data room go to Board, Marc runs them. Visible: board pack draft 3 covering sections 1 and 2, Corvid Capital’s second batch of data room questions, Julien’s cohort model working file, and Thursday’s agenda for comment.\n\nRead them and give me a list of what is still missing from the pack before Thursday, and who owns each gap. Flag anything Corvid Capital asked that nobody has answered."},{"id":"f4","label":"Customers","tint":"customers","count":10,"by_channel":{"mail":4,"slack":6},"say":"Renewal notices and two escalations Elena is running.","lede":"Ten threads. Elena owns every one.","rule":"Renewal notices and escalations Elena runs go to Customers, unless an account names me.","plain":[],"contents":[{"channel":"slack","from":"Elena","what":"Renewal notices going out this week","href":""},{"channel":"slack","from":"Elena","what":"Two escalations, both have owners","href":""},{"channel":"mail","from":"Renewals","what":"Marlow, 60 days out","href":""},{"channel":"mail","from":"Renewals","what":"Tarn Logistics, 90 days out","href":""}],"href":"","sources":[{"kind":"you","label":"Your rules, in your words","href":""},{"kind":"chat","via":"Slack","label":"#customers, 12:40","href":""}],"briefing":"My inbox routine labelled 10 unread items Customers this morning, 4 mails and 6 Slack threads, under a rule I wrote: renewal notices and escalations Elena runs go to Customers unless an account names me. Elena owns all of them. Visible: renewal notices going out this week, two escalations that already have owners, and renewal notices for Marlow at 60 days out and Tarn Logistics at 90 days out.\n\nRead them and tell me whether any renewal in here is at risk without me, and whether either escalation is heading towards something I will have to take."},{"id":"f5","label":"Hiring","tint":"hiring","count":7,"by_channel":{"mail":5,"teams":2},"say":"Two offers out, four candidate schedules.","lede":"Seven threads. Two offers are live.","rule":"Offers, candidate schedules and recruiting threads go to Hiring, unless the signature is mine.","plain":[],"contents":[{"channel":"mail","from":"Offers","what":"VP Marketing, stage two done","href":""},{"channel":"mail","from":"Offers","what":"Senior PM, verbal accepted","href":""},{"channel":"teams","from":"Recruiting","what":"Four candidate slots for next week","href":""}],"href":"","sources":[{"kind":"you","label":"Your rules, in your words","href":""},{"kind":"mail","label":"Hiring, 12:40","href":""}],"briefing":"My inbox routine labelled 7 unread items Hiring this morning, 5 mails and 2 Teams messages, under a rule I wrote: offers, candidate schedules and recruiting threads go to Hiring unless the signature is mine. Two offers are live: VP Marketing past stage two, and a Senior PM who accepted verbally. Four candidate slots were proposed for next week.\n\nRead them and tell me what is waiting on my signature or my calendar, and by when. Nothing else."},{"id":"f6","label":"Read later","tint":"later","count":8,"by_channel":{"mail":8},"say":"Newsletters and product updates, none addressed to you.","lede":"Eight things nobody is waiting on.","rule":"Newsletters and product updates go to Read later, unless I subscribed to it this month.","plain":[],"contents":[{"channel":"mail","from":"Stratechery","what":"Weekly","href":""},{"channel":"mail","from":"Linear","what":"Changelog, September","href":""},{"channel":"mail","from":"Figma","what":"What shipped this month","href":""}],"href":"","sources":[{"kind":"you","label":"Your rules, in your words","href":""},{"kind":"mail","label":"Labels applied, 12:40","href":""}],"briefing":"My inbox routine filed 8 unread mails under Read later this morning, under a rule I wrote: newsletters and product updates go to Read later unless I subscribed to it this month. Nothing was deleted and all 8 are still unread.\n\nOpen them and tell me whether that rule is still right, or whether it should be tightened or loosened. Give me the new wording if so."},{"id":"f7","label":"To archive","tint":"arch","count":18,"by_channel":{"mail":11,"slack":7},"say":"Under three rules you wrote. Waiting on you, not gone.","lede":"Eighteen labelled. Nothing archived.","rules":[{"count":11,"rule":"Zendesk alerts with no mention of me"},{"count":5,"rule":"Event invites from vendors I have never bought from"},{"count":2,"rule":"Calendar accepts with no message"}],"plain":["Clear the label in your mailbox and all eighteen go at once. Ignore it and they stay."],"contents":[{"channel":"slack","from":"#alerts-prod","what":"Zendesk 4412 updated, you are not on it","href":""},{"channel":"slack","from":"#alerts-prod","what":"Zendesk 4418 updated, you are not on it","href":""},{"channel":"mail","from":"Zendesk","what":"Ticket 4390, status change","href":""},{"channel":"mail","from":"Datastack","what":"You are invited to our Paris breakfast","href":""},{"channel":"mail","from":"Calendar","what":"Priya accepted: Q4 roadmap review","href":""}],"href":"","sources":[{"kind":"you","label":"Your rules, in your words","href":""},{"kind":"mail","label":"Label applied, 12:40","href":""}],"briefing":"My inbox routine labelled 18 unread items \"To archive\" this morning, under three rules I wrote:\n11 under \"Zendesk alerts with no mention of me\"\n5 under \"Event invites from vendors I have never bought from\"\n2 under \"Calendar accepts with no message\"\nNothing was archived. Nothing was deleted, sent or marked read. All 18 are still sitting in my inbox carrying the label.\n\nFind them, list them so I can see exactly what is queued to go, and tell me which of the three rules is the one worth changing. Do not archive anything yourself."}],"grouped":[],"wrote":true,"next_run":"16:30"}</script>
+<script id="example" type="application/json">{"lang":"en","date_label":"Monday 14 September","time_label":"07:00","today":"2026-09-14","sub":"Tap any line for why it made the page.","gesture":"copy","links":{"context":"https://claude.ai/code/artifact/example-super-context","inbox":"https://claude.ai/code/artifact/example-priority-inbox"},"caps":{"decisions":3,"jobs":3},"metrics":null,"strip":{"start":"08:00","end":"18:00","meetings":[{"id":"m1","start":"08:45","end":"09:15","label":"Nadia","key":true,"brief":{"title":"Pipeline review with Nadia","who":"Nadia, VP Sales. Second sync this week.","before":"She has raised the Halden Mutual discount in three of the last four.","to_land":{"go":{"id":"c1","text":"Halden Mutual wants 19% off. Nadia wants to give it."}},"in_mind":{"text":"Since losing Wexley on price in August, she pushes for discounts."},"sources":[{"kind":"mail","label":"Halden Mutual procurement, 10 Sept","href":""},{"kind":"chat","via":"Slack","label":"#deals-emea, Nadia","href":""},{"kind":"calendar","label":"08:45 invite","href":""}],"briefing":"Get me ready for the 08:45 pipeline review with Nadia, VP Sales.\n\nFrom this morning’s brief:\n- She has raised the Halden Mutual discount in three of the last four reviews.\n- Halden Mutual want 19% off. List 84k, their offer 68k.\n- To land: whether we hold. I refused this exact shape in July with Bergen and it closed at 79k eleven days later.\n- Worth remembering: she lost Wexley on price in August and has not been the same about discounts since.\n\nRead the Halden Mutual procurement thread from 10 September and #deals-emea yourself. Then give me three things: the number I should hold at, the trade I can offer instead of price, and the one sentence that lets Nadia take it to Halden Mutual without losing face."}},{"id":"m2","start":"10:00","end":"10:30","label":"Elena","key":false,"brief":{"title":"One to one with Elena","who":"Elena, Head of Customer Success. Six months in.","before":"You moved this twice. She has chased the playbook three times.","to_land":{"text":"Nothing. Let her set the agenda."},"in_mind":{"text":"Sign the playbook first, or the meeting is about you.","go":{"id":"j1","text":"Sign off Elena’s renewal playbook, before 10:00"}},"sources":[{"kind":"chat","via":"Slack","label":"Elena, Friday 17:40","href":""},{"kind":"calendar","label":"10:00 invite","href":""}],"briefing":"Get me ready for the 10:00 one to one with Elena, Head of Customer Success, six months in.\n\nFrom this morning’s brief:\n- I have moved this meeting twice.\n- She has chased the renewal playbook three times. Her last message was not a question, it said the playbook ships without me.\n- Nothing to land. She sets the agenda.\n\nRead her recent Slack messages to me yourself. I do not want talking points. Tell me what she is actually asking for underneath the playbook chase, and what I should say first to acknowledge that I have been the blocker."}},{"id":"m3","start":"11:00","end":"11:45","label":"Migration","key":true,"brief":{"title":"Migration go or no go","note":"six people, Tomas chairing","who":"Tomas, Priya, Elena, plus the support and infra leads.","before":"Slipped from 28 August. The room has picked October twice.","to_land":{"go":{"id":"c2","text":"Migration: the 4 October weekend, or November."}},"in_mind":{"text":"November collides with nine renewals. Raise it, or nobody will."},"sources":[{"kind":"doc","label":"Migration plan v3, Tomas","href":""},{"kind":"chat","via":"Slack","label":"#infra-migration","href":""},{"kind":"calendar","label":"11:00 invite","href":""}],"briefing":"Get me ready for the 11:00 migration go or no go. 45 minutes, six people, Tomas chairing.\n\nFrom this morning’s brief:\n- Slipped from 28 August. The room has picked October twice.\n- To land: the 4 October weekend, or November.\n- November collides with nine renewals, and nobody in that room owns renewals. If I say nothing, the collision does not get raised.\n\nRead Tomas’s migration plan v3 and #infra-migration yourself. Then tell me the one question I should put to the room to surface the renewal collision without making it sound like I am overruling them, and what support needs from me either way."}},{"id":"m4","start":"14:00","end":"15:30","label":"Board prep","key":true,"brief":{"title":"Board prep with Julien and Marc","who":"Julien, CFO. Marc, Chief of staff.","before":"Two of five sections exist. Same point as the last two quarters.","to_land":{"go":{"id":"c3","text":"Board pack is due Thursday. Two of five parts exist."}},"in_mind":{"text":"Julien needs the cohort numbers before it starts, not during.","go":{"id":"j2","text":"Send Julien the cohort numbers, before 14:00"}},"sources":[{"kind":"doc","label":"Q3 board pack","href":""},{"kind":"mail","label":"Marc, pack outline","href":""},{"kind":"calendar","label":"14:00 invite","href":""}],"briefing":"Get me ready for 14:00 board prep with Julien (CFO) and Marc (Chief of staff). 1 h 30.\n\nFrom this morning’s brief:\n- The pack is due Thursday. Two of five sections exist.\n- Third quarter running that this gets built in the final two days.\n- Julien needs the cohort numbers before this starts, not during it.\n\nRead the Q3 board pack and Marc’s outline yourself. Then give me a running order for the 90 minutes that gets all five sections owned and dated by the end of it, and tell me which section I should cut rather than write."}},{"id":"m5","clash":true,"meetings":[{"start":"16:30","end":"17:15","title":"VP Marketing, stage two","text":"Second interview, 45 min. Priya sits in.","cost":"Moving it costs you. She was moved once already, and two others reach stage two this week."},{"start":"16:45","end":"17:30","title":"Corvid Capital, term sheet","text":"Walkthrough, 45 min. Their side booked it yesterday.","cost":"Moving it costs nothing. They offered Thursday first and you picked today."}],"to_land":{"text":"Which one you sit in, and who covers the other. Before 09:00, so the one you move gets a day’s notice."},"in_mind":{"text":"Take the interview. Corvid Capital offered Thursday, so move them there and read the term sheet with Julien first."},"sources":[{"kind":"calendar","label":"16:30 interview","href":""},{"kind":"calendar","label":"16:45 Corvid Capital","href":""},{"kind":"mail","label":"Corvid Capital, term sheet","href":""}],"briefing":"I am double booked at 16:30 and I need to resolve it before 09:00.\n\n- 16:30, VP Marketing stage two interview, 45 min, Priya sits in. I already moved this candidate once, and two other candidates reach stage two this week.\n- 16:45, Corvid Capital term sheet walkthrough, 45 min. Their side booked it yesterday. They offered Thursday first and I picked today.\n\nMy read is to keep the interview and move Corvid Capital to Thursday.\n\nCheck both invites yourself. Then draft two short messages: one to Corvid Capital moving them to Thursday without making it look like they are second priority, and one to Priya confirming she and I are both on the 16:30. Warm, brief, no em dashes."}]},"decisions":[{"id":"c1","say":"Halden Mutual wants 19% off. Nadia wants to give it.","meta":{"kind":"time","value":"08:45"},"type":"precedent","lede":"Hold at 78k on a 14-month term.","argument":["You refused this exact shape in July. Bergen asked for the same discount, you held, and it closed at 79k eleven days later."],"plain":["List 84k. Their offer 68k. Holding at 78k on a 14-month term gives Nadia something to trade."],"go":[{"page":"context","id":"d9","text":"No discount above 12% without a term extension, decided 14 July"}],"sources":[{"kind":"mail","label":"Halden Mutual procurement, 10 Sept","href":""},{"kind":"mail","label":"Bergen, 14 July","href":""}],"briefing":"Draft my reply to Halden Mutual on the discount.\n\nFrom this morning’s brief:\n- Halden Mutual want 19% off. List 84k, their offer 68k.\n- Nadia, VP Sales, wants to give it. She has raised it in three of the last four pipeline reviews.\n- Precedent: I refused this exact shape in July. Bergen asked for the same discount, I held, and it closed at 79k eleven days later.\n- My position: hold at 78k on a 14-month term, so Nadia has something to trade.\n- I see Nadia at 08:45, so I need this before then.\n\nRead the Halden Mutual procurement thread from 10 September and the Bergen thread from 14 July yourself, then draft the reply. Short, warm, no em dashes. Make the term-length trade explicit so Nadia can use it."},{"id":"c2","say":"Migration: the 4 October weekend, or November.","meta":{"kind":"time","value":"11:00"},"type":"knock_on","lede":"4 October.","argument":["November lands inside the renewal cycle for nine accounts."],"plain":["Elena has been told neither date, and support needs a week to staff whichever you pick."],"go":[{"page":"context","id":"d12","text":"No infrastructure change inside a renewal window, decided 28 May"}],"sources":[{"kind":"chat","via":"Slack","label":"#infra-migration","href":""},{"kind":"calendar","label":"Renewal cycle, November","href":""}],"briefing":"Help me decide the migration date: the 4 October weekend, or November. I have to call it at 11:00.\n\nFrom this morning’s brief:\n- November lands inside the renewal cycle for nine accounts.\n- Elena has been told neither date.\n- Support needs a week to staff whichever I pick.\n\nRead #infra-migration and pull the nine November renewals from the calendar yourself. Then lay out the two dates side by side on the things that actually differ: renewal exposure, how much notice support gets, and what breaks if it slips again. Give me a recommendation and the reason in one line."},{"id":"c3","say":"Board pack is due Thursday. Two of five parts exist.","meta":{"kind":"time","value":"14:00"},"type":"pattern","lede":"Cut the market section and reuse August’s.","argument":["Third quarter running that this gets built in the final two days."],"plain":["Dropping the market section and reusing August buys Marc a day, and nobody has ever asked about it."],"go":[],"sources":[{"kind":"doc","label":"Q3 board pack","href":""},{"kind":"doc","label":"August pack, market section","href":""}],"briefing":"The board pack is due Thursday and two of five sections exist. Help me get it done.\n\nFrom this morning’s brief:\n- Third quarter running that this gets built in the final two days.\n- Dropping the market section and reusing August buys Marc a day, and nobody has ever asked about it.\n- Board prep with Julien and Marc is at 14:00 today.\n\nRead the Q3 pack and the August pack yourself. Then tell me which three sections still need writing, who should own each, and what the shortest defensible version of each looks like. Say plainly whether reusing the August market section is safe."}],"jobs":[{"id":"j1","say":"Sign off Elena’s renewal playbook.","meta":{"kind":"before","value":"10:00"},"type":"history","lede":"Sign it before 10:00, or the meeting is about you.","argument":["Elena asked three times. Her last message said it ships without you."],"plain":[],"go":[{"id":"m2","text":"You see her at 10:00, one to one"}],"sources":[{"kind":"chat","via":"Slack","label":"Elena, Friday 17:40","href":""},{"kind":"doc","label":"Renewal playbook v4","href":""}],"briefing":"Help me sign off Elena’s renewal playbook before I see her at 10:00.\n\nFrom this morning’s brief:\n- Elena asked three times. Her last message was not a question, it said the playbook ships without me.\n\nRead playbook v4 and her Slack messages yourself. Then do two things. Tell me the three decisions in it that actually need me, ignoring everything that does not. And draft my sign-off note: approves it, owns the delay without grovelling, and flags only what genuinely needs changing."},{"id":"j2","say":"Send Julien the cohort numbers.","meta":{"kind":"before","value":"14:00"},"type":"pattern","lede":"Four numbers, in the body of a mail.","argument":["Last quarter you went in without them and rebuilt them out loud."],"plain":[],"go":[{"id":"m4","text":"Board prep starts at 14:00, 1 h 30"}],"sources":[{"kind":"mail","label":"Julien, cohort request","href":""},{"kind":"doc","label":"Cohort model, Q3","href":""}],"briefing":"Send Julien the cohort numbers before 14:00.\n\nFrom this morning’s brief:\n- Last quarter I went into board prep without them and spent the session reconstructing the numbers out loud.\n- Board prep is at 14:00 today.\n\nRead Julien’s request and the Q3 cohort model yourself. Pull the numbers he actually asked for, sanity check them against the model, and draft the mail. Numbers in the body, not attached. Flag anything that looks wrong before I send it."},{"id":"j3","say":"Give Priya the Q4 roadmap order.","meta":{"kind":"asked","value":"3 Sept"},"type":"knock_on","lede":"Confirm the part that does not depend on Halden Mutual.","argument":["This has slipped every week since 25 August. It waits on you, not on Priya."],"plain":["It unblocks the moment the Halden Mutual discount is settled."],"go":[{"id":"c1","text":"Halden Mutual wants 19% off. Nadia wants to give it."}],"sources":[{"kind":"chat","via":"Slack","label":"Priya, 3 Sept","href":""},{"kind":"doc","label":"Q4 roadmap, draft order","href":""}],"briefing":"Give Priya the Q4 roadmap order. She asked on 3 September.\n\nFrom this morning’s brief:\n- This has slipped every week since 25 August. It waits on me, not on Priya.\n- It unblocks the moment the Halden Mutual discount is settled.\n\nRead Priya’s 3 September message and the draft order yourself. Then tell me which parts of the ordering genuinely depend on the Halden Mutual outcome and which I could confirm to her today regardless. Draft the reply that unblocks her on everything that is not actually blocked."}],"footer":["Read at 06:52: 61 mails, 41 messages, 6 invites","Sends nothing, deletes nothing"]}</script>
 <script>
 var DICT={"_":"Every UI string on the three pages, in English and French. Data (names, decisions, topics) is never translated by a page. Plural entries are pairs, singular first. French keeps the no-break space before : ? ! as U+00A0. No em dash anywhere. Curly apostrophes.","en":{"page_brief":"Daily brief","page_inbox":"Priority inbox","page_context":"Super Context","by":"Built by","by_name":"Paul","by_tail":"from Aureol Labs","ask":"Ask Claude","draft":"Draft the note","draft_skill":"Draft the skill","copied":"Copied, paste in a new session","blocked":"Copy blocked here","k_mail":"Mail","k_chat":"Chat","k_calendar":"Calendar","k_doc":"Doc","k_meeting":"Meeting","k_file":"File","k_you":"You","t_precedent":"Precedent","t_knock_on":"Knock-on","t_pattern":"Pattern","t_history":"History","t_rule":"Rule","meetings_n":["{n} meeting","{n} meetings"],"clashes_n":["{n} clash","{n} clashes"],"decisions_n":["{n} decision","{n} decisions"],"jobs_n":["{n} job","{n} jobs"],"your_day":"Your day","booked":"{t} booked","cap_strip":["Tap a block for the brief","Filled means a decision is waiting","Stacked in red means two at once"],"two_at_once":"Two at once","n_at_once":"{n} at once","clash_head":"{a} to {b} · {what}","two_meetings_one":"two meetings, one of you","n_meetings_one":"{n} meetings, one of you","clear":"{t} clear","who":"Who","before":"Before","to_land":"To land","in_mind":"In mind","decisions_to_land":"Decisions to land","jobs_to_do":"Jobs to do","m_before":"Before {v}","m_asked":"Asked {v}","m_late":"Was due {v}","unread_mail_n":["{n} unread mail","{n} unread mails"],"unread_chat_n":["{n} unread message","{n} unread messages"],"need_you_n":["{n} needs you.","{n} need you."],"needs_you":"Needs you","of":"{n} of {t}","cap_queue":["Tap a line for the ask","Now, then today, then this week","Oldest first inside a tier"],"tier_now":"Now","tier_today":"Today","tier_week":"This week","labelled":"Labelled, still unread","grouped":"The rest, grouped","cap_filed":"Tap a label to see what is in it","cap_grouped":"Tap a group to see what is in it","more_label":"and {n} more in this label","more_group":"and {n} more in this group","to_archive":"To archive","next_run":"Next run {t}","labels_only":"Labels only · nothing moved, deleted, sent or marked read","nothing_written":"Nothing written to the mailbox · grouped here, not labelled","priorities_n":["{n} priority","{n} priorities"],"topics_n":["{n} live topic","{n} live topics"],"serve_none_n":["{n} serves none of them.","{n} serve none of them."],"your_priorities":"Your priorities","edit":"Edit","live_topics":"Live topics","people_orgs":"People and organisations","decisions":"Decisions","suggestions":"Connections and skills to add","c_topic":"Topic","c_serves":"Serves","c_last":"Last from you","c_name":"Name","c_role":"Role","c_decision":"Decision","c_by":"Decided by","c_when":"When","c_kind":"Kind","ahead_of":"Ahead of {x}","confirmed":"Confirmed {d}","not_yet":"Not yet","none":"None","in_your_words":"In your words","history":"History","so_far":"So far","next":"Next","cares_about":"Cares about","with":"With","ended":"Ended","evidence":"Evidence","nothing_booked":"Nothing booked.","your_words":"Your words, {d}","today_at":"Today {t}","was_due":"Was due {d}","r_contact_for":"contact for","r_contact":"contact","r_member_of":"member of","r_member":"member","r_leads":"leads","r_led_by":"led by","r_sits_on":"sits on","r_seat":"seat","customer":"Customer","prospect":"Prospect","investor":"Investor","partner":"Partner","supplier":"Supplier","company":"Company","team":"Team","board":"Board","product":"Product","other":"Other","connection":"Connection","skill":"Skill","against":"Decided against {x}.","land":"To land: {q}","replaces":"Replaces {x}","replaced_by":"Replaced by {x}","conflicts_with":"Conflicts with {x}","added_week":"Added this week","proposed_m":"Proposed, keep or drop","you":"You","and":"and","keep":"Keep","drop":"Drop","decline":"Decline","saved":"Saved","not_saved":"Not saved","waiting":"waiting for Claude","kept_m":"Kept","dropped_m":"Dropped","declined_m":"Declined","added_m":"Added","changed_m":"Changed","moved_m":"Moved","save":"Save","copy_for_claude":"Copy for Claude","discard":"Discard","add_priority":"Add a priority","full":"5 is the most the list holds. Drop one to add one.","full_this":"5 is the most the list holds. Drop one to add this.","empty_list":"The list cannot be empty.","one_empty":"One line is empty.","needs_ahead":"Every priority says what it comes before.","no_change":"Nothing changed yet.","changes_n":["{n} change","{n} changes"],"ahead_label":"Ahead of","ahead_ph":"what it comes before","pending":"Copied, paste in a new session.","saved_list":"Saved. Tomorrow’s brief ranks against this list.","propose_note":"Proposed from the {t} topic. What it comes before is yours.","add_as_priority":"Add it as a priority","pri_label":"Priority {n}","ahead_aria":"What priority {n} comes before","up_aria":"Move priority {n} up","down_aria":"Move priority {n} down","drop_aria":"Drop priority {n}","ch_added":"Added: {l}","ch_reworded":"Reworded: \"{a}\" now reads \"{b}\"","ch_dropped":"Dropped: {l}","ch_reordered":"Reordered.","edit_head":"I have changed my priorities. Update my Super Context so the priorities read exactly like this, in this order. Keep my wording, and change nothing else.","edit_changed":"What changed:","edit_was":"It was:","edit_ask":"Before you write, tell me:\n- what this moves on tomorrow’s brief, and which decisions or jobs leave it\n- which live topics now serve none of the list\n- for anything I dropped, the decision you would add to the log, with what it was decided against. Ask me before adding it.\n\nThen write it, and set the confirmed date on every line I touched to that day.","keep_briefing":"In my Super Context, mark this proposed decision as kept: “{say}” ({when}, {by}). Change nothing else.","drop_briefing":"In my Super Context, mark this proposed decision as dropped: “{say}” ({when}, {by}). Change nothing else.","decline_briefing":"In my Super Context, decline this suggestion and do not propose it again: {say}","rewritten":"Rewritten {t}","proposed_pri_n":["{n} proposed as a priority","{n} proposed as priorities"],"proposed_dec":"{n} proposed this week · you kept {k}","q_open":"“","q_close":"”","hist_page":"Changed on the page"},"fr":{"page_brief":"Brief du jour","page_inbox":"Boîte prioritaire","page_context":"Super Context","by":"Conçu par","by_name":"Paul","by_tail":"chez Aureol Labs","ask":"Demander à Claude","draft":"Rédiger la note","draft_skill":"Rédiger la compétence","copied":"Copié, à coller dans une nouvelle session","blocked":"Copie bloquée ici","k_mail":"Mail","k_chat":"Chat","k_calendar":"Agenda","k_doc":"Doc","k_meeting":"Réunion","k_file":"Fichier","k_you":"Vous","t_precedent":"Précédent","t_knock_on":"Répercussion","t_pattern":"Récurrence","t_history":"Historique","t_rule":"Règle","meetings_n":["{n} réunion","{n} réunions"],"clashes_n":["{n} conflit","{n} conflits"],"decisions_n":["{n} décision","{n} décisions"],"jobs_n":["{n} tâche","{n} tâches"],"your_day":"Votre journée","booked":"{t} de réunions","cap_strip":["Touchez un bloc pour le brief","Plein : une décision attend","Empilé en rouge : deux à la fois"],"two_at_once":"Deux à la fois","n_at_once":"{n} à la fois","clash_head":"{a} à {b} · {what}","two_meetings_one":"deux réunions, un seul vous","n_meetings_one":"{n} réunions, un seul vous","clear":"{t} libres","who":"Qui","before":"Avant","to_land":"À trancher","in_mind":"En tête","decisions_to_land":"Décisions à trancher","jobs_to_do":"À faire","m_before":"Avant {v}","m_asked":"Demandé le {v}","m_late":"Attendu {v}","unread_mail_n":["{n} mail non lu","{n} mails non lus"],"unread_chat_n":["{n} message non lu","{n} messages non lus"],"need_you_n":["{n} vous attend.","{n} vous attendent."],"needs_you":"Vous attendent","of":"{n} sur {t}","cap_queue":["Touchez une ligne pour la demande","Maintenant, puis aujourd’hui, puis cette semaine","Le plus ancien d’abord dans chaque niveau"],"tier_now":"Maintenant","tier_today":"Aujourd’hui","tier_week":"Cette semaine","labelled":"Étiquetés, toujours non lus","grouped":"Le reste, regroupé","cap_filed":"Touchez une étiquette pour voir ce qu’elle contient","cap_grouped":"Touchez un groupe pour voir ce qu’il contient","more_label":"et {n} de plus sous cette étiquette","more_group":"et {n} de plus dans ce groupe","to_archive":"À archiver","next_run":"Prochain passage {t}","labels_only":"Étiquettes seulement · rien de déplacé, supprimé, envoyé ni marqué lu","nothing_written":"Rien d’écrit dans la boîte · regroupé ici, pas étiqueté","priorities_n":["{n} priorité","{n} priorités"],"topics_n":["{n} sujet en cours","{n} sujets en cours"],"serve_none_n":["{n} ne sert aucune.","{n} ne servent aucune."],"your_priorities":"Vos priorités","edit":"Modifier","live_topics":"Sujets en cours","people_orgs":"Personnes et organisations","decisions":"Décisions","suggestions":"Connexions et compétences à ajouter","c_topic":"Sujet","c_serves":"Sert","c_last":"Dernier de vous","c_name":"Nom","c_role":"Rôle","c_decision":"Décision","c_by":"Décidé par","c_when":"Quand","c_kind":"Type","ahead_of":"Avant {x}","confirmed":"Confirmé le {d}","not_yet":"Pas encore","none":"Aucune","in_your_words":"Vos mots","history":"Historique","so_far":"Jusqu’ici","next":"Ensuite","cares_about":"Tient à","with":"Avec","ended":"Terminé","evidence":"Indices","nothing_booked":"Rien de prévu.","your_words":"Vos mots, {d}","today_at":"Aujourd’hui {t}","was_due":"Attendu {d}","r_contact_for":"contact pour","r_contact":"contact","r_member_of":"membre de","r_member":"membre","r_leads":"dirige","r_led_by":"dirigé par","r_sits_on":"siège à","r_seat":"siège","customer":"Client","prospect":"Prospect","investor":"Investisseur","partner":"Partenaire","supplier":"Fournisseur","company":"Entreprise","team":"Équipe","board":"Conseil","product":"Produit","other":"Autre","connection":"Connexion","skill":"Compétence","against":"Écarté : {x}.","land":"À trancher : {q}","replaces":"Remplace {x}","replaced_by":"Remplacé par {x}","conflicts_with":"En conflit avec {x}","added_week":"Ajouté cette semaine","proposed_m":"Proposé, à garder ou écarter","you":"Vous","and":"et","keep":"Garder","drop":"Écarter","decline":"Refuser","saved":"Enregistré","not_saved":"Non enregistré","waiting":"en attente de Claude","kept_m":"Gardé","dropped_m":"Écarté","declined_m":"Refusé","added_m":"Ajouté","changed_m":"Modifié","moved_m":"Déplacé","save":"Enregistrer","copy_for_claude":"Copier pour Claude","discard":"Abandonner","add_priority":"Ajouter une priorité","full":"La liste tient 5 lignes au plus. Écartez-en une pour en ajouter une.","full_this":"La liste tient 5 lignes au plus. Écartez-en une pour ajouter celle-ci.","empty_list":"La liste ne peut pas être vide.","one_empty":"Une ligne est vide.","needs_ahead":"Chaque priorité dit ce qu’elle précède.","no_change":"Rien n’a changé.","changes_n":["{n} changement","{n} changements"],"ahead_label":"Avant","ahead_ph":"ce qu’elle précède","pending":"Copié, à coller dans une nouvelle session.","saved_list":"Enregistré. Le brief de demain se classe sur cette liste.","propose_note":"Proposé depuis le sujet {t}. Ce qu’elle précède est à vous.","add_as_priority":"L’ajouter comme priorité","pri_label":"Priorité {n}","ahead_aria":"Ce que la priorité {n} précède","up_aria":"Monter la priorité {n}","down_aria":"Descendre la priorité {n}","drop_aria":"Écarter la priorité {n}","ch_added":"Ajouté : {l}","ch_reworded":"Reformulé : « {a} » devient « {b} »","ch_dropped":"Écarté : {l}","ch_reordered":"Réordonné.","edit_head":"J’ai changé mes priorités. Mets à jour mon Super Context pour que les priorités se lisent exactement ainsi, dans cet ordre. Garde mes mots et ne change rien d’autre.","edit_changed":"Ce qui a changé :","edit_was":"C’était :","edit_ask":"Avant d’écrire, dis-moi :\n- ce que cela déplace sur le brief de demain, et quelles décisions ou tâches en sortent\n- quels sujets en cours ne servent plus aucune priorité\n- pour chaque ligne écartée, la décision que tu ajouterais au journal, avec ce qu’elle écarte. Demande-moi avant de l’ajouter.\n\nPuis écris, et mets la date de confirmation de chaque ligne touchée à ce jour.","keep_briefing":"Dans mon Super Context, marque cette décision proposée comme gardée : « {say} » ({when}, {by}). Ne change rien d’autre.","drop_briefing":"Dans mon Super Context, marque cette décision proposée comme écartée : « {say} » ({when}, {by}). Ne change rien d’autre.","decline_briefing":"Dans mon Super Context, refuse cette suggestion et ne la propose plus : {say}","rewritten":"Réécrit à {t}","proposed_pri_n":["{n} proposée comme priorité","{n} proposées comme priorités"],"proposed_dec":"{n} proposées cette semaine · {k} gardées","q_open":"« ","q_close":" »","hist_page":"Modifié sur la page"}};
   /* ================ THE DESIGN SYSTEM, ONE SOURCE: BEHAVIOUR ================
@@ -917,22 +922,24 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
     el_.scrollIntoView({behavior:'smooth',block:'center'});
   }
 
-  /* ================ THE PRIORITY INBOX ================ */
-  function chip(label,tint){ return el('span','cat'+(tint?' '+tint:''),label||''); }
-  function quoted(s){ return L('q_open')+s+L('q_close'); }
+  /* ================ THE DAILY BRIEF ================ */
+  function metaEl(mt){
+    var s=el('span','meta'); if(!mt || !mt.kind || mt.kind==='none') return s;
+    var v=mt.value==null?'':String(mt.value);
+    if(mt.kind==='time' || mt.kind==='date') s.textContent=v;
+    else if(mt.kind==='before') s.textContent=F(L('m_before'),{v:v});
+    else if(mt.kind==='asked') s.textContent=F(L('m_asked'),{v:v});
+    else if(mt.kind==='late'){ s.textContent=F(L('m_late'),{v:v}); s.classList.add('late'); }
+    return s;
+  }
 
-  /* a queue row: tier, channel mark, sentence, label and arrival */
-  function queueRow(it){
+  /* a list row: the sentence, the time, and a reveal that opens on the ask */
+  function row(it,i){
     var r=el('div','row'); r.id=it.id;
     var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
     b.onclick=function(){ t(b); };
-    var tier=it.tier==='now'?'now':it.tier==='today'?'today':'week';
-    var say=el('span','say'); add(say, channel(it.channel), it.say||'');
-    var meta=el('span','meta');
-    if(it.label && it.label.name) add(meta, chip(it.label.name,it.label.tint));
-    add(meta, it.meta && it.meta.value!=null ? String(it.meta.value) : '');
-    var dec=el('span','dec'); add(dec,say);
-    add(b, el('span','tier '+tier,L('tier_'+tier)), dec, meta);
+    var dec=el('span','dec'); add(dec, el('span','say',it.say));
+    add(b, el('span','n',String(i+1)), dec, metaEl(it.meta));
     add(r,b);
     var w=el('div','why');
     if(it.lede) add(w, el('p','lede',it.lede));
@@ -943,75 +950,135 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
     add(r,w);
     return r;
   }
+  function list(items){
+    var l=el('div','list'); (items||[]).forEach(function(it,i){ add(l,row(it,i)); }); return l;
+  }
 
-  /* a filed label: the tally, the chip, the sentence, the count per channel, and a
-     reveal that opens on the rule and on what is inside */
-  function filedRow(f,withRule){
-    var r=el('div','row'); r.id=f.id;
-    var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
-    b.onclick=function(){ t(b); };
-    var say=el('span','say'); add(say, chip(f.label,f.tint), f.say||'');
-    var meta=el('span','meta'), bc=f.by_channel||{};
-    ['mail','slack','teams'].forEach(function(c){
-      if(bc[c]) add(meta, channel(c,'ch sm'), String(bc[c]));
-    });
-    var dec=el('span','dec'); add(dec,say);
-    add(b, el('span','n',String(f.count==null?'':f.count)), dec, meta);
-    add(r,b);
-    var w=el('div','why');
-    if(f.lede) add(w, el('p','lede',f.lede));
-    if(withRule && f.tint==='arch' && f.rules && f.rules.length){
-      add(w, typeTag('rule'));
-      var tight=el('div','tight');
-      f.rules.forEach(function(x){ var p=el('p'); add(p, el('b',null,String(x.count)), quoted(x.rule||'')); add(tight,p); });
-      add(w,tight);
-    } else if(withRule && f.rule){
-      add(w, typeTag('rule'), el('p',null,quoted(f.rule)));
-    }
-    paras(w,f.plain,'plain');
-    var items=(f.contents||[]).slice(0,5);
-    if(items.length){
-      var mini=el('div','mini');
-      items.forEach(function(x){
-        var a=link(x.href,''); a.textContent='';
-        add(a, channel(x.channel), el('b',null,x.from||''), x.what||'');
-        if(a.getAttribute('href')!=='#'){ a.setAttribute('target','_blank'); a.setAttribute('rel','noopener'); }
-        add(mini,a);
-      });
-      var more=(f.count|0)-items.length;
-      if(more>0){
-        var ma=link(f.href, F(L(withRule?'more_label':'more_group'),{n:more}), 'more');
-        if(ma.getAttribute('href')!=='#'){ ma.setAttribute('target','_blank'); ma.setAttribute('rel','noopener'); }
-        add(mini,ma);
-      }
-      add(w,mini);
-    }
-    add(w, srcRow(f.sources,f.briefing));
-    add(r,w);
-    return r;
+  /* a tagged cell of a brief card */
+  function cell(tag,cls){
+    var d=el('div',cls); add(d, el('span','tag',tag)); return d;
+  }
+  function pOrGo(box,v,cls){
+    if(!v) return;
+    if(v.go) add(box, goRow(v.go));
+    if(v.text) add(box, el('p',cls,v.text));
   }
 
   function render(){
     var d=loadData(), page=$('page');
-    var q=d.queue||[], filed=d.filed||[], grouped=d.grouped||[], counts=d.counts||{};
-    var mail=counts.mail|0, chat=counts.chat|0;
+    var strip=d.strip||{}, meetings=strip.meetings||[], decisions=d.decisions||[], jobs=d.jobs||[];
 
-    header(page,'page_inbox', P('unread_mail_n',mail)+', '+P('unread_chat_n',chat)+'. '+P('need_you_n',q.length));
+    /* the title: numerals, computed from the rows so they cannot disagree */
+    var nMeet=0, nClash=0;
+    meetings.forEach(function(mt){ if(mt.clash){ nClash++; nMeet+=(mt.meetings||[]).length; } else nMeet++; });
+    var parts=[P('meetings_n',nMeet)];
+    if(nClash) parts.push(P('clashes_n',nClash));
+    parts.push(P('decisions_n',decisions.length), P('jobs_n',jobs.length));
+    header(page,'page_brief',parts.join(', '));
 
-    /* ---- the queue ---- */
-    add(page, h2(L('needs_you'),F(L('of'),{n:q.length,t:mail+chat})), cap(L('cap_queue')));
-    var ql=el('div','list queue'); q.forEach(function(it){ add(ql,queueRow(it)); }); add(page,ql);
-
-    /* ---- the filing, or the grouping ---- */
-    var bulk = filed.length ? filed : grouped, withRule = filed.length>0;
-    if(bulk.length){
-      var sum=0; bulk.forEach(function(f){ sum+=(f.count|0); });
-      add(page, h2(L(withRule?'labelled':'grouped'),String(sum)), cap([L(withRule?'cap_filed':'cap_grouped')]));
-      var fl=el('div','list filed'); bulk.forEach(function(f){ add(fl,filedRow(f,withRule)); }); add(page,fl);
+    /* metrics, only when the routine has a source */
+    if(d.metrics && d.metrics.tiles && d.metrics.tiles.length){
+      var mx=el('div','metrics');
+      d.metrics.tiles.forEach(function(tile){
+        var tl=el('div','tile'); add(tl, el('b',null,String(tile.value)), el('span',null,tile.label||'')); add(mx,tl);
+      });
+      if(d.metrics.source) add(mx, el('div','from',d.metrics.source));
+      add(page,mx);
     }
 
-    var right = d.wrote ? L('labels_only') : L('nothing_written');
-    add(page, footer([d.next_run ? F(L('next_run'),{t:d.next_run}) : '', right]), credit());
+    /* ---- the day ---- */
+    var start=minutes(strip.start||'08:00'), end=minutes(strip.end||'18:00'), total=Math.max(end-start,1);
+    var pct=function(mins){ return (mins-start)/(total/100); };
+    var busy=[];
+    meetings.forEach(function(mt){
+      if(mt.clash) (mt.meetings||[]).forEach(function(x){ busy.push([minutes(x.start),minutes(x.end)]); });
+      else busy.push([minutes(mt.start),minutes(mt.end)]);
+    });
+    busy=busy.filter(function(iv){ return !isNaN(iv[0]) && !isNaN(iv[1]); });
+    busy.sort(function(a,b){ return a[0]-b[0]; });
+    var merged=[];
+    busy.forEach(function(iv){
+      var last=merged[merged.length-1];
+      if(last && iv[0]<=last[1]) last[1]=Math.max(last[1],iv[1]); else merged.push([iv[0],iv[1]]);
+    });
+    var booked=0; merged.forEach(function(iv){ booked+=iv[1]-iv[0]; });
+    var gaps=[], cursor=start;
+    merged.forEach(function(iv){ if(iv[0]-cursor>=60) gaps.push([cursor,iv[0]]); cursor=Math.max(cursor,iv[1]); });
+    if(end-cursor>=60) gaps.push([cursor,end]);
+
+    var tally=el('b',null,F(L('booked'),{t:span(booked)}));
+    if(nClash) add(tally, ' ', el('em',null,'· '+P('clashes_n',nClash)));
+    add(page, h2(L('your_day'),tally));
+    var ends=el('div','ends'); add(ends, el('span',null,strip.start||'08:00'), el('span',null,strip.end||'18:00'));
+    add(page,ends);
+
+    var st=el('div','strip'); add(st, el('div','track'));
+    gaps.forEach(function(g){
+      var w=pct(g[1])-pct(g[0]), f=el('div','free', w>=14 ? F(L('clear'),{t:span(g[1]-g[0])}) : span(g[1]-g[0]));
+      f.style.setProperty('--l',pct(g[0])+'%'); f.style.setProperty('--w',w+'%');
+      add(st,f);
+    });
+    var briefs=[];
+    meetings.forEach(function(mt){
+      var b=el('button'), lbl=el('span','lbl'), bid='b-'+mt.id;
+      b.type='button'; b.id=mt.id; b.dataset.b=bid; b.setAttribute('aria-expanded','false');
+      b.onclick=function(){ m(b); };
+      var card=el('div','why brief mbrief'); card.id=bid;
+      if(mt.clash){
+        var inner=(mt.meetings||[]), s0=Infinity, e0=-Infinity;
+        inner.forEach(function(x){ s0=Math.min(s0,minutes(x.start)); e0=Math.max(e0,minutes(x.end)); });
+        var n=inner.length, sp=Math.max(e0-s0,1);
+        b.className='mt clash'+(n>=3?' three':'');
+        b.style.setProperty('--l',pct(s0)+'%'); b.style.setProperty('--w',(sp/(total/100))+'%');
+        inner.slice(0,3).forEach(function(x,k){
+          var blk=el('span','blk');
+          blk.style.setProperty('--l',((minutes(x.start)-s0)/(sp/100))+'%');
+          blk.style.setProperty('--w',((minutes(x.end)-minutes(x.start))/(sp/100))+'%');
+          blk.style.setProperty('--lane',String(k));
+          add(b,blk);
+        });
+        add(lbl, el('b',null,inner[0]?inner[0].start:''), n===2 ? L('two_at_once') : F(L('n_at_once'),{n:n}));
+        add(b,lbl);
+        /* the clash brief: a column per meeting, each ending on what it costs to move
+           that one, then the choice, then the read */
+        card.classList.add('clash');
+        var a=inner[0]?inner[0].start:'', z='';
+        inner.forEach(function(x){ if(minutes(x.end)===e0) z=x.end; });
+        add(card, el('div','bhead',F(L('clash_head'),{a:a,b:z,what: n===2 ? L('two_meetings_one') : F(L('n_meetings_one'),{n:n})})));
+        inner.forEach(function(x){
+          var c=cell(x.start+' · '+(x.title||''));
+          if(x.text) add(c, el('p',null,x.text));
+          if(x.cost) add(c, el('p','plain',x.cost));
+          add(card,c);
+        });
+        var tl=cell(L('to_land'),'wide'); pOrGo(tl,mt.to_land); add(card,tl);
+        var im=cell(L('in_mind'),'wide'); pOrGo(im,mt.in_mind,'plain'); add(card,im);
+        add(card, srcRow(mt.sources,mt.briefing));
+      } else {
+        b.className='mt'+(mt.key?' key':'');
+        b.style.setProperty('--l',pct(minutes(mt.start))+'%');
+        b.style.setProperty('--w',((minutes(mt.end)-minutes(mt.start))/(total/100))+'%');
+        add(b, el('span','blk'));
+        add(lbl, el('b',null,mt.start), mt.label||''); add(b,lbl);
+        var br=mt.brief||{};
+        var head=mt.start+' · '+(br.title||mt.label||'')+' · '+span(minutes(mt.end)-minutes(mt.start))+(br.note?' · '+br.note:'');
+        add(card, el('div','bhead',head));
+        var who=cell(L('who')); add(who, el('p',null,br.who||'')); add(card,who);
+        var bef=cell(L('before')); add(bef, el('p',null,br.before||'')); add(card,bef);
+        var tl2=cell(L('to_land'),'wide'); pOrGo(tl2,br.to_land); add(card,tl2);
+        var im2=cell(L('in_mind'),'wide'); pOrGo(im2,br.in_mind,'plain'); add(card,im2);
+        add(card, srcRow(br.sources,br.briefing));
+      }
+      add(st,b); briefs.push(card);
+    });
+    add(page, st, cap(L('cap_strip')));
+    briefs.forEach(function(c){ add(page,c); });
+
+    /* ---- the two lists ---- */
+    add(page, h2(L('decisions_to_land'),String(decisions.length)), list(decisions));
+    add(page, h2(L('jobs_to_do'),String(jobs.length)), list(jobs));
+
+    add(page, footer(d.footer||[]), credit());
   }
   render();
 </script>

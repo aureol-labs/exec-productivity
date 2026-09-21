@@ -18,7 +18,7 @@
   appears only when the weekly review found something.
 
   THE STORE
-  The page is a projection of the plugin's database (skills/context/references/
+  The page is a projection of the plugin's database (skills/aureol-context/references/
   store.md). It writes three things back from the browser, through claude.use("db"):
   the priorities editor, Keep and Drop on a proposed decision, Decline on a
   suggestion. Nothing else on any page writes. `window.claude` carries `use` and
@@ -42,7 +42,7 @@
   English or French from data.lang. Data is never translated by the page.
   tools/check-page.py refuses a document that breaks a rule below.
 
-  THE JSON, IN SHORT (the full fixture is skills/context/references/example.json)
+  THE JSON, IN SHORT (the full fixture is skills/aureol-context/references/example.json)
     lang, date_label, time_label, today, sub, gesture, links   as on every page
     priorities    [ { id, say, ahead, short, confirmed, lede, argument: [p], yours,
                       history: [{date, event}], go: [ref], sources, briefing } ]
