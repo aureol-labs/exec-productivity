@@ -173,8 +173,9 @@ Write `rules`.
 ## 8. The habits
 
 List the scheduled tasks. `Aureol morning`, `Aureol inbox` or `Aureol weekly` already there: keep it, create only
-the missing ones. One question: "Anyone else run your assistant from another account?" Then one question for
-the morning time, options 06:30, 06:50, 07:30, free entry, 06:50 first. Then one question for the
+the missing ones. Open the series with one line: "Three habits, on your account: the morning brief, the inbox
+through the day, the Friday review. Three questions on when, and how to be told." Then one question for the
+morning time, options 06:30, 06:50, 07:30, free entry, 06:50 first. Then one question for the
 inbox rhythm, options "every hour, 08:00 to 18:00" (first), "twice a day, 12:30 and 16:30", "once,
 at 12:30", free entry. The page is always current whatever the rhythm; the rhythm only decides how
 fresh.
