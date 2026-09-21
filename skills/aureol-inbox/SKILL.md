@@ -17,24 +17,28 @@ document (shape in its head comment and `references/example.json`).
    mark as read, never a move, never an archive. `To archive` is a label the exec clears in their own mailbox.
 2. **Every write is listed** on the page, under the label, with its count and the rule in the exec's words.
    A label without a rule is not applied.
-3. **The test for the queue is stated on the page**: someone is blocked, a promise is late, or only the exec can
+3. **The main inbox only.** Unless `connections/preferences.mail_scope` is `all`, every read, every count and
+   every queue line comes from the mailbox's main inbox: Gmail's Primary category (`category:primary`), Outlook's
+   Focused inbox where it exists, and never from Promotions, Social, Updates, Forums, Other, Junk or Clutter.
+   The h1's unread count is that inbox's count, and the sub says so in three words ("in your main inbox").
+4. **The test for the queue is stated on the page**: someone is blocked, a promise is late, or only the exec can
    answer. A group ask anyone could answer is not the exec's. A thread the exec already replied to or reacted to
    is out. Check the thread before ranking it, not the snippet. **Unread first**: the queue is built from unread
    mail and unread messages; a thread the exec has read but not answered enters only when someone is visibly
    still waiting (a follow-up, a question with no reply), and the h1's counts are the real unread counts from
    the tools, never estimated.
-4. **A dropped line stays dropped.** Read `dismissals` from the inbox page's store before ranking (the store is
+5. **A dropped line stays dropped.** Read `dismissals` from the inbox page's store before ranking (the store is
    the page's own, at `connections/current.pages.inbox`). A thread dropped as done or not important never comes
    back, and a `done` also covers its follow-ups for 7 days. Give every queue line a stable `ref` (the thread id
    or link) so the page can record the drop.
-5. **Now is a clock the exec does not control**: an offer that lapses tonight, a deck that locks tomorrow, a
+6. **Now is a clock the exec does not control**: an offer that lapses tonight, a deck that locks tomorrow, a
    build that starts after lunch. Importance is not a tier. Then Today, then This week. Inside a tier, oldest
    first.
-6. **The right column is when it arrived.** A time if today, a date otherwise. No due time you invented, no
+7. **The right column is when it arrived.** A time if today, a date otherwise. No due time you invented, no
    computed lateness, no brick on this page.
-7. **Every reveal leads with the ask**, one line, then the type, then the reason, three sources, and a briefing
+8. **Every reveal leads with the ask**, one line, then the type, then the reason, three sources, and a briefing
    that is your summary plus pointers and ends "do not send" when it drafts.
-8. **The lead is a count, not a claim.** "61 unread mails, 41 unread messages. 9 need you." Filing is not
+9. **The lead is a count, not a claim.** "61 unread mails, 41 unread messages. 9 need you." Filing is not
    judging, so the filed list is "labelled, still unread".
 
 ## 0. Read, probe
