@@ -128,11 +128,14 @@ across every connected role, meetings first; it publishes the Super Context arti
 Then the priorities, on the question tool only, introduced first by one line: "Your priorities, as I read them
 in your last 30 days. Keep, reword or drop each one." For each proposed priority (five at most), one question
 whose text carries the frame: "Priority 1 of 4, as I read it: "Sign a first paid mission before the end of
-October." Keep it?" Options: Keep, with the evidence in one line under it; Reword, "type yours below"; Drop.
-For each kept one, one question: "Priority 1, "Sign a first paid mission...": ahead of what?" with the other
-priorities as options plus free entry. Write `priorities` in the exec's own words, `confirmed` today, `yours` verbatim, a unique `short` name that
-is not a topic or entity name. Republish the page. Then one line and the link: "Your Super Context. Your
-assistant starts every conversation from it."
+October." Keep it?" Options: Keep, and under it what it comes before as you read it ("ahead of polishing the
+plugin: three threads this month went that way"); Reword, "type yours below"; Drop. Never ask "ahead of what":
+you propose it from the evidence, the exec corrects it on the page. Then one question on the order: "Is this the
+order?" with the kept list numbered in the question text and options "Yes", "Change it" (type the order).
+Write `priorities` in the exec's own words, `ahead` as you read it, `confirmed` today, `yours` verbatim, a
+unique `short` name that is not a topic or entity name. Republish the page. Then one line and the link: "Your
+Super Context. Your assistant starts every conversation from it. The Edit button changes any line, including
+what each priority comes before."
 
 ## 5. The first brief
 

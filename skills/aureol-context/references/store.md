@@ -76,7 +76,8 @@ Written by install from the exec's answers, then only by the page's editor. The 
   "status": "live" }
 ```
 
-`short` is the name the topics' Serves column and every other page use; it must be unique across priorities and
+`ahead` is what the priority comes before, the trade-off the brief ranks with; install and the routine propose
+it from the evidence, the exec corrects it in the page's editor. `short` is the name the topics' Serves column and every other page use; it must be unique across priorities and
 must not equal any topic or entity name. A dropped priority keeps its document with `status: "dropped"`,
 `dropped_at`, and the routine appends a proposed decision for it.
 
