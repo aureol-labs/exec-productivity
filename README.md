@@ -13,7 +13,7 @@ says "you refused this exact shape in July".
 
 In the Claude desktop app:
 
-1. Plugins, add a marketplace from the repo `paul-r-92/aureol-exec-productivity`, install **Make me productive**.
+1. Plugins, add a marketplace from the repo `aureol-labs/exec-productivity`, install **Make me productive**.
 2. Type `/`, choose **Make me productive**, and answer its questions. About ten minutes. It ends on your first
    brief.
 3. Pin the three pages.

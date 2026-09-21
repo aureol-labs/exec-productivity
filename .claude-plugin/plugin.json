@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "description": "Make me productive: an executive's daily operating routines, run by Claude in Cowork. A guided install that ends on your first brief, a Super Context your assistant starts every session from (priorities, live topics, people, decisions), a daily brief every weekday morning, a priority inbox across mail and chat through the day, and a Friday review that finds the asks a connection would have answered. Reads your mail, calendar, chat, documents and meetings. Sends nothing, deletes nothing.",
   "author": {
-    "name": "Paul Rousselle, Aureol",
+    "name": "Paul Rousselle, Aureol Labs",
     "url": "https://aureol.co"
   },
-  "repository": "https://github.com/paul-r-92/aureol-exec-productivity",
+  "repository": "https://github.com/aureol-labs/exec-productivity",
   "keywords": [
     "executive",
     "daily-brief",
