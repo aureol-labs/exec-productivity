@@ -187,7 +187,7 @@
     "empty_list": "The list cannot be empty.",
     "one_empty": "One line is empty.",
     "needs_ahead": "Every priority says what it comes before.",
-    "no_change": "Nothing changed yet.",
+    "no_change": "Change a line, then Save.",
     "changes_n": [
       "{n} change",
       "{n} changes"
@@ -411,7 +411,7 @@
     "empty_list": "La liste ne peut pas être vide.",
     "one_empty": "Une ligne est vide.",
     "needs_ahead": "Chaque priorité dit ce qu’elle précède.",
-    "no_change": "Rien n’a changé.",
+    "no_change": "Modifiez une ligne, puis Enregistrer.",
     "changes_n": [
       "{n} changement",
       "{n} changements"

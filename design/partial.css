@@ -442,8 +442,11 @@
   .emsg.bad{color:var(--brick)}
   .ebar .e-x{color:var(--ink-3)}
   .ebar .e-x:hover{color:var(--ink)}
-  .ebar .e-go{font-weight:600;color:var(--pine)}
-  .ebar .e-go:disabled{font-weight:400;color:var(--ink-3);cursor:default}
+  .ebar .e-go{font-weight:600;color:#fff;background:var(--pine);border:1px solid var(--pine);
+     border-radius:999px;padding:5px 14px;line-height:1.4}
+  .ebar .e-go:hover{background:var(--pine-ink);border-color:var(--pine-ink)}
+  .ebar .e-go:disabled{font-weight:500;color:var(--ink-3);background:none;border-color:var(--hair);cursor:default}
+  .ebar .e-x{padding:5px 0}
   .ectl button:focus-visible,.eadd button:focus-visible,.ebar button:focus-visible{
      outline:2px solid var(--pine);outline-offset:2px}
 
