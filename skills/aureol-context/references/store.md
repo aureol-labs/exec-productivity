@@ -84,7 +84,8 @@ must not equal any topic or entity name. A dropped priority keeps its document w
 ### `topics`, rewritten every morning
 
 ```json
-{ "name": "Aviva discount", "state": "19% asked, 12% rule, no answer yet.",
+{ "name": "Aviva discount", "aka": ["the Aviva thing", "the discount"],
+  "state": "19% asked, 12% rule, no answer yet.",
   "serves": "p3", "last_from_you": "2026-09-10",
   "read": "One paragraph, the routine's read.",
   "who": [ { "ref": "people/nadia", "note": "owns the deal" } ],
@@ -95,7 +96,8 @@ must not equal any topic or entity name. A dropped priority keeps its document w
   "live": true }
 ```
 
-`serves` is a priority id or `null` (rendered as None). `next` is a list or `null` (rendered "Nothing booked").
+`aka` holds the shorthand the exec and their colleagues use for the topic, read off the threads, so a chat
+that says "the Aviva thing" resolves; same on people and entities. `serves` is a priority id or `null` (rendered as None). `next` is a list or `null` (rendered "Nothing booked").
 `late: true` on a `next` entry renders in brick with "Was due <date>" and is allowed only when the date comes from
 a decision or a promise the routine can point at. `gesture` is `ask`, `add_priority` or `none`.
 

@@ -1,5 +1,6 @@
 ---
 name: aureol-brief
+user-invocable: false
 description: Write today's Daily brief for the executive: the day strip from the calendar with double bookings designed for, the decisions to land (three, each with a precedent, a knock-on, a pattern or a history), the jobs to do before a wall on the strip, every reveal ending on its sources and an Ask Claude briefing. Reads the Super Context store first, then calendar, mail, chat and meetings. Load from the morning task, from install for the first brief, or when the exec asks for their day.
 ---
 

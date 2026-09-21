@@ -1,5 +1,6 @@
 ---
 name: aureol-context
+user-invocable: false
 description: Build or refresh the executive's Super Context, the page every conversation starts from and the store every other habit reads. Reads mail, calendar, chat, documents and meetings; rewrites the live topics, the people and organisations, the summary; proposes decisions with what each was decided against; never edits the priorities. Three modes, bootstrap (install, 30 days), morning (the daily pass) and render (republish the page from the store). Load from install, from the morning task, or when the exec asks what the assistant knows about their work.
 ---
 
@@ -51,7 +52,9 @@ at what a morning can hold and write the counts to the run.
 ## 2. Judge
 
 - **Live topics.** A thread of work with something open, named in the fewest unique words, the same name every
-  page will use. Each serves one priority (`serves` is its id) or none. `state` is one line. `last_from_you` is
+  page will use. A topic stops being live by a stated rule, not by mood: nothing on it from anyone in 30 days,
+  or the thing it was about is settled (a decision, a signature, a date passed). It leaves the page with its
+  `so_far` intact and its last date, never deleted. Each serves one priority (`serves` is its id) or none. `state` is one line. `last_from_you` is
   the last date something came from the exec on it, read off a message or an invite, or `null` ("Not yet").
   `next` lists what is booked, or `null`; `late: true` only on a date the exec themselves set or a decision
   fixed, with that source. `who` lists refs with a relation note phrased about the relation so it reads from

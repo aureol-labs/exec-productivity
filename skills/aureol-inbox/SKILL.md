@@ -1,5 +1,6 @@
 ---
 name: aureol-inbox
+user-invocable: false
 description: Write the executive's Priority inbox: mail and chat in one queue, ranked by who is blocked and for how long, with a tier word on every line (Now, Today, This week) and the ask as the first line of every reveal. Applies labels only where the mail connection can write them and only from rules the exec confirmed, and lists every write with its rule; never archives, deletes, moves, sends or marks as read. Load from the inbox task, or when the exec asks what needs them.
 ---
 

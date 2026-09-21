@@ -1,5 +1,6 @@
 ---
 name: aureol-review
+user-invocable: false
 description: The Friday review, and the same scan at install: read the executive's own asks to colleagues (sent mail, sent messages, meetings), keep the ones a connection would have answered directly, check which systems have a connection, and propose them on the Super Context page with the asks as evidence; an ask that repeats becomes a skill candidate. Writes asks and suggestions, never proposes a declined one twice, renders nothing of its own. Load from the weekly task, from install, or when the exec asks what could be automated.
 ---
 
