@@ -29,8 +29,11 @@ ones that bite are below.
    that drafts something ends "do not send".
 7. **A dropped line stays dropped.** Read `dismissals` from the brief page's own store
    (`connections/current.pages.brief`) before selecting. A job or decision dropped as done or not important is
-   not proposed again; a `done` becomes a `so_far` fact on the topic it served. Give every decision and job a
-   stable `ref` (the source thread, or `brief:<slug>`).
+   not proposed again on this run or any later one, because every run reads the whole collection. That only
+   holds if the ref is the same across runs: give every decision and job the id of its source thread or
+   calendar event as `ref`, and only when there is none `brief:<slug of the ask>`. A `done` also becomes a
+   `so_far` fact on the topic it served, so the morning pass knows it happened rather than merely hiding it.
+   Prune `done` dismissals older than 30 days; keep `not_important` ones.
 8. **Ranking is against the priorities.** Left alone you rank by mail volume, which is always new business.
    Rank against `priorities` in their order, and take topic names and roles from the store so every page says
    the same words.
