@@ -2,8 +2,9 @@
 
 A Claude plugin that runs a time-poor executive's daily operating routines in Claude Cowork and produces three
 pages: a Super Context the assistant starts every conversation from, a Daily brief every weekday morning, and a
-Priority inbox twice a day. A Friday review reads the exec's own asks to colleagues and proposes the connections
-and skills that would have answered them. Built by [Aureol](https://aureol.co).
+Priority inbox through the day. A review at the end of each weekday looks at the last seven days for the work
+Claude could do instead of the exec, and proposes only what can be added, a connection, a ready-made plugin, a
+routine or a skill, staying silent when there is nothing new. Built by [Aureol](https://aureol.co).
 
 Not a dashboard. Not a task manager. A notebook that arrives already written, and gets better the longer it runs:
 the brief asks for decisions, Super Context records them with what they were decided against, and tomorrow's brief
@@ -33,7 +34,7 @@ archives or marks as read.
 |---|---|---|
 | morning | weekdays, at the time chosen at install (proposed from the calendar: 30 minutes before the usual first meeting) | Super Context refreshed, the Daily brief, the day's first Priority inbox |
 | inbox | weekdays, 11:30, 13:30 and 16:30 by default (the morning run is the fourth pass); hourly as an option | Priority inbox, and what it learned into Super Context |
-| weekly | Friday 16:30 | the review, on Super Context |
+| review | weekdays 17:30 | the review, on Super Context; silent when nothing new |
 
 Each habit runs in the cloud, so it runs with the laptop shut. Its result is the pinned page. How the exec is
 told is their choice at install, per habit, after a test notification: a one-line notification (desktop, and
@@ -54,8 +55,8 @@ ranks against it. Then:
    learned into the store: a reply from the exec, a new fact on a topic, a decision taken in a thread. It never
    adds a topic or touches the priorities; that judgement stays with the morning. Nothing new, nothing
    published.
-3. **Friday, 16:30**: `aureol-review` reads the exec's own asks of the week and proposes connections and skills
-   on Super Context.
+3. **End of day, 17:30**: `aureol-review` looks at the last seven days for the work Claude could do instead of
+   the exec and proposes what to add on Super Context; nothing new, one line and no notification.
 
 The exec's writes come from the page: priorities in the editor, keep and drop on decisions, decline on a
 suggestion. The routines propose; the exec decides.
@@ -68,7 +69,7 @@ suggestion. The routines propose; the exec decides.
 | `aureol-context` | Super Context: topics, people, entities, proposed decisions, the summary, the page |
 | `aureol-brief` | the Daily brief |
 | `aureol-inbox` | the Priority inbox |
-| `aureol-review` | the Friday review: asks, connections, skill candidates |
+| `aureol-review` | the end-of-day review: where Claude would do the work, and what to add for it |
 | `help` | the assistant explaining and fixing itself |
 
 The store every skill reads and writes: [skills/aureol-context/references/store.md](skills/aureol-context/references/store.md).

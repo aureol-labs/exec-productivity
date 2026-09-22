@@ -49,10 +49,10 @@ is connected but answered nothing is `null` with a `note`.
 
 ```json
 { "language": "fr", "timezone": "Europe/Paris", "first_name": "Clovis",
-  "morning": "08:30", "inbox": ["11:30", "13:30", "16:30"], "weekly": "Fri 16:30",
+  "morning": "08:30", "inbox": ["11:30", "13:30", "16:30"], "review": "17:30",
   "caps": { "decisions": 3, "jobs": 3 }, "tiers": ["Now", "Today", "This week"],
   "gesture": "copy", "metrics": null,
-  "notify": { "brief": "push", "inbox": "none", "weekly": "push" },
+  "notify": { "brief": "push", "inbox": "none", "review": "push" },
   "installed": "2026-09-22", "plugin_version": "0.1.0" }
 ```
 
@@ -62,7 +62,7 @@ notification only when something is Now), `email` (one message to the exec's own
 only where the mail role can send, never for the inbox), or `none` (the pinned page). Chosen at install, per
 habit, after a test notification. Nothing is automatic: the run decides from this value.
 
-`morning` is the time chosen at install, proposed from the calendar. `inbox` is a list of times (weekdays; the default `["11:30", "13:30", "16:30"]`, the morning run being the
+`morning` is the time chosen at install, proposed from the calendar. `review` is the end-of-day time of the daily review, 17:30 by default; its notification fires only on a day something new qualified. `inbox` is a list of times (weekdays; the default `["11:30", "13:30", "16:30"]`, the morning run being the
 fourth pass; the times share one minute value so they fit one schedule line) or `"hourly"` (every hour from one hour after `morning` to 18:00). `mail_scope` is `"main"` (the
 default) or `"all"`: every skill that reads mail, context, brief, inbox and review, reads the mailbox's main
 inbox only under `main`, Gmail's Primary category, Outlook's Focused inbox where it exists, and leaves the
@@ -173,7 +173,7 @@ Seven at most, `tint` one of `sales | product | board | customers | hiring | lat
 written in the mailbox, in the exec's language ("À archiver", not "To archive", for a French exec); `tint` is
 the colour slot and never shows. `archive: true` is the To archive label, drawn as an outline.
 
-### `asks` and `suggestions`, the weekly review
+### `asks` and `suggestions`, the end-of-day review
 
 ```json
 { "date": "2026-09-17", "to": "people/julien", "what": "The cohort numbers for the board pack.",
