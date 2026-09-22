@@ -45,8 +45,13 @@ document (shape in its head comment and `references/example.json`).
    computed lateness, no brick on this page.
 8. **Every reveal leads with the ask**, one line, then the type, then the reason, three sources, and a briefing
    that is your summary plus pointers and ends "do not send" when it drafts.
-9. **The lead is a count, not a claim.** "61 unread mails, 41 unread messages. 9 need you." Filing is not
-   judging, so the filed list is "labelled, still unread".
+9. **The lead is a count, not a claim, and every unread is somewhere on the page.** "61 unread mails, 41 unread
+   messages. 9 need you." The unread set is the whole main inbox's unread, not only what arrived since the last
+   run: the window decides what is re-read and re-ranked, never what is counted. Each unread lands in exactly one
+   place: the queue, a label (or a group where labels cannot be written), or `others`, one closing line "N more
+   unread, nothing asked of you" with up to three examples. Queue plus filed plus others equals the title, mail
+   and chat separately; `check-page` refuses a page where it does not. Filing is not judging, so the filed
+   list is "labelled, still unread".
 
 ## 0. Read, probe
 

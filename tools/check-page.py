@@ -377,6 +377,25 @@ def check_inbox(d, r, others):
                     r.bad(p, 'a group carries no rule: nothing was written')
     if d.get('next_run') is not None and not TIME.match(str(d['next_run'])):
         r.bad('$.next_run', 'HH:MM')
+    # every unread is somewhere on the page: the title's counts reconcile with the rows
+    oth = d.get('others') or {}
+    if oth and not isinstance(oth, dict):
+        r.bad('$.others', 'others is an object with mail, chat and up to 3 examples')
+        oth = {}
+    if len(oth.get('examples') or []) > 3:
+        r.bad('$.others.examples', 'three examples at most')
+    bulk = filed or grouped
+    on_page = {
+        'mail': sum(1 for row in q if row.get('channel') == 'mail')
+                + sum(((x.get('by_channel') or {}).get('mail') or 0) for x in bulk) + (oth.get('mail') or 0),
+        'chat': sum(1 for row in q if row.get('channel') in ('slack', 'teams'))
+                + sum(((x.get('by_channel') or {}).get('slack') or 0) + ((x.get('by_channel') or {}).get('teams') or 0)
+                      for x in bulk) + (oth.get('chat') or 0),
+    }
+    for k in ('mail', 'chat'):
+        if isinstance(counts.get(k), int) and counts[k] != on_page[k]:
+            r.bad('$.counts.' + k, 'the title says %d unread %s, the page accounts for %d: every unread is waiting, filed, or in others'
+                  % (counts[k], k, on_page[k]))
     check_refs(d, r, 'inbox', own, others)
     return own
 
@@ -655,6 +674,7 @@ def selftest():
     broken('inbox', 'ref that is not a string', lambda d: d['queue'][0].__setitem__('ref', {'id': 'x'}))
     broken('context', 'ref that is not a string on a topic', lambda d: d['topics'][0].__setitem__('ref', ''))
     broken('inbox', 'untyped queue row', lambda d: d['queue'][8].__setitem__('type', None))
+    broken('inbox', 'unread counts do not reconcile', lambda d: d['counts'].__setitem__('mail', 99))
     broken('inbox', 'filed label without its rule', lambda d: d['filed'][1].pop('rule'))
     broken('inbox', 'To archive briefing missing a rule', lambda d: d['filed'][6].__setitem__('briefing', 'Nothing here.'))
     broken('inbox', 'per-channel counts do not add up', lambda d: d['filed'][0]['by_channel'].__setitem__('mail', 3))

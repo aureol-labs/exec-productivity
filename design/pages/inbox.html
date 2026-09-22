@@ -78,6 +78,10 @@
     grouped       [ group ]  the same shape without rule, when filed is empty
     wrote         true when labels were written, false otherwise
     next_run      "16:30"
+    others        { mail: 3, chat: 0, examples: [ { channel, from, what, href } ] }  the unread that
+                  are neither waiting on the exec nor filed, so the title's counts reconcile:
+                  counts.mail = queue mail rows + filed mail + others.mail, same for chat. Up to 3
+                  examples. Absent or zero: nothing rendered.
       ref         { id } same page (opens the target) or { page, id } another page
       src         { kind: mail|chat|calendar|doc|meeting|file|you, via, label, href }
 
@@ -211,6 +215,18 @@ var DICT={{DICT}};
       var sum=0; bulk.forEach(function(f){ sum+=(f.count|0); });
       add(page, h2(L(withRule?'labelled':'grouped'),String(sum)), cap([L(withRule?'cap_filed':'cap_grouped')]));
       var fl=el('div','list filed'); bulk.forEach(function(f){ add(fl,filedRow(f,withRule)); }); add(page,fl);
+    }
+
+    /* ---- the rest, so every unread is somewhere on the page ---- */
+    var oth=d.others||{}, othN=(oth.mail|0)+(oth.chat|0);
+    if(othN>0){
+      var rp=el('p','rest', F(L('others_line'),{n:othN})+' ');
+      (oth.examples||[]).slice(0,3).forEach(function(x,i){
+        if(i) add(rp, ', ');
+        var a=el('a',null,(x.from?x.from+', ':'')+(x.what||''));
+        var h=x.href||'#'; a.setAttribute('href', /^(https:|mailto:|#)/.test(h)?h:'#'); add(rp,a);
+      });
+      add(page, rp);
     }
 
     var right = d.wrote ? L('labels_only') : L('nothing_written');
