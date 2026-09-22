@@ -10,7 +10,10 @@ Rules that hold for every document:
 - `version` comes back on every read; every write from a routine pins `if_version`. A refused write is re-read
   and redone, never forced.
 - Every fact carries the date of its source (`date`, ISO `YYYY-MM-DD`) and a `source` (`{kind, label, href}` with
-  `kind` one of `mail | chat | calendar | doc | meeting | file | you`). A fact that a newer source contradicts is
+  `kind` one of `mail | chat | calendar | doc | meeting | file | you | web`). A `web` source is a public page
+  (`href` is its address, `label` the site and what it says) used to enrich organisations and the public
+  professional information of the people on the page, the exec's working contacts; it never overrides a
+  written source and never creates a person. A fact that a newer source contradicts is
   closed with that source's date (`ended`), never deleted.
 - Ids are stable slugs the routine chooses once (`p1`, `t-aviva-discount`, `e-legal`), never renumbered.
 - Names resolve: every `ref` names an existing `people/<id>`, `entities/<id>`, `topics/<id>` or `priorities/<id>`.
@@ -70,7 +73,8 @@ connected. `metrics` is `null` until a business metric source is named and prove
 metrics block while it is `null`.
 
 `gesture` is `copy` (the briefing is copied to the clipboard) or `link` (a `https://claude.ai/new?q=` link); install
-sets it after the deep-link test.
+sets it after the deep-link test. `enrich` is `"public"` (the default: web lookups on organisations and on the public professional information
+of the people on the page) or `"none"`; changed through `help`.
 
 ### `priorities`
 
@@ -108,6 +112,14 @@ that says "the Aviva thing" resolves; same on people and entities, where it also
 notetaker produces ("Men in Black" for Mailinblack), so a transcript resolves to the entity the mail spells. `serves` is a priority id or `null` (rendered as None). `next` is a list or `null` (rendered "Nothing booked").
 `late: true` on a `next` entry renders in brick with "Was due <date>" and is allowed only when the date comes from
 a decision or a promise the routine can point at. `gesture` is `ask`, `add_priority` or `none`.
+
+### Closed topics, on the page
+
+`topics/<id>` keeps `live: false` with `closed_reason` (`done | not_important | silent | settled`) and
+`closed_at` when a topic stops being live. The page renders them in a "Closed" list at the end, greyed, three
+rows and "and N more", so what left the page leaves a trace the exec can read and reopen through Claude. A
+`done` or `not_important` dismissal on an inbox line or a job that served a topic closes nothing by itself: it
+becomes a `so_far` fact; the topic closes by the topic rule (settled, silent 30 days) or by its own Drop.
 
 ### `people` and `entities`
 
@@ -157,8 +169,9 @@ to `dropped` or `kept`: those two are the exec's, from the page. "Added this wee
 { "label": "Sales", "tint": "sales", "rule": "In the exec's words.", "order": 1, "archive": false }
 ```
 
-Seven at most, `tint` one of `sales | product | board | customers | hiring | later | arch`. `archive: true` is the
-`To archive` label, drawn as an outline.
+Seven at most, `tint` one of `sales | product | board | customers | hiring | later | arch`. `label` is the name as
+written in the mailbox, in the exec's language ("À archiver", not "To archive", for a French exec); `tint` is
+the colour slot and never shows. `archive: true` is the To archive label, drawn as an outline.
 
 ### `asks` and `suggestions`, the weekly review
 

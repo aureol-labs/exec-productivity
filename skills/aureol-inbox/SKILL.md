@@ -12,6 +12,8 @@ document (shape in its head comment and `references/example.json`).
 
 ## Rules that override anything you infer
 
+0. **Label names are the mailbox's, in the exec's language**, exactly as `rules` spells them; the page shows
+   that spelling on every chip and never a translation of it.
 1. **Labels only, and only where the mail role can write them** (`connections/current.roles.mail.can` contains
    `label`) **and only from `rules`.** One write, applied over and over. Never a delete, never a send, never a
    mark as read, never a move, never an archive. `To archive` is a label the exec clears in their own mailbox.
