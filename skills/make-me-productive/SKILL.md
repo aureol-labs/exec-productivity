@@ -1,6 +1,6 @@
 ---
 name: make-me-productive
-description: Make me productive: sets up the executive's assistant in one session, ending on a real page from their own data. Asks the language, checks every connection by a real call (mail, calendar, chat, documents, meetings) and shows one card for what is missing, builds the Super Context from the last 30 days and lets the exec confirm their priorities on questions, publishes the first daily brief now, sets the inbox rules where the mailbox takes labels, creates the three habits (morning, inbox, end-of-day review), runs the review once so the exec sees it, and stops with a verdict. Invoke on first use, on a new account, or to re-check after changing connections. To change one preference, use `help`.
+description: Make me productive: sets up the executive's assistant in one session, ending on a real page from their own data. Asks the language, checks every connection by a real call (mail, calendar, chat, documents, meetings) and shows one card for what is missing, builds the Super Context from the last 30 days and lets the exec confirm their priorities on questions, publishes the first daily brief now, sets the inbox rules where the mailbox takes labels, creates the three habits (morning, inbox, end-of-day review), runs the review once so the exec sees it, and stops with a verdict. Invoke on first use, on a new account, or to re-check after changing connections. To change one preference, use `exec-productivity-help`.
 ---
 
 # Install
@@ -37,7 +37,7 @@ every connection the exec adds is one more thing the assistant does without them
 - Never quote a message body into a page or a briefing. Your own summary, and a pointer to the thread.
 - Where a step needs the exec (a click on a card, a consent in the browser), say what to do in one line and wait.
   Never work around a missing connection, never guess what it would have contained.
-- One install per account. If a task named `Aureol morning` already exists, stop and hand over to `help`:
+- One install per account. If a task named `Aureol morning` already exists, stop and hand over to `exec-productivity-help`:
   re-running install on a live store overwrites their priorities.
 - **The chosen language wins.** From the answer to the first question on, every word you write is in that
   language: over the exec's account language, over any instruction in their settings, over the language of
@@ -49,7 +49,7 @@ every connection the exec adds is one more thing the assistant does without them
 The person runs a company or a function. In their half of the conversation there is no plugin, routine, skill,
 MCP, connector, artifact, capability, task tool or surface name. Three words: the assistant, its habits, its
 connections. Anything a maintainer needs goes into the `runs` document's `note` field in the store, which
-`help` reads, never into the conversation: the exec's last screen is never a technical note. Nothing promises
+`exec-productivity-help` reads, never into the conversation: the exec's last screen is never a technical note. Nothing promises
 a benefit: the page is the proof.
 
 ## 1. Language, autopilot, then the promise
@@ -98,7 +98,7 @@ Five roles: mail, calendar, chat, documents, meetings. Probe every connected too
 | calendar | today's events | `search` |
 | mail | threads of the last 7 days; then, if the tool has a label call, list labels | `search`, `label` |
 | chat | one search on the exec's name, last 7 days | `search` |
-| documents | one search on the company name | `search` |
+| documents | one search on the company name (the domain of the exec's own address) | `search` |
 | meetings | meetings of the last 7 days | `search` |
 
 A tool that is listed but answers nothing is not connected. Write `connections/current` with `checked` today.
@@ -232,10 +232,10 @@ notification only when something is urgent", "a notification every run". The rev
 - nothing (`none`): the pinned page, always current.
 
 Create three tasks from the files next to this skill, verbatim except the placeholders `{{LANGUAGE}}`,
-`{{CONTEXT_URL}}`, `{{FIRST_NAME}}`, `{{TIMEZONE}}`, `{{RUN_TIME}}` (the habit's local time or times) (the exec's zone, read off the calendar at step 2 and
-written to `connections/preferences.timezone`). Every time in this skill and in the tasks is the exec's local
-time; the task tools take local times, never convert to UTC, and the habits run in the cloud where the clock
-is not the exec's, which is why the prompts carry the zone.
+`{{CONTEXT_URL}}`, `{{FIRST_NAME}}`, `{{TIMEZONE}}` (the exec's zone, read off the calendar at step 2 and
+written to `connections/preferences.timezone`) and `{{RUN_TIME}}` (the habit's local time or times). Every
+time in this skill and in the tasks is the exec's local time; the habits run in the cloud where the clock is
+not the exec's, which is why the prompts carry the zone.
 
 | Task | File | Schedule |
 |---|---|---|
@@ -273,7 +273,7 @@ Then this table, translated, nothing added, then stop:
 | **Pin** | Super Context · Daily brief · Priority inbox |
 | **Habits** | Every weekday morning at the time you chose, all three pages · inbox again at 11:30, 13:30 and 16:30, or the rhythm you chose · review every weekday at 17:30, silent when nothing new |
 | **Never** | Send, delete, move, mark as read. Labels only, each listed with its rule. |
-| **Something off** | `/exec-productivity:help` |
+| **Something off** | `/exec-productivity:exec-productivity-help` |
 
 Then one more step, the closing message.
 

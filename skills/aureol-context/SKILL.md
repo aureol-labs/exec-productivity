@@ -115,10 +115,12 @@ Build the page JSON from the store: `lang` and `first_name` from preferences, `d
 the language with the real time of this run, `today`, the four lists, `suggestions` with `status: proposed`
 (three at most), `links` to the other pages from `connections/current.pages`, `gesture` from preferences,
 `notices`. Titles are numerals: "4 priorities, 9 live topics. 2 serve none of them." Run
-`tools/check-page.py context` on the JSON when a shell exists; otherwise apply its list by hand.
+`python3 tools/check-page.py --kind context DATA.json` from the plugin's root folder (the one holding `skills/`
+and `tools/`) when a shell exists; otherwise apply its list by hand.
 
-Publish: fill the template with `tools/fill-page.py --kind context references/super-context.html DATA.json
-OUT.html --links brief=<link> inbox=<link>` when a shell exists (it checks the data and escapes the JSON);
+Publish: fill the template with `python3 tools/fill-page.py --kind context
+skills/aureol-context/references/super-context.html DATA.json OUT.html --links brief=<link> inbox=<link>`,
+from the same root, when a shell exists (it checks the data and escapes the JSON);
 without a shell, replace the single `{{DATA_JSON}}` by hand with every `<` written as `\u003c`. In bootstrap mode publish new with
 `capabilities: {db: {}}` and return the link. Otherwise read the page at `connections/current.pages.context`
 first, then publish to its `url` so the link holds; if the publish is refused because the page changed, re-read

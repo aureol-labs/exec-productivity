@@ -8,6 +8,9 @@
   "plugins": [
     {
       "name": "exec-productivity",
+      "displayName": "Exec productivity",
+      "category": "productivity",
+      "homepage": "https://aureol.co",
       "source": "./",
       "description": "Make me productive: guided install, Super Context, daily brief, priority inbox, end-of-day review. Reads mail, calendar, chat, documents and meetings; writes only its own pages."
     }
