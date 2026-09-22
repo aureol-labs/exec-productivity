@@ -297,6 +297,8 @@ routine; the review looks again every Friday," and stop.
 End on one line, "Say which ones you want and I add them," then the sign-off, two sentences, translated:
 "This is one way to start with Claude: habits that run on their own, pages that arrive written, a review that
 finds what to add next. From here it is yours: change any of it, ask for a habit or a page of your own, and it
-happens." Then stop. Write a `runs` document with
+happens." Then the last thing on screen, the reminder with the three links, one per line, so the message is
+also the shortcut: "Pin these three now, from each page's menu, and they are one click away every morning:"
+Super Context, Daily brief, Priority inbox, each as its link. Then stop. Write a `runs` document with
 `task: "install"` and, in its `note`, anything a maintainer would need (a probe that failed, a schedule
 created in UTC and its local equivalent): never in the conversation.
