@@ -53,7 +53,8 @@ connections. Anything a maintainer needs goes in a block of three lines or fewer
 
 ## 1. Language, autopilot, then the promise
 
-Question tool: "Which language should your assistant work in?" Options Français, English, free entry. Everything
+Question tool: "Setting up your assistant, 10 to 15 minutes. Which language should it work in?" Options
+Français, English, free entry. Everything
 from here on is in that language, whatever language the exec replies in; it goes into
 `connections/preferences.language` and into every habit's prompt.
 
@@ -64,7 +65,7 @@ nothing. The three habits are created with automatic approvals in any case (step
 
 Then the introduction, translated, then the table, and start at once without waiting:
 
-> **Setting up your assistant.** About ten minutes.
+> **Setting up your assistant.** Expect 10 to 15 minutes, and a few questions only you can answer.
 >
 > Your assistant reads your mail, calendar, chat, documents and meetings, and keeps three pages for you. A
 > Super Context it starts every conversation from: your priorities, the live topics, the people in play, your
