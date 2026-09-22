@@ -1,70 +1,76 @@
 ---
 name: aureol-review
 user-invocable: false
-description: The Friday review, and the same scan at install: read the executive's own asks to colleagues (sent mail, sent messages, meetings), keep the ones a connection would have answered directly, check which systems have a connection, and propose them on the Super Context page with the asks as evidence; an ask that repeats becomes a skill candidate, an ask on a cadence becomes a routine candidate, and an off-the-shelf plugin is proposed first when one covers the ask. Writes asks and suggestions, never proposes a declined one twice, renders nothing of its own. Load from the weekly task, from install, or when the exec asks what could be automated.
+description: The Friday review, and the same look at install: find where the executive's assistant would take work off their hands this week, from what they asked colleagues for, what they did themselves again and again, what they prepare every time, what they forward or summarise, and propose only what can be added, a connection, a ready-made plugin, a routine or a skill, each as a use case with its evidence. Writes asks and suggestions, never proposes a declined one twice, renders nothing of its own. Load from the weekly task, from install, or when the exec asks what could be automated.
 ---
 
 # The review
 
-The exec keeps asking colleagues for data, figures, a status, an extract, an analysis. Someone opens a system,
-pulls it, sends it back, sometimes with their own analysis on top. With the right connection the exec could have
-asked their assistant. This skill finds those asks and turns them into three lines on Super Context, with the
-evidence. It renders no page: the `aureol-context` skill's render mode republishes Super Context.
+One question, every Friday: where, this week, would the assistant have done the work, and what has to be
+added for it to do so next week. The answer is a short list of use cases, each with the thing to add. The
+mechanics that find them stay inside this file; the exec reads use cases and value, never how they were
+found. It renders no page: the `aureol-context` skill's render mode republishes Super Context with the
+proposals.
 
 ## Rules that override anything you infer
 
-1. **Evidence or nothing.** A suggestion carries the asks that justify it, in the exec's words, with who was
-   asked and when. Three lines on the page at most, ranked by how often the ask came back.
-2. **Only systems with a connection.** Check the catalog (`search_mcp_registry`) for every system named. No
-   connection, no suggestion; the ask is still recorded with `connector.name: null` so a later catalog can
-   find it. Without the catalog tools in a scheduled run, record `connector: unknown` and let the next
-   interactive `help` session resolve it.
-3. **Declined is final.** Read `suggestions` with `status: declined` before proposing; never propose the same
-   system or the same skill again.
-4. **The shelf before the workshop.** Before proposing a skill or a routine, search the Claude plugin catalog
-   with the session's plugin search tool (the one the app's own setup uses) for the system or the task in the
-   pattern: sales, data analysis, project tracking, documents, meetings. A plugin or a shipped skill that covers
-   the ask is proposed as `kind: plugin`, with its name and the sentence that says where to add it, and the card
-   in an interactive session. Only when nothing on the shelf covers it does the pattern become a custom skill
-   or routine. In a scheduled run without the catalog tools, record `plugin: unknown` on the suggestion and let
-   the next `help` session resolve it.
-5. **A skill candidate is a pattern**, the same ask three times in the window to the same person or on the same
-   system, reached for at no fixed time, and its line says the pattern in one sentence with "Draft the skill" as
-   the gesture. **A routine candidate is a pattern with a clock**: the same ask or the same piece of work on a
-   cadence (every Monday, before each board or pipeline meeting, at month end, the day after a release). Its line
-   says the cadence and what the routine would produce, and its gesture is "Create the routine", seeded with the
-   habit's prompt drafted in the plugin's shape: language, timezone, the connections to read, what to publish,
-   send nothing. A recurring ask that a connection would answer is proposed as a routine, not only as a
-   connection: the connection is the means, the routine is the habit.
-6. **The exec's own asks only.** Sent mail, sent messages, the exec's own action items in meeting notes. Never
-   what colleagues asked the exec; that is the inbox's job.
+1. **Only what can be added.** A finding is a use case plus the thing that makes it possible: a connection
+   that exists in the catalog, a ready-made plugin or skill from the Claude catalog, a routine, or a custom
+   skill. Something that would stay a human chase is not a finding; it is not shown, not even as "nothing
+   covers it". Nothing found means one line, never a table of what did not qualify.
+2. **A use case is written as value, not as mechanism.** "Your Qonto charges, read by your assistant when you
+   ask, instead of asking someone with billing access", not "an ask a connection would have answered". The
+   table's columns are: what you do today, how often, what your assistant would do instead, what to add.
+3. **The shelf before the workshop.** Search the Claude plugin catalog (the session's plugin search tool) for
+   the system or the task before proposing anything custom; a plugin or a shipped skill that covers it is
+   proposed as `kind: plugin`. Only then a routine (a pattern with a clock) or a skill (a pattern reached for
+   on demand). A recurring ask that a connection would answer is a routine with the connection as its means.
+4. **Evidence or nothing.** Every finding carries the two or three moments it comes from, dated, in the exec's
+   words. Ranked by how much work it takes off the exec: how often, times how long.
+5. **Declined is final.** Read `suggestions` with `status: declined` before proposing; never the same system,
+   plugin, routine or skill twice.
+6. **Three on the page, all in the message.** The Super Context list shows the three strongest; the run's
+   message shows every finding that qualified, and nothing that did not.
+
+## The signals, all of them, the exec's side only
+
+- **Asks to colleagues** for data, figures, a status, an extract, an analysis that lives in a system: sent
+  mail, sent messages, the exec's own action items in meeting notes. The system named or inferred.
+- **Work the exec does themselves again and again**: the same kind of mail drafted, the same document
+  assembled, the same numbers compiled, the same reply written. Sent mail and documents authored.
+- **What the exec prepares every time**: a recurring meeting with the same preparation (the pipeline numbers
+  before the Monday review, the pack before the board).
+- **What the exec forwards or summarises for others**: a thread relayed, a digest written, a status sent
+  upward or downward on a rhythm.
+- **What the exec reads to decide**: documents opened before a recurring decision, dashboards checked.
+- **What the inbox habit keeps ranking**: a class of message that comes back every week and always waits on
+  the exec for the same reason.
+
+Never what colleagues asked the exec; that is the inbox's job.
 
 ## Modes
 
-Install mode: the last 30 days, called by install, silent unless something is found. Weekly mode: the last 7
+Install mode: the last 30 days, called by install, silent unless something qualified. Weekly mode: the last 7
 days, called by the Friday task.
 
 ## Steps
 
-0. Read `connections/current`, `asks`, `suggestions`, `people`, `entities`, `topics`. Probe mail, chat and
-   meetings with one real call each.
-1. Read the exec's sent mail and sent messages in the window, and their action items in meeting notes when a
-   recorder is connected.
-2. Detect asks: a request to a named colleague for something that lives in a system (numbers, a list, a report,
-   a status, an extract, an analysis of data). Not a scheduling request, not an opinion, not a decision.
-   For each: `to` (a `people` ref when it resolves), `what` in the exec's words, `system` (named in the ask, or
-   inferred from `entities` and documents, or the generic name the exec used), `source`. Write `asks`,
-   deduplicated on the same what and to within the window.
-3. Group by system. For each system with two or more asks in the window (one in install mode counts when the
-   ask is recurring by its own wording, "as every month"), search the catalog; with a connection, write a
-   `suggestions` document `kind: connection` with the ask ids as `evidence`. For each repeated ask (rule 4),
-   write `kind: skill` with `name` and `pattern`; for each pattern with a clock (rule 4), write `kind: routine`
-   with `name`, `pattern` (cadence and output) and `briefing`; for each pattern the shelf covers (rule 4), write
-   `kind: plugin` with `name` and `path` instead. Skip anything declined. Cap at three proposed across the four
-   kinds, routines and plugins first when they exist, the rest stay `found`.
-4. Load the `aureol-context` skill in render mode so Super Context shows the list. In install mode also return the
-   proposed systems and their connector ids to install, which shows the card.
-5. Write a `runs` document. The task prompt says how the run ends: one line of counts, one table with a row
-   per finding (what was asked, who and how often, what would answer it, what it would change), the topics
-   reading "Not yet" (from `topics.last_from_you`), and the link on its own line. The table is the whole
-   finding, proposed rows and the rest; the page carries only the three proposed with their gestures.
+0. Read `connections/current`, `asks`, `suggestions`, `people`, `entities`, `topics`, the last `runs` of this
+   task. Probe mail, chat, meetings and documents with one real call each.
+1. Read the window from the exec's side across the signals above. Record each ask in `asks` (deduplicated on
+   the same what and to), and note the other patterns in the run.
+2. For each pattern, decide what would make the assistant do it: the system's connection (catalog check with
+   `search_mcp_registry`), a shipped plugin or skill (plugin catalog check), a routine (a clock), a skill (no
+   clock). No such thing exists: the pattern is dropped from the findings and stays in the run's notes only.
+   Without the catalog tools in a scheduled run, record `connector: unknown` or `plugin: unknown` and let the
+   next `help` session resolve it; do not show the pattern as a finding until it is resolved.
+3. Write `suggestions` for what qualified: `kind` connection, plugin, routine or skill, the use case in one
+   sentence as `say`, the evidence ids, `pattern` (cadence and output for a routine, the repeated ask for a
+   skill), `briefing` for a routine or a skill (the habit's prompt drafted, or the skill's outline), `path` for
+   a connection or a plugin. Skip anything declined. Cap at three `proposed`, the rest `found`.
+4. Load the `aureol-context` skill in render mode so Super Context shows the proposals. In install mode also
+   return the connections and plugins with their catalog ids to install, which shows the cards.
+5. Write a `runs` document. The task prompt says how the run ends: one line, then a table with a row per
+   qualified finding (what you do today, how often, what your assistant would do instead, what to add), then
+   the cards, then "Say which ones you want and I add them." Nothing qualified: one line, "Nothing this
+   week that a connection or a routine would take off your hands; the review looks again next Friday."
