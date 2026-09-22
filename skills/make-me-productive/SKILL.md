@@ -180,9 +180,12 @@ page the exec was just asked about has to exist before the next question.
 List the scheduled tasks. `Aureol morning`, `Aureol inbox` or `Aureol weekly` already there: keep it, create only
 the missing ones. Open the series with one line: "Three habits, on your account: the morning brief, the inbox
 through the day, the Friday review. Three questions on when, and how to be told." Then one question for the
-morning time, options 06:30, 06:50, 07:30, free entry, 06:50 first. Then one question for the
-inbox rhythm, options "every hour, 08:00 to 18:00" (first), "twice a day, 12:30 and 16:30", "once,
-at 12:30", free entry. The page is always current whatever the rhythm; the rhythm only decides how
+morning time, and the first option comes from the calendar: read the exec's first meeting of each of the last
+ten working days, take the usual start, subtract 30 minutes, round down to the quarter hour, and offer it as
+"HH:MM, 30 minutes before your usual first meeting" (first), then 07:30, 08:30, free entry. Never 06:50 by
+default: the brief has to land before the day is prepared for, not before the exec is awake. Then one question for the
+inbox rhythm, options "every hour after the morning brief, until 18:00" (first), "twice a day, 12:30 and
+16:30", "once, at 12:30", free entry. The page is always current whatever the rhythm; the rhythm only decides how
 fresh.
 
 Then how to be reached. Nothing is automatic: each run decides, from the exec's answer, whether to
@@ -210,8 +213,8 @@ is not the exec's, which is why the prompts carry the zone.
 
 | Task | File | Schedule |
 |---|---|---|
-| `Aureol morning` | `references/task-morning.md` | weekdays, the chosen time |
-| `Aureol inbox` | `references/task-inbox.md` | weekdays, the chosen rhythm (default every hour 08:00 to 18:00) |
+| `Aureol morning` | `references/task-morning.md` | weekdays, the chosen time; it refreshes all three pages |
+| `Aureol inbox` | `references/task-inbox.md` | weekdays, the chosen rhythm: every hour from one hour after the morning time to 18:00 by default |
 | `Aureol weekly` | `references/task-weekly.md` | Friday 16:30 |
 
 Settings, decided, not asked: cloud execution ("Require this computer" off), permissions approve automatically,
@@ -242,7 +245,7 @@ connection," and go on.
 
 One of:
 
-- **"All good. Tomorrow at 06:50 your brief is ready."**
+- **"All good. Tomorrow at HH:MM your three pages are ready."** (the chosen time)
 - **"Before it can run:"** the blockers, numbered, one line each, then "Want me to do it?"
 
 Then this table, translated, nothing added, then stop:
@@ -250,7 +253,7 @@ Then this table, translated, nothing added, then stop:
 | | |
 |---|---|
 | **Pin** | Super Context · Daily brief · Priority inbox |
-| **Habits** | Weekdays 06:50 brief · inbox every hour, or the rhythm you chose · Friday 16:30 review |
+| **Habits** | Every weekday morning at the time you chose, all three pages · inbox every hour after, or the rhythm you chose · Friday 16:30 review |
 | **Never** | Send, delete, move, mark as read. Labels only, each listed with its rule. |
 | **Something off** | `/exec-productivity:help` |
 
