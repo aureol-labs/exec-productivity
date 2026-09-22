@@ -32,7 +32,7 @@ archives or marks as read.
 | Habit | When | Page |
 |---|---|---|
 | morning | weekdays, at the time chosen at install (proposed from the calendar: 30 minutes before the usual first meeting) | Super Context refreshed, the Daily brief, the day's first Priority inbox |
-| inbox | weekdays, every hour from one hour after the morning run to 18:00 by default | Priority inbox, and what it learned into Super Context |
+| inbox | weekdays, 11:00, 13:30 and 16:00 by default (the morning run is the fourth pass); hourly as an option | Priority inbox, and what it learned into Super Context |
 | weekly | Friday 16:30 | the review, on Super Context |
 
 Each habit runs in the cloud, so it runs with the laptop shut. Its result is the pinned page. How the exec is
@@ -49,7 +49,7 @@ ranks against it. Then:
    connection, meetings first, rewrites the live topics, the people and organisations and the summary, proposes
    decisions, republishes Super Context. Then `aureol-brief` reads that store and today's calendar and writes the
    Daily brief. Then `aureol-inbox` once, so the three pages are fresh together. One session, one message.
-2. **Inbox, every hour after the morning run until 18:00** (or the rhythm chosen at install): the light pass. `aureol-inbox` reads
+2. **Inbox, three more times a day, 11:00, 13:30 and 16:00** (or hourly, or the rhythm chosen at install): the light pass. `aureol-inbox` reads
    what arrived since the last run, ranks what needs the exec, publishes the Priority inbox, and writes what it
    learned into the store: a reply from the exec, a new fact on a topic, a decision taken in a thread. It never
    adds a topic or touches the priorities; that judgement stays with the morning. Nothing new, nothing
