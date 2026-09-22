@@ -15,7 +15,8 @@
   exec's, in their words and their order: the routine proposes and never edits a
   line. The live topics, the people and organisations on them, and the decisions
   are the routine's, from the store. A fifth list, connections and skills to add,
-  appears only when the weekly review found something.
+  appears only when the weekly review found something. A Closed list, between the
+  decisions and the suggestions, appears only when something has left the page.
 
   THE STORE
   The page is a projection of the plugin's database (skills/aureol-context/references/
@@ -62,6 +63,16 @@
   that lands while the editor is open leaves the list as rendered. A read that
   fails, or a store that is null, changes nothing and shows nothing.
 
+  CLOSED
+  A topic that stops being live leaves a trace the exec can read and reopen through
+  Claude: the Closed list, greyed, with no reveal and no button, the reason as a word
+  (Done, Not important, Silent 30 days, Settled) and the day it closed at the right.
+  Three rows show and "and N more" reveals the rest, so the page stays a page. The
+  routine writes the rows from the store: topics no longer live, and the jobs and
+  inbox lines the exec dropped. The h1 never counts them. A topic dropped on this
+  page greys where it stands on this render and moves to Closed on the next; the
+  list is never hydrated from the store.
+
   HOW IT RENDERS
   The routine never hand-writes rows. It builds one JSON document and puts it in the
   <script id="data" type="application/json"> element in place of the DATA_JSON placeholder, with
@@ -107,8 +118,14 @@
     suggestions   [ { id, kind: connection|plugin|skill|routine, say, state, proposed_label, lede,
                       evidence: [{date, text}], path, pattern, sources, briefing,
                       status } ]   proposed ones only, three at most
+    closed        [ { id, name, kind: topic|job|queue, reason: done|not_important|
+                      silent|settled, date, note } ]
+                  what left the page, newest first; note is one optional line;
+                  greyed, no reveal, no button; three rows, then "and N more"
       ref         { id } same page (opens the target) or { page, id } another page
-      src         { kind: mail|chat|calendar|doc|meeting|file|you, via, label, href }
+      src         { kind: mail|chat|calendar|doc|meeting|file|you|web, via, label, href }
+                  a web source is a public page: href its https:// address, label the
+                  site and what it says ("LinkedIn, Fabien Grob")
 
   THE RULES ON THE FACE
   A priority says what it comes before. Serves carries the priority's name, never
@@ -663,6 +680,39 @@ var DICT={{DICT}};
     return r;
   }
 
+  /* ================ CLOSED ================ */
+  var CLOSED_KEY={done:'closed_done', not_important:'closed_unimportant', silent:'closed_silent', settled:'closed_settled'};
+  /* a flat face, greyed: the name, the note when there is one, the reason as the
+     marker, the day it closed at the right. Nothing opens, nothing writes. */
+  function closedRow(c){
+    var r=el('div','row gone'); if(c.id) r.id=c.id;
+    var f=el('div','face'), dec=el('span','dec');
+    add(dec, el('span','say',c.name||''));
+    if(c.note) add(dec, el('span','state',c.note));
+    add(dec, el('span','rel', CLOSED_KEY[c.reason] ? L(CLOSED_KEY[c.reason]) : (c.reason||'')));
+    add(f, dec, el('span','last',c.date||''));
+    add(r,f);
+    return r;
+  }
+  /* three rows, then a quiet link for the rest, so the page stays a page */
+  function closedSection(rows){
+    var sec=section('cl', h2(L('closed'),String(rows.length)), null, rows.map(closedRow));
+    var list=sec.querySelector('.list'), rest=Array.prototype.slice.call(list.children,3);
+    if(rest.length){
+      rest.forEach(function(r){ r.hidden=true; });
+      var m=el('div','more'), a=el('a',null,P('closed_more',rest.length));
+      a.setAttribute('href','#');
+      a.onclick=function(e){
+        e.preventDefault();
+        rest.forEach(function(r){ r.hidden=false; });
+        m.parentNode.removeChild(m);
+        return false;
+      };
+      add(m,a); add(list,m);
+    }
+    return sec;
+  }
+
   /* ================ THE PAGE ================ */
   function cols(a,b,c){
     var d=el('div','cols'); add(d, el('span',null,a), el('span',null,b), el('span',null,c)); return d;
@@ -819,6 +869,8 @@ var DICT={{DICT}};
     DSEC=section('dl', h2(L('decisions'),String(DECS.length)),
         cols(L('c_decision'),L('c_by'),L('c_when')), DECS.map(decisionRow));
     add(page,DSEC);
+    /* closed, only when something has left the page; never counted in the h1 */
+    if((d.closed||[]).length) add(page, closedSection(d.closed));
     /* connections and skills, only when the review found something */
     if(SUGG.length){
       SSEC=section('tt', h2(L('suggestions'),String(SUGG.length)),
