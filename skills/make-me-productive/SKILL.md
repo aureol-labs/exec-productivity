@@ -17,8 +17,10 @@ never a paragraph. Do the work yourself; ask only for what only they know (their
 their rules, one click on a card). Never explain what a page will show. Never narrate a step. No em dashes.
 A question card arrives on its own, without the message around it, so every question says in its own text
 what it is about, what the answer changes, and where it sits: "Priority 1 of 4, as I read it: ..." never a
-bare quote. Every series (connections, priorities, times, notifications) opens with one line that says what
-it decides and what the assistant will do with the answers, then the cards. A set of proposals the exec can
+bare quote. Every series (connections, priorities, times, notifications) takes two turns: first a message
+with one line that says what it decides and what the assistant will do with the answers, and, where the items
+can be shown, a table of them, ending on "Say go" and nothing else, then the turn ends so the exec can read;
+the cards come only after the exec replies. Never a card in the same turn as its introduction. A set of proposals the exec can
 judge as a whole (the labels) is one table and one go, never a card per item: cards only where each item
 needs its own answer.
 Autopilot: the first suggestion after the language is to switch this conversation to automatic approvals, and
@@ -128,10 +130,11 @@ Load the `aureol-context` skill (installed spelling `exec-productivity:aureol-co
 across every connected role, meetings first; it publishes the Super Context artifact with `capabilities: {db:
 {}}` and returns the link. Write it to `connections/current.pages.context`.
 
-Then the priorities, on the question tool only, introduced first by one line: "I read your last 30 days and
-propose four priorities. Say for each whether it is one of yours." These are proposals the exec has never seen,
-so the verbs never presume they exist: no "keep", no "drop". For each proposed priority (five at most), one
-question whose text carries the frame: "Priority 1 of 4, as I read it: "Sign a first paid mission before the end
+Then the priorities, in two turns. First a message: one line, "I read your last 30 days and propose four
+priorities. Read them, then say go and I ask you about each one," and a table of the proposals: the priority,
+what it comes before as read, the evidence in a few words. End the turn. When the exec replies, the cards.
+These are proposals the exec has never seen, so the verbs never presume they exist: no "keep", no "drop". For
+each proposed priority (five at most), one question whose text carries the frame: "Priority 1 of 4, as I read it: "Sign a first paid mission before the end
 of October." Is this one of your priorities?" Options: "Yes", and under it what it comes before as you read it
 ("ahead of polishing the plugin: three threads this month went that way"); "Yes, worded differently", "type yours
 below"; "No". Never ask "ahead of what":
@@ -188,9 +191,9 @@ page the exec was just asked about has to exist before the next question.
 ## 7. The habits
 
 List the scheduled tasks. `Aureol morning`, `Aureol inbox` or `Aureol weekly` already there: keep it, create only
-the missing ones. Open the series with one line: "Three habits, on your account: the morning brief, the inbox
-through the day, the Friday review. Three questions on when, and how to be told." Then one question for the
-morning time, and the first option comes from the calendar: read the exec's first meeting of each of the last
+the missing ones. First a message: "Three habits, on your account: the morning brief, the inbox through the day, the
+Friday review. Three questions on when, and how to be told. Say go." End the turn. When the exec replies, one
+question for the morning time, and the first option comes from the calendar: read the exec's first meeting of each of the last
 ten working days, take the usual start, subtract 30 minutes, round down to the quarter hour, and offer it as
 "HH:MM, 30 minutes before your usual first meeting" (first), then 07:30, 08:30, free entry. Never 06:50 by
 default: the brief has to land before the day is prepared for, not before the exec is awake. Then one question for the
