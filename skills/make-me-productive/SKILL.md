@@ -83,8 +83,10 @@ keep it.
 ## 2. Detect, silently
 
 Note, without narrating: the question tool, the scheduled-task tools, the Artifact tool with the database
-capability, the connector catalog tools (`search_mcp_registry`, `suggest_connectors`), the exec's first name
-from the account, the timezone from the calendar. Missing first name: ask it in one line at step 3.
+capability, the connector catalog tools (`search_mcp_registry`, `suggest_connectors`), web search, the exec's
+first name from the account, the timezone from the calendar. Missing first name: ask it in one line at step
+3. Write `connections/preferences` as soon as the store exists with every default the store names, `enrich:
+"public"` included, so no routine ever finds a preference missing.
 
 ## 3. Connections
 
