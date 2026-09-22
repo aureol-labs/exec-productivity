@@ -70,6 +70,22 @@ at what a morning can hold and write the counts to the run.
   both rows. Then `read` (one paragraph), `so_far` (dated, oldest first), `sources` (3), `gesture` and
   `briefing`. A topic serving none gets `gesture: "add_priority"` when it is a priority in all but name, else
   `ask`.
+- **Enrich from the web, within bounds.** When `preferences.enrich` is `public` and the session has web
+  search: for each organisation on the page, one search for what a public page states (what it does, size,
+  ownership, a recent public event) and for each person on the page, one search for what they state publicly
+  about their professional self (a company page, a professional profile, a press mention, a talk, a post):
+  role, company, tenure, what they work on, what they said in public about the topic. The people are the
+  exec's working contacts; the bound is the subject, not the person: public and professional, never private
+  life, health, family, politics, and only for the topics they are on. Every web fact carries
+  `source.kind: "web"` with the page address. A web fact never overrides a
+  written source from mail, calendar or chat: it confirms, adds, or is dropped. For a name heard in a meeting
+  with no written match, one search with the context (the company, the topic) may propose the real spelling;
+  the proposal stays marked as heard until a written source or the exec confirms it. One search per row per
+  week is enough; the run notes in `runs` how many it made.
+- **Closed topics.** A topic that stops being live keeps `live: false`, `closed_reason` and `closed_at`, and the
+  page renders it in the Closed list with its reason. Reasons: `done` or `not_important` from the exec's Drop on
+  the topic, `silent` after 30 days with nothing from anyone, `settled` when what it was about is decided,
+  signed or past. Reopened by the exec through Claude, or by the routine when the thread wakes again.
 - **People and entities.** `role` is the single source for every page's "Nadia, VP Sales". `cares_about` in
   your words unless the exec wrote it (`yours: true`, and then you never overwrite it). `with` stored once, on the
   side that changes when it does. `on_page` recomputed every morning by rule 7. Everyone else stays in the store.

@@ -17,6 +17,8 @@ its connections; no plugin, skill, task, connector or artifact in the exec's hal
 | Change the morning time, the inbox times | `connections/preferences` | Update the task's schedule with the task tools and the preference. One line back. |
 | Change my priorities | `priorities` | Point at the page's Edit button. Or take it on the question tool, keep, reword, drop, ahead of what, and write the store; a dropped one gets a proposed decision. |
 | Change a label rule, add or remove a label | `rules`, `connections/current.roles.mail.can` | Question tool, then write `rules`. Without `label` in `can`: one line, the mailbox cannot take labels. |
+| Stop the web lookups, or turn them back on | `connections/preferences.enrich` | One line, write `none` or `public`. |
+| Reopen a closed topic | `topics/<id>` | Set `live: true`, clear `closed_reason`, one `so_far` line "reopened by you", republish. |
 | Add a connection, add a notetaker | `connections/current` | One card (`search_mcp_registry`, `suggest_connectors`), then re-probe with a real call and write `connections/current`. |
 | What do you know about my work | `context/summary` | The Super Context link and three lines. |
 | Update the assistant | nothing | The plugin card's menu, Check for updates, keep Sync automatically on. If the update changed a habit's prompt (the release note says so), delete the three tasks and recreate them from the reference files. |
