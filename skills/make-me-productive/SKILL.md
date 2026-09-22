@@ -48,8 +48,9 @@ every connection the exec adds is one more thing the assistant does without them
 
 The person runs a company or a function. In their half of the conversation there is no plugin, routine, skill,
 MCP, connector, artifact, capability, task tool or surface name. Three words: the assistant, its habits, its
-connections. Anything a maintainer needs goes in a block of three lines or fewer at the very end, titled
-"Technical note", or is done silently. Nothing promises a benefit: the page is the proof.
+connections. Anything a maintainer needs goes into the `runs` document's `note` field in the store, which
+`help` reads, never into the conversation: the exec's last screen is never a technical note. Nothing promises
+a benefit: the page is the proof.
 
 ## 1. Language, autopilot, then the promise
 
@@ -232,7 +233,7 @@ brief's choice. Write `connections/preferences.notify`. What each answer means, 
 - nothing (`none`): the pinned page, always current.
 
 Create three tasks from the files next to this skill, verbatim except the placeholders `{{LANGUAGE}}`,
-`{{CONTEXT_URL}}`, `{{FIRST_NAME}}`, `{{TIMEZONE}}` (the exec's zone, read off the calendar at step 2 and
+`{{CONTEXT_URL}}`, `{{FIRST_NAME}}`, `{{TIMEZONE}}`, `{{RUN_TIME}}` (the habit's local time or times) (the exec's zone, read off the calendar at step 2 and
 written to `connections/preferences.timezone`). Every time in this skill and in the tasks is the exec's local
 time; the task tools take local times, never convert to UTC, and the habits run in the cloud where the clock
 is not the exec's, which is why the prompts carry the zone.
@@ -246,9 +247,10 @@ is not the exec's, which is why the prompts carry the zone.
 Settings, decided, not asked: cloud execution ("Require this computer" off), permissions approve automatically,
 model Opus 5 where the task form offers a model, connectors inherited, no folder. Exactly three tasks with
 exactly these names: never a fourth, never "Aureol inbox midday" or any variant; the inbox rhythm is one task
-with several hours on one schedule line. Schedules are given in the exec's local time and zone; after
-creating, read each task back, and if its schedule shows UTC or another zone, recreate it with the local
-time: a UTC schedule drifts by an hour when the clocks change. Write the times to `connections/preferences`. List again; each exists once.
+with several hours on one schedule line. Schedules are the exec's local times; where the task tool takes UTC,
+convert with the exec's zone as of today, say nothing about it to the exec, and rely on the prompts: each
+habit checks at run time that it started at its local time and moves its own schedule when the clocks have
+changed, so the conversion is never a maintenance chore. Write the times to `connections/preferences`. List again; each exists once.
 Without task tools: a table of the three names, schedules and prompt texts, and one line on where to paste.
 
 The sentence, in a code block, with one line above it: "Paste this in your Claude settings, Instructions. It is
@@ -296,4 +298,5 @@ End on one line, "Say which ones you want and I add them," then the sign-off, tw
 "This is one way to start with Claude: habits that run on their own, pages that arrive written, a review that
 finds what to add next. From here it is yours: change any of it, ask for a habit or a page of your own, and it
 happens." Then stop. Write a `runs` document with
-`task: "install"`. A maintainer's fact, if any: "Technical note", three lines or fewer, at the very bottom.
+`task: "install"` and, in its `note`, anything a maintainer would need (a probe that failed, a schedule
+created in UTC and its local equivalent): never in the conversation.
