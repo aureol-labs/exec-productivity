@@ -4,7 +4,7 @@ Une page, à garder avec le registre des traitements. Rédigée à l'installatio
 
 | | |
 |---|---|
-| **Finalité** | Préparer la journée de {{FIRST_NAME}} : un brief chaque matin, une file de messages triée deux fois par jour, un contexte de travail tenu à jour (priorités, sujets en cours, interlocuteurs, décisions). |
+| **Finalité** | Préparer la journée de {{FIRST_NAME}} : un brief chaque matin, une file de messages triée plusieurs fois par jour, au rythme choisi, un contexte de travail tenu à jour (priorités, sujets en cours, interlocuteurs, décisions). |
 | **Ce qui est lu** | {{ROLES_READ}} (mails, agenda, messagerie interne, documents, réunions), sur le compte de {{FIRST_NAME}} uniquement, avec ses propres accès. Des pages web publiques, pour les organisations et les informations professionnelles publiques des personnes avec qui {{FIRST_NAME}} travaille, jamais la vie privée. |
 | **Ce qui est écrit** | Trois pages privées sur son compte Claude et leur base de données. {{LABELS_LINE}} {{NOTIFY_LINE}} Rien d'autre n'est envoyé ; rien n'est supprimé, déplacé ni marqué comme lu. |
 | **Où vit la mémoire** | Dans la page Super Context et sa base, sur le compte Claude de {{FIRST_NAME}}. Une mémoire par personne, jamais partagée. |

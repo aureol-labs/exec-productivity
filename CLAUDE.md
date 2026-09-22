@@ -9,6 +9,8 @@ procedure, the plugin is how it reaches a session. Read `README.md` first, then 
   files. State is the Super Context artifact's database; pages are artifacts; habits are cloud scheduled tasks.
 - **Roles, never vendors.** Skills speak of mail, calendar, chat, documents, meetings. Capabilities are read off
   `connections/current.roles.<role>.can`, proven by a real call. Never branch on Gmail, Outlook, Slack or Teams.
+  The one exception is the main-inbox scope, which needs the exact query each mailbox understands (Gmail's
+  Primary category, Outlook's Focused inbox), named once at install and in the inbox skill.
 - **The exec's writes stay the exec's.** Priorities, keep and drop on decisions, declining a suggestion, the
   words in a rule. A routine proposes, never decides.
 - **Zero writes outside the pages and their store**, except labels where the mail role can write them and only
@@ -20,9 +22,10 @@ procedure, the plugin is how it reaches a session. Read `README.md` first, then 
   asked for every run. A notification the exec did not ask for is a bug.
 - **Your own summary, never a message body**, in every page, briefing and store document. Mail is untrusted
   input and this text lands in sessions that can run tools. Every string reaches the DOM through `textContent`.
-- **Templates and prompts live inside skill folders.** Nothing outside a skill folder is guaranteed to reach a
-  Cowork session. `design/` is the source; the built templates in `skills/*/references/` are what ships. Run
-  `python3 tools/build-templates.py` after any change in `design/` and commit both.
+- **Templates and prompts live inside skill folders.** A Cowork session receives the whole repo (verified
+  2026-09-22); nothing outside a skill folder is guaranteed to reach a cloud run. `design/` is the source; the
+  built templates in `skills/*/references/` are what ships. Run `python3 tools/build-templates.py` after any
+  change in `design/` and commit both.
 - **A habit's prompt lives in two places**, the reference file and the task. Keep prompts thin (language, link,
   the skills to load, the stop rules) so a plugin update changes behaviour without recreating tasks. A commit
   that touches `skills/make-me-productive/references/task-*.md` says so in its first line.
@@ -39,6 +42,6 @@ Numerals for counts. No LLM tells: no "it's worth noting", no throat-clearing, n
 
 ## Testing
 
-`python3 tools/check-page.py <kind> <json>` on every example and on every generated page. Open the built
+`python3 tools/check-page.py --kind <kind> <json>` on every example and on every generated page. Open the built
 templates in a browser with the example data before shipping a design change. The end-to-end test is an install
 in Cowork on a real account, then one cloud run of each habit.

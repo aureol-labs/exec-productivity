@@ -55,6 +55,8 @@ events are drawn.
 
 ## 2. Build
 
+- **Frame**: `lang` from `preferences.language`; `date_label` and `time_label` in that language with the real
+  time of this run.
 - **Metrics**: only when `preferences.metrics` names a source that answered; otherwise the block is absent.
   Never fill it with something adjacent.
 - **The strip**: 08:00 to 18:00 by default, widened to the first and last event of the day. Every event is a
@@ -71,8 +73,9 @@ events are drawn.
 
 ## 3. Check, publish, record
 
-Run `tools/fill-page.py --kind brief references/daily-brief.html DATA.json OUT.html --links context=<link>
-inbox=<link>` when a shell exists (it checks the data, then fills the template with every `<` escaped); without a
+Run `python3 tools/fill-page.py --kind brief skills/aureol-brief/references/daily-brief.html DATA.json OUT.html
+--links context=<link> inbox=<link>` from the plugin's root folder (the one holding `skills/` and `tools/`)
+when a shell exists (it checks the data, then fills the template with every `<` escaped); without a
 shell, apply check-page's list by hand and replace the single `{{DATA_JSON}}` yourself. Read the page at `connections/current.pages.brief` then publish to its `url` with
 `capabilities: {db: {}}`; no link yet, publish new the same way and write the link. Write a `runs` document. The task prompt says how the run ends: the link on its
 own line, and the counts.

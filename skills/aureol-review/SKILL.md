@@ -1,7 +1,7 @@
 ---
 name: aureol-review
 user-invocable: false
-description: The end-of-day review, every weekday, and the same look at install: find where the executive's assistant would take work off their hands this week, from what they asked colleagues for, what they did themselves again and again, what they prepare every time, what they forward or summarise, and propose only what can be added, a connection, a ready-made plugin, a routine or a skill, each as a use case with its evidence. Writes asks and suggestions, never proposes a declined one twice, renders nothing of its own. Load from the weekly task, from install, or when the exec asks what could be automated.
+description: The end-of-day review, every weekday, and the same look at install: find where the executive's assistant would take work off their hands this week, from what they asked colleagues for, what they did themselves again and again, what they prepare every time, what they forward or summarise, and propose only what can be added, a connection, a ready-made plugin, a routine or a skill, each as a use case with its evidence. Writes asks and suggestions, never proposes a declined one twice, renders nothing of its own. Load from the end-of-day task, from install, or when the exec asks what could be automated.
 ---
 
 # The review
@@ -67,7 +67,7 @@ in `suggestions` as proposed, found or declined), so the same pattern never come
    `search_mcp_registry`), a shipped plugin or skill (plugin catalog check), a routine (a clock), a skill (no
    clock). No such thing exists: the pattern is dropped from the findings and stays in the run's notes only.
    Without the catalog tools in a scheduled run, record `connector: unknown` or `plugin: unknown` and let the
-   next `help` session resolve it; do not show the pattern as a finding until it is resolved.
+   next `exec-productivity-help` session resolve it; do not show the pattern as a finding until it is resolved.
 3. Write `suggestions` for what qualified: `kind` connection, plugin, routine or skill, the use case in one
    sentence as `say`, the evidence ids, `pattern` (cadence and output for a routine, the repeated ask for a
    skill), `briefing` for a routine or a skill (the habit's prompt drafted, or the skill's outline), `path` for
@@ -76,5 +76,5 @@ in `suggestions` as proposed, found or declined), so the same pattern never come
    return the connections and plugins with their catalog ids to install, which shows the cards.
 5. Write a `runs` document. The task prompt says how the run ends: one line, then a table with a row per
    qualified finding (what you do today, how often, what Claude would do instead, what to add), then
-   the cards, then "Say which ones you want and I add them." Nothing qualified: one line, "Nothing this
-   new today." No table, no notification: silence is the right answer most days.
+   the cards, then "Say which ones you want and I add them." Nothing qualified: one line, "Nothing new
+   today." No table, no notification: silence is the right answer most days.

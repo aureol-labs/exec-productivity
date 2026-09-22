@@ -14,10 +14,17 @@ says "you refused this exact shape in July".
 
 In the Claude desktop app:
 
-1. Plugins, add a marketplace from the repo `aureol-labs/exec-productivity`, install **Exec productivity**.
-2. Type `/`, choose **make-me-productive**, and answer its questions. About ten minutes. It ends on your first
+1. Customize, Plugins, then in Personal plugins the **+** button, **Add marketplace**, **Add from a
+   repository**, and paste:
+
+   ```
+   aureol-labs/exec-productivity
+   ```
+
+   Install **Exec productivity**.
+2. Type `/`, choose **make-me-productive**, and answer its questions. 10 to 15 minutes. It ends on your first
    brief.
-3. Pin the three pages.
+3. Say yes when it offers to pin the three pages.
 
 The guide with screenshots, in French: [guide/guide-fr.md](guide/guide-fr.md).
 
@@ -26,7 +33,8 @@ The guide with screenshots, in French: [guide/guide-fr.md](guide/guide-fr.md).
 Reads, through your own connections: mail, calendar, internal chat, documents, meetings (a notetaker such as
 Granola). Writes only its three pages and their store. Where your mailbox allows it and only from rules you
 wrote, it applies labels, each one listed on the inbox page with its rule. It never sends, deletes, moves,
-archives or marks as read.
+archives or marks as read. The one exception: one mail a day to your own address with the brief's link, only
+if you chose it at install.
 
 ## The habits
 
@@ -37,7 +45,7 @@ archives or marks as read.
 | review | weekdays 17:30 | the review, on Super Context; silent when nothing new |
 
 Each habit runs in the cloud, so it runs with the laptop shut. Its result is the pinned page. How the exec is
-told is their choice at install, per habit, after a test notification: a one-line notification (desktop, and
+told is their choice at install, per habit: a one-line notification (desktop, and
 phone when the Claude app is there), an email to their own address where their mailbox can send, or nothing. The
 inbox can notify only when something is urgent. Nothing is automatic: each run decides from that choice.
 
@@ -70,7 +78,7 @@ suggestion. The routines propose; the exec decides.
 | `aureol-brief` | the Daily brief |
 | `aureol-inbox` | the Priority inbox |
 | `aureol-review` | the end-of-day review: where Claude would do the work, and what to add for it |
-| `help` | the assistant explaining and fixing itself |
+| `exec-productivity-help` | the assistant explaining and fixing itself |
 
 The store every skill reads and writes: [skills/aureol-context/references/store.md](skills/aureol-context/references/store.md).
 The design system: `design/`, inlined into every page template by `tools/build-templates.py`. Every generated page
@@ -78,9 +86,9 @@ is checked by `tools/check-page.py`.
 
 ## Updating
 
-Plugin card, Check for updates, keep Sync automatically on. Skills and templates apply on the next run. A habit's
-prompt is stored on the scheduled task at creation, so a release that changes one says so, and `help` recreates
-the tasks.
+Customize, Plugins, then Update on the marketplace; the app also checks it on its own. Skills and templates
+apply on the next run. A habit's prompt is stored on the scheduled task at creation, so a release that changes
+one says so, and `exec-productivity-help` recreates the tasks.
 
 ## Rules of this repo
 

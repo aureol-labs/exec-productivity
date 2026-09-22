@@ -82,7 +82,7 @@ reading aid, `data.wrote` false and the footer says nothing was written to the m
 
 ## 4. Tell the context
 
-The inbox reads the world every hour; the morning pass reads it once. So what the inbox sees goes into the store,
+The inbox reads the world several times a day; the morning pass reads it once. So what the inbox sees goes into the store,
 lightly and by the store's rules. On the topics and people this run's lines touched: `last_from_you` when the
 exec replied, one `so_far` entry per new fact with its date and source, `state` when it changed. A decision found
 in a message, with what it was decided against: one `decisions` document with `status: "proposed"`. Update in
@@ -92,8 +92,10 @@ render mode so the Super Context page shows it.
 
 ## 5. Check, publish, record
 
-`tools/fill-page.py --kind inbox references/inbox.html DATA.json OUT.html --links brief=<link> context=<link>`
-when a shell exists (it checks the data and fills the template); without a shell, apply check-page's list by
+`lang` from `preferences.language`; `date_label` and `time_label` in that language with the real time of this
+run. Then `python3 tools/fill-page.py --kind inbox skills/aureol-inbox/references/inbox.html DATA.json OUT.html --links
+brief=<link> context=<link>` from the plugin's root folder (the one holding `skills/` and `tools/`) when a
+shell exists (it checks the data and fills the template); without a shell, apply check-page's list by
 hand and replace the single `{{DATA_JSON}}` with every `<` written as `\u003c`. Read the page at
 `connections/current.pages.inbox`, publish to its `url` with `capabilities: {db: {}}`, or publish new the same
 way and write the link. Write a `runs`

@@ -45,22 +45,24 @@ Rules that hold for every document:
 `tool` is the connector's display name or `null`. `can` lists only capabilities proven by a real call. A tool that
 is connected but answered nothing is `null` with a `note`.
 
-`connections/preferences`, written by install, edited only through install or the help skill:
+`connections/preferences`, written by install, edited only through install or the `exec-productivity-help` skill:
 
 ```json
 { "language": "fr", "timezone": "Europe/Paris", "first_name": "Clovis",
   "morning": "08:30", "inbox": ["11:30", "13:30", "16:30"], "review": "17:30",
   "caps": { "decisions": 3, "jobs": 3 }, "tiers": ["Now", "Today", "This week"],
+  "mail_scope": "main", "mailboxes": ["clovis@example.com"], "enrich": "public",
   "gesture": "copy", "metrics": null,
   "notify": { "brief": "push", "inbox": "none", "review": "push" },
-  "installed": "2026-09-22", "plugin_version": "0.1.0" }
+  "installed": "2026-09-22", "plugin_version": "0.3.3" }
 ```
 
 `notify.<habit>` is `push` (the run ends by sending one notification with the session's notification tool, one
 line under 200 characters, desktop and phone when the Claude app is on the phone), `push_now` (inbox only: a
 notification only when something is Now), `email` (one message to the exec's own address with the page's link,
 only where the mail role can send, never for the inbox), or `none` (the pinned page). Chosen at install, per
-habit, after a test notification. Nothing is automatic: the run decides from this value.
+habit. Nothing is automatic: the run decides from this value. `installed` is the day of the install and
+`plugin_version` the manifest's version that day, both written by install.
 
 `morning` is the time chosen at install, proposed from the calendar. `review` is the end-of-day time of the daily review, 17:30 by default; its notification fires only on a day something new qualified. `inbox` is a list of times (weekdays; the default `["11:30", "13:30", "16:30"]`, the morning run being the
 fourth pass; the times share one minute value so they fit one schedule line) or `"hourly"` (every hour from one hour after `morning` to 18:00). `mail_scope` is `"main"` (the
@@ -72,9 +74,9 @@ counted, not ranked. An exec who runs inbox zero on their main inbox must never 
 connected. `metrics` is `null` until a business metric source is named and proven by a real call; the brief renders no
 metrics block while it is `null`.
 
-`gesture` is `copy` (the briefing is copied to the clipboard) or `link` (a `https://claude.ai/new?q=` link); install
-sets it after the deep-link test. `enrich` is `"public"` (the default: web lookups on organisations and on the public professional information
-of the people on the page) or `"none"`; changed through `help`.
+`gesture` is `copy` (the briefing is copied to the clipboard, the default, written at install step 2) or `link`
+(a `https://claude.ai/new?q=` link). `enrich` is `"public"` (the default: web lookups on organisations and on the public professional information
+of the people on the page) or `"none"`; changed through `exec-productivity-help`.
 
 ### `priorities`
 
@@ -103,7 +105,8 @@ must not equal any topic or entity name. A dropped priority keeps its document w
   "so_far": [ { "date": "2026-09-03", "move": "Aviva asked for 19%." } ],
   "next": [ { "date": "2026-09-15", "event": "Pipeline review", "late": false } ],
   "sources": [ { "kind": "mail", "label": "Aviva procurement, 10 Sept", "href": "" } ],
-  "gesture": "ask", "briefing": "The Ask Claude text, the routine's summary plus pointers.",
+  "gesture": "ask", "proposal": null,
+  "briefing": "The Ask Claude text, the routine's summary plus pointers.",
   "live": true }
 ```
 
@@ -111,7 +114,8 @@ must not equal any topic or entity name. A dropped priority keeps its document w
 that says "the Aviva thing" resolves; same on people and entities, where it also holds the mis-hearings a
 notetaker produces ("Men in Black" for Mailinblack), so a transcript resolves to the entity the mail spells. `serves` is a priority id or `null` (rendered as None). `next` is a list or `null` (rendered "Nothing booked").
 `late: true` on a `next` entry renders in brick with "Was due <date>" and is allowed only when the date comes from
-a decision or a promise the routine can point at. `gesture` is `ask`, `add_priority` or `none`.
+a decision or a promise the routine can point at. `gesture` is `ask`, `add_priority` or `none`; `proposal` carries the proposed priority's wording when `gesture` is
+`add_priority`, else `null`.
 
 ### Closed topics, on the page
 
@@ -140,7 +144,9 @@ closed `type`: `company | team | board | product | other`, plus `label` when `ot
 ```
 
 `cares_about.yours: true` means the exec's own words, in ink, with `date`; the routine never overwrites it.
-`with[].type` is one of `member of | leads | sits on | contact for`. `note` must read correctly from both rows, so it
+`with[].type` is one of `member of | leads | sits on | contact for`, stored on one side only. The page JSON spells
+the same four `member_of`, `leads`, `sits_on`, `contact_for` and carries the inverse on the other row (`member`,
+`led_by`, `seat`, `contact`); the routine maps when it builds the page. `note` must read correctly from both rows, so it
 is phrased about the relation, not about one side ("owns the deal" is fine, "runs the data room" is not).
 `role` is the single source for every page's "Nadia, VP Sales". `on_page` is recomputed every morning: on a live
 topic with something open between them and the exec.
@@ -177,18 +183,22 @@ the colour slot and never shows. `archive: true` is the To archive label, drawn 
 
 ```json
 { "date": "2026-09-17", "to": "people/julien", "what": "The cohort numbers for the board pack.",
-  "system": "Power BI", "connector": { "name": null, "uuid": null },
+  "system": "Power BI", "connector": { "name": null, "uuid": null }, "plugin": { "name": null, "path": null },
   "source": { "kind": "mail", "label": "To Julien, 17 Sept", "href": "" }, "status": "found" }
 ```
 
-`status` is `found | proposed | declined | connected`. `suggestions/<id>`:
+`status` is `found | proposed | declined | connected`. `plugin` names the ready-made plugin or skill from the
+Claude catalog that covers the ask, when one does. A scheduled run without the catalog tools writes `"unknown"`
+as `connector` or `plugin`, and the next `exec-productivity-help` session resolves it. `suggestions/<id>`:
 
 ```json
-{ "kind": "connection", "system": "HubSpot", "connector": { "name": "HubSpot", "uuid": "875dee50-..." },
+{ "kind": "connection", "say": "Your HubSpot pipeline, read by your assistant when you ask.",
+  "system": "HubSpot", "connector": { "name": "HubSpot", "uuid": "875dee50-..." },
   "evidence": ["a-2026-09-17-julien"], "status": "proposed", "proposed_at": "2026-09-19" }
 ```
 
-`kind` is `connection`, `plugin`, `skill` or `routine`. A plugin suggestion names an off-the-shelf plugin or
+`kind` is `connection`, `plugin`, `skill` or `routine`; `say` is the use case in one sentence, as value, the
+words the page and the run's table show. A plugin suggestion names an off-the-shelf plugin or
 skill from the Claude catalog that already covers the ask (`name`, `path`: where to add it, the marketplace or
 the card); it comes before a custom skill whenever one exists. A skill suggestion carries `name` and `pattern`
 (the ask that repeats, reached for on demand, and nothing on the shelf covers it). A routine suggestion carries `name`, `pattern` (the cadence and what it
@@ -230,6 +240,8 @@ on the page carries `reason` (`not_a_decision | not_important`).
   "note": "Ten lines at most." }
 ```
 
+`task` is one of `install | morning | inbox | review`, the habit that wrote the document.
+
 ### `context/summary`, what a session reads first
 
 ```json
@@ -242,4 +254,4 @@ on the page carries `reason` (`not_a_decision | not_important`).
 
 Each page template embeds one JSON document in `<script id="data" type="application/json">` and renders from it.
 The routine builds that JSON from the store; it never hand-writes rows. The shapes are documented in each template's
-head comment and in `example.json` next to it, which is also the fixture `tools/check-page.py` is tested against.
+head comment and in `example.json` next to it, which is also the fixture `tools/check-page.py --kind <kind>` is tested against.
