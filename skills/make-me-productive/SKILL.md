@@ -120,8 +120,9 @@ re-probe with a real call, and redraw the table.
 
 **Meetings, whatever the answer, one sentence and the card.** If the exec has none: "Most decisions are taken
 in meetings and written nowhere; a notetaker is the connection that changes the most." Recommend Granola first
-(runs on their machine, needs nobody's consent), the others as options on the card. One rule, one line: say at
-the start of a meeting that notes are taken. Declined: record `declined: true`; pages say "no meetings
+(runs on their machine, needs nobody's consent), the others as options on the card. One line on the law, not an
+order: "In most countries, France included, people in a meeting must be told it is being recorded or
+transcribed; saying so at the start is enough." Declined: record `declined: true`; pages say "no meetings
 connected" where meetings would be, and never guess what a meeting decided.
 
 ## 4. Super Context
