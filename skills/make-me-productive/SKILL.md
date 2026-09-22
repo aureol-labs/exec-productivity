@@ -277,13 +277,15 @@ The last message of the install is the first thing the Friday habit will do, so 
 assistant found they could connect or automate, and acts on it from there. Load
 the `aureol-review` skill in **install mode** on the last 30 days: the asks to colleagues that a connection would
 have answered, the asks that repeat. It writes `asks` and `suggestions` and republishes Super Context with the
-"connections and skills to add" list. Then, if it found anything: one line, "Your assistant read a month of your
-own asks. These could have been answered without asking anyone:" then one table, a row per finding: what you
+"connections and skills to add" list. The message opens by saying what this is, in two sentences: "One
+last thing, and it is what your Friday review will do every week: it reads what you asked colleagues for, and
+finds what a connection, a ready-made plugin, a routine or a skill could have answered without asking anyone.
+Here is what a month of your asks says." Then one line of counts, then one table, a row per finding: what you
 asked, who and how often, what would answer it, what it would change. Under the table, one connector card for
 the systems with a connection (three at most). Where the review found an off-the-shelf plugin that covers a pattern, the
 plugin suggestion card the app's own setup uses, one line above it. Routines and skills it proposed are on
-the Super Context page, one line says so. Nothing found: one line, "Nothing you asked this month needed a new
-connection," and go on.
+the Super Context page, one line says so. Nothing found: the same two opening sentences, then one line, "Nothing you asked this month needed a new
+connection; the review looks again every Friday," and stop.
 
 End on one line: "Say which ones you want and I add them." Then stop. Write a `runs` document with
 `task: "install"`. A maintainer's fact, if any: "Technical note", three lines or fewer, at the very bottom.
