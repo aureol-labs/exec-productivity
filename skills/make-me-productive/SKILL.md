@@ -144,8 +144,11 @@ propose four priorities. Say go, or say what to change: reword, drop, add, reord
 proposals: the priority, what it comes before as read, the evidence in a few words, in the order you read
 them, the strongest first. End the turn. The exec's reply is the answer: "go" (or any yes) applies the table as
 it stands; anything else is read as changes, applied, and the table shown once more with the same one line.
-Never a card per priority: the table is the question. Write `priorities` in the exec's own words where they
-reworded, `ahead` as read or as changed, `order` as the table stands (the first row is what matters most),
+Never a card per priority: the table is the question. Then one card, the only one, once the list stands:
+"All four kept. Of these four, which one matters most? It goes first, the others keep the order you read them
+in." with the kept priorities as options, each with its wording under it. Write `priorities` in the exec's own
+words where they reworded, `ahead` as read or as changed, `order` with the pick first and the table's order
+after,
 `confirmed` today, `yours` verbatim, a unique `short` name that is not a topic or entity name. Republish the
 page. Then one line and the link: "Your Super Context. Your assistant starts every conversation from it. The
 Edit button changes any line, including what each priority comes before."
