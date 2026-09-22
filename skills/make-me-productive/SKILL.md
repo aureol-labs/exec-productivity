@@ -71,7 +71,7 @@ Then one line and one table, translated, and start at once without waiting:
 | 3 | Your first brief and your first inbox, now |
 | 4 | The habits: every morning, every hour for your inbox, Friday for the review |
 
-Nothing is sent, nothing is deleted. That last sentence is the only reassurance, and the verdict at step 9 has to
+Nothing is sent, nothing is deleted. That last sentence is the only reassurance, and the verdict at step 8 has to
 keep it.
 
 ## 2. Detect, silently
@@ -241,20 +241,7 @@ the only line your assistant adds there."
 For anything about my work, start from my Super Context: {{CONTEXT_URL}}, rewritten every morning.
 ```
 
-## 8. The Friday review, run once now
-
-The last thing the install does is the first thing the Friday habit will do, so the exec sees it work. Load
-the `aureol-review` skill in **install mode** on the last 30 days: the asks to colleagues that a connection would
-have answered, the asks that repeat. It writes `asks` and `suggestions` and republishes Super Context with the
-"connections and skills to add" list. Then, if it found anything: one line, "Your assistant read a month of your
-own asks. These could have been answered without asking anyone:" then one table, a row per finding: what you
-asked, who and how often, what would answer it, what it would change. Under the table, one connector card for
-the systems with a connection (three at most). Where the review found an off-the-shelf plugin that covers a pattern, the
-plugin suggestion card the app's own setup uses, one line above it. Routines and skills it proposed are on
-the Super Context page, one line says so. Nothing found: one line, "Nothing you asked this month needed a new
-connection," and go on.
-
-## 9. Verdict, then stop
+## 8. The verdict
 
 One of:
 
@@ -270,5 +257,21 @@ Then this table, translated, nothing added, then stop:
 | **Never** | Send, delete, move, mark as read. Labels only, each listed with its rule. |
 | **Something off** | `/exec-productivity:help` |
 
-Write a `runs` document with `task: "install"`. A maintainer's fact, if any: "Technical note", three lines or
-fewer, at the very bottom.
+Then one more step, the closing message.
+
+## 9. The Friday review, run once: the closing message
+
+The last message of the install is the first thing the Friday habit will do, so the exec ends on what their
+assistant found they could connect or automate, and acts on it from there. Load
+the `aureol-review` skill in **install mode** on the last 30 days: the asks to colleagues that a connection would
+have answered, the asks that repeat. It writes `asks` and `suggestions` and republishes Super Context with the
+"connections and skills to add" list. Then, if it found anything: one line, "Your assistant read a month of your
+own asks. These could have been answered without asking anyone:" then one table, a row per finding: what you
+asked, who and how often, what would answer it, what it would change. Under the table, one connector card for
+the systems with a connection (three at most). Where the review found an off-the-shelf plugin that covers a pattern, the
+plugin suggestion card the app's own setup uses, one line above it. Routines and skills it proposed are on
+the Super Context page, one line says so. Nothing found: one line, "Nothing you asked this month needed a new
+connection," and go on.
+
+End on one line: "Say which ones you want and I add them." Then stop. Write a `runs` document with
+`task: "install"`. A maintainer's fact, if any: "Technical note", three lines or fewer, at the very bottom.
