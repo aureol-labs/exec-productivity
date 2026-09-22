@@ -59,9 +59,9 @@ from here on is in that language, whatever language the exec replies in; it goes
 `connections/preferences.language` and into every habit's prompt.
 
 Then autopilot, one line, before anything else: ask the exec to set this conversation's approvals to automatic
-(name the control as this session shows it, and where it is), so the rest runs without a click per step; the
-only stops left are the questions that are theirs. If the session already runs with automatic approvals, say
-nothing. The three habits are created with automatic approvals in any case (step 7).
+and its model to Opus 5 (name both controls as this session shows them, and where they are), so the rest runs
+without a click per step and with the model that reads a month of mail best; the only stops left are the
+questions that are theirs. If the session already runs that way, say nothing. The three habits are created with automatic approvals in any case (step 7).
 
 Then the introduction, translated, then the table, and start at once without waiting:
 
@@ -235,7 +235,7 @@ is not the exec's, which is why the prompts carry the zone.
 | `Aureol weekly` | `references/task-weekly.md` | Friday 16:30 |
 
 Settings, decided, not asked: cloud execution ("Require this computer" off), permissions approve automatically,
-connectors inherited, no folder. Write the times to `connections/preferences`. List again; each exists once.
+model Opus 5 where the task form offers a model, connectors inherited, no folder. Write the times to `connections/preferences`. List again; each exists once.
 Without task tools: a table of the three names, schedules and prompt texts, and one line on where to paste.
 
 The sentence, in a code block, with one line above it: "Paste this in your Claude settings, Instructions. It is
