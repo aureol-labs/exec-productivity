@@ -43,8 +43,8 @@ y est), un mail à vous-même, ou rien. L'inbox peut ne prévenir que quand quel
 
 | Habitude | Quand |
 |---|---|
-| le brief | en semaine à 06:50, ou l'heure choisie |
-| l'inbox | en semaine, chaque heure de 08:00 à 18:00, ou le rythme choisi |
+| le matin | en semaine, à l'heure choisie (proposée depuis votre agenda) : les trois pages |
+| l'inbox | en semaine, chaque heure après le brief jusqu'à 18:00, ou le rythme choisi |
 | la revue | le vendredi à 16:30 |
 
 L'ordinateur peut être fermé : les habitudes tournent dans le cloud.

@@ -31,8 +31,8 @@ archives or marks as read.
 
 | Habit | When | Page |
 |---|---|---|
-| morning | weekdays 06:50 | Super Context refreshed, then the Daily brief |
-| inbox | weekdays, every hour 08:00 to 18:00 by default | Priority inbox, and what it learned into Super Context |
+| morning | weekdays, at the time chosen at install (proposed from the calendar: 30 minutes before the usual first meeting) | Super Context refreshed, the Daily brief, the day's first Priority inbox |
+| inbox | weekdays, every hour from one hour after the morning run to 18:00 by default | Priority inbox, and what it learned into Super Context |
 | weekly | Friday 16:30 | the review, on Super Context |
 
 Each habit runs in the cloud, so it runs with the laptop shut. Its result is the pinned page. How the exec is
@@ -45,11 +45,11 @@ inbox can notify only when something is urgent. Nothing is automatic: each run d
 One store, three habits, one order. Super Context is built first, inside the install, because everything else
 ranks against it. Then:
 
-1. **Morning, 06:50**: the deep harvest. `aureol-context` reads the night and the last seven days across every
+1. **Morning, at the chosen time**: the deep harvest. `aureol-context` reads the night and the last seven days across every
    connection, meetings first, rewrites the live topics, the people and organisations and the summary, proposes
    decisions, republishes Super Context. Then `aureol-brief` reads that store and today's calendar and writes the
-   Daily brief. One session, one message.
-2. **Inbox, every hour 08:00 to 18:00** (or the rhythm chosen at install): the light pass. `aureol-inbox` reads
+   Daily brief. Then `aureol-inbox` once, so the three pages are fresh together. One session, one message.
+2. **Inbox, every hour after the morning run until 18:00** (or the rhythm chosen at install): the light pass. `aureol-inbox` reads
    what arrived since the last run, ranks what needs the exec, publishes the Priority inbox, and writes what it
    learned into the store: a reply from the exec, a new fact on a topic, a decision taken in a thread. It never
    adds a topic or touches the priorities; that judgement stays with the morning. Nothing new, nothing

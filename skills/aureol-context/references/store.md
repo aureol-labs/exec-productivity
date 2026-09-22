@@ -46,7 +46,7 @@ is connected but answered nothing is `null` with a `note`.
 
 ```json
 { "language": "fr", "timezone": "Europe/Paris", "first_name": "Clovis",
-  "morning": "06:50", "inbox": "hourly", "weekly": "Fri 16:30",
+  "morning": "08:30", "inbox": "hourly", "weekly": "Fri 16:30",
   "caps": { "decisions": 3, "jobs": 3 }, "tiers": ["Now", "Today", "This week"],
   "gesture": "copy", "metrics": null,
   "notify": { "brief": "push", "inbox": "none", "weekly": "push" },
@@ -59,7 +59,8 @@ notification only when something is Now), `email` (one message to the exec's own
 only where the mail role can send, never for the inbox), or `none` (the pinned page). Chosen at install, per
 habit, after a test notification. Nothing is automatic: the run decides from this value.
 
-`inbox` is `"hourly"` (weekdays 08:00 to 18:00, the default) or a list of times. `mail_scope` is `"main"` (the
+`morning` is the time chosen at install, proposed from the calendar. `inbox` is `"hourly"` (weekdays, every hour
+from one hour after `morning` to 18:00, the default) or a list of times. `mail_scope` is `"main"` (the
 default) or `"all"`: every skill that reads mail, context, brief, inbox and review, reads the mailbox's main
 inbox only under `main`, Gmail's Primary category, Outlook's Focused inbox where it exists, and leaves the
 mailbox's own bulk categories out (Promotions, Social, Updates, Forums, Other, Junk, Clutter): not read, not
