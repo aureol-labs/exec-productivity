@@ -20,7 +20,9 @@ what it is about, what the answer changes, and where it sits: "Priority 1 of 4, 
 bare quote. Every series (connections, priorities, times, notifications) takes two turns: first a message
 with one line that says what it decides and what the assistant will do with the answers, and, where the items
 can be shown, a table of them, ending on "Say go" and nothing else, then the turn ends so the exec can read;
-the cards come only after the exec replies. Never a card in the same turn as its introduction. A set of proposals the exec can
+the cards come only after the exec replies. Never a card in the same turn as its introduction. And where
+the table can carry the whole proposal (priorities, labels), there are no cards at all: the reply to the table
+is the answer, go or changes. A set of proposals the exec can
 judge as a whole (the labels) is one table and one go, never a card per item: cards only where each item
 needs its own answer.
 Autopilot: the first suggestion after the language is to switch this conversation to automatic approvals, and
@@ -137,22 +139,16 @@ Load the `aureol-context` skill (installed spelling `exec-productivity:aureol-co
 across every connected role, meetings first; it publishes the Super Context artifact with `capabilities: {db:
 {}}` and returns the link. Write it to `connections/current.pages.context`.
 
-Then the priorities, in two turns. First a message: one line, "I read your last 30 days and propose four
-priorities. Read them, then say go and I ask you about each one," and a table of the proposals: the priority,
-what it comes before as read, the evidence in a few words. End the turn. When the exec replies, the cards.
-These are proposals the exec has never seen, so the verbs never presume they exist: no "keep", no "drop". For
-each proposed priority (five at most), one question whose text carries the frame: "Priority 1 of 4, as I read it: "Sign a first paid mission before the end
-of October." Is this one of your priorities?" Options: "Yes", and under it what it comes before as you read it
-("ahead of polishing the plugin: three threads this month went that way"); "Yes, worded differently", "type yours
-below"; "No". Never ask "ahead of what":
-you propose it from the evidence, the exec corrects it on the page. Then one question, not an ordering: "Of the ones
-you kept, which matters most?" with the kept priorities as options; the pick goes first, the others keep the
-order they were read in. Four or five top priorities already carry the ranking; the brief ranks against the
-list as a whole and against each line's "ahead of", not against fine positions.
-Write `priorities` in the exec's own words, `ahead` as you read it, `confirmed` today, `yours` verbatim, a
-unique `short` name that is not a topic or entity name. Republish the page. Then one line and the link: "Your
-Super Context. Your assistant starts every conversation from it. The Edit button changes any line, including
-what each priority comes before."
+Then the priorities, in two turns and no cards. First a message: one line, "I read your last 30 days and
+propose four priorities. Say go, or say what to change: reword, drop, add, reorder," and a table of the
+proposals: the priority, what it comes before as read, the evidence in a few words, in the order you read
+them, the strongest first. End the turn. The exec's reply is the answer: "go" (or any yes) applies the table as
+it stands; anything else is read as changes, applied, and the table shown once more with the same one line.
+Never a card per priority: the table is the question. Write `priorities` in the exec's own words where they
+reworded, `ahead` as read or as changed, `order` as the table stands (the first row is what matters most),
+`confirmed` today, `yours` verbatim, a unique `short` name that is not a topic or entity name. Republish the
+page. Then one line and the link: "Your Super Context. Your assistant starts every conversation from it. The
+Edit button changes any line, including what each priority comes before."
 
 ## 5. The first brief
 
@@ -185,9 +181,9 @@ from your last 30 days." Then the table:
 | To archive (new) | promotions, receipts, surveys | "Promos, receipts already paid, surveys" | 19 |
 
 A label that already exists in the mailbox is marked "(yours)" and reused under its own name, never renamed,
-never deleted. Then one question: "Apply these labels to your mailbox?" Options: "Yes, all of them" (first);
-"Yes, with changes", "type them: rename, drop, reword a rule"; "No labels, sort only". On changes: apply them,
-show the table again, ask once more. Rules are written in the exec's words when they reword them, else as
+never deleted. The line under the table: "Say go, or say what to change: rename, drop, reword a rule. Say none for no
+labels at all." End the turn. The reply is the answer: go applies; changes are applied and the table shown once
+more; none means the inbox page sorts and writes nothing. Rules are written in the exec's words when they reword them, else as
 shown. Write `rules`. `To archive` is a label, never an archive, and its row says so in the Files column.
 
 **Then the first Priority inbox, now, on every mailbox.** Load the `aureol-inbox` skill and run it once on the
