@@ -217,10 +217,10 @@ fresh.
 
 Then how to be reached. Nothing is automatic: each run decides, from the exec's answer, whether to
 send a notification with the session's notification tool (one line, under 200 characters, desktop and
-phone when the Claude app is on the phone). First send one test notification, "Your assistant can reach
-you here", then one question: "Did that reach you?" with "on my computer", "on my phone too", "nothing
-came" as options. Nothing came: one line on where the app's notification setting is, as this session
-shows it, and go on. Then one question per habit. For the brief: "a notification" (first), "an email to
+phone when the Claude app is on the phone). Never send a test notification during the install: the tool
+skips a notification while the exec is active in the session, so a test always reads as failed. The first
+card says it instead, in its own text: "When a habit runs, it can notify you on your computer and, with the
+Claude app, on your phone." Then one question per habit. For the brief: "a notification" (first), "an email to
 me with the link", "nothing, I open the page". For the inbox: "nothing, I open the page" (first), "a
 notification only when something is urgent", "a notification every run". The review follows the brief's choice, and notifies only on a day it found something new. Write `connections/preferences.notify`. What each answer means, done by the runs:
 - notification (`push`): the run ends by sending one line leading with what to act on and the page's
