@@ -38,7 +38,7 @@ def main():
         sys.exit('fill-page: the template must carry exactly one {{DATA_JSON}}')
     payload = json.dumps(data, ensure_ascii=False).replace('<', '\\u003c')
     html = html.replace('{{DATA_JSON}}', payload)
-    if '—' in html:
+    if '\u2014' in html:
         sys.exit('fill-page: an em dash is in the page; nothing written')
     with open(a.out, 'w', encoding='utf-8') as f:
         f.write(html)

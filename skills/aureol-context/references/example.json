@@ -1394,9 +1394,9 @@
           "href": ""
         },
         {
-          "kind": "mail",
-          "label": "Halden Mutual, DPA redlines",
-          "href": ""
+          "kind": "web",
+          "label": "LinkedIn, Halden Mutual",
+          "href": "https://www.linkedin.com/company/halden-mutual"
         }
       ],
       "briefing": ""
@@ -2195,6 +2195,39 @@
         }
       ],
       "briefing": ""
+    }
+  ],
+  "closed": [
+    {
+      "id": "t11",
+      "name": "Nordics reseller agreement",
+      "kind": "topic",
+      "reason": "silent",
+      "date": "12 Sept",
+      "note": "Nothing from either side since 12 August."
+    },
+    {
+      "id": "j-offsite-venue",
+      "name": "Approve the Q4 offsite venue",
+      "kind": "job",
+      "reason": "not_important",
+      "date": "9 Sept"
+    },
+    {
+      "id": "t10",
+      "name": "Staging rehearsal",
+      "kind": "topic",
+      "reason": "done",
+      "date": "5 Sept",
+      "note": "Rehearsed clean. Folded into the migration date."
+    },
+    {
+      "id": "q-wexley-win-back",
+      "name": "Wexley, the win-back ask",
+      "kind": "queue",
+      "reason": "settled",
+      "date": "12 Aug",
+      "note": "Settled by the 12 August decision: no re-cut."
     }
   ],
   "suggestions": [

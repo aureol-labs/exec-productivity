@@ -28,7 +28,7 @@ EXAMPLES = {
 
 EM_DASH = chr(0x2014)  # the em dash, never written literally here
 TYPES = {'precedent', 'knock_on', 'pattern', 'history'}
-SRC_KINDS = {'mail', 'chat', 'calendar', 'doc', 'meeting', 'file', 'you'}
+SRC_KINDS = {'mail', 'chat', 'calendar', 'doc', 'meeting', 'file', 'you', 'web'}
 TINTS = {'sales', 'product', 'board', 'customers', 'hiring', 'later', 'arch'}
 REL_INVERSE = {'contact_for': 'contact', 'contact': 'contact_for', 'member_of': 'member',
                'member': 'member_of', 'leads': 'led_by', 'led_by': 'leads',
@@ -129,6 +129,8 @@ def check_common(d, r, kind):
                 h = s.get('href') or ''
                 if h and not re.match(r'^(https://|mailto:|#)', h):
                     r.bad('%s.sources[%d].href' % (path, i), 'href must start with https://, mailto: or #')
+                if s.get('kind') == 'web' and not h.startswith('https://'):
+                    r.bad('%s.sources[%d].href' % (path, i), 'a web source carries its https:// address')
         go = it.get('go')
         if isinstance(go, list):
             for i, g in enumerate(go):
@@ -150,7 +152,7 @@ def ids_of(d, kind):
         for row in (d.get('queue') or []) + (d.get('filed') or []) + (d.get('grouped') or []):
             ids.append(row.get('id'))
     elif kind == 'context':
-        for key in ('priorities', 'topics', 'entities', 'decisions', 'suggestions'):
+        for key in ('priorities', 'topics', 'entities', 'decisions', 'suggestions', 'closed'):
             for row in d.get(key) or []:
                 ids.append(row.get('id'))
     return [i for i in ids if i]
@@ -388,6 +390,7 @@ def check_context(d, r, others):
     ents = d.get('entities') or []
     decs = d.get('decisions') or []
     sugg = d.get('suggestions') or []
+    closed = d.get('closed') or []
     if len(pri) > 5:
         r.bad('$.priorities', '%d priorities, 5 at most' % len(pri))
     names = {t.get('name') for t in topics} | {e.get('name') for e in ents}
@@ -548,6 +551,18 @@ def check_context(d, r, others):
             r.bad(sp, 'a routine carries its cadence in pattern and a briefing that creates it')
         if s.get('kind') == 'skill' and not s.get('briefing'):
             r.bad(sp + '.briefing', 'a skill carries the Draft the skill briefing')
+    for i, c in enumerate(closed):
+        cp = '$.closed[%d]' % i
+        if not c.get('name'):
+            r.bad(cp + '.name', 'missing')
+        if c.get('kind') not in ('topic', 'job', 'queue'):
+            r.bad(cp + '.kind', 'topic, job or queue')
+        if c.get('reason') not in ('done', 'not_important', 'silent', 'settled'):
+            r.bad(cp + '.reason', 'done, not_important, silent or settled')
+        if not DATE.match(str(c.get('date', ''))):
+            r.bad(cp + '.date', 'the day it closed, a date like "3 Sept"')
+        if c.get('note') is not None and (not isinstance(c['note'], str) or '\n' in c['note']):
+            r.bad(cp + '.note', 'one line of text, or absent')
     check_refs(d, r, 'context', own, others)
     return own
 
@@ -656,6 +671,9 @@ def selftest():
     broken('context', 'conflict pair not mirrored', lambda d: d['decisions'][11].__setitem__('conflicts_with', None))
     broken('context', 'topic shares a name with an entity', lambda d: d['topics'][0].__setitem__('name', 'Elena'))
     broken('context', 'French lateness in a briefing', lambda d: d['topics'][2].__setitem__('briefing', 'Bergen n’a pas répondu depuis 5 jours.'))
+    broken('context', 'web source without its https address', lambda d: d['entities'][7]['sources'][2].__setitem__('href', ''))
+    broken('context', 'closed row with an unknown reason', lambda d: d['closed'][0].__setitem__('reason', 'gone'))
+    broken('context', 'closed row without its date', lambda d: d['closed'][1].pop('date'))
     print('selftest: %s' % ('ok' if fails == 0 else '%d FAILED' % fails))
     return 0 if fails == 0 else 1
 

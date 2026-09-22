@@ -235,6 +235,17 @@
      left exactly where it happened. Never moved into an archive section. */
   .row.gone .say{color:var(--ink-3);font-weight:400}
   .row.gone .ahead,.row.gone .state{color:var(--ink-3)}
+  /* ---- the closed list ----
+     What left the page, greyed, after the decisions. No reveal and no button: a flat
+     face in the table grid, the reason as the marker under the name, the date at
+     the right. Three rows show; "and N more" is a quiet link for the rest. */
+  .cl .row>.face{display:grid;grid-template-columns:1fr var(--last);column-gap:var(--gap);
+     align-items:baseline;padding:16px 6px 16px 0}
+  .cl .row+.row>.face{border-top:1px solid var(--hair)}
+  .cl .more{border-top:1px solid var(--hair);padding:12px 6px 12px 0;font-size:12.5px}
+  .cl .more a{color:var(--ink-3);text-decoration:none;border-bottom:1px solid transparent}
+  .cl .more a:hover{color:var(--pine);border-bottom-color:var(--pine)}
+  .cl .more a:focus-visible{outline:2px solid var(--pine);outline-offset:3px;border-radius:2px}
 
   /* ================ THE REVEAL ================
      Two kinds. A brief hangs off the strip and stays a card. A row reveal hangs off
@@ -534,6 +545,9 @@
     .why.clash{background:none}
     .row.open>button{background:none}
     .cap,.src .ask,.src .drop,.dropq,h2 .edit,.edbox,.act,.pending{display:none!important}
+    /* on paper the closed list is whole: the link goes, the tucked rows show */
+    .cl .more{display:none!important}
+    .cl .row[hidden]{display:block}
     .editing #pri{display:block}
     .go a,.src a,.by a,.ctx a{border-bottom:none}
     .src{border-top:none;padding-top:2px;margin-top:8px}
