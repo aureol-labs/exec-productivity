@@ -49,7 +49,7 @@ is connected but answered nothing is `null` with a `note`.
 
 ```json
 { "language": "fr", "timezone": "Europe/Paris", "first_name": "Clovis",
-  "morning": "08:30", "inbox": ["11:00", "13:30", "16:00"], "weekly": "Fri 16:30",
+  "morning": "08:30", "inbox": ["11:30", "13:30", "16:30"], "weekly": "Fri 16:30",
   "caps": { "decisions": 3, "jobs": 3 }, "tiers": ["Now", "Today", "This week"],
   "gesture": "copy", "metrics": null,
   "notify": { "brief": "push", "inbox": "none", "weekly": "push" },
@@ -62,8 +62,8 @@ notification only when something is Now), `email` (one message to the exec's own
 only where the mail role can send, never for the inbox), or `none` (the pinned page). Chosen at install, per
 habit, after a test notification. Nothing is automatic: the run decides from this value.
 
-`morning` is the time chosen at install, proposed from the calendar. `inbox` is a list of times (weekdays; the default `["11:00", "13:30", "16:00"]`, the morning run being the
-fourth pass) or `"hourly"` (every hour from one hour after `morning` to 18:00). `mail_scope` is `"main"` (the
+`morning` is the time chosen at install, proposed from the calendar. `inbox` is a list of times (weekdays; the default `["11:30", "13:30", "16:30"]`, the morning run being the
+fourth pass; the times share one minute value so they fit one schedule line) or `"hourly"` (every hour from one hour after `morning` to 18:00). `mail_scope` is `"main"` (the
 default) or `"all"`: every skill that reads mail, context, brief, inbox and review, reads the mailbox's main
 inbox only under `main`, Gmail's Primary category, Outlook's Focused inbox where it exists, and leaves the
 mailbox's own bulk categories out (Promotions, Social, Updates, Forums, Other, Junk, Clutter): not read, not

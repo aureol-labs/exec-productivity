@@ -202,8 +202,11 @@ morning time, and the first option comes from the calendar: read the exec's firs
 ten working days, take the usual start, subtract 30 minutes, round down to the quarter hour, and offer it as
 "HH:MM, 30 minutes before your usual first meeting" (first), then 07:30, 08:30, free entry. Never 06:50 by
 default: the brief has to land before the day is prepared for, not before the exec is awake. Then one question for the
-inbox rhythm, options "4 times a day: with the morning brief, then 11:00, 13:30 and 16:00" (first), "every
-hour after the morning brief, until 18:00", "twice a day, 12:30 and 16:30", free entry. The page is always current whatever the rhythm; the rhythm only decides how
+inbox rhythm, options "4 times a day: with the morning brief, then 11:30, 13:30 and 16:30" (first), "every
+hour after the morning brief, until 18:00", "twice a day, 12:30 and 16:30", free entry. A rhythm has to fit
+one schedule line: several hours are fine, the minutes must be the same for all of them (11:30, 13:30, 16:30
+fit; 11:00, 13:30, 16:00 do not). A free entry that does not fit is moved to the nearest times that do, and
+the exec is told in one line. The page is always current whatever the rhythm; the rhythm only decides how
 fresh.
 
 Then how to be reached. Nothing is automatic: each run decides, from the exec's answer, whether to
@@ -232,11 +235,15 @@ is not the exec's, which is why the prompts carry the zone.
 | Task | File | Schedule |
 |---|---|---|
 | `Aureol morning` | `references/task-morning.md` | weekdays, the chosen time; it refreshes all three pages |
-| `Aureol inbox` | `references/task-inbox.md` | weekdays, the chosen rhythm: 11:00, 13:30 and 16:00 by default (the morning run is the fourth) |
+| `Aureol inbox` | `references/task-inbox.md` | weekdays, the chosen rhythm: 11:30, 13:30 and 16:30 by default (the morning run is the fourth) |
 | `Aureol weekly` | `references/task-weekly.md` | Friday 16:30 |
 
 Settings, decided, not asked: cloud execution ("Require this computer" off), permissions approve automatically,
-model Opus 5 where the task form offers a model, connectors inherited, no folder. Write the times to `connections/preferences`. List again; each exists once.
+model Opus 5 where the task form offers a model, connectors inherited, no folder. Exactly three tasks with
+exactly these names: never a fourth, never "Aureol inbox midday" or any variant; the inbox rhythm is one task
+with several hours on one schedule line. Schedules are given in the exec's local time and zone; after
+creating, read each task back, and if its schedule shows UTC or another zone, recreate it with the local
+time: a UTC schedule drifts by an hour when the clocks change. Write the times to `connections/preferences`. List again; each exists once.
 Without task tools: a table of the three names, schedules and prompt texts, and one line on where to paste.
 
 The sentence, in a code block, with one line above it: "Paste this in your Claude settings, Instructions. It is
@@ -258,7 +265,7 @@ Then this table, translated, nothing added, then stop:
 | | |
 |---|---|
 | **Pin** | Super Context · Daily brief · Priority inbox |
-| **Habits** | Every weekday morning at the time you chose, all three pages · inbox again at 11:00, 13:30 and 16:00, or the rhythm you chose · Friday 16:30 review |
+| **Habits** | Every weekday morning at the time you chose, all three pages · inbox again at 11:30, 13:30 and 16:30, or the rhythm you chose · Friday 16:30 review |
 | **Never** | Send, delete, move, mark as read. Labels only, each listed with its rule. |
 | **Something off** | `/exec-productivity:help` |
 
