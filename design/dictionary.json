@@ -242,7 +242,8 @@
     "drop_decision_briefing": "In my Super Context, mark this proposed decision as dropped: “{say}” ({when}, {by}). Reason: {reason}. Change nothing else.",
     "routine": "Routine",
     "create_routine": "Create the routine",
-    "plugin": "Plugin"
+    "plugin": "Plugin",
+    "others_line": "{n} more unread, nothing asked of you:"
   },
   "fr": {
     "page_brief": "Brief du jour",
@@ -486,6 +487,7 @@
     "drop_decision_briefing": "Dans mon Super Context, marque cette décision proposée comme écartée : « {say} » ({when}, {by}). Raison : {reason}. Ne change rien d’autre.",
     "routine": "Routine",
     "create_routine": "Créer la routine",
-    "plugin": "Plugin"
+    "plugin": "Plugin",
+    "others_line": "{n} autres non lus, rien ne vous est demandé :"
   }
 }
