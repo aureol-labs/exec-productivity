@@ -195,9 +195,14 @@ Drop on a topic in Super Context's. Each routine reads `dismissals` from the pag
   "reason": "done", "date": "2026-09-22" }
 ```
 
-`kind` is `queue | decision | job | topic`; `ref` is the stable key the routine gave the line (a thread id or
-link for the inbox, `brief:<id>` or the source thread for the brief, the topic id on Super Context); `reason`
-is `done | not_important`. A `done` on an inbox thread also excludes its follow-ups for 7 days. The routine that
+`kind` is `queue | decision | job | topic`; `ref` is the stable key the routine gave the line, and stability is
+the whole mechanism: every run reads the whole collection, not only what changed, and excludes any line whose
+`ref` is there, on run n+1, n+2 and after. So the ref must be the same for the same thing across runs: the
+thread id for an inbox line; the source thread id or the calendar event id for a job or a decision on the
+brief, and only when there is none `brief:<slug of the ask>`; the topic id on Super Context. `reason` is
+`done | not_important`. A `done` on an inbox thread also excludes its follow-ups for 7 days; after that a
+genuinely new message on the thread may enter again. A `not_important` never returns. The routine prunes
+`done` dismissals older than 30 days and keeps `not_important` ones for good. The routine that
 reads a `done` records it as a fact where it can: a `so_far` entry on the topic the line served. A priority
 dropped in the editor carries `dropped_reason` on its own document (`done | not_a_priority`); a decision dropped
 on the page carries `reason` (`not_a_decision | not_important`).

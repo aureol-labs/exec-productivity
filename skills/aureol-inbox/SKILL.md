@@ -29,8 +29,10 @@ document (shape in its head comment and `references/example.json`).
    the tools, never estimated.
 5. **A dropped line stays dropped.** Read `dismissals` from the inbox page's store before ranking (the store is
    the page's own, at `connections/current.pages.inbox`). A thread dropped as done or not important never comes
-   back, and a `done` also covers its follow-ups for 7 days. Give every queue line a stable `ref` (the thread id
-   or link) so the page can record the drop.
+   back on this run or any later one, because every run reads the whole collection; a `done` also covers its
+   follow-ups for 7 days, after which a genuinely new message on the thread may enter again. Give every queue
+   line the thread id as `ref`, the same on every run, so the page can record the drop and the next runs find
+   it. Prune `done` dismissals older than 30 days; keep `not_important` ones.
 6. **Now is a clock the exec does not control**: an offer that lapses tonight, a deck that locks tomorrow, a
    build that starts after lunch. Importance is not a tier. Then Today, then This week. Inside a tier, oldest
    first.
