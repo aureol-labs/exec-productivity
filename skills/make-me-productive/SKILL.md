@@ -75,7 +75,7 @@ Then the introduction, translated, then the table, and start at once without wai
 | 1 | **Your connections** | What is connected is what it can read. The more, the more it does alone. |
 | 2 | **Your Super Context** | What it knows about your work: your priorities in your words, the live topics, the people in play, your decisions. Every conversation starts from it. |
 | 3 | **Your Daily brief and your Priority inbox, now** | The brief: your day, the decisions to land, the jobs to do, read in two minutes. The inbox: who is waiting on you, across mail and chat, ranked. |
-| 4 | **The habits** | The brief every morning before your first meeting, the inbox through the day, a Friday review that finds what a connection or an automation would have saved you. They run with your laptop shut. |
+| 4 | **The habits** | The brief every morning before your first meeting, the inbox four times a day, a Friday review that finds what a connection or an automation would have saved you. They run with your laptop shut. |
 
 Nothing is sent, nothing is deleted. That last sentence is the only reassurance, and the verdict at step 8 has to
 keep it.
@@ -201,8 +201,8 @@ question for the morning time, and the first option comes from the calendar: rea
 ten working days, take the usual start, subtract 30 minutes, round down to the quarter hour, and offer it as
 "HH:MM, 30 minutes before your usual first meeting" (first), then 07:30, 08:30, free entry. Never 06:50 by
 default: the brief has to land before the day is prepared for, not before the exec is awake. Then one question for the
-inbox rhythm, options "every hour after the morning brief, until 18:00" (first), "twice a day, 12:30 and
-16:30", "once, at 12:30", free entry. The page is always current whatever the rhythm; the rhythm only decides how
+inbox rhythm, options "4 times a day: with the morning brief, then 11:00, 13:30 and 16:00" (first), "every
+hour after the morning brief, until 18:00", "twice a day, 12:30 and 16:30", free entry. The page is always current whatever the rhythm; the rhythm only decides how
 fresh.
 
 Then how to be reached. Nothing is automatic: each run decides, from the exec's answer, whether to
@@ -231,7 +231,7 @@ is not the exec's, which is why the prompts carry the zone.
 | Task | File | Schedule |
 |---|---|---|
 | `Aureol morning` | `references/task-morning.md` | weekdays, the chosen time; it refreshes all three pages |
-| `Aureol inbox` | `references/task-inbox.md` | weekdays, the chosen rhythm: every hour from one hour after the morning time to 18:00 by default |
+| `Aureol inbox` | `references/task-inbox.md` | weekdays, the chosen rhythm: 11:00, 13:30 and 16:00 by default (the morning run is the fourth) |
 | `Aureol weekly` | `references/task-weekly.md` | Friday 16:30 |
 
 Settings, decided, not asked: cloud execution ("Require this computer" off), permissions approve automatically,
@@ -257,7 +257,7 @@ Then this table, translated, nothing added, then stop:
 | | |
 |---|---|
 | **Pin** | Super Context · Daily brief · Priority inbox |
-| **Habits** | Every weekday morning at the time you chose, all three pages · inbox every hour after, or the rhythm you chose · Friday 16:30 review |
+| **Habits** | Every weekday morning at the time you chose, all three pages · inbox again at 11:00, 13:30 and 16:00, or the rhythm you chose · Friday 16:30 review |
 | **Never** | Send, delete, move, mark as read. Labels only, each listed with its rule. |
 | **Something off** | `/exec-productivity:help` |
 
