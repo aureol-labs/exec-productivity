@@ -27,6 +27,9 @@ procedure, the plugin is how it reaches a session. Read `README.md` first, then 
   the skills to load, the stop rules) so a plugin update changes behaviour without recreating tasks. A commit
   that touches `skills/make-me-productive/references/task-*.md` says so in its first line.
 - **Never document a value that lives in the store.** Shapes and reasons here, values there.
+- **Bump the version on every push that changes a skill, a prompt or a template**: patch for a fix, minor
+  for a behaviour change, in `.claude-plugin/plugin.json`. The marketplace card shows the version and the synced
+  commit; a version that never moves makes the card useless.
 
 ## Writing
 
