@@ -516,7 +516,7 @@
      signature rather than as another row of the page. */
   .by{margin-top:20px;display:flex;align-items:center;gap:9px;
       font-size:11px;letter-spacing:.3px;color:var(--ink-3)}
-  .by .mark{width:22px;height:auto;color:var(--pine);flex:none;
+  .by .mark{width:26px;height:auto;color:var(--pine);flex:none;
       position:relative;top:-1px}
   .by a{color:var(--ink-3);text-decoration:none;border-bottom:1px solid var(--hair)}
   .by a:hover{color:var(--pine);border-bottom-color:var(--pine-pale)}
@@ -690,10 +690,11 @@
   </symbol>
   <!-- the Aureol mark, the site's own: two bold arcs, stroke set to currentColor so
        it stays pine in .by .mark. viewBox cropped to the ink. -->
-  <symbol id="i-mark" viewBox="3 17 90 58">
+  <symbol id="i-mark" viewBox="0 24 96 56">
     <g fill="none" stroke="currentColor" stroke-linecap="round">
-      <path d="M24.8 67.8 A24 24 0 0 1 71.2 67.8" stroke-width="12"/>
-      <path d="M9.4 63.7 A40 40 0 0 1 86.6 63.7" stroke-width="9" opacity="0.5"/>
+      <path d="M28 72.8 A20 20 0 0 1 68 72.8" stroke-width="9"/>
+      <path d="M16 72.8 A32 32 0 0 1 80 72.8" stroke-width="7" opacity="0.7"/>
+      <path d="M4 72.8 A44 44 0 0 1 92 72.8" stroke-width="5" opacity="0.45"/>
     </g>
   </symbol>
 </defs></svg>
@@ -879,7 +880,7 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
   function credit(){
     var p=el('p','by');
     add(p, L('by')+' ', outLink('https://www.linkedin.com/in/paul-rousselle/', L('by_name')), ' '+L('by_tail')+' ',
-        glyph('i-mark','mark','3 17 90 58'));
+        glyph('i-mark','mark','0 0 96 56'));
     return p;
   }
   /* a quiet mark on a row, in pine, for a moment: "Saved". Or in brick: "Not saved". */
