@@ -160,10 +160,13 @@ else. Write it to `connections/current.pages.brief`.
 
 ## 6. The inbox: its rules where mail can take a label, then the first page, now
 
-First the scope, one question, on every mailbox: probe whether the mailbox splits its inbox (Gmail's Primary
-against Promotions, Social and Updates; Outlook's Focused against Other) and ask: "Your assistant reads your
-main inbox only, N unread there today; Promotions, Social, Updates and the like stay out. Right?" Options: "Yes,
-main inbox only" (first), "No, read everything". Write `preferences.mail_scope`. If the exec's other addresses
+First the scope, one question, on every mailbox, never skipped whatever a probe says. Count twice with real
+calls: the unread in the main inbox (Gmail: `in:inbox is:unread category:primary`; Outlook: the Focused inbox)
+and the unread in the whole inbox (`in:inbox is:unread`). Then ask, with both numbers in the card's text: "Your
+assistant reads your main inbox only: N unread there today, M in the whole inbox with Promotions, Social and
+Updates. Right?" Options: "Yes, main inbox only" (first), "No, read everything". When the two counts are equal
+the mailbox has no tabs; ask anyway, in the same words, so the exec knows the rule. Write
+`preferences.mail_scope`. If the exec's other addresses
 show up in the read (a signature, a forwarded account) and are not connected, one line names them as not read.
 
 `connections/current.roles.mail.can` without `label`: one line, "Your inbox page sorts; it writes nothing to your
