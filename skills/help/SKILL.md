@@ -28,8 +28,8 @@ its connections; no plugin, skill, task, connector or artifact in the exec's hal
 ## Who fixes what
 
 1. A question the assistant asked on a page is not a fault. Answer it there.
-2. A run that failed leaves a "Technical note" at the end of its message with what failed. Paste it here and
-   say "fix this": with the same connections, do it now.
+2. A run that failed wrote what failed in its `runs` document's `note`. Read it, and with the same
+   connections, fix it now.
 3. The habit itself is wrong (a bad question, a skipped step, a false line): that is a change to the assistant.
    Describe what happened; the fix lands as a new version.
 
