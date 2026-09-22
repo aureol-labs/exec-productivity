@@ -67,18 +67,15 @@ Then the introduction, translated, then the table, and start at once without wai
 
 > **Setting up your assistant.** Expect 10 to 15 minutes, and a few questions only you can answer.
 >
-> Your assistant reads your mail, calendar, chat, documents and meetings, and keeps three pages for you. A
-> Super Context it starts every conversation from: your priorities, the live topics, the people in play, your
-> decisions. A Daily brief each morning: your day, the decisions to land, the jobs to do. A Priority inbox through
-> the day: who is waiting on you. It gets better as it runs, because what it reads today is what it ranks
-> against tomorrow. Four steps:
+> Your assistant reads your mail, calendar, chat, documents and meetings, and keeps three pages for you. It gets
+> better as it runs: what it reads today is what it ranks against tomorrow. Four steps:
 
-| | |
-|---|---|
-| 1 | Your connections: mail, calendar, chat, documents, meetings |
-| 2 | Your Super Context, from the last 30 days. You confirm your priorities. |
-| 3 | Your first brief and your first inbox, now |
-| 4 | The habits: every morning, every hour for your inbox, Friday for the review |
+| | | |
+|---|---|---|
+| 1 | **Your connections** | What is connected is what it can read. The more, the more it does alone. |
+| 2 | **Your Super Context** | What it knows about your work: your priorities in your words, the live topics, the people in play, your decisions. Every conversation starts from it. |
+| 3 | **Your Daily brief and your Priority inbox, now** | The brief: your day, the decisions to land, the jobs to do, read in two minutes. The inbox: who is waiting on you, across mail and chat, ranked. |
+| 4 | **The habits** | The brief every morning before your first meeting, the inbox through the day, a Friday review that finds what a connection or an automation would have saved you. They run with your laptop shut. |
 
 Nothing is sent, nothing is deleted. That last sentence is the only reassurance, and the verdict at step 8 has to
 keep it.
