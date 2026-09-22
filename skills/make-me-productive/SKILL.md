@@ -287,5 +287,8 @@ proposed are on the Super Context page, one line says so. Nothing qualified: the
 then one line, "Nothing this month that Claude could have taken off your hands with a new connection or a
 routine; the review looks again every Friday," and stop.
 
-End on one line: "Say which ones you want and I add them." Then stop. Write a `runs` document with
+End on one line, "Say which ones you want and I add them," then the sign-off, two sentences, translated:
+"This is one way to start with Claude: habits that run on their own, pages that arrive written, a review that
+finds what to add next. From here it is yours: change any of it, ask for a habit or a page of your own, and it
+happens." Then stop. Write a `runs` document with
 `task: "install"`. A maintainer's fact, if any: "Technical note", three lines or fewer, at the very bottom.
