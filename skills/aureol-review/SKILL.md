@@ -20,7 +20,8 @@ proposals.
    covers it". Nothing found means one line, never a table of what did not qualify.
 2. **A use case is written as value, not as mechanism.** "Your Qonto charges, read by your assistant when you
    ask, instead of asking someone with billing access", not "an ask a connection would have answered". The
-   table's columns are: what you do today, how often, what your assistant would do instead, what to add.
+   table's columns are: what you do today, how often, what Claude would do instead, what to add. No minute
+   counts: the value is the work Claude does, never a time saved.
 3. **The shelf before the workshop.** Search the Claude plugin catalog (the session's plugin search tool) for
    the system or the task before proposing anything custom; a plugin or a shipped skill that covers it is
    proposed as `kind: plugin`. Only then a routine (a pattern with a clock) or a skill (a pattern reached for
@@ -71,6 +72,6 @@ days, called by the Friday task.
 4. Load the `aureol-context` skill in render mode so Super Context shows the proposals. In install mode also
    return the connections and plugins with their catalog ids to install, which shows the cards.
 5. Write a `runs` document. The task prompt says how the run ends: one line, then a table with a row per
-   qualified finding (what you do today, how often, what your assistant would do instead, what to add), then
+   qualified finding (what you do today, how often, what Claude would do instead, what to add), then
    the cards, then "Say which ones you want and I add them." Nothing qualified: one line, "Nothing this
    week that a connection or a routine would take off your hands; the review looks again next Friday."

@@ -273,19 +273,19 @@ Then one more step, the closing message.
 
 ## 9. The Friday review, run once: the closing message
 
-The last message of the install is the first thing the Friday habit will do, so the exec ends on what their
-assistant found they could connect or automate, and acts on it from there. Load
-the `aureol-review` skill in **install mode** on the last 30 days: the asks to colleagues that a connection would
-have answered, the asks that repeat. It writes `asks` and `suggestions` and republishes Super Context with the
-"connections and skills to add" list. The message opens by saying what this is, in two sentences: "One
-last thing, and it is what your Friday review will do every week: it reads what you asked colleagues for, and
-finds what a connection, a ready-made plugin, a routine or a skill could have answered without asking anyone.
-Here is what a month of your asks says." Then one line of counts, then one table, a row per finding: what you
-asked, who and how often, what would answer it, what it would change. Under the table, one connector card for
-the systems with a connection (three at most). Where the review found an off-the-shelf plugin that covers a pattern, the
-plugin suggestion card the app's own setup uses, one line above it. Routines and skills it proposed are on
-the Super Context page, one line says so. Nothing found: the same two opening sentences, then one line, "Nothing you asked this month needed a new
-connection; the review looks again every Friday," and stop.
+The last message of the install is the first thing the Friday habit will do: what Claude could do for the
+exec next week that they did themselves this month. Load the `aureol-review` skill in **install mode** on the
+last 30 days. It writes `asks` and `suggestions` and republishes Super Context with the proposals. The message
+opens by saying what this is, in two sentences: "One last thing, and it is what your Friday review will do
+every week: it looks at your week for the work Claude could do instead of you, and says what to add for that,
+a connection, a ready-made plugin, a routine or a skill. Here is what your last month says." Then the table
+the review skill defines, a row per use case that qualified: what you do today, how often, what Claude would
+do instead, what to add. Never a row for what cannot be added, never the mechanics, never a minute count.
+Under the table, one connector card for the connections (three at most) and, where a ready-made plugin covers
+a use case, the plugin suggestion card the app's own setup uses, one line above each. Routines and skills it
+proposed are on the Super Context page, one line says so. Nothing qualified: the same two opening sentences,
+then one line, "Nothing this month that Claude could have taken off your hands with a new connection or a
+routine; the review looks again every Friday," and stop.
 
 End on one line: "Say which ones you want and I add them." Then stop. Write a `runs` document with
 `task: "install"`. A maintainer's fact, if any: "Technical note", three lines or fewer, at the very bottom.
