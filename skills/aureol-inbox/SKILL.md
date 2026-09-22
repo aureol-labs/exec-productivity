@@ -20,9 +20,12 @@ document (shape in its head comment and `references/example.json`).
 2. **Every write is listed** on the page, under the label, with its count and the rule in the exec's words.
    A label without a rule is not applied.
 3. **The main inbox only.** Unless `connections/preferences.mail_scope` is `all`, every read, every count and
-   every queue line comes from the mailbox's main inbox: Gmail's Primary category (`category:primary`), Outlook's
-   Focused inbox where it exists, and never from Promotions, Social, Updates, Forums, Other, Junk or Clutter.
-   The h1's unread count is that inbox's count, and the sub says so in three words ("in your main inbox").
+   every queue line comes from the mailbox's main inbox. On Gmail that is the query `in:inbox is:unread
+   category:primary` for the count and `in:inbox category:primary` plus the date window for the read; on a
+   mailbox without tabs the same query returns the plain inbox, which is right. On Outlook, the Focused inbox
+   where it exists. Never Promotions, Social, Updates, Forums, Other, Junk or Clutter. The h1's unread count is
+   that query's count, never the account's total, and the sub says so in three words ("in your main inbox"). A
+   page that says 4,000 unread to an exec who runs inbox zero has used the wrong query.
 4. **The test for the queue is stated on the page**: someone is blocked, a promise is late, or only the exec can
    answer. A group ask anyone could answer is not the exec's. A thread the exec already replied to or reacted to
    is out. Check the thread before ranking it, not the snippet. **Unread first**: the queue is built from unread
