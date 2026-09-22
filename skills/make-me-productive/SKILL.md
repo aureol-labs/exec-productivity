@@ -60,9 +60,15 @@ Then autopilot, one line, before anything else: ask the exec to set this convers
 only stops left are the questions that are theirs. If the session already runs with automatic approvals, say
 nothing. The three habits are created with automatic approvals in any case (step 7).
 
-Then one line and one table, translated, and start at once without waiting:
+Then the introduction, translated, then the table, and start at once without waiting:
 
 > **Setting up your assistant.** About ten minutes.
+>
+> Your assistant reads your mail, calendar, chat, documents and meetings, and keeps three pages for you. A
+> Super Context it starts every conversation from: your priorities, the live topics, the people in play, your
+> decisions. A Daily brief each morning: your day, the decisions to land, the jobs to do. A Priority inbox through
+> the day: who is waiting on you. It gets better as it runs, because what it reads today is what it ranks
+> against tomorrow. Four steps:
 
 | | |
 |---|---|
