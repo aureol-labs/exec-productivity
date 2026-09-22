@@ -86,7 +86,13 @@ at what a morning can hold and write the counts to the run.
   page renders it in the Closed list with its reason. Reasons: `done` or `not_important` from the exec's Drop on
   the topic, `silent` after 30 days with nothing from anyone, `settled` when what it was about is decided,
   signed or past. Reopened by the exec through Claude, or by the routine when the thread wakes again.
-- **People and entities.** `role` is the single source for every page's "Nadia, VP Sales". `cares_about` in
+- **People and entities.** `role` is the single source for every page's "Nadia, VP Sales", and it is never
+  left empty by omission. Sources in order, stop at the first that answers: the mail signature; the chat
+  profile (Slack and Teams carry a title); the calendar (organiser, attendee domain); a document that names
+  them; the web, under the enrichment rule, a company page or a professional profile. None of those: the
+  company from the address domain, and "role not found" in `state` so the exec can tell Claude in one line.
+  The same order gives an entity its `type` and `relationship`. A run that leaves the page with people
+  without a role, when the sources above exist, is wrong, whatever else it did. `cares_about` in
   your words unless the exec wrote it (`yours: true`, and then you never overwrite it). `with` stored once, on the
   side that changes when it does. `on_page` recomputed every morning by rule 7. Everyone else stays in the store.
 - **Decisions.** From meetings, threads and the exec's own messages: what was decided, by whom (`["you"]` alone is
