@@ -1,6 +1,6 @@
 ---
 name: make-me-productive
-description: Make me productive: sets up the executive's assistant in one session, ending on a real page from their own data. Asks the language, checks every connection by a real call (mail, calendar, chat, documents, meetings) and shows one card for what is missing, builds the Super Context from the last 30 days and lets the exec confirm their priorities on questions, publishes the first daily brief now, sets the inbox rules where the mailbox takes labels, creates the three habits (morning, inbox, Friday review), runs the Friday review once so the exec sees it, and stops with a verdict. Invoke on first use, on a new account, or to re-check after changing connections. To change one preference, use `help`.
+description: Make me productive: sets up the executive's assistant in one session, ending on a real page from their own data. Asks the language, checks every connection by a real call (mail, calendar, chat, documents, meetings) and shows one card for what is missing, builds the Super Context from the last 30 days and lets the exec confirm their priorities on questions, publishes the first daily brief now, sets the inbox rules where the mailbox takes labels, creates the three habits (morning, inbox, end-of-day review), runs the review once so the exec sees it, and stops with a verdict. Invoke on first use, on a new account, or to re-check after changing connections. To change one preference, use `help`.
 ---
 
 # Install
@@ -21,7 +21,7 @@ bare quote. Two shapes. When there is something to read first (a table of propos
 labels), the series takes two turns: the message with one line and the table, ending on "Say go, or say what to
 change", then the turn ends so the exec can read, and the reply is the answer, no cards. When there is nothing
 to read first (the times, the notifications), no "say go": the introduction is the first card's own text,
-"Three habits on your account: the morning brief, the inbox through the day, the Friday review. First, the
+"Three habits on your account: the morning brief, the inbox through the day, the end-of-day review. First, the
 morning: what time should your brief be ready?", and the cards follow one another. A set of proposals the exec can
 judge as a whole (the labels) is one table and one go, never a card per item: cards only where each item
 needs its own answer.
@@ -76,7 +76,7 @@ Then the introduction, translated, then the table, and start at once without wai
 | 1 | **Your connections** | What is connected is what it can read. The more, the more it does alone. |
 | 2 | **Your Super Context** | What it knows about your work: your priorities in your words, the live topics, the people in play, your decisions. Every conversation starts from it. |
 | 3 | **Your Daily brief and your Priority inbox, now** | The brief: your day, the decisions to land, the jobs to do, read in two minutes. The inbox: who is waiting on you, across mail and chat, ranked. |
-| 4 | **The habits** | The brief every morning before your first meeting, the inbox four times a day, a Friday review that finds what a connection or an automation would have saved you. They run with your laptop shut. |
+| 4 | **The habits** | The brief every morning before your first meeting, the inbox four times a day, a review at the end of each day that finds what Claude could do instead of you, silent when there is nothing new. They run with your laptop shut. |
 
 Nothing is sent, nothing is deleted. That last sentence is the only reassurance, and the verdict at step 8 has to
 keep it.
@@ -200,9 +200,9 @@ page the exec was just asked about has to exist before the next question.
 
 ## 7. The habits
 
-List the scheduled tasks. `Aureol morning`, `Aureol inbox` or `Aureol weekly` already there: keep it, create only
+List the scheduled tasks. `Aureol morning`, `Aureol inbox` or `Aureol review` already there: keep it, create only
 the missing ones. No message before the cards here, nothing to read first: the first card carries the introduction in its own
-text, "Three habits on your account: the morning brief, the inbox through the day, the Friday review. Three
+text, "Three habits on your account: the morning brief, the inbox through the day, the end-of-day review. Three
 questions: when, and how to be told. First, the morning: what time should your brief be ready?" Then the
 morning time, and the first option comes from the calendar: read the exec's first meeting of each of the last
 ten working days, take the usual start, subtract 30 minutes, round down to the quarter hour, and offer it as
@@ -222,8 +222,7 @@ you here", then one question: "Did that reach you?" with "on my computer", "on m
 came" as options. Nothing came: one line on where the app's notification setting is, as this session
 shows it, and go on. Then one question per habit. For the brief: "a notification" (first), "an email to
 me with the link", "nothing, I open the page". For the inbox: "nothing, I open the page" (first), "a
-notification only when something is urgent", "a notification every run". The Friday review follows the
-brief's choice. Write `connections/preferences.notify`. What each answer means, done by the runs:
+notification only when something is urgent", "a notification every run". The review follows the brief's choice, and notifies only on a day it found something new. Write `connections/preferences.notify`. What each answer means, done by the runs:
 - notification (`push`): the run ends by sending one line leading with what to act on and the page's
   link. For the inbox, `push_now` sends only when something is Now, and says what.
 - email: only where the mail role can send (`can` contains `send`, proven by the tool having a send call
@@ -242,7 +241,7 @@ is not the exec's, which is why the prompts carry the zone.
 |---|---|---|
 | `Aureol morning` | `references/task-morning.md` | weekdays, the chosen time; it refreshes all three pages |
 | `Aureol inbox` | `references/task-inbox.md` | weekdays, the chosen rhythm: 11:30, 13:30 and 16:30 by default (the morning run is the fourth) |
-| `Aureol weekly` | `references/task-weekly.md` | Friday 16:30 |
+| `Aureol review` | `references/task-review.md` | weekdays 17:30 |
 
 Settings, decided, not asked: cloud execution ("Require this computer" off), permissions approve automatically,
 model Opus 5 where the task form offers a model, connectors inherited, no folder. Exactly three tasks with
@@ -272,19 +271,19 @@ Then this table, translated, nothing added, then stop:
 | | |
 |---|---|
 | **Pin** | Super Context · Daily brief · Priority inbox |
-| **Habits** | Every weekday morning at the time you chose, all three pages · inbox again at 11:30, 13:30 and 16:30, or the rhythm you chose · Friday 16:30 review |
+| **Habits** | Every weekday morning at the time you chose, all three pages · inbox again at 11:30, 13:30 and 16:30, or the rhythm you chose · review every weekday at 17:30, silent when nothing new |
 | **Never** | Send, delete, move, mark as read. Labels only, each listed with its rule. |
 | **Something off** | `/exec-productivity:help` |
 
 Then one more step, the closing message.
 
-## 9. The Friday review, run once: the closing message
+## 9. The review, run once: the closing message
 
-The last message of the install is the first thing the Friday habit will do: what Claude could do for the
+The last message of the install is the first thing the end-of-day review will do: what Claude could do for the
 exec next week that they did themselves this month. Load the `aureol-review` skill in **install mode** on the
 last 30 days. It writes `asks` and `suggestions` and republishes Super Context with the proposals. The message
-opens by saying what this is, in two sentences: "One last thing, and it is what your Friday review will do
-every week: it looks at your week for the work Claude could do instead of you, and says what to add for that,
+opens by saying what this is, in two sentences: "One last thing, and it is what your end-of-day review will do
+every weekday: it looks at your week for the work Claude could do instead of you, and says what to add for that,
 a connection, a ready-made plugin, a routine or a skill. Here is what your last month says." Then the table
 the review skill defines, a row per use case that qualified: what you do today, how often, what Claude would
 do instead, what to add. Never a row for what cannot be added, never the mechanics, never a minute count.
@@ -292,7 +291,7 @@ Under the table, one connector card for the connections (three at most) and, whe
 a use case, the plugin suggestion card the app's own setup uses, one line above each. Routines and skills it
 proposed are on the Super Context page, one line says so. Nothing qualified: the same two opening sentences,
 then one line, "Nothing this month that Claude could have taken off your hands with a new connection or a
-routine; the review looks again every Friday," and stop.
+routine; the review looks again at the end of every day, and stays silent when there is nothing new," and stop.
 
 End on one line, "Say which ones you want and I add them," then the sign-off, two sentences, translated:
 "This is one way to start with Claude: habits that run on their own, pages that arrive written, a review that

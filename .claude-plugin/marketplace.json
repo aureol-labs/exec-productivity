@@ -9,7 +9,7 @@
     {
       "name": "exec-productivity",
       "source": "./",
-      "description": "Make me productive: guided install, Super Context, daily brief, priority inbox, Friday review. Reads mail, calendar, chat, documents and meetings; writes only its own pages."
+      "description": "Make me productive: guided install, Super Context, daily brief, priority inbox, end-of-day review. Reads mail, calendar, chat, documents and meetings; writes only its own pages."
     }
   ]
 }

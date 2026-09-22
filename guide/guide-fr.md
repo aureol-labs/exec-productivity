@@ -45,7 +45,7 @@ y est), un mail à vous-même, ou rien. L'inbox peut ne prévenir que quand quel
 |---|---|
 | le matin | en semaine, à l'heure choisie (proposée depuis votre agenda) : les trois pages |
 | l'inbox | en semaine, avec le brief puis à 11:30, 13:30 et 16:30, ou le rythme choisi |
-| la revue | le vendredi à 16:30 |
+| la revue | en semaine à 17:30, muette s'il n'y a rien de nouveau |
 
 L'ordinateur peut être fermé : les habitudes tournent dans le cloud.
 

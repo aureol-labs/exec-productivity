@@ -1,13 +1,15 @@
 ---
 name: aureol-review
 user-invocable: false
-description: The Friday review, and the same look at install: find where the executive's assistant would take work off their hands this week, from what they asked colleagues for, what they did themselves again and again, what they prepare every time, what they forward or summarise, and propose only what can be added, a connection, a ready-made plugin, a routine or a skill, each as a use case with its evidence. Writes asks and suggestions, never proposes a declined one twice, renders nothing of its own. Load from the weekly task, from install, or when the exec asks what could be automated.
+description: The end-of-day review, every weekday, and the same look at install: find where the executive's assistant would take work off their hands this week, from what they asked colleagues for, what they did themselves again and again, what they prepare every time, what they forward or summarise, and propose only what can be added, a connection, a ready-made plugin, a routine or a skill, each as a use case with its evidence. Writes asks and suggestions, never proposes a declined one twice, renders nothing of its own. Load from the weekly task, from install, or when the exec asks what could be automated.
 ---
 
 # The review
 
-One question, every Friday: where, this week, would the assistant have done the work, and what has to be
-added for it to do so next week. The answer is a short list of use cases, each with the thing to add. The
+One question, at the end of every weekday: where, in the last seven days, would the assistant have done the
+work, and what has to be added for it to do so tomorrow. Daily because cadence beats completeness: a
+proposal the day after the pattern showed is worth more than a fuller one on Friday, and a run that finds
+nothing new says one line and costs nothing. The answer is a short list of use cases, each with the thing to add. The
 mechanics that find them stay inside this file; the exec reads use cases and value, never how they were
 found. It renders no page: the `aureol-context` skill's render mode republishes Super Context with the
 proposals.
@@ -30,7 +32,7 @@ proposals.
    words. Ranked by how much work it takes off the exec: how often, times how long.
 5. **Declined is final.** Read `suggestions` with `status: declined` before proposing; never the same system,
    plugin, routine or skill twice.
-6. **Three on the page, all in the message.** The Super Context list shows the three strongest; the run's
+6. **Three on the page, all new ones in the message.** The Super Context list shows the three strongest; the run's
    message shows every finding that qualified, and nothing that did not.
 
 ## The signals, all of them, the exec's side only
@@ -51,8 +53,9 @@ Never what colleagues asked the exec; that is the inbox's job.
 
 ## Modes
 
-Install mode: the last 30 days, called by install, silent unless something qualified. Weekly mode: the last 7
-days, called by the Friday task.
+Install mode: the last 30 days, called by install, silent unless something qualified. Daily mode: a rolling 7
+days, called by the weekday task at the end of the day; it proposes only what is new since the last run (not
+in `suggestions` as proposed, found or declined), so the same pattern never comes back day after day.
 
 ## Steps
 
@@ -74,4 +77,4 @@ days, called by the Friday task.
 5. Write a `runs` document. The task prompt says how the run ends: one line, then a table with a row per
    qualified finding (what you do today, how often, what Claude would do instead, what to add), then
    the cards, then "Say which ones you want and I add them." Nothing qualified: one line, "Nothing this
-   week that a connection or a routine would take off your hands; the review looks again next Friday."
+   new today." No table, no notification: silence is the right answer most days.
