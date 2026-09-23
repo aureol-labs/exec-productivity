@@ -20,6 +20,11 @@ Installer **Exec productivity**.
 Dans une nouvelle conversation, taper `/` puis choisir **make-me-productive**. Répondre aux questions. Dix à
 quinze minutes. Ça se termine sur votre premier brief.
 
+Avant de commencer, l'assistant vous demande de mettre le modèle sur Opus 5.5 et le mode Auto, tous deux en bas
+de la conversation, et attend votre oui.
+
+[capture : le menu du modèle et le menu du mode, en bas de la conversation]
+
 [capture : le menu / avec make-me-productive]
 
 Pendant l'installation, l'assistant vous montre une carte pour chaque connexion qui manque. Cliquer, autoriser,
@@ -40,9 +45,9 @@ Si une connexion demande un administrateur, envoyez-lui le lien ; l'assistant co
 ## 3. Épingler les trois pages
 
 **Super Context**, **Brief du jour**, **Inbox prioritaire**. À la fin de l'installation, l'assistant propose de
-les épingler : dites oui. Elles sont toujours à jour. À l'installation, vous
-choisissez pour chaque habitude comment être prévenu : une notification (ordinateur, et téléphone si l'app Claude
-y est), un mail à vous-même, ou rien. L'inbox peut ne prévenir que quand quelque chose est urgent.
+les épingler : dites oui. Elles sont toujours à jour. Vous êtes prévenu par une notification (ordinateur, et
+téléphone si l'app Claude y est) : chaque matin avec le brief, pour l'inbox seulement quand quelque chose est
+urgent, pour la revue seulement quand elle a trouvé quelque chose. Pour changer, demandez à l'assistant.
 
 [capture : les trois pages épinglées]
 
@@ -50,15 +55,15 @@ y est), un mail à vous-même, ou rien. L'inbox peut ne prévenir que quand quel
 
 | Habitude | Quand |
 |---|---|
-| le matin | en semaine, à l'heure choisie (proposée depuis votre agenda) : les trois pages |
-| l'inbox | en semaine, avec le brief puis à 11:30, 13:30 et 16:30, ou le rythme choisi |
-| la revue | en semaine à 17:30, muette s'il n'y a rien de nouveau |
+| le matin | en semaine à 08:30 : les trois pages |
+| l'inbox | en semaine, avec le brief puis à 11:00, 13:00, 15:00 et 17:00 : tous vos non-lus, mails et messages, ce qui vous attend en haut |
+| la revue | en semaine à 17:30 : une notification seulement quand elle a trouvé du travail que Claude peut faire à votre place |
 
 L'ordinateur peut être fermé : les habitudes tournent dans le cloud.
 
 ## Ce que l'assistant ne fait jamais
 
-Envoyer, supprimer, déplacer, archiver, marquer comme lu. Une seule exception, si vous l'avez choisie : un mail
+Envoyer, supprimer, déplacer, archiver, marquer comme lu. Une seule exception, si vous la demandez : un mail
 par jour à vous-même, avec le lien du brief. Il pose des étiquettes seulement si votre messagerie le permet et
 selon des règles écrites dans vos mots, chacune listée sur la page.
 

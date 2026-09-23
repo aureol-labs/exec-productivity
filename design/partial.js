@@ -171,6 +171,22 @@
   function footer(spans){
     var f=el('footer'); (spans||[]).forEach(function(s){ add(f, el('span',null,s||'')); }); return f;
   }
+  /* a long list shows its first n lines and one quiet link for the rest; the link
+     opens every line and goes. Print shows everything (see partial.css). */
+  function tuck(list,n,key){
+    var all=list.children.length, rest=Array.prototype.slice.call(list.children,n);
+    if(!rest.length) return;
+    rest.forEach(function(r){ r.hidden=true; });
+    var a=el('a','more',F(L(key),{n:all}));
+    a.setAttribute('href','#');
+    a.onclick=function(e){
+      e.preventDefault();
+      rest.forEach(function(r){ r.hidden=false; });
+      if(a.parentNode) a.parentNode.removeChild(a);
+      return false;
+    };
+    add(list,a);
+  }
   function credit(){
     var p=el('p','by');
     add(p, L('by')+' ', outLink('https://www.linkedin.com/in/paul-rousselle/', L('by_name')), ' '+L('by_tail')+' ',

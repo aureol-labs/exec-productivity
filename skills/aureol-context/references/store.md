@@ -49,23 +49,26 @@ is connected but answered nothing is `null` with a `note`.
 
 ```json
 { "language": "fr", "timezone": "Europe/Paris", "first_name": "Clovis",
-  "morning": "08:30", "inbox": ["11:30", "13:30", "16:30"], "review": "17:30",
+  "morning": "08:30", "inbox": ["11:00", "13:00", "15:00", "17:00"], "review": "17:30",
   "caps": { "decisions": 3, "jobs": 3 }, "tiers": ["Now", "Today", "This week"],
   "mail_scope": "main", "mailboxes": ["clovis@example.com"], "enrich": "public",
   "gesture": "copy", "metrics": null,
-  "notify": { "brief": "push", "inbox": "none", "review": "push" },
+  "notify": { "brief": "push", "inbox": "push_now", "review": "push" },
   "installed": "2026-09-22", "plugin_version": "0.3.3" }
 ```
 
 `notify.<habit>` is `push` (the run ends by sending one notification with the session's notification tool, one
 line under 200 characters, desktop and phone when the Claude app is on the phone), `push_now` (inbox only: a
 notification only when something is Now), `email` (one message to the exec's own address with the page's link,
-only where the mail role can send, never for the inbox), or `none` (the pinned page). Chosen at install, per
-habit. Nothing is automatic: the run decides from this value. `installed` is the day of the install and
+only where the mail role can send, never for the inbox), or `none` (the pinned page). Install sets `push`,
+`push_now`, `push` without asking; the exec changes any of it through `exec-productivity-help`. Nothing is
+automatic: the run decides from this value. `installed` is the day of the install and
 `plugin_version` the manifest's version that day, both written by install.
 
-`morning` is the time chosen at install, proposed from the calendar. `review` is the end-of-day time of the daily review, 17:30 by default; its notification fires only on a day something new qualified. `inbox` is a list of times (weekdays; the default `["11:30", "13:30", "16:30"]`, the morning run being the
-fourth pass; the times share one minute value so they fit one schedule line) or `"hourly"` (every hour from one hour after `morning` to 18:00). `mail_scope` is `"main"` (the
+`morning`, `inbox` and `review` are set by install without asking: 08:30, then 11:00, 13:00, 15:00 and 17:00
+(the morning run is the inbox's first pass), then 17:30; changed through `exec-productivity-help`. `inbox` is a
+list of weekday times that share one minute value, so they fit one schedule line. The review's notification
+fires only on a day something worth it qualified. `mail_scope` is `"main"` (the
 default) or `"all"`: every skill that reads mail, context, brief, inbox and review, reads the mailbox's main
 inbox only under `main`, Gmail's Primary category, Outlook's Focused inbox where it exists, and leaves the
 mailbox's own bulk categories out (Promotions, Social, Updates, Forums, Other, Junk, Clutter): not read, not

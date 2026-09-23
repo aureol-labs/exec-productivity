@@ -37,7 +37,8 @@ document (shape in its head comment and `references/example.json`).
    back on this run or any later one, because every run reads the whole collection; a `done` also covers its
    follow-ups for 7 days, after which a genuinely new message on the thread may enter again. Give every queue
    line the thread id as `ref`, the same on every run, so the page can record the drop and the next runs find
-   it. Prune `done` dismissals older than 30 days; keep `not_important` ones.
+   it; a merged line (rule 9) joins its thread ids with `+`, mail first, and a dismissal whose `ref` carries `+`
+   drops each thread in it. Prune `done` dismissals older than 30 days; keep `not_important` ones.
 6. **Now is a clock the exec does not control**: an offer that lapses tonight, a deck that locks tomorrow, a
    build that starts after lunch. Importance is not a tier. Then Today, then This week. Inside a tier, oldest
    first.
@@ -45,22 +46,35 @@ document (shape in its head comment and `references/example.json`).
    computed lateness, no brick on this page.
 8. **Every reveal leads with the ask**, one line, then the type, then the reason, three sources, and a briefing
    that is your summary plus pointers and ends "do not send" when it drafts.
-9. **The lead is a count, not a claim, and every unread is somewhere on the page.** "61 unread mails, 41 unread
-   messages. 9 need you." The unread set is the whole main inbox's unread, not only what arrived since the last
-   run: the window decides what is re-read and re-ranked, never what is counted. Each unread lands in exactly one
-   place: the queue, a label (or a group where labels cannot be written), or `others`, one closing line "N more
-   unread, nothing asked of you" with up to three examples. Queue plus filed plus others equals the title, mail
-   and chat separately; `check-page` refuses a page where it does not. Filing is not judging, so the filed
-   list is "labelled, still unread".
+9. **The lead is a count, not a claim, and every unread is on the page, one line each.** "61 unread mails, 41
+   unread messages. 9 need you." The page is where the exec sees all of it: what needs them on top, everything
+   else below, nothing missing. Count mail and chat with one real call each on every run, and write both numbers
+   even when one is 0. A channel that could not be read is `null` in `counts` with one line in `notices`, in
+   the exec's language ("Slack could not be read this morning"), never a 0 and never a missing key: a chat that
+   silently disappears reads as a broken connection. The unread set is the whole main inbox's unread, not only
+   what arrived since the last run: the window decides what is re-read and re-ranked, never what is counted.
+   Chat unread: what the tool marks unread; where it cannot say, every message that came to the exec (a direct
+   message, a mention, a thread or channel they are in) after their own last message in that conversation, over
+   the last 7 days. Each unread lands in exactly one place: the queue, a label (or a group where labels cannot
+   be written), or `others.items`, the full list, newest first, the channel mark on every line; the page shows
+   3 and "show all N" opens the rest. **One topic on two channels is one line**: a mail thread and a chat
+   thread about the same thing (the same ask, the same deal, the same person on the same subject) are one
+   queue line, `channel` the thread the ask sits in, `channels` both, `sources` both threads, `ref` the two
+   thread ids joined with `+`; never two threads of one channel in one line. Queue (each line counted once per
+   channel it carries) plus filed plus others equals the title, mail and chat separately; `check-page` refuses
+   a page where it does not. Filing is not judging, so the filed list is "labelled, still unread".
 
 ## 0. Read, probe
 
 `connections/current`, `connections/preferences` (tiers), `rules`, `topics`, `people`, the last inbox run.
-Probe mail and chat with one real call each.
+Probe mail and chat with one real call each, on every run, whatever the last run found. A probe that fails is
+`null` and a notice (rule 9), and the run goes on with the other channel.
 
 ## 1. Read since the last run
 
-Mail and chat since the last inbox run (48 hours on the first run), both directions, the exec's threads only.
+Mail and chat since the last inbox run (48 hours on the first run), both directions, the exec's threads only:
+for chat, their direct messages, their mentions, and the threads and channels they are in, whatever the mail
+scope. Chat is read even when mail has nothing new.
 Every time on the page is the exec's local time (`connections/preferences.timezone`); the run may execute in
 another zone.
 Open every candidate thread once to check rule 3. Nothing new since the last run: publish nothing, write a
@@ -69,7 +83,7 @@ Open every candidate thread once to check rule 3. Nothing new since the last run
 ## 2. Rank
 
 Nine to twelve lines is a page; more means the test was too loose. Each line: the tier, the channel (mail,
-slack, teams), the ask with the name, the label chip when the mail role writes labels, the arrival time or date,
+slack, teams), `channels` when it is one topic on two, the ask with the name, the label chip when the mail role writes labels, the arrival time or date,
 the typed reveal (PRECEDENT, KNOCK-ON, PATTERN, HISTORY), sources, briefing. Cross-references into today's brief
 carry their whole substance.
 

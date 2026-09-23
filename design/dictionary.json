@@ -243,7 +243,10 @@
     "routine": "Routine",
     "create_routine": "Create the routine",
     "plugin": "Plugin",
-    "others_line": "{n} more unread, nothing asked of you:"
+    "others_line": "{n} more unread, nothing asked of you:",
+    "show_all_n": "show all {n}",
+    "mail_not_read": "mail not read",
+    "chat_not_read": "chat not read"
   },
   "fr": {
     "page_brief": "Brief du jour",
@@ -488,6 +491,9 @@
     "routine": "Routine",
     "create_routine": "Créer la routine",
     "plugin": "Plugin",
-    "others_line": "{n} autres non lus, rien ne vous est demandé :"
+    "others_line": "{n} autres non lus, rien ne vous est demandé :",
+    "show_all_n": "afficher les {n}",
+    "mail_not_read": "mails non relevés",
+    "chat_not_read": "messages non relevés"
   }
 }

@@ -139,6 +139,9 @@ def check_common(d, r, kind):
     for i, s in enumerate(d.get('footer') or []):
         if isinstance(s, str) and NUMBER_WORDS.search(s):
             r.bad('$.footer[%d]' % i, 'a count spelled out: "%s"' % NUMBER_WORDS.search(s).group(0))
+    for i, s in enumerate(d.get('notices') or []):
+        if not isinstance(s, str) or not s.strip():
+            r.bad('$.notices[%d]' % i, 'a notice is one line of text')
 
 
 def ids_of(d, kind):
@@ -302,9 +305,15 @@ def check_brief(d, r, others):
 def check_inbox(d, r, others):
     own = check_ids(d, r, 'inbox')
     counts = d.get('counts') or {}
+    notices = d.get('notices') or []
     for k in ('mail', 'chat'):
-        if not isinstance(counts.get(k), int):
-            r.bad('$.counts.' + k, 'missing or not a numeral')
+        if k not in counts:
+            r.bad('$.counts.' + k, 'missing: 0 when the channel was read and is empty, null when it could not be read')
+        elif counts[k] is None:
+            if not notices:
+                r.bad('$.counts.' + k, 'null means the channel could not be read, and that takes one line in notices')
+        elif not isinstance(counts[k], int):
+            r.bad('$.counts.' + k, 'not a numeral')
     q = d.get('queue') or []
     row_types(q, '$.queue', r)
     total = (counts.get('mail') or 0) + (counts.get('chat') or 0)
@@ -322,6 +331,11 @@ def check_inbox(d, r, others):
             last = order[row['tier']]
         if row.get('channel') not in ('mail', 'slack', 'teams'):
             r.bad(p + '.channel', 'channel must be mail, slack or teams')
+        chans = row.get('channels')
+        if chans is not None and (not isinstance(chans, list) or not chans or len(set(chans)) != len(chans)
+                                  or any(c not in ('mail', 'slack', 'teams') for c in chans)
+                                  or row.get('channel') not in chans):
+            r.bad(p + '.channels', 'channels lists the distinct channels this line stands for, channel among them')
         check_meta(p + '.meta', row.get('meta'), r, {'time', 'date'})
         if row.get('meta') is None:
             r.bad(p + '.meta', 'the right column is when it arrived')
@@ -380,17 +394,46 @@ def check_inbox(d, r, others):
     # every unread is somewhere on the page: the title's counts reconcile with the rows
     oth = d.get('others') or {}
     if oth and not isinstance(oth, dict):
-        r.bad('$.others', 'others is an object with mail, chat and up to 3 examples')
+        r.bad('$.others', 'others is an object with mail, chat and items, the full list')
         oth = {}
-    if len(oth.get('examples') or []) > 3:
-        r.bad('$.others.examples', 'three examples at most')
+    if 'examples' in oth:
+        r.bad('$.others.examples', 'examples went with 0.4.0: items is the full list of the rest')
+    oth_n = {'mail': oth.get('mail') or 0, 'chat': oth.get('chat') or 0}
+    items = oth.get('items') or []
+    if oth_n['mail'] + oth_n['chat'] > 0 and not items:
+        r.bad('$.others.items', 'every unread is on the page: the full list, not only a count')
+    tally = {'mail': 0, 'chat': 0}
+    for j, x in enumerate(items):
+        pj = '$.others.items[%d]' % j
+        if not isinstance(x, dict):
+            r.bad(pj, 'not an object')
+            continue
+        if x.get('channel') not in ('mail', 'slack', 'teams'):
+            r.bad(pj + '.channel', 'channel must be mail, slack or teams')
+        else:
+            tally['mail' if x['channel'] == 'mail' else 'chat'] += 1
+        if not x.get('from') or not x.get('what'):
+            r.bad(pj, 'every line names who and what')
+        h = x.get('href') or ''
+        if h and not re.match(r'^(https://|mailto:|#)', h):
+            r.bad(pj + '.href', 'href must start with https://, mailto: or #')
+        w = x.get('when')
+        if w is not None and not (TIME.match(str(w)) or DATE.match(str(w))):
+            r.bad(pj + '.when', 'a clock for today, a date before that')
+    if items:
+        for k in ('mail', 'chat'):
+            if tally[k] != oth_n[k]:
+                r.bad('$.others.' + k, 'says %d, the items carry %d' % (oth_n[k], tally[k]))
+
+    def carries(row):
+        return row.get('channels') or [row.get('channel')]
     bulk = filed or grouped
     on_page = {
-        'mail': sum(1 for row in q if row.get('channel') == 'mail')
-                + sum(((x.get('by_channel') or {}).get('mail') or 0) for x in bulk) + (oth.get('mail') or 0),
-        'chat': sum(1 for row in q if row.get('channel') in ('slack', 'teams'))
+        'mail': sum(1 for row in q if 'mail' in carries(row))
+                + sum(((x.get('by_channel') or {}).get('mail') or 0) for x in bulk) + oth_n['mail'],
+        'chat': sum(sum(1 for c in carries(row) if c in ('slack', 'teams')) for row in q)
                 + sum(((x.get('by_channel') or {}).get('slack') or 0) + ((x.get('by_channel') or {}).get('teams') or 0)
-                      for x in bulk) + (oth.get('chat') or 0),
+                      for x in bulk) + oth_n['chat'],
     }
     for k in ('mail', 'chat'):
         if isinstance(counts.get(k), int) and counts[k] != on_page[k]:
@@ -681,6 +724,10 @@ def selftest():
     broken('inbox', 'more than 5 contents', lambda d: d['filed'][0]['contents'].append(dict(d['filed'][0]['contents'][0])))
     broken('inbox', 'lateness arithmetic in a briefing', lambda d: d['queue'][0].__setitem__('briefing', 'No reply in five days.'))
     broken('inbox', 'tiers out of order', lambda d: d['queue'][0].__setitem__('tier', 'week'))
+    broken('inbox', 'others still uses examples', lambda d: d['others'].__setitem__('examples', []))
+    broken('inbox', 'others items tally off by one', lambda d: d['others']['items'].pop())
+    broken('inbox', 'channels without channel', lambda d: d['queue'][2].__setitem__('channels', ['mail', 'teams']))
+    broken('inbox', 'chat null without a notice', lambda d: d['counts'].__setitem__('chat', None))
     broken('context', 'decision without against', lambda d: d['decisions'][0].pop('against'))
     broken('context', 'six priorities', lambda d: d['priorities'].extend([dict(d['priorities'][0], id='p5', short='Five'), dict(d['priorities'][0], id='p6', short='Six')]))
     broken('context', 'short equals a topic name', lambda d: d['priorities'][3].__setitem__('short', 'Migration date'))

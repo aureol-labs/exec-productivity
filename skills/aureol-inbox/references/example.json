@@ -9,7 +9,7 @@
     "brief": "https://claude.ai/code/artifact/example-daily-brief",
     "context": "https://claude.ai/code/artifact/example-super-context"
   },
-  "counts": { "mail": 61, "chat": 41 },
+  "counts": { "mail": 65, "chat": 43 },
   "queue": [
     {
       "id": "r1", "ref": "thread:slack-elena-renewal-playbook", "tier": "now", "channel": "slack",
@@ -46,7 +46,8 @@
       "briefing": "Julien needs net revenue retention by cohort for the retention slide in the board pack. Board prep is at 14:00 today and the pack is due Thursday. He asked at 09:10 and again at 11:35 and I have not replied.\n\nOpen both of his mails and the cohort view I used for last quarter’s pack. Then:\n1. Pull the numbers he needs and show me the source for each one.\n2. Draft the reply.\n3. Tell me whether the slide can be dropped instead, and what the pack loses if it is."
     },
     {
-      "id": "r3", "ref": "thread:slack-nadia-halden-76k", "tier": "now", "channel": "slack",
+      "id": "r3", "ref": "thread:mail-halden-procurement-76k+thread:slack-nadia-halden-76k", "tier": "now", "channel": "slack",
+      "channels": ["mail", "slack"],
       "say": "Nadia needs a yes or no on Halden Mutual at 76k.",
       "label": { "name": "Sales", "tint": "sales" },
       "meta": { "kind": "time", "value": "11:02" },
@@ -301,6 +302,16 @@
     }
   ],
   "grouped": [],
+  "others": {
+    "mail": 3, "chat": 2,
+    "items": [
+      { "channel": "slack", "from": "#general", "what": "Office closed Friday 25 for the electrical works", "href": "", "when": "10:05" },
+      { "channel": "mail", "from": "Datastack", "what": "Your September invoice is ready", "href": "", "when": "08:12" },
+      { "channel": "mail", "from": "Lena Ortiz", "what": "Re: offsite venue, two options", "href": "", "when": "12 Sept" },
+      { "channel": "mail", "from": "Notion", "what": "Weekly digest: 14 pages updated", "href": "", "when": "11 Sept" },
+      { "channel": "slack", "from": "Tomas", "what": "FYI, migration runbook v3 is in the channel", "href": "", "when": "9 Sept" }
+    ]
+  },
   "wrote": true,
-  "next_run": "16:30"
+  "next_run": "13:00"
 }

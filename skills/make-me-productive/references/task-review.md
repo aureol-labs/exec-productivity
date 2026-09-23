@@ -26,6 +26,7 @@ found, no minute counts. Then the topics that still read "not yet" from {{FIRST_
 Context on its own line, where the proposals wait with their gestures. Nothing new: one line, "Nothing new
 today," and stop: no table, no notification, no email. Something new: then read
 `connections/preferences.notify.review` in the store and do exactly one thing: "push", one notification
-with the session's notification tool, one line under 200 characters in {{LANGUAGE}}, the count first, then the
-link; "email", and only if the mail connection can send, the same lines to {{FIRST_NAME}}'s own address,
+with the session's notification tool, one line under 200 characters in {{LANGUAGE}}, only for a finding that
+clears the review skill's bar: what Claude would do for {{FIRST_NAME}}, in plain words, then what to add, then
+the link, never a count ("Claude could prepare your Monday pipeline numbers itself. Connect HubSpot: <link>"); "email", and only if the mail connection can send, the same lines to {{FIRST_NAME}}'s own address,
 nobody else; "none" or missing, nothing.
