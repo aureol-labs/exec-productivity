@@ -1,7 +1,7 @@
 ---
 name: aureol-review
 user-invocable: false
-description: The end-of-day review, every weekday, and the same look at install: find where the executive's assistant would take work off their hands this week, from what they asked colleagues for, what they did themselves again and again, what they prepare every time, what they forward or summarise, and propose only what can be added, a connection, a ready-made plugin, a routine or a skill, each as a use case with its evidence. Writes asks and suggestions, never proposes a declined one twice, renders nothing of its own. Load from the end-of-day task, from install, or when the exec asks what could be automated.
+description: The end-of-day review, every weekday: find where the executive's assistant would take work off their hands this week, from what they asked colleagues for, what they did themselves again and again, what they prepare every time, what they forward or summarise, and propose only what can be added, a connection, a ready-made plugin, a routine or a skill, each as a use case with its evidence. Writes asks and suggestions, never proposes a declined one twice, renders nothing of its own, and notifies only on a day it found something worth it, in plain words. Load from the end-of-day task, or when the exec asks what could be automated.
 ---
 
 # The review
@@ -53,9 +53,9 @@ Never what colleagues asked the exec; that is the inbox's job.
 
 ## Modes
 
-Install mode: the last 30 days, called by install, silent unless something qualified. Daily mode: a rolling 7
-days, called by the weekday task at the end of the day; it proposes only what is new since the last run (not
-in `suggestions` as proposed, found or declined), so the same pattern never comes back day after day.
+One pass: a rolling 7 days, called by the weekday task at the end of the day, or in a session when the exec
+asks what could be automated. It proposes only what is new since the last run (not in `suggestions` as
+proposed, found or declined), so the same pattern never comes back day after day. The install does not run it.
 
 ## Steps
 
@@ -72,9 +72,15 @@ in `suggestions` as proposed, found or declined), so the same pattern never come
    sentence as `say`, the evidence ids, `pattern` (cadence and output for a routine, the repeated ask for a
    skill), `briefing` for a routine or a skill (the habit's prompt drafted, or the skill's outline), `path` for
    a connection or a plugin. Skip anything declined. Cap at three `proposed`, the rest `found`.
-4. Load the `aureol-context` skill in render mode so Super Context shows the proposals. In install mode also
-   return the connections and plugins with their catalog ids to install, which shows the cards.
+4. Load the `aureol-context` skill in render mode so Super Context shows the proposals. In a session the exec
+   opened, also return the connections and plugins with their catalog ids, which shows the cards.
 5. Write a `runs` document. The task prompt says how the run ends: one line, then a table with a row per
    qualified finding (what you do today, how often, what Claude would do instead, what to add), then
    the cards, then "Say which ones you want and I add them." Nothing qualified: one line, "Nothing new
    today." No table, no notification: silence is the right answer most days.
+6. **The notification is the value, not the report.** Only on a day something qualified, and only for a finding
+   worth the exec's attention: it recurs (two moments at least in the window) and it takes real work off them,
+   not a nicety. One line under 200 characters, in the exec's language: what Claude would do for them, in their
+   own words from the evidence, then what to add, then the link. "Claude could prepare your Monday pipeline
+   numbers itself. Connect HubSpot: <link>". Never a count, never how it was found, never the words use case,
+   finding, suggestion or signal. Nothing clears the bar: no notification, even when something was recorded.

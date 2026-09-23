@@ -332,6 +332,9 @@
      line-height:1.45;color:var(--ink-2);text-decoration:none;
      border-bottom:1px solid rgba(46,107,98,.11);transition:color .12s}
   .mini>a:first-child{border-top:1px solid rgba(46,107,98,.11)}
+  .mini>a[hidden]{display:none}
+  .mini .when{margin-left:auto;padding-left:12px;white-space:nowrap;color:var(--ink-3);
+     font-size:12.5px}
   .mini>a:hover{color:var(--ink)}
   .mini>a:focus-visible{outline:2px solid var(--pine);outline-offset:2px;
      border-radius:2px}
@@ -551,6 +554,9 @@
     /* on paper the closed list is whole: the link goes, the tucked rows show */
     .cl .more{display:none!important}
     .cl .row[hidden]{display:block}
+    /* same on the inbox's rest: every line, no link */
+    .others .more{display:none!important}
+    .others>a[hidden]{display:flex}
     .editing #pri{display:block}
     .go a,.src a,.by a,.ctx a{border-bottom:none}
     .src{border-top:none;padding-top:2px;margin-top:8px}

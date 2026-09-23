@@ -55,13 +55,22 @@
 
   THE JSON, IN SHORT (the full fixture is skills/aureol-inbox/references/example.json)
     lang, date_label, time_label, today, sub, gesture, links   as on every page
-    counts        { mail: 61, chat: 41 }      unread, read off the connectors
+    counts        { mail: 61, chat: 41 }      unread, read off the connectors on every
+                  run: 0 when a channel was read and is empty, null when it could not
+                  be read (the title then says "chat not read"), never absent
+    notices       [ "one line" ]   what the run could not read, in the exec's language,
+                  under the sub; required when a count is null
     queue         [ row ]   ordered: tier, then oldest first inside a tier
-      a row       { id, ref, tier: now|today|week, channel: mail|slack|teams, say,
-                    label: { name, tint }, meta: { kind: "time" | "date", value },
+      a row       { id, ref, tier: now|today|week, channel: mail|slack|teams, channels,
+                    say, label: { name, tint }, meta: { kind: "time" | "date", value },
                     lede, type, argument: [p], plain: [p], go: [ref], sources, briefing }
+      channels    optional, ["mail","slack"]: one topic on two channels is one line.
+                  It lists every channel the line stands for, contains channel, at
+                  most one thread per channel; the sentence carries one mark per
+                  channel and the title counts the line once per channel
       ref         optional string, the stable key Drop is remembered under: the
-                  thread id ("thread:...") or its link; absent, the page falls back
+                  thread id ("thread:...") or its link; a merged line joins its
+                  thread ids with "+", mail first; absent, the page falls back
                   to the first source href, then to the row id
       type        precedent | knock_on | pattern | history      never absent
       meta        when the message arrived: a clock for today, a date before that
@@ -77,11 +86,12 @@
                   the count minus the items shown is "and N more in this label"
     grouped       [ group ]  the same shape without rule, when filed is empty
     wrote         true when labels were written, false otherwise
-    next_run      "16:30"
-    others        { mail: 3, chat: 0, examples: [ { channel, from, what, href } ] }  the unread that
-                  are neither waiting on the exec nor filed, so the title's counts reconcile:
-                  counts.mail = queue mail rows + filed mail + others.mail, same for chat. Up to 3
-                  examples. Absent or zero: nothing rendered.
+    next_run      "13:00"
+    others        { mail: 3, chat: 2, items: [ { channel, from, what, href, when } ] }  every
+                  unread that is neither waiting on the exec nor filed, the full list, newest
+                  first, so the title's counts reconcile: counts.mail = queue lines carrying
+                  mail + filed mail + others.mail, same for chat. The page shows 3 lines and
+                  "show all N" opens the rest. Absent or zero: nothing rendered.
       ref         { id } same page (opens the target) or { page, id } another page
       src         { kind: mail|chat|calendar|doc|meeting|file|you, via, label, href }
 
@@ -120,7 +130,9 @@ var DICT={{DICT}};
     var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
     b.onclick=function(){ t(b); };
     var tier=it.tier==='now'?'now':it.tier==='today'?'today':'week';
-    var say=el('span','say'); add(say, channel(it.channel), it.say||'');
+    var say=el('span','say');
+    (it.channels||[it.channel]).forEach(function(c){ add(say, channel(c)); });
+    add(say, it.say||'');
     var meta=el('span','meta');
     if(it.label && it.label.name) add(meta, chip(it.label.name,it.label.tint));
     add(meta, it.meta && it.meta.value!=null ? String(it.meta.value) : '');
@@ -137,6 +149,16 @@ var DICT={{DICT}};
     var first=(it.sources||[])[0];
     dropUI(r, {page:'inbox', kind:'queue', ref: it.ref || (first && first.href) || it.id, say:it.say||''});
     return r;
+  }
+
+  /* one line of a label's contents or of the rest: the channel mark, who, what, and
+     when it arrived; every line is a link to its own thread */
+  function miniLine(x){
+    var a=link(x.href,''); a.textContent='';
+    add(a, channel(x.channel), el('b',null,x.from||''), x.what||'');
+    if(x.when) add(a, el('span','when',String(x.when)));
+    if(a.getAttribute('href')!=='#'){ a.setAttribute('target','_blank'); a.setAttribute('rel','noopener'); }
+    return a;
   }
 
   /* a filed label: the tally, the chip, the sentence, the count per channel, and a
@@ -167,12 +189,7 @@ var DICT={{DICT}};
     var items=(f.contents||[]).slice(0,5);
     if(items.length){
       var mini=el('div','mini');
-      items.forEach(function(x){
-        var a=link(x.href,''); a.textContent='';
-        add(a, channel(x.channel), el('b',null,x.from||''), x.what||'');
-        if(a.getAttribute('href')!=='#'){ a.setAttribute('target','_blank'); a.setAttribute('rel','noopener'); }
-        add(mini,a);
-      });
+      items.forEach(function(x){ add(mini, miniLine(x)); });
       var more=(f.count|0)-items.length;
       if(more>0){
         var ma=link(f.href, F(L(withRule?'more_label':'more_group'),{n:more}), 'more');
@@ -189,23 +206,27 @@ var DICT={{DICT}};
   /* the counts that depend on the queue rows: the h1's "N need you" and the tally.
      Recounted from the rows still standing once the store has said what was dropped. */
   var H1=null, QT=null, QL=null, MAIL=0, CHAT=0;
+  /* a count in the title: a numeral when the channel was read, "not read" when it
+     could not be, so a zero can only mean read and empty */
+  function countWord(k,n){ return n==null ? L(k+'_not_read') : P('unread_'+k+'_n',n); }
   function recount(){
     var n=QL.querySelectorAll('.row:not(.gone)').length;
-    H1.textContent=P('unread_mail_n',MAIL)+', '+P('unread_chat_n',CHAT)+'. '+P('need_you_n',n);
-    QT.textContent=F(L('of'),{n:n,t:MAIL+CHAT});
+    H1.textContent=countWord('mail',MAIL)+', '+countWord('chat',CHAT)+'. '+P('need_you_n',n);
+    QT.textContent=F(L('of'),{n:n,t:(MAIL|0)+(CHAT|0)});
   }
 
   function render(){
     var d=loadData(), page=$('page');
     var q=d.queue||[], filed=d.filed||[], grouped=d.grouped||[], counts=d.counts||{};
-    var mail=counts.mail|0, chat=counts.chat|0;
+    var mail=counts.mail==null?null:(counts.mail|0), chat=counts.chat==null?null:(counts.chat|0);
     MAIL=mail; CHAT=chat;
 
-    header(page,'page_inbox', P('unread_mail_n',mail)+', '+P('unread_chat_n',chat)+'. '+P('need_you_n',q.length));
+    header(page,'page_inbox', countWord('mail',mail)+', '+countWord('chat',chat)+'. '+P('need_you_n',q.length));
     H1=page.querySelector('h1');
+    (d.notices||[]).forEach(function(s){ if(s) add(page, el('p','sub',String(s))); });
 
     /* ---- the queue ---- */
-    var hq=h2(L('needs_you'),F(L('of'),{n:q.length,t:mail+chat})); QT=hq.querySelector('b');
+    var hq=h2(L('needs_you'),F(L('of'),{n:q.length,t:(mail|0)+(chat|0)})); QT=hq.querySelector('b');
     add(page, hq, cap(L('cap_queue')));
     var ql=el('div','list queue'); q.forEach(function(it){ add(ql,queueRow(it)); }); add(page,ql); QL=ql;
 
@@ -217,16 +238,15 @@ var DICT={{DICT}};
       var fl=el('div','list filed'); bulk.forEach(function(f){ add(fl,filedRow(f,withRule)); }); add(page,fl);
     }
 
-    /* ---- the rest, so every unread is somewhere on the page ---- */
+    /* ---- the rest, every line of it, so every unread is somewhere on the page:
+       three lines show, "show all N" opens the rest. Plain lines, no reveal, no Drop. ---- */
     var oth=d.others||{}, othN=(oth.mail|0)+(oth.chat|0);
     if(othN>0){
-      var rp=el('p','rest', F(L('others_line'),{n:othN})+' ');
-      (oth.examples||[]).slice(0,3).forEach(function(x,i){
-        if(i) add(rp, ', ');
-        var a=el('a',null,(x.from?x.from+', ':'')+(x.what||''));
-        var h=x.href||'#'; a.setAttribute('href', /^(https:|mailto:|#)/.test(h)?h:'#'); add(rp,a);
-      });
-      add(page, rp);
+      add(page, el('p','rest', F(L('others_line'),{n:othN})));
+      var om=el('div','mini others');
+      (oth.items||[]).forEach(function(x){ add(om, miniLine(x)); });
+      tuck(om, 3, 'show_all_n');
+      add(page, om);
     }
 
     var right = d.wrote ? L('labels_only') : L('nothing_written');
