@@ -56,11 +56,13 @@
     caps          { decisions: 3, jobs: 3 }  the lists never exceed them
     metrics       null, or { tiles: [{value, label}], source } rendered above the strip
     strip         { start: "08:00", end: "18:00", meetings: [...] }
-      a meeting   { id, start, end, label, key, brief: { title, note, who, before,
-                    to_land: { text } | { go }, in_mind: { text, go }, sources, briefing } }
-                  a cell with nothing to say is left out and not drawn
-      a clash     { id, clash: true, meetings: [{ start, end, title, text, cost }],
-                    to_land, in_mind, sources, briefing }
+      a meeting   { id, start, end, label, key, brief: { title, note, to_land: { go },
+                    in_mind: { text }, sources, briefing } }
+                  to_land links the call this meeting settles, its text the call;
+                  in_mind is one fact; a cell with nothing to say is left out
+      a clash     { id, clash: true, meetings: [{ start, end, title, cost }],
+                    to_land: { text }, sources, briefing }
+                  each column ends on what moving that one costs; to_land is the call
     decisions     [ row ]   "To decide", three at most; say is the call with its options
     jobs          [ row ]   "To do", three at most; say is the job
       a row       { id, ref, say, type, meta, argument: [fact], sources: [src], briefing }

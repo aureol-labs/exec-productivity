@@ -14,8 +14,9 @@
   different jobs. Categorising keeps the mailbox clean. Ranking decides what you
   touch. The page never lets the first pretend to be the second: the lead is a
   count, not a claim, and the bulk is called "labelled, still unread", which says
-  exactly what happened and exactly what did not. Mail, Slack and Teams in one
-  queue, never three tabs. The channel is a monochrome mark in the sentence.
+  exactly what happened and exactly what did not. Mail, Slack and Teams on one page,
+  ranked as one queue, with a filter to see one channel at a time. The channel is a
+  monochrome mark in the left column.
 
   THE WRITES
   Labels only. Never a delete, never a send, never a mark as read, never a move.
@@ -40,7 +41,7 @@
   those rows. Once the store resolves, every dismissals document whose page is
   "inbox" and whose ref is a queue row's ref leaves that row as a fresh drop does:
   closed, greyed, "remembered", no Drop word. Recounted from the rows still
-  standing: the h1's "N need you" and the queue tally "N of T". The unread counts
+  standing: the title's "N need you, K now" and the filter's counts. The unread counts
   are the connectors' and stay: a drop marks nothing read. A read that fails, or a
   store that is null, changes nothing and shows nothing.
 
@@ -78,9 +79,10 @@
       meta        when the message arrived: a clock for today, a date before that
     filed         [ label ]  only where the mail role could write labels
       a label     { id, label, tint, count, by_channel: { mail, slack, teams },
-                    say, lede, rule, plain: [p], contents: [item], href, briefing }
-                  lede only when something inside deserves the exec's eye; no
-                  sources, the contents are the sources;
+                    lede, rule, contents: [item], href, briefing }
+                  the row is the tally and the label; lede only when something
+                  inside deserves the exec's eye; no sources, the contents are the
+                  sources;
                   tint is one of sales|product|board|customers|hiring|later|arch;
                   arch is To archive, drawn as an outline, and carries rules: [{count,
                   rule}] instead of one rule; every other label carries its rule, in
