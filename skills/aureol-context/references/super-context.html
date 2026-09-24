@@ -91,33 +91,33 @@
                   lede is one fact on how the week served it; done_hint, when its
                   outcome has happened, says what and when, and the exec closes it
     topics        [ { id, ref, name, state, serves: priority id | null, last: date | null,
-                      lede, argument: [p], who: [{ref, name, note}], so_far: [{date,
-                      move}], next: [{when, today, late, event, decision}] | null,
-                      go: [ref], sources, briefing, gesture: ask|add_priority|none,
-                      proposal } ]
+                      who: [{ref, name, note}], so_far: [{date, move}], next: [{when,
+                      today, late, event, decision}] | null, sources, briefing,
+                      gesture: ask|add_priority|none, proposal } ]
+                  the face is the name and the state; opened, who, the last three
+                  so_far and next, only when something is booked
                   ordered by the priority served, then the ones that serve none;
                   a late next entry needs a decision id or a "you" source behind it;
                   ref is an optional string, the key Drop is remembered under, and
                   the topic id when absent
     entities      [ { id, kind: person|entity, name, role, type: company|team|board|
                       product|other, label, relationship: customer|prospect|investor|
-                      partner|supplier, state, last, lede, argument: [p],
-                      cares_about: { text, yours, date }, with: [{ref, type, note}],
-                      so_far, ended, next, go: [ref], sources, briefing } ]
+                      partner|supplier, state, last, cares_about: { text, yours,
+                      date }, with: [{ref, type, note}], so_far, ended, next, sources,
+                      briefing } ]
                   on the page only while on a live topic with something open; a
                   relation is written on both rows with the same note, and the type
                   on each side is the other's inverse: contact_for / contact,
                   member_of / member, leads / led_by, sits_on / seat
     decisions     [ { id, say, decided_by: ["you", "Tomas"], when, when_iso, against,
-                      argument: [p], plain: [p], land, replaces: {id, name},
+                      land, replaces: {id, name},
                       replaced_by: {id, name}, conflicts_with: {id, name}, status:
-                      proposed|kept|dropped, proposed_at, kept_at, go: [ref], sources,
-                      briefing } ]
+                      proposed|kept|dropped, proposed_at, kept_at, sources, briefing } ]
                   newest first; every one says what it was decided against; a
                   conflict requires land, the open question; a replaced decision
                   stays where it happened, greyed; "Added this week" is computed from
                   kept_at within 7 days of today; dropped rows are not rendered
-    suggestions   [ { id, kind: connection|plugin|skill|routine, say, state, proposed_label, lede,
+    suggestions   [ { id, kind: connection|plugin|skill|routine, say, state, proposed_label,
                       evidence: [{date, text}], path, pattern, sources, briefing,
                       status } ]   proposed ones only, three at most
     closed        [ { id, name, kind: topic|job|queue, reason: done|not_important|
