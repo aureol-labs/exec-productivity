@@ -64,11 +64,6 @@
   h2 .edit:focus-visible{outline:2px solid var(--pine);outline-offset:3px;border-radius:2px}
   .editing h2 .edit{visibility:hidden}
 
-  /* the quiet lines under a head. they say how to read the list, so they belong to
-     the list and not to a legend somewhere else. */
-  .cap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
-       font-size:11px;color:var(--ink-3);margin:12px 0 4px}
-
   /* ================ METRICS ================
      Above the day strip, so the number is read before the meetings. A short row of
      numeral tiles and one line saying where they came from. Rendered only when the
@@ -545,12 +540,12 @@
        overridden by .why above, because .why.mbrief and .why.clash are the more
        specific selectors and would each keep what they set. A tint that is gone does
        not need padding holding it off the type, and a brick wash on a laser is a grey
-       box. The clash still says "two meetings, one of you" in brick type, which is
-       where the meaning was anyway. */
+       box. The clash head still says "2 meetings" in brick type, which is where the
+       meaning was anyway. */
     .why.mbrief{padding:6px 0 0}
     .why.clash{background:none}
     .row.open>button{background:none}
-    .cap,.src .ask,.src .drop,.dropq,h2 .edit,.edbox,.act,.pending{display:none!important}
+    .src .ask,.src .drop,.dropq,h2 .edit,.edbox,.act,.pending{display:none!important}
     /* on paper the closed list is whole: the link goes, the tucked rows show */
     .cl .more{display:none!important}
     .cl .row[hidden]{display:block}

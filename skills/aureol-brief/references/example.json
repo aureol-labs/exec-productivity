@@ -3,7 +3,6 @@
   "date_label": "Monday 14 September",
   "time_label": "07:00",
   "today": "2026-09-14",
-  "sub": "Tap any line for why it made the page.",
   "gesture": "copy",
   "links": {
     "context": "https://claude.ai/code/artifact/example-super-context",
@@ -196,5 +195,5 @@
       "briefing": "Give Priya the Q4 roadmap order. She asked on 3 September.\n\nFrom this morning’s brief:\n- This has slipped every week since 25 August. It waits on me, not on Priya.\n- It unblocks the moment the Halden Mutual discount is settled.\n\nRead Priya’s 3 September message and the draft order yourself. Then tell me which parts of the ordering genuinely depend on the Halden Mutual outcome and which I could confirm to her today regardless. Draft the reply that unblocks her on everything that is not actually blocked."
     }
   ],
-  "footer": [ "Read at 06:52: 61 mails, 41 messages, 6 invites", "Sends nothing, deletes nothing" ]
+  "footer": [ "Read at 06:52: 61 mails, 41 messages, 6 invites" ]
 }

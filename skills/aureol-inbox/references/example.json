@@ -3,7 +3,6 @@
   "date_label": "Monday 14 September",
   "time_label": "12:40",
   "today": "2026-09-14",
-  "sub": "The 9 are here because someone is waiting on you, not because they are recent.",
   "gesture": "copy",
   "links": {
     "brief": "https://claude.ai/code/artifact/example-daily-brief",
@@ -166,9 +165,8 @@
     {
       "id": "f1", "label": "Sales", "tint": "sales", "count": 22, "by_channel": { "mail": 15, "slack": 7 },
       "say": "Nadia’s deal threads, two inbound, one lost-reason write-up.",
-      "lede": "Nothing left in here is waiting on you.",
       "rule": "Anything on a deal Nadia owns goes to Sales, unless it names me and asks a question.",
-      "plain": [ "Three name you, all in recaps. Nadia has answered the two pricing asks. The three real asks are in the queue above." ],
+      "plain": [ "Three name you, all in recaps. Nadia has answered the two pricing asks." ],
       "contents": [
         { "channel": "slack", "from": "Nadia", "what": "Bergen asked about a multi-year price", "href": "" },
         { "channel": "mail", "from": "Halden Mutual procurement", "what": "DPA redlines, third round", "href": "" },
@@ -177,16 +175,11 @@
         { "channel": "mail", "from": "Vestra", "what": "Inbound, sent the security questionnaire", "href": "" }
       ],
       "href": "",
-      "sources": [
-        { "kind": "you", "label": "Your rules, in your words", "href": "" },
-        { "kind": "mail", "label": "Labels applied, 12:40", "href": "" }
-      ],
       "briefing": "My inbox routine filed 22 unread items under Sales this morning, 15 mails and 7 Slack threads, under a rule I wrote: anything on a deal Nadia owns goes to Sales unless it names me and asks a question. The routine judged that none of the 22 needs me.\n\nCheck that judgement. Open the 22 threads and tell me whether any of them is actually waiting on a decision from me. If one is, tell me which, and why the rule missed it."
     },
     {
       "id": "f2", "label": "Product", "tint": "product", "count": 15, "by_channel": { "mail": 5, "slack": 10 },
       "say": "Migration standup and Priya’s roadmap doc comments.",
-      "lede": "Fifteen threads, none of them a decision.",
       "rule": "Standups, doc comments and shares from Tomas’s and Priya’s teams go to Product, unless one asks me for a date or a decision.",
       "plain": [],
       "contents": [
@@ -196,16 +189,12 @@
         { "channel": "slack", "from": "Tomas", "what": "Staging cutover rehearsal ran clean", "href": "" }
       ],
       "href": "",
-      "sources": [
-        { "kind": "you", "label": "Your rules, in your words", "href": "" },
-        { "kind": "chat", "via": "Slack", "label": "#product, 12:40", "href": "" }
-      ],
       "briefing": "My inbox routine labelled 15 unread items Product this morning, 5 mails and 10 Slack threads, under a rule I wrote: standups, doc comments and shares from Tomas’s and Priya’s teams go to Product unless one asks me for a date or a decision. It judged that none of them needs a decision from me. The visible ones are the migration standup, Priya’s roadmap doc comments, the Q4 roadmap share, and a staging cutover rehearsal.\n\nRead the 15 and tell me two things. Whether any of them is actually waiting on me, and whether anything in the migration thread contradicts the date I am about to give Tomas."
     },
     {
       "id": "f3", "label": "Board", "tint": "board", "count": 13, "by_channel": { "mail": 9, "teams": 4 },
       "say": "Pack drafts and Corvid Capital’s data room questions.",
-      "lede": "Thirteen threads. Marc is holding all of them.",
+      "lede": "Marc is holding all of them.",
       "rule": "Pack drafts, agendas and the investor data room go to Board. Marc runs them.",
       "plain": [],
       "contents": [
@@ -215,16 +204,12 @@
         { "channel": "mail", "from": "Marc", "what": "Thursday agenda, for comment", "href": "" }
       ],
       "href": "",
-      "sources": [
-        { "kind": "you", "label": "Your rules, in your words", "href": "" },
-        { "kind": "mail", "label": "Board, 12:40", "href": "" }
-      ],
       "briefing": "My inbox routine labelled 13 unread items Board this morning, 9 mails and 4 Teams messages, under a rule I wrote: pack drafts, agendas and the investor data room go to Board, Marc runs them. Visible: board pack draft 3 covering sections 1 and 2, Corvid Capital’s second batch of data room questions, Julien’s cohort model working file, and Thursday’s agenda for comment.\n\nRead them and give me a list of what is still missing from the pack before Thursday, and who owns each gap. Flag anything Corvid Capital asked that nobody has answered."
     },
     {
       "id": "f4", "label": "Customers", "tint": "customers", "count": 10, "by_channel": { "mail": 4, "slack": 6 },
       "say": "Renewal notices and two escalations Elena is running.",
-      "lede": "Ten threads. Elena owns every one.",
+      "lede": "Elena owns every one.",
       "rule": "Renewal notices and escalations Elena runs go to Customers, unless an account names me.",
       "plain": [],
       "contents": [
@@ -234,16 +219,12 @@
         { "channel": "mail", "from": "Renewals", "what": "Tarn Logistics, 90 days out", "href": "" }
       ],
       "href": "",
-      "sources": [
-        { "kind": "you", "label": "Your rules, in your words", "href": "" },
-        { "kind": "chat", "via": "Slack", "label": "#customers, 12:40", "href": "" }
-      ],
       "briefing": "My inbox routine labelled 10 unread items Customers this morning, 4 mails and 6 Slack threads, under a rule I wrote: renewal notices and escalations Elena runs go to Customers unless an account names me. Elena owns all of them. Visible: renewal notices going out this week, two escalations that already have owners, and renewal notices for Marlow at 60 days out and Tarn Logistics at 90 days out.\n\nRead them and tell me whether any renewal in here is at risk without me, and whether either escalation is heading towards something I will have to take."
     },
     {
       "id": "f5", "label": "Hiring", "tint": "hiring", "count": 7, "by_channel": { "mail": 5, "teams": 2 },
       "say": "Two offers out, four candidate schedules.",
-      "lede": "Seven threads. Two offers are live.",
+      "lede": "Two offers are live.",
       "rule": "Offers, candidate schedules and recruiting threads go to Hiring, unless the signature is mine.",
       "plain": [],
       "contents": [
@@ -252,16 +233,11 @@
         { "channel": "teams", "from": "Recruiting", "what": "Four candidate slots for next week", "href": "" }
       ],
       "href": "",
-      "sources": [
-        { "kind": "you", "label": "Your rules, in your words", "href": "" },
-        { "kind": "mail", "label": "Hiring, 12:40", "href": "" }
-      ],
       "briefing": "My inbox routine labelled 7 unread items Hiring this morning, 5 mails and 2 Teams messages, under a rule I wrote: offers, candidate schedules and recruiting threads go to Hiring unless the signature is mine. Two offers are live: VP Marketing past stage two, and a Senior PM who accepted verbally. Four candidate slots were proposed for next week.\n\nRead them and tell me what is waiting on my signature or my calendar, and by when. Nothing else."
     },
     {
       "id": "f6", "label": "Read later", "tint": "later", "count": 8, "by_channel": { "mail": 8 },
       "say": "Newsletters and product updates, none addressed to you.",
-      "lede": "Eight things nobody is waiting on.",
       "rule": "Newsletters and product updates go to Read later, unless I subscribed to it this month.",
       "plain": [],
       "contents": [
@@ -270,22 +246,17 @@
         { "channel": "mail", "from": "Figma", "what": "What shipped this month", "href": "" }
       ],
       "href": "",
-      "sources": [
-        { "kind": "you", "label": "Your rules, in your words", "href": "" },
-        { "kind": "mail", "label": "Labels applied, 12:40", "href": "" }
-      ],
       "briefing": "My inbox routine filed 8 unread mails under Read later this morning, under a rule I wrote: newsletters and product updates go to Read later unless I subscribed to it this month. Nothing was deleted and all 8 are still unread.\n\nOpen them and tell me whether that rule is still right, or whether it should be tightened or loosened. Give me the new wording if so."
     },
     {
       "id": "f7", "label": "To archive", "tint": "arch", "count": 18, "by_channel": { "mail": 11, "slack": 7 },
-      "say": "Under three rules you wrote. Waiting on you, not gone.",
-      "lede": "Eighteen labelled. Nothing archived.",
+      "say": "Zendesk alerts, vendor invites and calendar accepts.",
       "rules": [
         { "count": 11, "rule": "Zendesk alerts with no mention of me" },
         { "count": 5, "rule": "Event invites from vendors I have never bought from" },
         { "count": 2, "rule": "Calendar accepts with no message" }
       ],
-      "plain": [ "Clear the label in your mailbox and all eighteen go at once. Ignore it and they stay." ],
+      "plain": [],
       "contents": [
         { "channel": "slack", "from": "#alerts-prod", "what": "Zendesk 4412 updated, you are not on it", "href": "" },
         { "channel": "slack", "from": "#alerts-prod", "what": "Zendesk 4418 updated, you are not on it", "href": "" },
@@ -294,10 +265,6 @@
         { "channel": "mail", "from": "Calendar", "what": "Priya accepted: Q4 roadmap review", "href": "" }
       ],
       "href": "",
-      "sources": [
-        { "kind": "you", "label": "Your rules, in your words", "href": "" },
-        { "kind": "mail", "label": "Label applied, 12:40", "href": "" }
-      ],
       "briefing": "My inbox routine labelled 18 unread items \"To archive\" this morning, under three rules I wrote:\n11 under \"Zendesk alerts with no mention of me\"\n5 under \"Event invites from vendors I have never bought from\"\n2 under \"Calendar accepts with no message\"\nNothing was archived. Nothing was deleted, sent or marked read. All 18 are still sitting in my inbox carrying the label.\n\nFind them, list them so I can see exactly what is queued to go, and tell me which of the three rules is the one worth changing. Do not archive anything yourself."
     }
   ],

@@ -1,6 +1,6 @@
 {
   "name": "exec-productivity",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "An executive's daily operating routines, run by Claude in Cowork. A guided install that ends on your first brief, a Super Context your assistant starts every session from (priorities, live topics, people, decisions), a daily brief every weekday morning, a priority inbox with every unread mail and message, what needs you on top, five times a day, and an end-of-day review that tells you only when it found work Claude could take off your hands. Reads your mail, calendar, chat, documents and meetings. Sends nothing, deletes nothing.",
   "author": {
     "name": "Paul Rousselle, Aureol Labs",

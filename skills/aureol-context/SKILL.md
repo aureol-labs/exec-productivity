@@ -11,6 +11,9 @@ the people and organisations, and the proposed decisions are yours, written from
 `references/store.md`; the page is `references/super-context.html` rendered from one JSON document whose shape is
 in the template's head comment and in `references/example.json`.
 
+**Voice.** Every word the exec reads, on the page or in a briefing, follows `references/voice.md`, the voice
+of every skill in this plugin. Read it before you write.
+
 ## Rules that override anything you infer
 
 1. **Never edit a priority.** `priorities/*` has one writer, the exec, through install or the page's editor. You
@@ -38,12 +41,15 @@ in the template's head comment and in `references/example.json`.
    dropped as done is closed with that date, a topic dropped as not important never returns to the page.
 7. **Caps at write time.** Sources 3 per document, priorities 5, people and entities on the page only while on a
    live topic with something open between them and the exec, suggestions 3 on the page.
+8. **Nothing about the page.** No line explains the page or how it is made ("you write the priorities, the
+   assistant writes the rest"): no `sub`. A field with nothing to say is left out, never filled to say so.
 
 ## 0. Probe, then read the store
 
 Read `connections/current` and `connections/preferences`. Probe each role's tool with one real call (the same
 five probes as install) and refresh `checked`. A role that fails: its section is missing from the page with one
-line in `data.notices`, and the run continues. Never a page that pretends.
+line in `data.notices`, saying what could not be read, never how it was checked, and the run continues. Never a
+page that pretends.
 
 Then read: `priorities` (live and dropped), `topics`, `people`, `entities`, `decisions`, `suggestions`, and the
 last `runs` document of this task.
