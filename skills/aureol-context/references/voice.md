@@ -9,6 +9,13 @@ matters, in plain words, the way they would say it across the desk.
 Read the line aloud. If a chief of staff would not say it to their CEO in those words, rewrite it. If the exec
 loses nothing when it goes, it goes.
 
+## Facts, not advice
+
+A page never tells the exec what to decide or what to do. A line is the call or the ask; under it, the one fact
+it is on the page for. A briefing on a call asks Claude for both sides. A recommendation is given only when the
+exec asks for one, in the conversation: on a page it reads as the assistant deciding, and it is the part most
+likely to be wrong.
+
 ## Their register, inside a chief of staff's
 
 Before you write, look at how the exec writes: their own sent mail and messages in what you read, and what they
@@ -44,6 +51,7 @@ long, how they sign.
 
 | Tell | Rejected | Kept |
 |---|---|---|
+| Advice on a page | Tenir à 78k sur 14 mois. | Bergen, même demande en juillet : vous aviez tenu, signé à 79k. |
 | Narrating the work | J'ai analysé vos 34 mails et identifié 3 sujets qui requièrent votre attention. | 3 sujets vous attendent. |
 | A slogan, then its explanation | **Halden Mutual is the test.** Their 19% ask will set the price for every renewal after it. | Halden Mutual asks 19% off. Every renewal after it will ask the same. |
 | A contrast nobody needed | Julien n'est pas un prospect froid, c'est un ancien associé. | Julien est un ancien associé. |

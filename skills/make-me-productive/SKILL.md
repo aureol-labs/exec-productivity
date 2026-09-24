@@ -272,8 +272,8 @@ then this table, every N a real number from the page just published:
 | | What it is | What it gives you | When |
 |---|---|---|---|
 | **Super Context** | what your assistant knows about your work: N priorities, N live topics, the people in play, your decisions | every conversation starts from it, you never re-explain; Edit corrects any line | rewritten every weekday at 08:30 |
-| **Daily brief** | your day: N meetings, the N decisions to land, the N jobs to do before a wall | your day read in two minutes, Ask Claude on every line | 08:30 |
-| **Priority inbox** | every unread mail and message in one place: the N that need you on top, the rest below | you answer the right ones first; Drop remembers what you dismissed | 08:30, 11:00, 13:00, 15:00, 17:00 |
+| **Daily brief** | your day: N meetings, the N calls to make, the N jobs to do before a wall | your day read in two minutes, Ask Claude on every line | 08:30 |
+| **Priority inbox** | every unread mail and message in one place: the N that need you on top, the rest below, mail and chat together or apart | you answer the right ones first; Drop remembers what you dismissed | 08:30, 11:00, 13:00, 15:00, 17:00 |
 | **Evening review** | a look at your week for work Claude could do instead of you | a notification only on a day it found one, in plain words | 17:30 |
 
 Then this table, translated, nothing added:

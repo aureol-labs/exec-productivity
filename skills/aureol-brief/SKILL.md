@@ -1,7 +1,7 @@
 ---
 name: aureol-brief
 user-invocable: false
-description: Write today's Daily brief for the executive: the day strip from the calendar with double bookings designed for, the decisions to land (three, each with a precedent, a knock-on, a pattern or a history), the jobs to do before a wall on the strip, every reveal ending on its sources and an Ask Claude briefing. Reads the Super Context store first, then calendar, mail, chat and meetings. Load from the morning task, from install for the first brief, or when the exec asks for their day.
+description: Write today's Daily brief for the executive: the day strip from the calendar with double bookings designed for, the calls to make (three, each asked with its options, the one fact it is on the page for under it: a precedent, a knock-on, a pattern or a history), the jobs to do before a wall on the strip, no advice anywhere, every line opening on its sources and an Ask Claude briefing. Reads the Super Context store first, then calendar, mail, chat and meetings. Load from the morning task, from install for the first brief, or when the exec asks for their day.
 ---
 
 # Daily brief
@@ -15,21 +15,26 @@ ones that bite are below.
 
 ## Rules that override anything you infer
 
-1. **Clear first. The line is the decision, the reveal is the answer.** A decision line names the topic (the same
-   word the day strip uses for that block) and what is being decided, in full, and does not decide. The reveal
-   opens with your answer in its first words, then argues. Jobs stay imperative.
+1. **The line is the call, never the answer.** A decision line names the topic (the same word the day strip uses
+   for that block) and asks the call with its options: "Halden Mutual: grant 19% off, or hold the price?". Under
+   it, one line: the fact the call is on the page for (rule 3). No recommendation on the page or in a briefing:
+   the call is the exec's, and an answer is the part most likely to be wrong. Jobs stay imperative, with their
+   fact under them. One topic, one line: a call and the job it implies are the call, and check-page refuses two
+   lines on one ref.
 2. **A decision has a counterpart and a room. A job you produce alone.** Nothing that starts with "Decide" goes
    in the jobs list.
 3. **No type, no line.** Every decision and job is on the page because it has a PRECEDENT, a KNOCK-ON, a PATTERN
-   or a HISTORY, and the reveal says which. A line you cannot type is holding a slot something else has earned.
-   Inventing a type is the one thing you may not do.
+   or a HISTORY, and the line under it states that fact in 12 words at most ("Bergen asked the same in July: you
+   held, it closed at 79k."). `type` names it in the data; the page never prints it. A line you cannot type is
+   holding a slot something else has earned. Inventing a type is the one thing you may not do.
 4. **The right column is a time on the strip, never a number you worked out.** On a decision, the bare time it
    lands on the exec. On a job, "Before HH:MM" and that time is a block on today's strip; no block, the date it
    was asked; neither, empty. Brick only once the time has gone by, with the word: "Was due 10:00". Never "6 days
    late".
 5. **Caps.** `preferences.caps`, three and three by default. The day is whatever the calendar says.
-6. **Three sources per reveal.** Your own summary in the briefing, never a message body, and every briefing
-   that drafts something ends "do not send".
+6. **Three sources per line.** Your own summary in the briefing, never a message body. A briefing on a call asks
+   Claude for the case on each side, never for an answer. Every briefing that drafts something ends "do not
+   send".
 7. **A dropped line stays dropped.** Read `dismissals` from the brief page's own store
    (`connections/current.pages.brief`) before selecting. A job or decision dropped as done or not important is
    not proposed again on this run or any later one, because every run reads the whole collection. That only
@@ -43,7 +48,9 @@ ones that bite are below.
 9. **Nothing about the page.** No line explains the page, how to read it, or what the assistant does not do
    ("sends nothing"). A cell or field with nothing to say is left out, never filled with "nothing to prepare"
    or "nothing to decide": a workout on the calendar is a block with its head line and nothing else. No `sub`
-   unless it carries one fact the page cannot show, never a line already on it.
+   unless it carries one fact the page cannot show, never a line already on it. A line and its fact are 12 words
+   each at most: check-page warns past that and refuses past 16 and 20, and a refused page is shortened and checked
+   again, never cut off.
 
 ## 0. Read the store, then probe
 
@@ -70,12 +77,14 @@ events are drawn.
   block with `left` and `width` in percent of the strip. Filled means a decision is waiting in that meeting.
   Overlapping events are one block with stacked lanes and one clash brief whose columns each end on what it costs
   to move that one. Free stretches of an hour or more are named.
-- **Meeting briefs**: WHO (from `people.role`), BEFORE, TO LAND, IN MIND, each only when it has something to
-  say (rule 9); sources; briefing.
-- **Decisions to land**: the cap, ranked against the priorities; type; reveal that opens on the answer; a
-  PRECEDENT links to the decision it cites on Super Context, carrying the decision's words as its link text.
-- **Jobs to do**: the cap; the wall on the strip; type. A job whose reveal would only summarise the thing it asks
-  the exec to read has no Ask Claude.
+- **Meeting cards**: the title with who (from `people.role`); TO LAND, the call this meeting settles, as a link
+  to its decision line (`to_land.go`, its text the call); TO KNOW (`in_mind.text`), one fact, 12 words at most. No
+  WHO or BEFORE cells. A clash: each column ends on what moving that meeting costs; TO LAND says which call, and by
+  when.
+- **Decisions**: the cap, ranked against the priorities; `say` the call with its options; `argument` one entry,
+  the fact; `type`; sources; briefing. No `lede`, `plain` or `go`: the page shows none of them.
+- **Jobs**: the cap; the wall on the strip; `argument` one entry, the fact; type. A job whose briefing would only
+  summarise the thing it asks the exec to read has no Ask Claude.
 - **Footer**: what the assistant read this morning, in numerals ("Read at 06:52: 61 mails, 41 messages, 6
   invites").
 - **h1**: numerals only. "6 meetings, 1 clash, 3 decisions, 3 jobs." `sub`: absent, unless one fact the page

@@ -1,7 +1,7 @@
 ---
 name: aureol-inbox
 user-invocable: false
-description: Write the executive's Priority inbox: mail and chat in one queue, ranked by who is blocked and for how long, with a tier word on every line (Now, Today, This week) and the ask as the first line of every reveal. Applies labels only where the mail connection can write them and only from rules the exec confirmed, and lists every write with its rule; never archives, deletes, moves, sends or marks as read. Load from the inbox task, or when the exec asks what needs them.
+description: Write the executive's Priority inbox: mail and chat on one page, ranked by who is blocked and for how long, in three tiers (Now, Today, This week), each line the ask with the one fact it is on the page for, and a filter for mail or chat alone. Applies labels only where the mail connection can write them and only from rules the exec confirmed, and lists every write with its rule; never archives, deletes, moves, sends or marks as read. Load from the inbox task, or when the exec asks what needs them.
 ---
 
 # Priority inbox
@@ -47,10 +47,14 @@ document (shape in its head comment and `references/example.json`).
    first.
 7. **The right column is when it arrived.** A time if today, a date otherwise. No due time you invented, no
    computed lateness, no brick on this page.
-8. **Every reveal leads with the ask**, one line, then the type, then the reason, three sources, and a briefing
-   that is your summary plus pointers and ends "do not send" when it drafts.
-9. **The lead is a count, not a claim, and every unread is on the page, one line each.** "61 unread mails, 41
-   unread messages. 9 need you." The page is where the exec sees all of it: what needs them on top, everything
+8. **The line is the ask; opened, it is the fact.** `say` is the ask with the name, 12 words at most ("Halden
+   Mutual: Nadia needs a yes or no on the 19%."). `argument` is one entry, the fact the line is on the page for,
+   the precedent, knock-on, pattern or history, 12 words at most, and `type` names it. No `lede`, `plain`, `go`
+   or `label` on a queue line: the page shows none of them. Never advice: not what to answer, not what to do. Then
+   three sources and a briefing that is your summary plus pointers, asks Claude for both sides on a call, and ends
+   "do not send" when it drafts.
+9. **The title is a count, not a claim, and every unread is on the page, one line each.** The page titles itself
+   from the queue ("9 need you, 3 now.") and prints the unread counts in its footer. The page is where the exec sees all of it: what needs them on top, everything
    else below, nothing missing. Count mail and chat with one real call each on every run, and write both numbers
    even when one is 0. A channel that could not be read is `null` in `counts` with one line in `notices`, in
    the exec's language ("Slack could not be read this morning"), never a 0 and never a missing key: a chat that
@@ -91,23 +95,25 @@ Open every candidate thread once to check rule 3. Nothing new since the last run
 ## 2. Rank
 
 Nine to twelve lines is a page; more means the test was too loose. Each line: the tier, the channel (mail,
-slack, teams), `channels` when it is one topic on two, the ask with the name, the label chip when the mail role writes labels, the arrival time or date,
-the typed reveal (PRECEDENT, KNOCK-ON, PATTERN, HISTORY), sources, briefing. Cross-references into today's brief
-carry their whole substance.
+slack, teams), `channels` when it is one topic on two, the ask with the name, the arrival time or date, the fact
+and its `type`, sources, briefing. One topic is one line: check-page refuses two lines on one ref. The page draws
+its filter (all, mail, the chat tool) from the channels; there is nothing to write for it.
 
 ## 3. File, where allowed
 
 With `label` and `rules`: apply each rule, count the writes, and render `data.filed` with each label's rule, its
 count per channel, three to five content lines each a link, and the `To archive` label listing every rule that
-filed into it. A label's `lede` only when something inside deserves the exec's eye (who holds it, what is
-live); no `sources`, the content lines are its sources. Without `label`: no write, `data.filed` empty, `data.grouped` carries the same grouping as a
+filed into it. A label's row is its tally and its name: no `say`. A `lede` only when something inside deserves
+the exec's eye (who holds it, what is live); no `sources`, the content lines are its sources. Without `label`: no write, `data.filed` empty, `data.grouped` carries the same grouping as a
 reading aid, `data.wrote` false and the footer says nothing was written to the mailbox.
 
 ## 4. Tell the context
 
 The inbox reads the world several times a day; the morning pass reads it once. So what the inbox sees goes into the store,
 lightly and by the store's rules. On the topics and people this run's lines touched: `last_from_you` when the
-exec replied, one `so_far` entry per new fact with its date and source, `state` when it changed. A decision found
+exec replied, one `so_far` entry per new fact with its date and source, `state` when it changed. A fact that
+settles a topic (signed, decided, cancelled, past) is written as that, with its date, so the morning pass closes
+the topic the same day: a Super Context that only grows stops being read. A decision found
 in a message, with what it was decided against: one `decisions` document with `status: "proposed"`. Update in
 place with `if_version`; never rewrite a topic, never add a topic (that is the morning's judgement), never touch
 `priorities`, `rules`, `asks` or `suggestions`. If anything was written, load the `aureol-context` skill in

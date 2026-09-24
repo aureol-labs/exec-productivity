@@ -125,11 +125,49 @@
      behind them, so a line can never fall out of register with the type. Closed
      top and bottom like a pad. Horizontal only. */
   .list{border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
-  /* the queue's left column holds a tier word, so it is wide and set in the sans.
+  /* the queue's left column holds the channel marks, so the eye can run down it and
+     see mail from chat without reading. The tier is said once, over its lines.
      the filed list's left column holds a tally, so it is narrow and set in the
      serif like every other quantity in the notebook. */
-  .queue{--num:74px}
+  .queue{--num:40px}
   .filed{--num:38px;--chip:84px}
+  .queue .chs{display:flex;align-items:baseline;gap:5px}
+  .queue .chs .ch{margin-right:0;vertical-align:0;position:relative;top:2px}
+  .tierh{font-size:9.5px;letter-spacing:1.3px;text-transform:uppercase;font-weight:600;
+     color:var(--ink-3);padding:20px 0 6px;border-top:1px solid var(--hair)}
+  .tierh:first-child,.tierh.first{border-top:none;padding-top:14px}
+  .tierh.now{color:var(--pine)}
+  .tierh.off,.rest.off,.mini.off,.fsec.off{display:none}
+  .list.queue{margin-top:30px}
+  .row>button:hover .chs .ch,.row.open .chs .ch{color:var(--pine)}
+
+  /* ================ THE FILTER ================
+     All, Mail, Slack: one queue, seen whole or one channel at a time. The choice is
+     the viewer's and stays on this device. It never uses the hidden attribute, which
+     "show all" owns: the page's data-f is matched against each line's data-ch. */
+  .seg{display:inline-flex;gap:2px;margin-top:24px;padding:3px;border-radius:999px;
+     background:#F0F3F3}
+  .seg button{all:unset;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--ink-2);
+     padding:5px 14px 5px;border-radius:999px;line-height:1.4;white-space:nowrap}
+  .seg button b{font-weight:400;color:var(--ink-3);margin-left:7px;font-variant-numeric:tabular-nums}
+  .seg button:hover{color:var(--pine)}
+  .seg button.on{background:#fff;color:var(--pine);box-shadow:0 1px 2px rgba(38,41,46,.14)}
+  .seg button.on b{color:var(--pine)}
+  .seg button:focus-visible{outline:2px solid var(--pine);outline-offset:2px}
+  @media screen{
+    .page[data-f="mail"] [data-ch]:not([data-ch~="mail"]),
+    .page[data-f="chat"] [data-ch]:not([data-ch~="chat"]){display:none}
+  }
+
+  /* a label row with nothing under the filter goes, and the first one standing
+     carries no rule above it, since the list has its own */
+  .filed .row.off{display:none}
+  .filed .row.first>button{border-top:none}
+  /* a label row is a tally and a name, so it sits lower than a queue line */
+  .filed .row>button{padding:12px 6px 12px 0}
+  .filed .row.open>button{padding-bottom:10px}
+  .filed .n{font-size:18px;line-height:1.45}
+  .filed .why{padding-top:4px}
 
   .row+.row>button{border-top:1px solid var(--hair)}
   .row>button{all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:grid;
@@ -152,6 +190,8 @@
      thread stands this morning. Same register for both. */
   .ahead,.state{display:block;margin-top:3px;font-size:13.5px;line-height:1.45;
      color:var(--ink-2)}
+  /* a reveal that holds only its sources: no rule above them */
+  .why>.src:first-child{margin-top:2px;padding-top:0;border-top:none}
   /* ---- the marker ----
      The second line of the first column, on the rows that have a relationship. Grey
      for a fact, brick for a conflict, pine for the routine's own hand, and it says
@@ -327,7 +367,7 @@
      line-height:1.45;color:var(--ink-2);text-decoration:none;
      border-bottom:1px solid rgba(46,107,98,.11);transition:color .12s}
   .mini>a:first-child{border-top:1px solid rgba(46,107,98,.11)}
-  .mini>a[hidden]{display:none}
+  .mini>a[hidden],.mini>a.tk{display:none}
   .mini .when{margin-left:auto;padding-left:12px;white-space:nowrap;color:var(--ink-3);
      font-size:12.5px}
   .mini>a:hover{color:var(--ink)}
@@ -493,7 +533,8 @@
   @media (max-width:660px){
     body{padding:32px 20px 64px}
     .page{--num:22px;--gap:14px}
-    .queue{--num:66px}
+    .queue{--num:36px}
+    .queue .row>button{grid-template-columns:var(--num) 1fr}
     .filed{--num:30px}
     h1{font-size:27px}
     .eyebrow{font-size:16px}
@@ -551,7 +592,9 @@
     .cl .row[hidden]{display:block}
     /* same on the inbox's rest: every line, no link */
     .others .more{display:none!important}
-    .others>a[hidden]{display:flex}
+    .others>a[hidden],.others>a.tk{display:flex}
+    /* paper shows every channel, whatever the screen was filtered to */
+    .seg{display:none!important}
     .editing #pri{display:block}
     .go a,.src a,.by a,.ctx a{border-bottom:none}
     .src{border-top:none;padding-top:2px;margin-top:8px}
