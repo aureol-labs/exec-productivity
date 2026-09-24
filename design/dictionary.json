@@ -50,9 +50,9 @@
     "who": "Who",
     "before": "Before",
     "to_land": "To land",
-    "in_mind": "In mind",
-    "decisions_to_land": "Decisions to land",
-    "jobs_to_do": "Jobs to do",
+    "in_mind": "To know",
+    "decisions_to_land": "To decide",
+    "jobs_to_do": "To do",
     "m_before": "Before {v}",
     "m_asked": "Asked {v}",
     "m_late": "Was due {v}",
@@ -233,7 +233,16 @@
     ],
     "show_all_n": "show all {n}",
     "mail_not_read": "mail not read",
-    "chat_not_read": "chat not read"
+    "chat_not_read": "chat not read",
+    "need_you_now": [
+      "{n} needs you, now.",
+      "{n} need you, {k} now."
+    ],
+    "none_need_you": "Nothing needs you.",
+    "f_all": "All",
+    "f_mail": "Mail",
+    "f_chat": "Chat",
+    "looks_done": "Looks done: {x}"
   },
   "fr": {
     "page_brief": "Brief du jour",
@@ -285,8 +294,8 @@
     "who": "Qui",
     "before": "Avant",
     "to_land": "À trancher",
-    "in_mind": "En tête",
-    "decisions_to_land": "Décisions à trancher",
+    "in_mind": "À savoir",
+    "decisions_to_land": "À trancher",
     "jobs_to_do": "À faire",
     "m_before": "Avant {v}",
     "m_asked": "Demandé le {v}",
@@ -468,6 +477,15 @@
     ],
     "show_all_n": "afficher les {n}",
     "mail_not_read": "mails non relevés",
-    "chat_not_read": "messages non relevés"
+    "chat_not_read": "messages non relevés",
+    "need_you_now": [
+      "{n} vous attend, maintenant.",
+      "{n} vous attendent, dont {k} maintenant."
+    ],
+    "none_need_you": "Rien ne vous attend.",
+    "f_all": "Tout",
+    "f_mail": "Mail",
+    "f_chat": "Messages",
+    "looks_done": "Semble atteinte : {x}"
   }
 }

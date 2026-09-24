@@ -58,12 +58,55 @@ NUMBER_WORDS = re.compile(r'\b(?:one|two|three|four|five|six|seven|eight|nine|te
 class Report:
     def __init__(self):
         self.lines = []
+        self.warnings = []
 
     def bad(self, where, what):
         self.lines.append('%s: %s' % (where, what))
 
+    def warn(self, where, what):
+        self.warnings.append('%s: %s' % (where, what))
+
     def ok(self):
         return not self.lines
+
+
+# ---------- words ----------
+
+BUDGET = {'line': (12, 16), 'fact': (14, 20), 'card': (14, 20)}
+
+
+def words(s):
+    return len([t for t in re.split(r'[\s\u00a0\u202f]+', s or '') if re.search(r'\w', t)])
+
+
+def budget(r, path, s, kind):
+    if not isinstance(s, str):
+        return
+    target, cap = BUDGET[kind]
+    n = words(s)
+    if n > cap:
+        r.bad(path, '%d words, %d at most: shorten it and check again, never cut it off' % (n, cap))
+    elif n > target:
+        r.warn(path, '%d words, aim for %d' % (n, target))
+
+
+def one_fact(r, path, row):
+    arg = row.get('argument')
+    if isinstance(arg, list) and len(arg) > 1:
+        r.warn(path + '.argument', '%d entries: the page shows the first, one fact' % len(arg))
+    if isinstance(arg, list) and arg:
+        budget(r, path + '.argument[0]', arg[0], 'fact')
+
+
+def unique_refs(r, rows, path):
+    seen = {}
+    for i, row in enumerate(rows):
+        ref = row.get('ref')
+        if isinstance(ref, str) and ref.strip():
+            if ref in seen:
+                r.bad('%s[%d].ref' % (path, i), 'same ref as %s[%d]: one topic is one line, and a Drop would take both' % (path, seen[ref]))
+            else:
+                seen[ref] = i
 
 
 # ---------- walking ----------
@@ -215,14 +258,16 @@ def check_meta(path, meta, r, allowed):
         r.bad(path, 'late needs HH:MM or a date, got %r' % v)
 
 
-def row_types(rows, path, r, decision_ids=None):
+def row_types(rows, path, r, decision_ids=None, need_lede=False):
     for i, row in enumerate(rows):
         p = '%s[%d]' % (path, i)
         if row.get('type') not in TYPES:
             r.bad(p, 'untyped row (%r); the routine types the line or leaves it off' % row.get('type'))
         if not row.get('say'):
             r.bad(p, 'no sentence')
-        if not row.get('lede'):
+        # the line is the call or the ask and the fact under it says why it is on the
+        # page; there is no answer to write, so a lede is optional
+        if need_lede and not row.get('lede'):
             r.bad(p, 'no lede: every reveal opens on the ask')
         check_ref(p, row, r)
 
@@ -250,6 +295,8 @@ def check_brief(d, r, others):
         row_types(rows, '$.' + key, r)
         for i, row in enumerate(rows):
             p = '$.%s[%d]' % (key, i)
+            budget(r, p + '.say', row.get('say'), 'line')
+            one_fact(r, p, row)
             check_meta(p + '.meta', row.get('meta'), r, {'time', 'before', 'asked', 'late', 'none'})
             meta = row.get('meta') or {}
             if meta.get('kind') == 'late':
@@ -258,6 +305,7 @@ def check_brief(d, r, others):
                               for g in row.get('go') or [])
                 if not (has_you or has_dec):
                     r.bad(p + '.meta', 'late without a "you" source or a decision reference')
+    unique_refs(r, dec + jobs, '$.decisions+jobs')
     strip = d.get('strip') or {}
     meetings = strip.get('meetings') or []
     start, end = strip.get('start', '08:00'), strip.get('end', '18:00')
@@ -275,6 +323,7 @@ def check_brief(d, r, others):
                     r.bad('%s.meetings[%d]' % (p, j), 'start and end must be HH:MM')
                 if not x.get('cost'):
                     r.bad('%s.meetings[%d]' % (p, j), 'each column of a clash ends on what it costs to move that one')
+                budget(r, '%s.meetings[%d].cost' % (p, j), x.get('cost'), 'card')
             if not m.get('briefing') and not m.get('sources'):
                 r.bad(p, 'a clash brief has sources')
         else:
@@ -284,6 +333,13 @@ def check_brief(d, r, others):
                 r.bad(p, 'a block is labelled with its time and a word')
             # WHO, BEFORE, TO LAND and IN MIND are each optional: a cell with nothing
             # to say is left out, never filled with "nothing to prepare"
+            br = m.get('brief') or {}
+            for key in ('who', 'before'):
+                budget(r, '%s.brief.%s' % (p, key), br.get(key), 'card')
+            for key in ('to_land', 'in_mind'):
+                v = br.get(key)
+                if isinstance(v, dict):
+                    budget(r, '%s.brief.%s.text' % (p, key), v.get('text'), 'card')
         times.append(m.get('start'))
     mx = d.get('metrics')
     if mx is not None:
@@ -339,6 +395,9 @@ def check_inbox(d, r, others):
         lb = row.get('label')
         if lb is not None and (not isinstance(lb, dict) or not lb.get('name')):
             r.bad(p + '.label', 'a label carries a name and a tint')
+        budget(r, p + '.say', row.get('say'), 'line')
+        one_fact(r, p, row)
+    unique_refs(r, q, '$.queue')
     filed, grouped = d.get('filed') or [], d.get('grouped') or []
     wrote = d.get('wrote')
     if filed and not wrote:
@@ -462,6 +521,7 @@ def check_context(d, r, others):
             r.bad(pp + '.short', '"%s" is also a topic or entity name' % p['short'])
         if p.get('short') in shorts:
             r.bad(pp + '.short', 'duplicate short name')
+        budget(r, pp + '.done_hint', p.get('done_hint'), 'card')
         shorts.add(p.get('short'))
         if p.get('confirmed') and not DATE.match(str(p['confirmed'])):
             r.bad(pp + '.confirmed', 'a date like "1 Sept"')
@@ -501,7 +561,7 @@ def check_context(d, r, others):
 
     for i, t in enumerate(topics):
         tp = '$.topics[%d]' % i
-        for key in ('name', 'state', 'lede'):
+        for key in ('name', 'state'):
             if not t.get(key):
                 r.bad(tp + '.' + key, 'missing')
         if t.get('serves') is not None and t['serves'] not in pri_ids:
@@ -519,7 +579,7 @@ def check_context(d, r, others):
     by_id = {e.get('id'): e for e in ents}
     for i, e in enumerate(ents):
         ep = '$.entities[%d]' % i
-        for key in ('name', 'state', 'lede'):
+        for key in ('name', 'state'):
             if not e.get(key):
                 r.bad(ep + '.' + key, 'missing')
         if e.get('kind') not in ('person', 'entity'):
@@ -599,8 +659,8 @@ def check_context(d, r, others):
         sp = '$.suggestions[%d]' % i
         if s.get('kind') not in ('connection', 'plugin', 'skill', 'routine'):
             r.bad(sp + '.kind', 'connection, plugin, skill or routine')
-        if not s.get('say') or not s.get('lede'):
-            r.bad(sp, 'a suggestion has a sentence and a lede')
+        if not s.get('say'):
+            r.bad(sp, 'a suggestion has a sentence')
         if not s.get('evidence'):
             r.bad(sp + '.evidence', 'a suggestion carries its evidence')
         if s.get('kind') in ('connection', 'plugin') and not s.get('path'):
@@ -703,13 +763,18 @@ def selftest():
     broken('brief', 'four sources', lambda d: d['decisions'][0]['sources'].extend([{'kind': 'doc', 'label': 'x', 'href': ''}] * 2))
     broken('brief', 'lateness arithmetic in a briefing', lambda d: d['jobs'][0].__setitem__('briefing', 'It is six days late.'))
     broken('brief', 'right column is an interval', lambda d: d['jobs'][0].__setitem__('meta', {'kind': 'time', 'value': '6 days'}))
-    broken('brief', 'cross-reference to a missing row', lambda d: d['jobs'][0]['go'].__setitem__(0, {'id': 'zz', 'text': 'x'}))
-    broken('brief', 'cross-page reference to a missing row', lambda d: d['decisions'][0]['go'].__setitem__(0, {'page': 'context', 'id': 'd99', 'text': 'x'}))
+    broken('brief', 'cross-reference to a missing row', lambda d: d['strip']['meetings'][0]['brief']['to_land']['go'].__setitem__('id', 'zz'))
+    broken('brief', 'cross-page reference to a missing row', lambda d: d['strip']['meetings'][0]['brief']['to_land'].__setitem__('go', {'page': 'context', 'id': 'd99', 'text': 'x'}))
     broken('brief', 'rows over the cap', lambda d: d['jobs'].append(dict(d['jobs'][0], id='j9')))
     broken('brief', 'late without a decision or a you source', lambda d: d['jobs'][1].__setitem__('meta', {'kind': 'late', 'value': '10:00'}))
     broken('brief', 'time_label missing', lambda d: d.pop('time_label'))
     broken('brief', 'a count spelled out in the footer', lambda d: d.__setitem__('footer', ['Three replies drafted']))
     broken('brief', 'ref that is not a string', lambda d: d['decisions'][0].__setitem__('ref', 17))
+    broken('brief', 'a line past the word cap', lambda d: d['decisions'][0].__setitem__('say', ' '.join(['word'] * 17)))
+    broken('brief', 'a fact past the word cap', lambda d: d['jobs'][0].__setitem__('argument', [' '.join(['mot'] * 21)]))
+    broken('brief', 'a decision and a job on one ref', lambda d: d['jobs'][0].__setitem__('ref', d['decisions'][0]['ref']))
+    broken('inbox', 'two queue lines on one ref', lambda d: d['queue'][1].__setitem__('ref', d['queue'][0]['ref']))
+    broken('inbox', 'an ask past the word cap', lambda d: d['queue'][0].__setitem__('say', ' '.join(['word'] * 17)))
     broken('inbox', 'ref that is not a string', lambda d: d['queue'][0].__setitem__('ref', {'id': 'x'}))
     broken('context', 'ref that is not a string on a topic', lambda d: d['topics'][0].__setitem__('ref', ''))
     broken('inbox', 'untyped queue row', lambda d: d['queue'][8].__setitem__('type', None))
@@ -761,6 +826,8 @@ def main():
     r = check(d, args.kind, load_others(args))
     for line in r.lines:
         print(line)
+    for line in r.warnings:
+        print('warning: ' + line)
     if r.ok():
         print('%s: ok (%s)' % (args.path, args.kind))
         return 0

@@ -62,8 +62,10 @@
                   under the title; required when a count is null
     queue         [ row ]   ordered: tier, then oldest first inside a tier
       a row       { id, ref, tier: now|today|week, channel: mail|slack|teams, channels,
-                    say, label: { name, tint }, meta: { kind: "time" | "date", value },
-                    lede, type, argument: [p], plain: [p], go: [ref], sources, briefing }
+                    say, meta: { kind: "time" | "date", value }, type, argument: [fact],
+                    sources, briefing }
+      say         the ask with the name; argument, one entry, the fact it is on the
+                  page for, shown when the line opens; no advice
       channels    optional, ["mail","slack"]: one topic on two channels is one line.
                   It lists every channel the line stands for, contains channel, at
                   most one thread per channel; the sentence carries one mark per
@@ -96,6 +98,14 @@
       ref         { id } same page (opens the target) or { page, id } another page
       src         { kind: mail|chat|calendar|doc|meeting|file|you, via, label, href }
 
+  THE FILTER
+  All, Mail, and the chat tool (Slack, Teams, or "Chat" when both), each with its
+  count of lines waiting on the exec. Built from the data, nothing to write for it. A
+  line on two channels stands under both and shows only the filtered channel's mark.
+  The title stays the whole inbox. The choice is the viewer's, kept in this browser
+  when the page may keep it, and the page starts on All when it may not. It never
+  uses the hidden attribute, which "show all" owns.
+
   THE RIGHT COLUMN IS WHEN IT ARRIVED
   Precise due times and computed lateness were tried and cut. A receipt time is a
   fact. Brick left this page with the lateness mark: nothing an inbox page can see
@@ -124,27 +134,31 @@ var DICT={{DICT}};
   /* ================ THE PRIORITY INBOX ================ */
   function chip(label,tint){ return el('span','cat'+(tint?' '+tint:''),label||''); }
   function quoted(s){ return L('q_open')+s+L('q_close'); }
+  /* the filter's word for a channel: mail, or chat for Slack and Teams alike */
+  function fk(c){ return c==='mail' ? 'mail' : 'chat'; }
+  /* the filter words a line stands for: "mail", "chat", or "mail chat" for one topic on both */
+  function chans(it){
+    var out=[]; (it.channels||[it.channel]).forEach(function(c){ var k=fk(c); if(out.indexOf(k)<0) out.push(k); });
+    return out.join(' ');
+  }
+  function tierOf(it){ return it.tier==='now'?'now':it.tier==='today'?'today':'week'; }
+  function matches(chs){ return FILTER==='all' || (' '+(chs||'')+' ').indexOf(' '+FILTER+' ')>=0; }
 
-  /* a queue row: tier, channel mark, sentence, label and arrival */
+  /* a queue line: the channel marks, the ask, when it arrived. The reveal: what to
+     do, why in one line, then the sources, Ask Claude and Drop. */
   function queueRow(it){
-    var r=el('div','row'); r.id=it.id;
+    var r=el('div','row'); r.id=it.id; r.dataset.ch=chans(it); r.dataset.tier=tierOf(it);
     var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
     b.onclick=function(){ t(b); };
-    var tier=it.tier==='now'?'now':it.tier==='today'?'today':'week';
-    var say=el('span','say');
-    (it.channels||[it.channel]).forEach(function(c){ add(say, channel(c)); });
-    add(say, it.say||'');
-    var meta=el('span','meta');
-    if(it.label && it.label.name) add(meta, chip(it.label.name,it.label.tint));
-    add(meta, it.meta && it.meta.value!=null ? String(it.meta.value) : '');
-    var dec=el('span','dec'); add(dec,say);
-    add(b, el('span','tier '+tier,L('tier_'+tier)), dec, meta);
+    var marks=el('span','chs');
+    /* each mark carries its own channel, so a filtered view shows only its own */
+    (it.channels||[it.channel]).forEach(function(c){ var g=channel(c); g.setAttribute('data-ch',fk(c)); add(marks,g); });
+    var dec=el('span','dec'); add(dec, el('span','say',it.say||''));
+    add(b, marks, dec, el('span','meta', it.meta && it.meta.value!=null ? String(it.meta.value) : ''));
     add(r,b);
     var w=el('div','why');
     if(it.lede) add(w, el('p','lede',it.lede));
-    add(w, typeTag(it.type));
-    paras(w,it.argument); paras(w,it.plain,'plain');
-    goRows(w,it.go);
+    var why=(it.argument||[])[0]; if(why) add(w, el('p',null,why));
     add(w, srcRow(it.sources,it.briefing));
     add(r,w);
     var first=(it.sources||[])[0];
@@ -162,96 +176,200 @@ var DICT={{DICT}};
     return a;
   }
 
-  /* a filed label: the tally, the chip, the sentence, the count per channel, and a
-     reveal that opens on the rule and on what is inside */
-  function filedRow(f,withRule){
+  /* ---- the filter: All, Mail, Slack. The viewer's choice, kept on this device when
+     the page may keep it; a page that may not starts on All. ---- */
+  var FILTER='all', FKEY='aureol-inbox-filter', PAGE=null, SEG=null;
+  function readFilter(){ try{ var v=window.localStorage.getItem(FKEY); return v==='mail'||v==='chat' ? v : 'all'; }catch(e){ return 'all'; } }
+  function keepFilter(v){ try{ window.localStorage.setItem(FKEY,v); }catch(e){} }
+  function chatName(d){
+    var seen={};
+    (d.queue||[]).forEach(function(it){ (it.channels||[it.channel]).forEach(function(c){ if(c!=='mail') seen[c]=1; }); });
+    (d.filed||[]).concat(d.grouped||[]).forEach(function(f){ var bc=f.by_channel||{}; for(var c in bc){ if(c!=='mail' && bc[c]) seen[c]=1; } });
+    ((d.others||{}).items||[]).forEach(function(x){ if(x.channel!=='mail') seen[x.channel]=1; });
+    var ks=Object.keys(seen);
+    if(ks.length===1 && ks[0]==='slack') return 'Slack';
+    if(ks.length===1 && ks[0]==='teams') return 'Teams';
+    return L('f_chat');
+  }
+  function segBar(name){
+    var bar=el('div','seg'); bar.setAttribute('role','group');
+    [['all',L('f_all')],['mail',L('f_mail')],['chat',name]].forEach(function(x){
+      var bt=el('button'); bt.type='button'; bt.dataset.f=x[0]; bt.setAttribute('aria-pressed','false');
+      add(bt, x[1], el('b',null,''));
+      bt.onclick=function(){ setFilter(x[0],true); };
+      add(bar,bt);
+    });
+    return bar;
+  }
+  function setFilter(f,keep){
+    FILTER=f; if(keep) keepFilter(f);
+    PAGE.dataset.f=f;
+    if(SEG) Array.prototype.forEach.call(SEG.querySelectorAll('button'),function(bt){
+      var on=bt.dataset.f===f; bt.classList.toggle('on',on); bt.setAttribute('aria-pressed',on?'true':'false');
+    });
+    document.querySelectorAll('.row.open').forEach(closeRow);
+    syncTiers(); syncFiled(); retuck();
+  }
+  /* a tier with nothing left under the filter says nothing */
+  function syncTiers(){
+    if(!QL) return;
+    var firstSeen=false;
+    Array.prototype.forEach.call(QL.querySelectorAll('.tierh'),function(th){
+      var any=Array.prototype.some.call(QL.querySelectorAll('.row[data-tier="'+th.dataset.tier+'"]'),function(r){ return matches(r.dataset.ch); });
+      th.classList.toggle('off',!any);
+      th.classList.toggle('first', any && !firstSeen);
+      if(any) firstSeen=true;
+    });
+  }
+
+  /* ---- what was filed: one short row per label, its tally and its name. The row
+     opens on the rule and on what is inside; the tally and the lines follow the
+     filter. ---- */
+  var FROWS=[], FILED_H=null, FSEC=null, WITH_RULE=true;
+  function labelCount(f){
+    if(FILTER==='all') return f.count|0;
+    var bc=f.by_channel||{}, n=0;
+    for(var c in bc){ if(fk(c)===FILTER) n+=(bc[c]|0); }
+    return n;
+  }
+  function filedRow(f){
     var r=el('div','row'); r.id=f.id;
     var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
     b.onclick=function(){ t(b); };
-    var say=el('span','say'); add(say, chip(f.label,f.tint), f.say||'');
-    var meta=el('span','meta'), bc=f.by_channel||{};
-    ['mail','slack','teams'].forEach(function(c){
-      if(bc[c]) add(meta, channel(c,'ch sm'), String(bc[c]));
-    });
-    var dec=el('span','dec'); add(dec,say);
-    add(b, el('span','n',String(f.count==null?'':f.count)), dec, meta);
-    add(r,b);
+    var n=el('span','n','');
+    var dec=el('span','dec'); add(dec, el('span','say', null)); dec.firstChild.appendChild(chip(f.label,f.tint));
+    add(b, n, dec, el('span','meta',''));
     var w=el('div','why');
+    add(r, b, w);
+    FROWS.push({f:f, r:r, n:n, w:w});
+    return r;
+  }
+  function fillFiled(x){
+    var f=x.f, w=x.w; w.textContent='';
     if(f.lede) add(w, el('p','lede',f.lede));
-    if(withRule && f.tint==='arch' && f.rules && f.rules.length){
+    if(WITH_RULE && f.tint==='arch' && f.rules && f.rules.length){
       add(w, typeTag('rule'));
       var tight=el('div','tight');
       f.rules.forEach(function(x){ var p=el('p'); add(p, el('b',null,String(x.count)), quoted(x.rule||'')); add(tight,p); });
       add(w,tight);
-    } else if(withRule && f.rule){
+    } else if(WITH_RULE && f.rule){
       add(w, typeTag('rule'), el('p',null,quoted(f.rule)));
     }
     paras(w,f.plain,'plain');
-    var items=(f.contents||[]).slice(0,5);
+    var items=(f.contents||[]).filter(function(y){ return FILTER==='all' || fk(y.channel)===FILTER; }).slice(0,5);
     if(items.length){
       var mini=el('div','mini');
-      items.forEach(function(x){ add(mini, miniLine(x)); });
-      var more=(f.count|0)-items.length;
+      items.forEach(function(y){ add(mini, miniLine(y)); });
+      var more=labelCount(f)-items.length;
       if(more>0){
-        var ma=link(f.href, F(L(withRule?'more_label':'more_group'),{n:more}), 'more');
+        var ma=link(f.href, F(L(WITH_RULE?'more_label':'more_group'),{n:more}), 'more');
         if(ma.getAttribute('href')!=='#'){ ma.setAttribute('target','_blank'); ma.setAttribute('rel','noopener'); }
         add(mini,ma);
       }
       add(w,mini);
     }
     add(w, srcRow(f.sources,f.briefing));
-    add(r,w);
-    return r;
+  }
+  function syncFiled(){
+    if(!FSEC) return;
+    var sum=0, firstSeen=false;
+    FROWS.forEach(function(x){
+      var n=labelCount(x.f); x.n.textContent=String(n);
+      x.r.classList.toggle('off', n===0);
+      x.r.classList.toggle('first', n>0 && !firstSeen); if(n>0) firstSeen=true;
+      sum+=n; fillFiled(x);
+    });
+    FILED_H.textContent=String(sum);
+    FSEC.classList.toggle('off', sum===0);
   }
 
-  /* the counts that depend on the queue rows: the h1's "N need you" and the tally.
-     Recounted from the rows still standing once the store has said what was dropped. */
-  var H1=null, QT=null, QL=null, MAIL=0, CHAT=0;
-  /* a count in the title: a numeral when the channel was read, "not read" when it
+  /* ---- the rest, every line of it: three show, "show all N" opens the rest of the
+     channel in view. Its own mark, never the hidden attribute. ---- */
+  var OM=null, REST=null;
+  function retuck(){
+    if(!OM) return;
+    var old=OM.querySelector('.more'); if(old) OM.removeChild(old);
+    var vis=[];
+    Array.prototype.forEach.call(OM.children,function(a){ a.classList.remove('tk'); if(matches(a.dataset.ch)) vis.push(a); });
+    REST.textContent=P('others_line',vis.length);
+    REST.classList.toggle('off',!vis.length); OM.classList.toggle('off',!vis.length);
+    if(vis.length>3){
+      vis.slice(3).forEach(function(a){ a.classList.add('tk'); });
+      var more=el('a','more',F(L('show_all_n'),{n:vis.length})); more.setAttribute('href','#');
+      more.onclick=function(e){ e.preventDefault(); vis.forEach(function(a){ a.classList.remove('tk'); }); if(more.parentNode) more.parentNode.removeChild(more); return false; };
+      add(OM,more);
+    }
+  }
+
+  /* ---- the counts. The h1 is the whole inbox, whatever the filter, so it says what
+     the notification said; the filter's segments carry each channel's share. Both
+     recounted from the rows still standing once the store has said what was dropped. ---- */
+  var H1=null, QL=null, MAIL=0, CHAT=0;
+  /* a count in the footer: a numeral when the channel was read, "not read" when it
      could not be, so a zero can only mean read and empty */
   function countWord(k,n){ return n==null ? L(k+'_not_read') : P('unread_'+k+'_n',n); }
+  function headline(n,k){ return !n ? L('none_need_you') : k ? P('need_you_now',n,{k:k}) : P('need_you_n',n); }
   function recount(){
-    var n=QL.querySelectorAll('.row:not(.gone)').length;
-    H1.textContent=countWord('mail',MAIL)+', '+countWord('chat',CHAT)+'. '+P('need_you_n',n);
-    QT.textContent=F(L('of'),{n:n,t:(MAIL|0)+(CHAT|0)});
+    var rows=QL ? Array.prototype.slice.call(QL.querySelectorAll('.row:not(.gone)')) : [];
+    var k=rows.filter(function(r){ return r.dataset.tier==='now'; }).length;
+    H1.textContent=headline(rows.length,k);
+    if(SEG){
+      var c={all:rows.length, mail:0, chat:0};
+      rows.forEach(function(r){ var s=' '+r.dataset.ch+' '; if(s.indexOf(' mail ')>=0) c.mail++; if(s.indexOf(' chat ')>=0) c.chat++; });
+      Array.prototype.forEach.call(SEG.querySelectorAll('button'),function(bt){ bt.querySelector('b').textContent=String(c[bt.dataset.f]); });
+    }
   }
 
   function render(){
-    var d=loadData(), page=$('page');
+    var d=loadData(), page=$('page'); PAGE=page;
     var q=d.queue||[], filed=d.filed||[], grouped=d.grouped||[], counts=d.counts||{};
     var mail=counts.mail==null?null:(counts.mail|0), chat=counts.chat==null?null:(counts.chat|0);
     MAIL=mail; CHAT=chat;
 
-    header(page,'page_inbox', countWord('mail',mail)+', '+countWord('chat',chat)+'. '+P('need_you_n',q.length));
+    header(page,'page_inbox', headline(q.length, q.filter(function(it){ return tierOf(it)==='now'; }).length));
     H1=page.querySelector('h1');
     (d.notices||[]).forEach(function(s){ if(s) add(page, el('p','sub',String(s))); });
 
-    /* ---- the queue ---- */
-    var hq=h2(L('needs_you'),F(L('of'),{n:q.length,t:(mail|0)+(chat|0)})); QT=hq.querySelector('b');
-    add(page, hq);
-    var ql=el('div','list queue'); q.forEach(function(it){ add(ql,queueRow(it)); }); add(page,ql); QL=ql;
+    /* the filter, only when there is something on both sides */
+    var hasMail=(mail|0)>0 || q.some(function(it){ return chans(it).indexOf('mail')>=0; });
+    var hasChat=(chat|0)>0 || q.some(function(it){ return chans(it).indexOf('chat')>=0; });
+    if(hasMail && hasChat){ SEG=segBar(chatName(d)); add(page,SEG); }
 
-    /* ---- the filing, or the grouping ---- */
-    var bulk = filed.length ? filed : grouped, withRule = filed.length>0;
+    /* the queue: the tier said once, over its lines, in rank order */
+    if(q.length){
+      var ql=el('div','list queue'); QL=ql;
+      ['now','today','week'].forEach(function(tr){
+        var rows=q.filter(function(it){ return tierOf(it)===tr; });
+        if(!rows.length) return;
+        var th=el('div','tierh '+tr, L('tier_'+tr)); th.dataset.tier=tr; add(ql,th);
+        rows.forEach(function(it){ add(ql, queueRow(it)); });
+      });
+      add(page,ql);
+    }
+
+    /* what was filed, or grouped where nothing can be written: one short row a label */
+    var bulk = filed.length ? filed : grouped; WITH_RULE = filed.length>0;
     if(bulk.length){
-      var sum=0; bulk.forEach(function(f){ sum+=(f.count|0); });
-      add(page, h2(L(withRule?'labelled':'grouped'),String(sum)));
-      var fl=el('div','list filed'); bulk.forEach(function(f){ add(fl,filedRow(f,withRule)); }); add(page,fl);
+      FSEC=el('div','fsec');
+      var hb=h2(L(WITH_RULE?'labelled':'grouped'),''); FILED_H=hb.querySelector('b');
+      var fl=el('div','list filed'); bulk.forEach(function(f){ add(fl, filedRow(f)); });
+      add(FSEC, hb, fl); add(page,FSEC);
     }
 
-    /* ---- the rest, every line of it, so every unread is somewhere on the page:
-       three lines show, "show all N" opens the rest. Plain lines, no reveal, no Drop. ---- */
-    var oth=d.others||{}, othN=(oth.mail|0)+(oth.chat|0);
-    if(othN>0){
-      add(page, el('p','rest', P('others_line',othN)));
-      var om=el('div','mini others');
-      (oth.items||[]).forEach(function(x){ add(om, miniLine(x)); });
-      tuck(om, 3, 'show_all_n');
-      add(page, om);
+    /* the rest, every line of it, so every unread is somewhere on the page */
+    var items=(d.others||{}).items||[];
+    if(items.length){
+      REST=el('p','rest'); OM=el('div','mini others');
+      items.forEach(function(x){ var a=miniLine(x); a.dataset.ch=fk(x.channel); add(OM,a); });
+      add(page, REST, OM);
     }
 
-    var right = d.wrote ? '' : L('nothing_written');
-    add(page, footer([d.next_run ? F(L('next_run'),{t:d.next_run}) : '', right]), credit());
+    var foot=[countWord('mail',mail)+', '+countWord('chat',chat), d.next_run ? F(L('next_run'),{t:d.next_run}) : ''];
+    if(!d.wrote) foot.push(L('nothing_written'));
+    add(page, footer(foot), credit());
+
+    setFilter(SEG ? readFilter() : 'all', false);
+    recount();
     dbInit(function(){ hydrateDrops(recount); });
   }
   render();

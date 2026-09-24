@@ -10,7 +10,10 @@
   design/partial.js or design/dictionary.json and rebuild.
 
   WHAT THIS IS
-  One page, three parts. The shape of the day, the decisions to land, the jobs to do.
+  One page, three parts. The shape of the day, the calls to make, the jobs to do. Every
+  line reads without opening: the call or the job, and under it the one fact it is on
+  the page for. Never advice: the call stays the exec's. Opened, a line is its sources,
+  Ask Claude and Drop.
   Nothing else. No board, no tabs, no dashboard. Reads mail, calendar and messaging.
   Delivered at 06:50, thrown away at 18:00.
 
@@ -58,10 +61,11 @@
                   a cell with nothing to say is left out and not drawn
       a clash     { id, clash: true, meetings: [{ start, end, title, text, cost }],
                     to_land, in_mind, sources, briefing }
-    decisions     [ row ]   "Decisions to land", three at most
-    jobs          [ row ]   "Jobs to do", three at most
-      a row       { id, ref, say, type, meta, lede, argument: [p], plain: [p], go: [ref],
-                    sources: [src], briefing }
+    decisions     [ row ]   "To decide", three at most; say is the call with its options
+    jobs          [ row ]   "To do", three at most; say is the job
+      a row       { id, ref, say, type, meta, argument: [fact], sources: [src], briefing }
+      argument    one entry, the fact the line is on the page for, drawn under the line;
+                  check-page counts the words of both
       ref         optional string, the stable key Drop is remembered under: the
                   source thread when there is one, else "brief:" + id, which is what
                   the page falls back to when ref is absent
@@ -122,20 +126,19 @@ var DICT={{DICT}};
     return s;
   }
 
-  /* a list row: the sentence, the time, and a reveal that opens on the ask and ends
-     on its sources, Ask Claude and Drop. `kind` is decision or job, for the store. */
+  /* a list row: the call or the job, its time, and under it the one fact that
+     matters: the precedent, the knock-on, the pattern or the history the line is on
+     the page for. No advice: the call stays the exec's. The reveal is its sources,
+     Ask Claude and Drop. `kind` is decision or job, for the store. */
   function row(it,i,kind){
     var r=el('div','row'); r.id=it.id;
     var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
     b.onclick=function(){ t(b); };
     var dec=el('span','dec'); add(dec, el('span','say',it.say));
+    var fact=(it.argument||[])[0]; if(fact) add(dec, el('span','state',fact));
     add(b, el('span','n',String(i+1)), dec, metaEl(it.meta));
     add(r,b);
     var w=el('div','why');
-    if(it.lede) add(w, el('p','lede',it.lede));
-    add(w, typeTag(it.type));
-    paras(w,it.argument); paras(w,it.plain,'plain');
-    goRows(w,it.go);
     add(w, srcRow(it.sources,it.briefing));
     add(r,w);
     dropUI(r, {page:'brief', kind:kind, ref: it.ref || ('brief:'+it.id), say:it.say||''});

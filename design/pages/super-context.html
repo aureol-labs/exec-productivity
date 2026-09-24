@@ -84,10 +84,12 @@
 
   THE JSON, IN SHORT (the full fixture is skills/aureol-context/references/example.json)
     lang, date_label, time_label, today, sub, gesture, links   as on every page
-    priorities    [ { id, say, ahead, short, confirmed, lede, argument: [p], yours,
-                      history: [{date, event}], go: [ref], sources, briefing } ]
+    priorities    [ { id, say, ahead, short, confirmed, lede, yours, done_hint,
+                      history: [{date, event}], sources, briefing } ]
                   five at most; short is the name the Serves column uses and never
-                  equals a topic or entity name; ahead is what the line comes before
+                  equals a topic or entity name; ahead is what the line comes before;
+                  lede is one fact on how the week served it; done_hint, when its
+                  outcome has happened, says what and when, and the exec closes it
     topics        [ { id, ref, name, state, serves: priority id | null, last: date | null,
                       lede, argument: [p], who: [{ref, name, note}], so_far: [{date,
                       move}], next: [{when, today, late, event, decision}] | null,
@@ -226,13 +228,15 @@ var DICT={{DICT}};
     var dec=el('span','dec');
     add(dec, el('span','say',p.say), el('span','ahead',F(L('ahead_of'),{x:p.ahead||''})));
     if(mark) add(dec, el('span','rel nw',mark));
+    /* a priority whose outcome has happened says so, with what and when; closing it
+       stays the exec's, with Edit */
+    else if(!gone && src.done_hint) add(dec, el('span','rel nw',F(L('looks_done'),{x:src.done_hint})));
     add(b, el('span','n', gone?'':String(i+1)), dec,
         el('span','meta', src.confirmed ? F(L('confirmed'),{d:src.confirmed}) : ''));
     add(r,b);
     if(!fresh){
       var w=el('div','why');
-      if(src.lede) add(w, el('p','lede',src.lede));
-      paras(w,src.argument); paras(w,src.plain,'plain');
+      if(src.lede) add(w, el('p',null,src.lede));
       if(src.yours || (src.history&&src.history.length)){
         var c=el('div','ctx');
         if(src.yours){ ctxTag(c,'in_your_words'); add(c, el('p','yours',L('q_open')+src.yours+L('q_close'))); }
@@ -502,15 +506,11 @@ var DICT={{DICT}};
     add(b, dec, sv, el('span','last', tp.last || L('not_yet')));
     add(r,b);
     var w=el('div','why');
-    if(tp.lede) add(w, el('p','lede',tp.lede));
-    paras(w,tp.argument); paras(w,tp.plain,'plain');
     var c=el('div','ctx');
     if(tp.who&&tp.who.length){ ctxTag(c,'who'); add(c, withList(tp.who,false)); }
-    if(tp.so_far&&tp.so_far.length){ ctxTag(c,'so_far'); add(c, datedList(tp.so_far)); }
-    ctxTag(c,'next');
-    if(tp.next&&tp.next.length) add(c, datedList(tp.next)); else add(c, el('p',null,L('nothing_booked')));
-    add(w,c);
-    goRows(w,tp.go);
+    if(tp.so_far&&tp.so_far.length){ ctxTag(c,'so_far'); add(c, datedList(tp.so_far.slice(-3))); }
+    if(tp.next&&tp.next.length){ ctxTag(c,'next'); add(c, datedList(tp.next)); }
+    if(c.children.length) add(w,c);
     var extra=null;
     if(tp.gesture==='add_priority'){
       extra=el('a','ask',L('add_as_priority')); extra.setAttribute('href','#priorities');
@@ -537,8 +537,6 @@ var DICT={{DICT}};
     add(b, dec, el('span','role',roleOf(en)), el('span','last', en.last || L('not_yet')));
     add(r,b);
     var w=el('div','why');
-    if(en.lede) add(w, el('p','lede',en.lede));
-    paras(w,en.argument); paras(w,en.plain,'plain');
     var c=el('div','ctx'), ca=en.cares_about;
     if(ca && ca.text){
       ctxTag(c,'cares_about');
@@ -548,12 +546,10 @@ var DICT={{DICT}};
       } else add(c, el('p',null,ca.text));
     }
     if(en.with&&en.with.length){ ctxTag(c,'with'); add(c, withList(en.with,true)); }
-    if(en.so_far&&en.so_far.length){ ctxTag(c,'so_far'); add(c, datedList(en.so_far)); }
+    if(en.so_far&&en.so_far.length){ ctxTag(c,'so_far'); add(c, datedList(en.so_far.slice(-3))); }
     if(en.ended&&en.ended.length){ ctxTag(c,'ended'); add(c, datedList(en.ended)); }
-    ctxTag(c,'next');
-    if(en.next&&en.next.length) add(c, datedList(en.next)); else add(c, el('p',null,L('nothing_booked')));
-    add(w,c);
-    goRows(w,en.go);
+    if(en.next&&en.next.length){ ctxTag(c,'next'); add(c, datedList(en.next)); }
+    if(c.children.length) add(w,c);
     add(w, srcRow(en.sources,en.briefing));
     add(r,w);
     return r;
@@ -613,13 +609,11 @@ var DICT={{DICT}};
     add(b, dec, el('span','who',decidedBy(dc)), el('span','when',dc.when||''));
     add(r,b);
     var w=el('div','why');
-    add(w, el('p','lede',F(L('against'),{x:dc.against||''})));
-    paras(w,dc.argument); paras(w,dc.plain,'plain');
+    add(w, el('p',null,F(L('against'),{x:dc.against||''})));
     if(dc.land) add(w, el('p','land',F(L('land'),{q:dc.land})));
     relGo(w,'conflicts_with',dc.conflicts_with);
     relGo(w,'replaces',dc.replaces);
     relGo(w,'replaced_by',dc.replaced_by);
-    goRows(w,dc.go);
     if(dc.status==='proposed'){
       var act=el('div','act'), k=el('button',null,L('keep')), d=el('button','quiet',L('drop'));
       k.type='button'; d.type='button';
@@ -663,8 +657,6 @@ var DICT={{DICT}};
     add(b, dec, el('span','role',L(sg.kind==='skill'?'skill':sg.kind==='routine'?'routine':sg.kind==='plugin'?'plugin':'connection')), el('span','last',sg.proposed_label||''));
     add(r,b);
     var w=el('div','why');
-    if(sg.lede) add(w, el('p','lede',sg.lede));
-    paras(w,sg.argument);
     if(sg.evidence&&sg.evidence.length){
       var c=el('div','ctx'); ctxTag(c,'evidence');
       var ol=el('ol'); sg.evidence.forEach(function(x){ var li=el('li'); add(li, el('b',null,x.date||''), el('span',null,x.text||'')); add(ol,li); });

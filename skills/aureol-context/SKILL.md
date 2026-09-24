@@ -14,12 +14,20 @@ in the template's head comment and in `references/example.json`.
 **Voice.** Every word the exec reads, on the page or in a briefing, follows `references/voice.md`, the voice
 of every skill in this plugin. Read it before you write.
 
+**Current, or it misleads.** Every session starts from this page, so a stale line does more harm than a missing
+one, and keeping it current is the job. Each morning pass rewrites every live topic from the read; closes every
+topic whose thing is settled, signed, past or silent for 30 days, with its reason and date; takes people and
+organisations off the page once no live topic holds them; and flags every priority whose outcome has happened
+(rule 1). Closing is half the work: a page that only grows stops being read.
+
 ## Rules that override anything you infer
 
 1. **Never edit a priority.** `priorities/*` has one writer, the exec, through install or the page's editor. You
    read them, you rank against them, you propose a new one with status `proposed` and `ahead` filled from the
-   evidence when the read shows what it competed with (else empty), and that is all. What a priority comes
-   before is corrected by the exec on the page, never asked as a question.
+   evidence when the read shows what it competed with (else empty), and you flag one whose outcome has happened
+   (the deal signed, the date passed, the thing shipped): the page JSON carries `done_hint` on it, what happened
+   and when, 12 words at most ("Mailinblack signed, 3 Oct"), and the exec closes it with Edit. You never drop it
+   yourself. What a priority comes before is corrected by the exec on the page, never asked as a question.
 2. **Never retire a decision.** `decisions/*` is appended. You propose with `status: "proposed"`; keep and drop are
    the exec's, on the page. A newer decision that replaces an older one gets `replaces`; the older one gets
    `replaced_by`; both stay where they happened. A conflict is a suspicion, never a merge: set `conflicts_with`
@@ -42,7 +50,8 @@ of every skill in this plugin. Read it before you write.
 7. **Caps at write time.** Sources 3 per document, priorities 5, people and entities on the page only while on a
    live topic with something open between them and the exec, suggestions 3 on the page.
 8. **Nothing about the page.** No line explains the page or how it is made ("you write the priorities, the
-   assistant writes the rest"): no `sub`. A field with nothing to say is left out, never filled to say so.
+   assistant writes the rest"): no `sub`. A field with nothing to say is left out, never filled to say so. No
+   advice either: no line tells the exec what to do or decide.
 
 ## 0. Probe, then read the store
 
@@ -120,7 +129,12 @@ the kept decisions that constrain, and the connections in use.
 Build the page JSON from the store: `lang` and `first_name` from preferences, `date_label` and `time_label` in
 the language with the real time of this run, `today`, the four lists, `suggestions` with `status: proposed`
 (three at most), `links` to the other pages from `connections/current.pages`, `gesture` from preferences,
-`notices`. Titles are numerals: "4 priorities, 9 live topics. 2 serve none of them." Run
+`notices`. On the page a topic is its `name`, `state` (one line, where it stands), `serves` and `last`, and
+opens on `who`, the last three `so_far` and `next`; a person or an organisation likewise, with `cares_about` and
+`with`. Neither carries a `lede`, an `argument` or a `go`: the store keeps the `read` for sessions. A priority's
+`lede` is one fact on how the week served it, and `done_hint` is rule 1's. A decision shows what it was decided
+against and, on a conflict, `land`; no `argument` or `plain`. A suggestion shows its evidence and its path or
+pattern, no `lede`. Titles are numerals: "4 priorities, 9 live topics. 2 serve none of them." Run
 `python3 tools/check-page.py --kind context DATA.json` from the plugin's root folder (the one holding `skills/`
 and `tools/`) when a shell exists; otherwise apply its list by hand.
 
