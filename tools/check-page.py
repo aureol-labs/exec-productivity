@@ -102,7 +102,8 @@ def check_common(d, r, kind):
             if m:
                 r.bad(path, 'lateness arithmetic: "%s"' % m.group(0))
                 break
-    for key in ('date_label', 'time_label', 'today', 'sub'):
+    # sub is optional: one fact the page cannot show, or nothing
+    for key in ('date_label', 'time_label', 'today'):
         if not d.get(key):
             r.bad('$.' + key, 'missing')
     if d.get('today') and not ISO.match(str(d['today'])):
@@ -281,12 +282,8 @@ def check_brief(d, r, others):
                 r.bad(p, 'start and end must be HH:MM')
             if not m.get('label'):
                 r.bad(p, 'a block is labelled with its time and a word')
-            br = m.get('brief') or {}
-            for key in ('who', 'before'):
-                if not br.get(key):
-                    r.bad(p + '.brief.' + key, 'missing')
-            if not br.get('to_land') or not br.get('in_mind'):
-                r.bad(p + '.brief', 'a brief carries WHO, BEFORE, TO LAND and IN MIND')
+            # WHO, BEFORE, TO LAND and IN MIND are each optional: a cell with nothing
+            # to say is left out, never filled with "nothing to prepare"
         times.append(m.get('start'))
     mx = d.get('metrics')
     if mx is not None:
@@ -360,8 +357,7 @@ def check_inbox(d, r, others):
                 r.bad(p + '.tint', 'tint must be one of %s' % sorted(TINTS))
             if not f.get('label'):
                 r.bad(p + '.label', 'missing')
-            if not f.get('lede'):
-                r.bad(p + '.lede', 'every reveal opens on the ask')
+            # a label's lede is optional: a label rarely asks anything of the exec
             items = f.get('contents') or []
             if isinstance(f.get('count'), int):
                 want = min(5, f['count'])

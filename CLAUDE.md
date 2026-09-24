@@ -39,6 +39,8 @@ procedure, the plugin is how it reaches a session. Read `README.md` first, then 
 Skills in English, exec-facing text in the exec's language, generated at run time. Every message to the exec is
 at most three short sentences plus one tool: a question, a card, a table, a link. No em dashes, in any language.
 Numerals for counts. No LLM tells: no "it's worth noting", no throat-clearing, no hedging a number you have.
+The voice every skill writes in lives in one file, `skills/aureol-context/references/voice.md`, and every skill
+points at it: a CEO's chief of staff, in the exec's own register. Change the voice there, never in a skill.
 
 ## Testing
 

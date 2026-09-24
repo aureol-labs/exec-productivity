@@ -105,13 +105,15 @@
     document.documentElement.setAttribute('lang',LANG);
     return d;
   }
-  /* the header: the notebook page, the date and the time in the hand, the count, the sub */
+  /* the header: the notebook page, the date and the time in the hand, the count, and
+     the sub only when the routine wrote one */
   function header(page,pageKey,h1){
     PAGE_KEY=pageKey;
     add(page, el('div','book',L(pageKey)));
     var top=el('div','top');
     add(top, el('span','eyebrow',DATA.date_label||''), el('span','eyebrow',DATA.time_label||''));
-    add(page, top, el('h1',null,h1), el('p','sub',DATA.sub||''));
+    add(page, top, el('h1',null,h1));
+    if(DATA.sub) add(page, el('p','sub',DATA.sub));
     document.title=L(pageKey);
   }
   /* a section head: label, rule, tally. `extra` is an optional element at the end. */
@@ -120,9 +122,6 @@
     if(tally!=null){ var b=el('b'); if(typeof tally==='string') b.textContent=tally; else add(b,tally); add(h,b); }
     if(extra) add(h,extra);
     return h;
-  }
-  function cap(lines){
-    var c=el('div','cap'); (lines||[]).forEach(function(s){ add(c, el('span',null,s)); }); return c;
   }
   /* the sources row: three at most, then the gesture at the right end */
   function srcRow(sources,briefing,gestureLabel,extra){

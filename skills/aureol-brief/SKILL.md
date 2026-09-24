@@ -10,6 +10,9 @@ One page, read in two minutes, expired by 18:00. The template is `references/dai
 JSON document (shape in its head comment and `references/example.json`). Design rules are the plan's, and the
 ones that bite are below.
 
+**Voice.** Every word the exec reads, on the page, in a notification or a briefing, follows
+`../aureol-context/references/voice.md`. Read it before you write.
+
 ## Rules that override anything you infer
 
 1. **Clear first. The line is the decision, the reveal is the answer.** A decision line names the topic (the same
@@ -37,12 +40,16 @@ ones that bite are below.
 8. **Ranking is against the priorities.** Left alone you rank by mail volume, which is always new business.
    Rank against `priorities` in their order, and take topic names and roles from the store so every page says
    the same words.
+9. **Nothing about the page.** No line explains the page, how to read it, or what the assistant does not do
+   ("sends nothing"). A cell or field with nothing to say is left out, never filled with "nothing to prepare"
+   or "nothing to decide": a workout on the calendar is a block with its head line and nothing else. No `sub`
+   unless it carries one fact the page cannot show, never a line already on it.
 
 ## 0. Read the store, then probe
 
 `connections/current`, `connections/preferences`, `priorities`, `topics`, `people`, `entities`, kept
 `decisions`, `context/summary`. Probe calendar, mail, chat and meetings with one real call each. A failed role
-is a missing section and one line in `data.notices`.
+is a missing section and one line in `data.notices`, saying what could not be read, never how it was checked.
 
 ## 1. Read the day
 
@@ -63,13 +70,16 @@ events are drawn.
   block with `left` and `width` in percent of the strip. Filled means a decision is waiting in that meeting.
   Overlapping events are one block with stacked lanes and one clash brief whose columns each end on what it costs
   to move that one. Free stretches of an hour or more are named.
-- **Meeting briefs**: WHO (from `people.role`), BEFORE, TO LAND, IN MIND; sources; briefing.
+- **Meeting briefs**: WHO (from `people.role`), BEFORE, TO LAND, IN MIND, each only when it has something to
+  say (rule 9); sources; briefing.
 - **Decisions to land**: the cap, ranked against the priorities; type; reveal that opens on the answer; a
   PRECEDENT links to the decision it cites on Super Context, carrying the decision's words as its link text.
 - **Jobs to do**: the cap; the wall on the strip; type. A job whose reveal would only summarise the thing it asks
   the exec to read has no Ask Claude.
-- **Footer**: what the assistant did this morning, in numerals ("29 mails read, 0 written").
-- **h1**: numerals only. "6 meetings, 1 clash, 3 decisions, 3 jobs." `sub`: the one thing the page cannot show.
+- **Footer**: what the assistant read this morning, in numerals ("Read at 06:52: 61 mails, 41 messages, 6
+  invites").
+- **h1**: numerals only. "6 meetings, 1 clash, 3 decisions, 3 jobs." `sub`: absent, unless one fact the page
+  cannot show.
 
 ## 3. Check, publish, record
 

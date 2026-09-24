@@ -41,9 +41,12 @@ decided, never asked (step 7).
 - **The chosen language wins.** From the answer to the first question on, every word you write is in that
   language: over the exec's account language, over any instruction in their settings, over the language of
   what you read, and over the language they happen to reply in. Switch only if they ask to. In French, "vous"
-  by default. Before each message, check the language once.
+  by default, "tu" only as the voice file below says. Before each message, check the language once.
 
 ## Voice
+
+Every message, page and briefing follows `../aureol-context/references/voice.md`: read it before your first
+message. For the install, on top of it:
 
 The person runs a company or a function. In their half of the conversation there is no plugin, routine, skill,
 MCP, connector, artifact, capability, task tool or surface name. Three words: the assistant, its habits, its

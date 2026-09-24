@@ -59,7 +59,7 @@
                   run: 0 when a channel was read and is empty, null when it could not
                   be read (the title then says "chat not read"), never absent
     notices       [ "one line" ]   what the run could not read, in the exec's language,
-                  under the sub; required when a count is null
+                  under the title; required when a count is null
     queue         [ row ]   ordered: tier, then oldest first inside a tier
       a row       { id, ref, tier: now|today|week, channel: mail|slack|teams, channels,
                     say, label: { name, tint }, meta: { kind: "time" | "date", value },
@@ -76,8 +76,9 @@
       meta        when the message arrived: a clock for today, a date before that
     filed         [ label ]  only where the mail role could write labels
       a label     { id, label, tint, count, by_channel: { mail, slack, teams },
-                    say, lede, rule, plain: [p], contents: [item], href, sources,
-                    briefing }
+                    say, lede, rule, plain: [p], contents: [item], href, briefing }
+                  lede only when something inside deserves the exec's eye; no
+                  sources, the contents are the sources;
                   tint is one of sales|product|board|customers|hiring|later|arch;
                   arch is To archive, drawn as an outline, and carries rules: [{count,
                   rule}] instead of one rule; every other label carries its rule, in
@@ -227,14 +228,14 @@ var DICT={{DICT}};
 
     /* ---- the queue ---- */
     var hq=h2(L('needs_you'),F(L('of'),{n:q.length,t:(mail|0)+(chat|0)})); QT=hq.querySelector('b');
-    add(page, hq, cap(L('cap_queue')));
+    add(page, hq);
     var ql=el('div','list queue'); q.forEach(function(it){ add(ql,queueRow(it)); }); add(page,ql); QL=ql;
 
     /* ---- the filing, or the grouping ---- */
     var bulk = filed.length ? filed : grouped, withRule = filed.length>0;
     if(bulk.length){
       var sum=0; bulk.forEach(function(f){ sum+=(f.count|0); });
-      add(page, h2(L(withRule?'labelled':'grouped'),String(sum)), cap([L(withRule?'cap_filed':'cap_grouped')]));
+      add(page, h2(L(withRule?'labelled':'grouped'),String(sum)));
       var fl=el('div','list filed'); bulk.forEach(function(f){ add(fl,filedRow(f,withRule)); }); add(page,fl);
     }
 
@@ -242,14 +243,14 @@ var DICT={{DICT}};
        three lines show, "show all N" opens the rest. Plain lines, no reveal, no Drop. ---- */
     var oth=d.others||{}, othN=(oth.mail|0)+(oth.chat|0);
     if(othN>0){
-      add(page, el('p','rest', F(L('others_line'),{n:othN})));
+      add(page, el('p','rest', P('others_line',othN)));
       var om=el('div','mini others');
       (oth.items||[]).forEach(function(x){ add(om, miniLine(x)); });
       tuck(om, 3, 'show_all_n');
       add(page, om);
     }
 
-    var right = d.wrote ? L('labels_only') : L('nothing_written');
+    var right = d.wrote ? '' : L('nothing_written');
     add(page, footer([d.next_run ? F(L('next_run'),{t:d.next_run}) : '', right]), credit());
     dbInit(function(){ hydrateDrops(recount); });
   }

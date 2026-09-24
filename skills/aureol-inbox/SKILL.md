@@ -10,6 +10,9 @@ Two jobs, and they are different jobs. Ranking decides what the exec touches. Ca
 clean. The page never lets the second pretend to be the first. Template `references/inbox.html`, one JSON
 document (shape in its head comment and `references/example.json`).
 
+**Voice.** Every word the exec reads, on the page, in a notification or a briefing, follows
+`../aureol-context/references/voice.md`. Read it before you write.
+
 ## Rules that override anything you infer
 
 0. **Label names are the mailbox's, in the exec's language**, exactly as `rules` spells them; the page shows
@@ -24,9 +27,9 @@ document (shape in its head comment and `references/example.json`).
    category:primary` for the count and `in:inbox category:primary` plus the date window for the read; on a
    mailbox without tabs the same query returns the plain inbox, which is right. On Outlook, the Focused inbox
    where it exists. Never Promotions, Social, Updates, Forums, Other, Junk or Clutter. The h1's unread count is
-   that query's count, never the account's total, and the sub says so in three words ("in your main inbox"). A
-   page that says 4,000 unread to an exec who runs inbox zero has used the wrong query.
-4. **The test for the queue is stated on the page**: someone is blocked, a promise is late, or only the exec can
+   that query's count, never the account's total. A page that says 4,000 unread to an exec who runs inbox zero
+   has used the wrong query.
+4. **The test for the queue**: someone is blocked, a promise is late, or only the exec can
    answer. A group ask anyone could answer is not the exec's. A thread the exec already replied to or reacted to
    is out. Check the thread before ranking it, not the snippet. **Unread first**: the queue is built from unread
    mail and unread messages; a thread the exec has read but not answered enters only when someone is visibly
@@ -51,7 +54,8 @@ document (shape in its head comment and `references/example.json`).
    else below, nothing missing. Count mail and chat with one real call each on every run, and write both numbers
    even when one is 0. A channel that could not be read is `null` in `counts` with one line in `notices`, in
    the exec's language ("Slack could not be read this morning"), never a 0 and never a missing key: a chat that
-   silently disappears reads as a broken connection. The unread set is the whole main inbox's unread, not only
+   silently disappears reads as a broken connection. A notice says what could not be read, never how it was
+   checked; a channel read and empty is a 0 and no notice. The unread set is the whole main inbox's unread, not only
    what arrived since the last run: the window decides what is re-read and re-ranked, never what is counted.
    Chat unread: what the tool marks unread; where it cannot say, every message that came to the exec (a direct
    message, a mention, a thread or channel they are in) after their own last message in that conversation, over
@@ -63,6 +67,10 @@ document (shape in its head comment and `references/example.json`).
    thread ids joined with `+`; never two threads of one channel in one line. Queue (each line counted once per
    channel it carries) plus filed plus others equals the title, mail and chat separately; `check-page` refuses
    a page where it does not. Filing is not judging, so the filed list is "labelled, still unread".
+10. **Nothing about the page.** No line explains the page, how to read it, or what was or was not done to the
+    mailbox ("left unread", "nothing moved or deleted"). A field with nothing to say is left out, never filled
+    with "nothing to do". No `sub` unless it carries one fact the page cannot show. A source is something the
+    exec can open, never the rule or the run ("your rules, in your words", "label applied, 09:05").
 
 ## 0. Read, probe
 
@@ -91,7 +99,8 @@ carry their whole substance.
 
 With `label` and `rules`: apply each rule, count the writes, and render `data.filed` with each label's rule, its
 count per channel, three to five content lines each a link, and the `To archive` label listing every rule that
-filed into it. Without `label`: no write, `data.filed` empty, `data.grouped` carries the same grouping as a
+filed into it. A label's `lede` only when something inside deserves the exec's eye (who holds it, what is
+live); no `sources`, the content lines are its sources. Without `label`: no write, `data.filed` empty, `data.grouped` carries the same grouping as a
 reading aid, `data.wrote` false and the footer says nothing was written to the mailbox.
 
 ## 4. Tell the context

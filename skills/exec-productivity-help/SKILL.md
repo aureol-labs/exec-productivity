@@ -5,8 +5,9 @@ description: The assistant explaining and fixing itself from its own store and f
 
 # Help
 
-Fewest words. Read before answering. Fix before explaining. Same voice as install: the assistant, its habits,
-its connections; no plugin, skill, task, connector or artifact in the exec's half.
+Fewest words. Read before answering. Fix before explaining. The voice is `../aureol-context/references/voice.md`,
+the same as install: the assistant, its habits, its connections; no plugin, skill, task, connector or artifact
+in the exec's half.
 
 ## Where the answer is
 

@@ -43,16 +43,9 @@
     ],
     "your_day": "Your day",
     "booked": "{t} booked",
-    "cap_strip": [
-      "Tap a block for the brief",
-      "Filled means a decision is waiting",
-      "Stacked in red means two at once"
-    ],
     "two_at_once": "Two at once",
     "n_at_once": "{n} at once",
     "clash_head": "{a} to {b} · {what}",
-    "two_meetings_one": "two meetings, one of you",
-    "n_meetings_one": "{n} meetings, one of you",
     "clear": "{t} clear",
     "who": "Who",
     "before": "Before",
@@ -77,24 +70,16 @@
     ],
     "needs_you": "Needs you",
     "of": "{n} of {t}",
-    "cap_queue": [
-      "Tap a line for the ask",
-      "Now, then today, then this week",
-      "Oldest first inside a tier"
-    ],
     "tier_now": "Now",
     "tier_today": "Today",
     "tier_week": "This week",
     "labelled": "Labelled, still unread",
     "grouped": "The rest, grouped",
-    "cap_filed": "Tap a label to see what is in it",
-    "cap_grouped": "Tap a group to see what is in it",
     "more_label": "and {n} more in this label",
     "more_group": "and {n} more in this group",
     "to_archive": "To archive",
     "next_run": "Next run {t}",
-    "labels_only": "Labels only · nothing moved, deleted, sent or marked read",
-    "nothing_written": "Nothing written to the mailbox · grouped here, not labelled",
+    "nothing_written": "Nothing written to the mailbox",
     "priorities_n": [
       "{n} priority",
       "{n} priorities"
@@ -170,7 +155,7 @@
     "replaced_by": "Replaced by {x}",
     "conflicts_with": "Conflicts with {x}",
     "added_week": "Added this week",
-    "proposed_m": "Proposed, keep or drop",
+    "proposed_m": "Proposed",
     "you": "You",
     "and": "and",
     "keep": "Keep",
@@ -230,7 +215,6 @@
     "keep_briefing": "In my Super Context, mark this proposed decision as kept: “{say}” ({when}, {by}). Change nothing else.",
     "drop_briefing": "Drop this from my {page}: “{say}”. Reason: {reason}. Remember it.",
     "decline_briefing": "In my Super Context, decline this suggestion and do not propose it again: {say}",
-    "rewritten": "Rewritten {t}",
     "proposed_pri_n": [
       "{n} proposed as a priority",
       "{n} proposed as priorities"
@@ -243,7 +227,10 @@
     "routine": "Routine",
     "create_routine": "Create the routine",
     "plugin": "Plugin",
-    "others_line": "{n} more unread, nothing asked of you:",
+    "others_line": [
+      "{n} more unread:",
+      "{n} more unread:"
+    ],
     "show_all_n": "show all {n}",
     "mail_not_read": "mail not read",
     "chat_not_read": "chat not read"
@@ -291,16 +278,9 @@
     ],
     "your_day": "Votre journée",
     "booked": "{t} de réunions",
-    "cap_strip": [
-      "Touchez un bloc pour le brief",
-      "Plein : une décision attend",
-      "Empilé en rouge : deux à la fois"
-    ],
     "two_at_once": "Deux à la fois",
     "n_at_once": "{n} à la fois",
     "clash_head": "{a} à {b} · {what}",
-    "two_meetings_one": "deux réunions, un seul vous",
-    "n_meetings_one": "{n} réunions, un seul vous",
     "clear": "{t} libres",
     "who": "Qui",
     "before": "Avant",
@@ -325,24 +305,16 @@
     ],
     "needs_you": "Vous attendent",
     "of": "{n} sur {t}",
-    "cap_queue": [
-      "Touchez une ligne pour la demande",
-      "Maintenant, puis aujourd’hui, puis cette semaine",
-      "Le plus ancien d’abord dans chaque niveau"
-    ],
     "tier_now": "Maintenant",
     "tier_today": "Aujourd’hui",
     "tier_week": "Cette semaine",
     "labelled": "Étiquetés, toujours non lus",
     "grouped": "Le reste, regroupé",
-    "cap_filed": "Touchez une étiquette pour voir ce qu’elle contient",
-    "cap_grouped": "Touchez un groupe pour voir ce qu’il contient",
     "more_label": "et {n} de plus sous cette étiquette",
     "more_group": "et {n} de plus dans ce groupe",
     "to_archive": "À archiver",
     "next_run": "Prochain passage {t}",
-    "labels_only": "Étiquettes seulement · rien de déplacé, supprimé, envoyé ni marqué lu",
-    "nothing_written": "Rien d’écrit dans la boîte · regroupé ici, pas étiqueté",
+    "nothing_written": "Rien d’écrit dans la boîte",
     "priorities_n": [
       "{n} priorité",
       "{n} priorités"
@@ -418,7 +390,7 @@
     "replaced_by": "Remplacé par {x}",
     "conflicts_with": "En conflit avec {x}",
     "added_week": "Ajouté cette semaine",
-    "proposed_m": "Proposé, à garder ou écarter",
+    "proposed_m": "Proposé",
     "you": "Vous",
     "and": "et",
     "keep": "Garder",
@@ -478,7 +450,6 @@
     "keep_briefing": "Dans mon Super Context, marque cette décision proposée comme gardée : « {say} » ({when}, {by}). Ne change rien d’autre.",
     "drop_briefing": "Écarte cette ligne de la page {page} : « {say} ». Raison : {reason}. Retiens-la.",
     "decline_briefing": "Dans mon Super Context, refuse cette suggestion et ne la propose plus : {say}",
-    "rewritten": "Réécrit à {t}",
     "proposed_pri_n": [
       "{n} proposée comme priorité",
       "{n} proposées comme priorités"
@@ -491,7 +462,10 @@
     "routine": "Routine",
     "create_routine": "Créer la routine",
     "plugin": "Plugin",
-    "others_line": "{n} autres non lus, rien ne vous est demandé :",
+    "others_line": [
+      "{n} autre non lu :",
+      "{n} autres non lus :"
+    ],
     "show_all_n": "afficher les {n}",
     "mail_not_read": "mails non relevés",
     "chat_not_read": "messages non relevés"

@@ -47,7 +47,7 @@
     date_label    "Monday 14 September"      already localised by the routine
     time_label    "07:00"                    when the page was generated
     today         "2026-09-14"               ISO
-    sub           one sentence, the thing the page cannot show
+    sub           optional: one fact the page cannot show, absent otherwise
     gesture       "copy" (default) | "link"  Ask Claude copies, or opens claude.ai
     links         { context: "https://...", inbox: "https://..." } the other pages
     caps          { decisions: 3, jobs: 3 }  the lists never exceed them
@@ -55,6 +55,7 @@
     strip         { start: "08:00", end: "18:00", meetings: [...] }
       a meeting   { id, start, end, label, key, brief: { title, note, who, before,
                     to_land: { text } | { go }, in_mind: { text, go }, sources, briefing } }
+                  a cell with nothing to say is left out and not drawn
       a clash     { id, clash: true, meetings: [{ start, end, title, text, cost }],
                     to_land, in_mind, sources, briefing }
     decisions     [ row ]   "Decisions to land", three at most
@@ -153,6 +154,17 @@ var DICT={{DICT}};
     if(v.go) add(box, goRow(v.go));
     if(v.text) add(box, el('p',cls,v.text));
   }
+  /* a cell carries something or is not drawn: a block with nothing to prepare shows
+     its head line and nothing else, never "nothing to prepare" */
+  function said(v){ return !!(v && (v.text || (v.go && v.go.id))); }
+  function textCell(card,tag,s){
+    if(!s) return;
+    var c=cell(tag); add(c, el('p',null,s)); add(card,c);
+  }
+  function goCell(card,tag,v,cls){
+    if(!said(v)) return;
+    var c=cell(tag,'wide'); pOrGo(c,v,cls); add(card,c);
+  }
 
   /* the title: numerals, computed from the rows so they cannot disagree. The meetings
      and clashes are the calendar's; the decisions and jobs are counted again from the
@@ -247,15 +259,15 @@ var DICT={{DICT}};
         card.classList.add('clash');
         var a=inner[0]?inner[0].start:'', z='';
         inner.forEach(function(x){ if(minutes(x.end)===e0) z=x.end; });
-        add(card, el('div','bhead',F(L('clash_head'),{a:a,b:z,what: n===2 ? L('two_meetings_one') : F(L('n_meetings_one'),{n:n})})));
+        add(card, el('div','bhead',F(L('clash_head'),{a:a,b:z,what:P('meetings_n',n)})));
         inner.forEach(function(x){
           var c=cell(x.start+' · '+(x.title||''));
           if(x.text) add(c, el('p',null,x.text));
           if(x.cost) add(c, el('p','plain',x.cost));
           add(card,c);
         });
-        var tl=cell(L('to_land'),'wide'); pOrGo(tl,mt.to_land); add(card,tl);
-        var im=cell(L('in_mind'),'wide'); pOrGo(im,mt.in_mind,'plain'); add(card,im);
+        goCell(card,L('to_land'),mt.to_land);
+        goCell(card,L('in_mind'),mt.in_mind,'plain');
         add(card, srcRow(mt.sources,mt.briefing));
       } else {
         b.className='mt'+(mt.key?' key':'');
@@ -266,15 +278,15 @@ var DICT={{DICT}};
         var br=mt.brief||{};
         var head=mt.start+' · '+(br.title||mt.label||'')+' · '+span(minutes(mt.end)-minutes(mt.start))+(br.note?' · '+br.note:'');
         add(card, el('div','bhead',head));
-        var who=cell(L('who')); add(who, el('p',null,br.who||'')); add(card,who);
-        var bef=cell(L('before')); add(bef, el('p',null,br.before||'')); add(card,bef);
-        var tl2=cell(L('to_land'),'wide'); pOrGo(tl2,br.to_land); add(card,tl2);
-        var im2=cell(L('in_mind'),'wide'); pOrGo(im2,br.in_mind,'plain'); add(card,im2);
+        textCell(card,L('who'),br.who);
+        textCell(card,L('before'),br.before);
+        goCell(card,L('to_land'),br.to_land);
+        goCell(card,L('in_mind'),br.in_mind,'plain');
         add(card, srcRow(br.sources,br.briefing));
       }
       add(st,b); briefs.push(card);
     });
-    add(page, st, cap(L('cap_strip')));
+    add(page, st);
     briefs.forEach(function(c){ add(page,c); });
 
     /* ---- the two lists ---- */

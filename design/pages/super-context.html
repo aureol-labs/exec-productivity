@@ -884,7 +884,7 @@ var DICT={{DICT}};
     var kept=week.filter(function(x){ return x.status==='kept'; }).length;
     var right=[]; if(nPri) right.push(P('proposed_pri_n',nPri));
     if(week.length) right.push(F(L('proposed_dec'),{n:week.length,k:kept}));
-    var ft=footer([F(L('rewritten'),{t:d.time_label||''}), right.join(' · ')]);
+    var ft=footer([right.join(' · ')]);
     FOOT_R=ft.lastChild;
     add(page, ft, credit());
 

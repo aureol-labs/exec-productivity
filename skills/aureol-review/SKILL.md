@@ -14,6 +14,9 @@ mechanics that find them stay inside this file; the exec reads use cases and val
 found. It renders no page: the `aureol-context` skill's render mode republishes Super Context with the
 proposals.
 
+**Voice.** The run's message, the notification and every proposal the exec reads follow
+`../aureol-context/references/voice.md`. Read it before you write.
+
 ## Rules that override anything you infer
 
 1. **Only what can be added.** A finding is a use case plus the thing that makes it possible: a connection
