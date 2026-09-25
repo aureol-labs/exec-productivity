@@ -1,6 +1,6 @@
 {
   "name": "exec-productivity",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "The keys to start with Claude on your own work, in one guided install. Context makes the difference: your mail, calendar, chat, documents and meetings read with your own access, and a Super Context kept current every morning. Claude beyond a chat: a daily brief and a priority inbox, pages it writes and keeps current on a schedule. Your own use cases: every weekday evening, what you could have asked Claude, with the prompt, what to attach and the connections. Sends nothing, deletes nothing.",
   "author": {
     "name": "Paul Rousselle, Aureol Labs",
