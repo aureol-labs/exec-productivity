@@ -200,8 +200,11 @@ as `connector` or `plugin`, and the next `exec-productivity-help` session resolv
   "evidence": ["a-2026-09-17-julien"], "status": "proposed", "proposed_at": "2026-09-19" }
 ```
 
-`kind` is `connection`, `plugin`, `skill` or `routine`; `say` is the use case in one sentence, as value, the
-words the page and the run's table show. A plugin suggestion names an off-the-shelf plugin or
+`kind` is `prompt`, `connection`, `plugin`, `skill` or `routine`; `say` is the use case in one sentence, as
+value, the words the page and the run's table show. Every suggestion carries its how: `prompt`, the words the
+exec could have typed; `attach`, what to give it, absent when nothing; `needs`, `[{ "name": "Google Drive",
+"connected": true }]`, each connection it uses. A prompt suggestion needs nothing added: its `briefing` is the
+prompt, which Ask Claude copies. A plugin suggestion names an off-the-shelf plugin or
 skill from the Claude catalog that already covers the ask (`name`, `path`: where to add it, the marketplace or
 the card); it comes before a custom skill whenever one exists. A skill suggestion carries `name` and `pattern`
 (the ask that repeats, reached for on demand, and nothing on the shelf covers it). A routine suggestion carries `name`, `pattern` (the cadence and what it
@@ -240,10 +243,12 @@ on the page carries `reason` (`not_a_decision | not_important`).
   "read": { "mail": 61, "chat": 41, "calendar": 6, "meetings": 2, "documents": 0 },
   "wrote": ["topics", "people", "entities", "context/summary", "decisions: 1 proposed"],
   "failed": [], "pages": { "context": "https://claude.ai/...", "brief": "https://claude.ai/..." },
-  "note": "Ten lines at most." }
+  "version": "0.6.0", "note": "Ten lines at most." }
 ```
 
-`task` is one of `install | morning | inbox | review`, the habit that wrote the document.
+`task` is one of `install | morning | inbox | review`, the habit that wrote the document. `version` is the
+newest entry of `releases.md` when the run ended: the next run of the same task compares it to decide which
+release steps it still owes.
 
 ### `context/summary`, what a session reads first
 

@@ -23,7 +23,7 @@ in the exec's half.
 | Reopen a closed topic | `topics/<id>` | Set `live: true`, clear `closed_reason`, one `so_far` line "reopened by you", republish. |
 | Add a connection, add a notetaker | `connections/current` | One card (`search_mcp_registry`, `suggest_connectors`), then re-probe with a real call and write `connections/current`. |
 | What do you know about my work | `context/summary` | The Super Context link and three lines. |
-| Update the assistant | nothing | Customize, Plugins, then Update on the marketplace; the app also checks it on its own. If the update changed a habit's prompt (the release note says so), delete the three tasks and recreate them from the reference files. |
+| Update the assistant | the last `runs` of each task, their `version` and `note` | Customize, Plugins, then Update on the marketplace; the app also checks it on its own. Each habit applies its release steps on its next run (`../aureol-context/references/releases.md`). A step a run could not do is in its `note`: do it now, updating the task's prompt from its reference file, filled from the store. |
 | Stop everything | the scheduled tasks | Delete the three tasks. The pages stay; say so. To remove the pages too, the exec deletes them from their pages list. |
 | Is it reading my mail | `connections/current`, the register entry | The register entry `../make-me-productive/references/register-fr.md`, filled, in one message. |
 

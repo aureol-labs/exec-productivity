@@ -97,7 +97,7 @@
     "live_topics": "Live topics",
     "people_orgs": "People and organisations",
     "decisions": "Decisions",
-    "suggestions": "Connections, plugins, skills and routines to add",
+    "suggestions": "To ask Claude",
     "closed": "Closed",
     "closed_done": "Done",
     "closed_unimportant": "Not important",
@@ -242,7 +242,13 @@
     "f_all": "All",
     "f_mail": "Mail",
     "f_chat": "Chat",
-    "looks_done": "Looks done: {x}"
+    "looks_done": "Looks done: {x}",
+    "prompt_k": "Prompt",
+    "p_prompt": "Prompt",
+    "p_attach": "Attach",
+    "p_needs": "Connections",
+    "connected_m": "connected",
+    "to_add_m": "to add"
   },
   "fr": {
     "page_brief": "Brief du jour",
@@ -341,7 +347,7 @@
     "live_topics": "Sujets en cours",
     "people_orgs": "Personnes et organisations",
     "decisions": "Décisions",
-    "suggestions": "Connexions, plugins, compétences et routines à ajouter",
+    "suggestions": "À demander à Claude",
     "closed": "Clos",
     "closed_done": "Fait",
     "closed_unimportant": "Pas important",
@@ -486,6 +492,12 @@
     "f_all": "Tout",
     "f_mail": "Mail",
     "f_chat": "Messages",
-    "looks_done": "Semble atteinte : {x}"
+    "looks_done": "Semble atteinte : {x}",
+    "prompt_k": "Prompt",
+    "p_prompt": "Prompt",
+    "p_attach": "À joindre",
+    "p_needs": "Connexions",
+    "connected_m": "connectée",
+    "to_add_m": "à ajouter"
   }
 }

@@ -992,6 +992,28 @@
   "suggestions": [
     {
       "id": "s1",
+      "kind": "prompt",
+      "say": "The board pack’s market section, drafted from August’s in one ask",
+      "state": "Written by hand the night before, in June and again this quarter.",
+      "proposed_label": "11 Sept",
+      "evidence": [
+        { "date": "29 Jun", "text": "You wrote the market section yourself, the night before the board" },
+        { "date": "10 Sept", "text": "Draft 3: the market section is still unowned" }
+      ],
+      "prompt": "Draft the market section of the Q3 board pack from the August pack’s market section and the Q3 numbers. Keep its structure, update every figure, and flag anything that moved more than 10%.",
+      "attach": [ "August board pack", "Q3 cohort model" ],
+      "needs": [
+        { "name": "Google Drive", "connected": true }
+      ],
+      "sources": [
+        { "kind": "doc", "label": "Q3 board pack", "href": "" },
+        { "kind": "doc", "label": "August pack, market section", "href": "" }
+      ],
+      "briefing": "Draft the market section of the Q3 board pack from the August pack’s market section and the Q3 numbers. Keep its structure, update every figure, and flag anything that moved more than 10%.",
+      "status": "proposed"
+    },
+    {
+      "id": "s2",
       "kind": "connection",
       "say": "Connect HubSpot",
       "state": "3 asks last week that it would have answered.",
@@ -1009,26 +1031,11 @@
         { "kind": "mail", "label": "To Nadia, 11 Sept", "href": "" }
       ],
       "briefing": "",
-      "status": "proposed"
-    },
-    {
-      "id": "s2",
-      "kind": "skill",
-      "say": "A board pack section drafter",
-      "state": "The same three sections, rebuilt by hand every quarter.",
-      "proposed_label": "11 Sept",
-      "evidence": [
-        { "date": "12 May", "text": "Five sections, Marc owns the order" },
-        { "date": "10 Sept", "text": "Draft 3, three sections unowned, same three as June" }
-      ],
-      "path": "",
-      "pattern": "Every quarter the market, hiring and risk sections are written from the same sources in the same order. A skill drafts them from the last pack and this quarter’s numbers, for you to cut.",
-      "sources": [
-        { "kind": "doc", "label": "Q3 board pack", "href": "" },
-        { "kind": "doc", "label": "August pack, market section", "href": "" }
-      ],
-      "briefing": "Draft me a Claude skill that writes the market, hiring and risk sections of my quarterly board pack.\n\nWhat the routine saw. Check it rather than trust it:\n- the same three sections were unowned in June and in September, and I wrote them the night before both times\n- each one is built from the previous pack, the cohort model and the hiring tracker, in the same order\n\nPlease read these before drafting, do not rely on my summary:\n- the Q3 board pack and the August pack\n- the cohort model, Q3\n\nThen give me the skill as a SKILL.md: what it reads, the running order it writes to, and the three questions it asks me before it drafts. Do not write the sections themselves.",
-      "status": "proposed"
+      "status": "proposed",
+      "prompt": "Pull the pipeline by stage and owner for Monday’s review, and what moved since last Monday.",
+      "needs": [
+        { "name": "HubSpot", "connected": false }
+      ]
     },
     {
       "id": "s3",
@@ -1037,18 +1044,22 @@
       "state": "Asked every Monday for six weeks.",
       "proposed_label": "11 Sept",
       "evidence": [
-        { "date": "12 May", "text": "Five sections, Marc owns the order" },
-        { "date": "10 Sept", "text": "Draft 3, three sections unowned, same three as June" }
+        { "date": "31 Aug", "text": "You asked Nadia for the pipeline numbers before the 09:00 review" },
+        { "date": "7 Sept", "text": "The same ask, the same Monday morning" }
       ],
       "path": "",
       "pattern": "Every Monday at 08:30: pipeline by stage and owner from the CRM, on one page, before the 09:00 review.",
       "sources": [
-        { "kind": "doc", "label": "Q3 board pack", "href": "" },
-        { "kind": "doc", "label": "August pack, market section", "href": "" }
+        { "kind": "chat", "via": "Slack", "label": "To Nadia, 31 Aug", "href": "" },
+        { "kind": "chat", "via": "Slack", "label": "To Nadia, 7 Sept", "href": "" }
       ],
       "briefing": "Create a scheduled task named \"Monday pipeline numbers\", every Monday at 08:30 in my timezone, cloud, automatic approvals. Prompt: read the CRM through my connection, write one page with the pipeline by stage and owner and what moved since last Monday, publish it, send nothing. Language and timezone as in my Super Context preferences.",
       "status": "proposed",
-      "name": "Monday pipeline numbers"
+      "name": "Monday pipeline numbers",
+      "prompt": "Every Monday at 08:30, give me the pipeline by stage and owner and what moved since last week, on one page.",
+      "needs": [
+        { "name": "HubSpot", "connected": false }
+      ]
     }
   ]
 }

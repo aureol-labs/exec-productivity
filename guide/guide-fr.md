@@ -2,6 +2,17 @@
 
 Trois gestes dans l'application Claude sur votre ordinateur. Un abonnement Claude Pro suffit.
 
+## L'objectif
+
+Pas une nouvelle façon de travailler dès ce soir : les clés pour voir, sur votre propre travail, où Claude vous
+aide et comment démarrer.
+
+| La clé | Ce que vous obtenez |
+|---|---|
+| **Le contexte fait la différence** | Vos mails, agenda, messagerie, documents et réunions, lus avec vos propres accès, et un Super Context tenu à jour chaque matin : priorités, sujets en cours, personnes, décisions. Un enregistreur de réunion ajoute ce qui se dit dans la salle. |
+| **Claude au-delà d'une conversation** | Des pages que Claude écrit et tient à jour, et du travail qu'il fait seul, ordinateur fermé, sur deux classiques : le brief du jour et votre boîte de réception. |
+| **Vos propres cas d'usage** | Chaque soir de semaine, ce que vous auriez pu demander à Claude, avec le prompt, quoi joindre et les connexions nécessaires. |
+
 ## 1. Installer
 
 Dans l'application Claude : **Personnaliser**, **Plugins**, puis dans **Plugins personnels** le bouton **+**,
@@ -57,7 +68,7 @@ urgent, pour la revue seulement quand elle a trouvé quelque chose. Pour changer
 |---|---|
 | le matin | en semaine à 08:30 : les trois pages |
 | l'inbox | en semaine, avec le brief puis à 11:00, 13:00, 15:00 et 17:00 : tous vos non-lus, mails et messages, ce qui vous attend en haut |
-| la revue | en semaine à 17:30 : une notification seulement quand elle a trouvé du travail que Claude peut faire à votre place |
+| la revue | en semaine à 17:30 : ce que vous auriez pu demander à Claude dans la semaine, avec le prompt, quoi joindre et les connexions ; une notification seulement quand elle a trouvé quelque chose |
 
 L'ordinateur peut être fermé : les habitudes tournent dans le cloud.
 
