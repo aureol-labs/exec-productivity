@@ -53,10 +53,12 @@ MCP, connector, artifact, capability, task tool or surface name. Three words: th
 connections. Anything a maintainer needs goes into the `runs` document's `note` field in the store, which
 `exec-productivity-help` reads, never into the conversation: the exec's last screen is never a technical note. Nothing promises
 a benefit: the page is the proof.
-Two exceptions, both decided, because the install is also the exec's way into AI with no time to learn it:
-the introduction table (step 1) and the closing recap (step 8) name four Claude features, connectors,
-structured context, artifacts and scheduled tasks, once each, with what each does on the exec's own work. The
-recap may say what each page gives, with a number from that page. Everywhere else, the three words.
+Two exceptions, both decided, because the install is the exec's way into AI with no time to learn it, and
+they will read its start and its end, not its middle: the introduction table (step 1) and the closing recap
+(step 8) teach the three keys, once each, on the exec's own work. Context makes the difference (connectors, the
+Super Context, a meeting recorder); Claude works beyond a chat (artifacts, scheduled tasks); their own use cases,
+spotted for them with the prompt that would have done it (the evening review). The recap may say what each page
+gives, with a number from that page. Everywhere else, the three words.
 
 ## 1. Language, the settings check, then the tour
 
@@ -80,18 +82,17 @@ looks like, where it sits, what to pick), then the same card again. Never go on 
 habits are created with automatic approvals and Opus 5.5 in any case (step 7).
 
 Then the introduction, translated, then the table, and start at once without waiting. The exec is short of
-time and wants to see AI do real work: the table is the four Claude features they are about to see, each on
-their own work, in the order the install uses them.
+time and will read this and the end, little in between: the goal first, then the three keys, each on their own
+work. The goal is not productivity by tonight; it is the keys to see where Claude helps them and how to start.
 
-> **Setting up your assistant.** 10 to 15 minutes, a few questions only you can answer. It is also the shortest
-> way into what Claude does beyond a chat, on your own work:
+> **Setting up your assistant, 10 to 15 minutes.** The goal is not a new way of working by tonight: it is the
+> keys to see, on your own work, where Claude helps and how to start.
 
-| | What Claude does | Here, for you |
+| | The key | Here, for you |
 |---|---|---|
-| 1 | **Connectors** | reads your mail, calendar, chat, documents and meetings, with your own access. The more it reads, the more precise it is. |
-| 2 | **Structured context** | keeps what it read as one page, your Super Context: your priorities in your words, the live topics, the people, your decisions. Every conversation starts from it, so answers fit your work. |
-| 3 | **Artifacts** | writes pages you open, pin and act on: your Daily brief and your Priority inbox, built now from your data. |
-| 4 | **Scheduled tasks** | runs work on its own, laptop shut: the brief at 08:30, the inbox at 11:00, 13:00, 15:00 and 17:00, a review at 17:30 that tells you only when it found work to take off your hands. |
+| 1 | **Context makes the difference** | Claude reads your mail, calendar, chat, documents and meetings with your own access, and keeps what matters on one page, updated every morning: your Super Context. A meeting recorder adds what is said in the room. |
+| 2 | **Claude beyond a chat** | Pages it writes and keeps current, and work it runs on its own, laptop shut, on two classics: your daily brief at 08:30 and your inbox, sorted through the day. |
+| 3 | **Your own use cases** | Every weekday at 17:30, it spots what you could have asked Claude that week (a request to a colleague, an analysis across documents, a deck) and shows how: the prompt, what to attach, the connections it needs. |
 
 Nothing is sent, nothing is deleted. That last sentence is the only reassurance, and the verdict at step 8 has to
 keep it.
@@ -265,16 +266,15 @@ One of:
 - **"All good. Tomorrow at 08:30 your three pages are ready."**
 - **"Before it can run:"** the blockers, numbered, one line each, then "Want me to do it?"
 
-Then the recap. The exec went through the install fast and had no time to take in what each page is: this is
-where they learn it, on their own numbers. One line, translated, "What you have now, and what it gives you:",
-then this table, every N a real number from the page just published:
+Then the recap. The exec went through the install fast: this is where they learn it, on their own numbers,
+the same three keys as the start. One line, translated, "The three keys, now on your work:", then this table,
+every N a real number from the page just published, the recorder line only when no recorder is connected:
 
-| | What it is | What it gives you | When |
-|---|---|---|---|
-| **Super Context** | what your assistant knows about your work: N priorities, N live topics, the people in play, your decisions | every conversation starts from it, you never re-explain; Edit corrects any line | rewritten every weekday at 08:30 |
-| **Daily brief** | your day: N meetings, the N calls to make, the N jobs to do before a wall | your day read in two minutes, Ask Claude on every line | 08:30 |
-| **Priority inbox** | every unread mail and message in one place: the N that need you on top, the rest below, mail and chat together or apart | you answer the right ones first; Drop remembers what you dismissed | 08:30, 11:00, 13:00, 15:00, 17:00 |
-| **Evening review** | a look at your week for work Claude could do instead of you | a notification only on a day it found one, in plain words | 17:30 |
+| | Now, for you | When |
+|---|---|---|
+| **1 · Context** | Your Super Context: N priorities, N live topics, N people, from N connections. Every conversation starts from it; Edit corrects any line. No meeting recorder yet: it is the connection that adds the most. | rewritten every weekday at 08:30 |
+| **2 · Beyond a chat** | Your Daily brief (N meetings, N calls to make, N jobs) and your Priority inbox (N need you, mail and chat together or apart): pages Claude keeps current, laptop shut. | 08:30; the inbox also 11:00, 13:00, 15:00, 17:00 |
+| **3 · Your use cases** | The evening review: what you could have asked Claude this week, with the prompt, what to attach and the connections. Silent on a day it found nothing. | weekdays 17:30 |
 
 Then this table, translated, nothing added:
 
@@ -284,12 +284,8 @@ Then this table, translated, nothing added:
 | **Never** | Send, delete, move, mark as read. Labels only, each listed with its rule. |
 | **Something off** | `/exec-productivity:exec-productivity-help` |
 
-Then the line that closes the tour, translated: "Behind these pages, the four things that make Claude useful
-beyond a chat: connectors read your world, structured context keeps it, artifacts show it, scheduled tasks run
-it without you. You just used all four on your own work; they work the same for anything else you ask Claude."
-Then the sign-off, two sentences, translated: "This is one way to start with Claude: habits that run on their
-own, pages that arrive written, a review that finds what to add next. From here it is yours: change any of it,
-ask for a habit or a page of your own, and it happens." Then the last gesture, done for the exec: one question
+Then the sign-off, one sentence, translated: "From here it is yours: the same three keys work for anything
+else you ask Claude, and any of this changes on your word." Then the last gesture, done for the exec: one question
 card, "Pin your three pages to your sidebar, so they are one click away every morning?" Options: "Yes, all
 three" (first), "No". On yes, pin each of the three with the Artifact tool's pin action (Super Context, Daily
 brief, Priority inbox, by their links from `connections/current.pages`), then one line: "Pinned." with the

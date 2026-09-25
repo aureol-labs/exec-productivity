@@ -78,6 +78,8 @@ document (shape in its head comment and `references/example.json`).
 
 ## 0. Read, probe
 
+**Release steps.** Before anything else, read `../aureol-context/references/releases.md` and apply what it says for the `inbox` task.
+
 `connections/current`, `connections/preferences` (tiers), `rules`, `topics`, `people`, the last inbox run.
 Probe mail and chat with one real call each, on every run, whatever the last run found. A probe that fails is
 `null` and a notice (rule 9), and the run goes on with the other channel.

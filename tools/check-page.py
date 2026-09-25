@@ -72,7 +72,7 @@ class Report:
 
 # ---------- words ----------
 
-BUDGET = {'line': (12, 16), 'fact': (14, 20), 'card': (14, 20)}
+BUDGET = {'line': (12, 16), 'fact': (14, 20), 'card': (14, 20), 'prompt': (40, 60)}
 
 
 def words(s):
@@ -657,8 +657,16 @@ def check_context(d, r, others):
         r.bad('$.suggestions', 'three at most')
     for i, s in enumerate(sugg):
         sp = '$.suggestions[%d]' % i
-        if s.get('kind') not in ('connection', 'plugin', 'skill', 'routine'):
-            r.bad(sp + '.kind', 'connection, plugin, skill or routine')
+        if s.get('kind') not in ('prompt', 'connection', 'plugin', 'skill', 'routine'):
+            r.bad(sp + '.kind', 'prompt, connection, plugin, skill or routine')
+        if not s.get('prompt'):
+            r.bad(sp + '.prompt', 'every suggestion shows its how: the prompt the exec could have typed')
+        budget(r, sp + '.prompt', s.get('prompt'), 'prompt')
+        for j, x in enumerate(s.get('needs') or []):
+            if not isinstance(x, dict) or not x.get('name') or not isinstance(x.get('connected'), bool):
+                r.bad('%s.needs[%d]' % (sp, j), 'a connection it needs has a name and connected true or false')
+        if s.get('kind') == 'prompt' and not s.get('briefing'):
+            r.bad(sp + '.briefing', 'a prompt carries itself as the briefing Ask Claude copies')
         if not s.get('say'):
             r.bad(sp, 'a suggestion has a sentence')
         if not s.get('evidence'):
@@ -802,6 +810,8 @@ def selftest():
     broken('context', 'web source without its https address', lambda d: d['entities'][7]['sources'][2].__setitem__('href', ''))
     broken('context', 'closed row with an unknown reason', lambda d: d['closed'][0].__setitem__('reason', 'gone'))
     broken('context', 'closed row without its date', lambda d: d['closed'][1].pop('date'))
+    broken('context', 'a suggestion without its prompt', lambda d: d['suggestions'][0].pop('prompt'))
+    broken('context', 'a need without connected', lambda d: d['suggestions'][0]['needs'][0].pop('connected'))
     print('selftest: %s' % ('ok' if fails == 0 else '%d FAILED' % fails))
     return 0 if fails == 0 else 1
 

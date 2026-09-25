@@ -55,6 +55,8 @@ organisations off the page once no live topic holds them; and flags every priori
 
 ## 0. Probe, then read the store
 
+**Release steps.** Before anything else, read `references/releases.md` and apply what it says for the `morning` task.
+
 Read `connections/current` and `connections/preferences`. Probe each role's tool with one real call (the same
 five probes as install) and refresh `checked`. A role that fails: its section is missing from the page with one
 line in `data.notices`, saying what could not be read, never how it was checked, and the run continues. Never a

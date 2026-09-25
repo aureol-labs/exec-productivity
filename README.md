@@ -1,14 +1,14 @@
 # exec-productivity
 
-A Claude plugin that runs a time-poor executive's daily operating routines in Claude Cowork and produces three
-pages: a Super Context the assistant starts every conversation from, a Daily brief every weekday morning, and a
-Priority inbox through the day. A review at the end of each weekday looks at the last seven days for the work
-Claude could do instead of the exec, and proposes only what can be added, a connection, a ready-made plugin, a
-routine or a skill, staying silent when there is nothing new. Built by [Aureol](https://aureol.co).
+A Claude plugin for time-poor executives, in Claude Cowork. The goal is not a new way of working by tonight: it
+is the keys to see, on your own work, where Claude helps and how to start. Three of them, set up in one guided
+install. Built by [Aureol](https://aureol.co).
 
-For executives who want to see AI do real work on their own world and have no time to learn it: the install
-is also a tour of what Claude does beyond a chat, connectors, structured context, artifacts and scheduled
-tasks, each shown on the exec's own mail, calendar and meetings.
+| The key | What you get |
+|---|---|
+| **Context makes the difference** | Your mail, calendar, chat, documents and meetings, read with your own access, and a Super Context kept current every morning: priorities, live topics, people, decisions. A meeting recorder adds what is said in the room. |
+| **Claude beyond a chat** | Pages Claude writes and keeps current, and work it runs on its own, laptop shut, on two classics: a Daily brief every weekday morning and a Priority inbox through the day. |
+| **Your own use cases** | Every weekday evening, a review of the last seven days shows what you could have asked Claude, with the prompt, what to attach and the connections it needs, or the one thing to add first. Silent when there is nothing new. |
 
 Not a dashboard. Not a task manager. A notebook that arrives already written, and gets better the longer it runs:
 the brief asks for decisions, Super Context records them with what they were decided against, and tomorrow's brief
@@ -69,8 +69,9 @@ ranks against it. Then:
    learned into the store: a reply from the exec, a new fact on a topic, a decision taken in a thread. It never
    adds a topic or touches the priorities; that judgement stays with the morning. Nothing new, nothing
    published.
-3. **End of day, 17:30**: `aureol-review` looks at the last seven days for the work Claude could do instead of
-   the exec and proposes what to add on Super Context; it notifies only for a finding worth it, said as what
+3. **End of day, 17:30**: `aureol-review` looks at the last seven days for the work Claude could have done instead of
+   the exec and shows each on Super Context with its prompt, what to attach and the connections, or the one
+   thing to add first; it notifies only for a finding worth it, said as what
    Claude would do for the exec; nothing new, one line and no notification.
 
 The exec's writes come from the page: priorities in the editor, keep and drop on decisions, decline on a
@@ -84,7 +85,7 @@ suggestion. The routines propose; the exec decides.
 | `aureol-context` | Super Context: topics, people, entities, proposed decisions, the summary, the page |
 | `aureol-brief` | the Daily brief |
 | `aureol-inbox` | the Priority inbox |
-| `aureol-review` | the end-of-day review: where Claude would do the work, and what to add for it |
+| `aureol-review` | the end-of-day review: what Claude could have done, with the prompt, what to attach and the connections |
 | `exec-productivity-help` | the assistant explaining and fixing itself |
 
 The store every skill reads and writes: [skills/aureol-context/references/store.md](skills/aureol-context/references/store.md).
