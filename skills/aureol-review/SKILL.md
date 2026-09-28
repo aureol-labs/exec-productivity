@@ -1,7 +1,7 @@
 ---
 name: aureol-review
 user-invocable: false
-description: The end-of-day review, every weekday: find what Claude could have done for the executive this week, from what they asked colleagues for, the documents and decks they built, the analyses they ran across tools, what they prepare every time, and show how, so they learn to do it alone: the prompt they could have typed, what to attach, the connections it needs, and the one thing to add first when something is missing (a connection, a ready-made plugin, a routine or a skill), each with its evidence. Writes asks and suggestions, never proposes a declined one twice, renders nothing of its own, and notifies only on a day it found something worth it, in plain words. Load from the end-of-day task, or when the exec asks what could be automated.
+description: The end-of-day review, every weekday: find what Claude could have done for the executive this week, from what they asked colleagues for, the documents and decks they built, the analyses they ran across tools, what they prepare every time, and show how, so they learn to do it alone: the prompt they could have typed, what to attach, the connections it needs, and the one thing to add first when something is missing (a connection, a ready-made plugin, a routine or a skill), each with its evidence. Takes stock first of what the exec already has in Claude (every scheduled task, their skills and plugins, their connections) and never proposes what is already in place. Writes asks and suggestions, never proposes a declined one twice, renders nothing of its own, and notifies only on a day it found something worth it, in plain words. Load from the end-of-day task, or when the exec asks what could be automated.
 ---
 
 # The review
@@ -37,11 +37,23 @@ proposals.
    the system or the task before proposing anything custom; a plugin or a shipped skill that covers it is
    proposed as `kind: plugin`. Only then a routine (a pattern with a clock) or a skill (a pattern reached for
    on demand). A recurring ask that a connection would answer is a routine with the connection as its means.
-4. **Evidence or nothing.** Every finding carries the two or three moments it comes from, dated, in the exec's
+4. **What is already in place is never proposed.** Before any finding, take stock of what the exec already has
+   in Claude: every scheduled task on the account, not only the assistant's three, with its schedule and what
+   its prompt produces; the skills and plugins this session lists, theirs included; the connections. A pattern
+   one of them already does is not a finding, whatever its name: match on what it produces (a routine that
+   gathers the newsletters into one digest covers "centralise my newsletters", whatever the task is called).
+   It is dropped, and the run's `note` says which one covers it. A pattern one of them does in part is one
+   finding, the change to that one, named by its name ("add the Monday numbers to your Pipeline digest
+   routine"), with `extends`; never a second routine or skill beside it. A skill in place that the exec did not
+   use this week, doing by hand what it does, is at most a prompt that calls it, never a skill to create.
+   Where the scheduled tasks cannot be listed (a run without the task tool), read `connections/in_place`, the
+   last stock a session took; with no stock at all, a routine or a skill is recorded as `found` and neither
+   shown nor notified until a session with the task tool has checked it.
+5. **Evidence or nothing.** Every finding carries the two or three moments it comes from, dated, in the exec's
    words. Ranked by how much work it takes off the exec: how often, times how long.
-5. **Declined is final.** Read `suggestions` with `status: declined` before proposing; never the same system,
+6. **Declined is final.** Read `suggestions` with `status: declined` before proposing; never the same system,
    plugin, routine or skill twice.
-6. **Three on the page, all new ones in the message.** The Super Context list shows the three strongest; the run's
+7. **Three on the page, all new ones in the message.** The Super Context list shows the three strongest; the run's
    message shows every finding that qualified, and nothing that did not.
 
 ## The signals, all of them, the exec's side only
@@ -74,11 +86,16 @@ proposed, found or declined), so the same pattern never comes back day after day
 
 **Release steps.** Before anything else, read `../aureol-context/references/releases.md` and apply what it says for the `review` task.
 
-0. Read `connections/current`, `asks`, `suggestions`, `people`, `entities`, `topics`, the last `runs` of this
-   task. Probe mail, chat, meetings and documents with one real call each.
+0. Read `connections/current`, `connections/in_place`, `asks`, `suggestions`, `people`, `entities`, `topics`,
+   the last `runs` of this task. Probe mail, chat, meetings and documents with one real call each. Then take
+   stock (rule 4): list every scheduled task with the session's task tool, with its schedule and its prompt,
+   and the skills and plugins this session lists; when the task tool answered, write `connections/in_place`
+   with `checked` today. Without the task tool, the stored stock stands.
 1. Read the window from the exec's side across the signals above. Record each ask in `asks` (deduplicated on
    the same what and to), and note the other patterns in the run.
-2. For each pattern, write the prompt that would have done it, then what it needs: the connections, there or
+2. For each pattern, check it first against what is in place (rule 4): done already, dropped with a line in
+   the run's `note`; done in part, the finding is the change to that task or skill. Then write the prompt that
+   would have done it, then what it needs: the connections, there or
    not (catalog check with `search_mcp_registry` for a missing one), a shipped plugin or skill (plugin catalog
    check), a clock (routine), a recipe reached for on demand (skill). Nothing can do it: the pattern is dropped
    from the findings and stays in the run's notes only.
@@ -88,7 +105,8 @@ proposed, found or declined), so the same pattern never comes back day after day
    in one sentence as `say`; the evidence ids; `prompt`, `attach` and `needs` on every finding; `pattern`
    (cadence and output for a routine, the repeated ask for a skill); `briefing`, the prompt itself for a prompt,
    the habit's prompt drafted for a routine, the skill's outline for a skill; `path` for a connection or a
-   plugin. Skip anything declined. Cap at three `proposed`, the rest `found`.
+   plugin; `extends`, the name of the task or skill in place it changes, when it changes one. Skip anything
+   declined. Cap at three `proposed`, the rest `found`.
 4. Load the `aureol-context` skill in render mode so Super Context shows the proposals. In a session the exec
    opened, also return the connections and plugins with their catalog ids, which shows the cards.
 5. Write a `runs` document. The task prompt says how the run ends: one line, then a table with a row per

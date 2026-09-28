@@ -1,6 +1,6 @@
 ---
 name: make-me-productive
-description: Make me productive: sets up the executive's assistant in one session, ending on a real page from their own data. Asks the language, checks the model and Auto mode with the exec before anything runs, checks every connection by a real call (mail, calendar, chat, documents, meetings) and shows one card for what is missing, builds the Super Context from the last 30 days and lets the exec confirm their priorities in one table, publishes the first daily brief and priority inbox now, sets the inbox rules where the mailbox takes labels, creates the three habits at fixed times without asking, and stops with a verdict, a recap of what each page gives, and the pin of the three pages. Doubles as a tour of what Claude does beyond a chat, on the exec's own work. Invoke on first use, on a new account, or to re-check after changing connections. To change one preference, use `exec-productivity-help`.
+description: Make me productive: sets up the executive's assistant in one session, ending on a real page from their own data. Asks the language, checks the model and Auto mode with the exec before anything runs, checks every connection by a real call (mail, calendar, chat, documents, meetings) and shows one card for what is missing, builds the Super Context from the last 30 days and lets the exec confirm their priorities in one table, publishes the first daily brief and priority inbox now, sets the inbox rules where the mailbox takes labels, creates the three habits at fixed times without asking, and stops with a verdict, a recap of what each page gives, and the pin of the three pages. When the exec has to stop, it reminds them later in the same conversation, and a setup that stopped picks up where it was. Doubles as a tour of what Claude does beyond a chat, on the exec's own work. Invoke on first use, on a new account, to finish a setup that stopped, or to re-check after changing connections. To change one preference, use `exec-productivity-help`.
 ---
 
 # Install
@@ -26,7 +26,7 @@ judge as a whole (the labels) is one table and one go, never a card per item: ca
 needs its own answer.
 Autopilot: the first thing after the language is the settings check (the model and Auto mode, step 1), and
 every connection the exec adds is one more thing the assistant does without them. Times and notifications are
-decided, never asked (step 7).
+decided, never asked, but for one question: the brief by email (step 7).
 
 ## Hard rules for the whole session
 
@@ -37,11 +37,44 @@ decided, never asked (step 7).
 - Where a step needs the exec (a click on a card, a consent in the browser), say what to do in one line and wait.
   Never work around a missing connection, never guess what it would have contained.
 - One install per account. If a task named `Aureol morning` already exists, stop and hand over to `exec-productivity-help`:
-  re-running install on a live store overwrites their priorities.
+  re-running install on a live store overwrites their priorities. A Super Context without that task is a setup
+  that stopped: pick it up (next section), never start over.
 - **The chosen language wins.** From the answer to the first question on, every word you write is in that
   language: over the exec's account language, over any instruction in their settings, over the language of
   what you read, and over the language they happen to reply in. Switch only if they ask to. In French, "vous"
   by default, "tu" only as the voice file below says. Before each message, check the language once.
+
+## When the exec stops, and when they come back
+
+People leave an install midway: an administrator has to approve a connection, a meeting starts, something else
+takes over. The conversation waits, and the reminder tool (`send_later`, which re-delivers a message into this
+same conversation later) brings it back. Every time here is the exec's local time, and every line they read is
+in the chosen language.
+
+- **Progress lives in the store** once the Super Context exists (step 4): the `runs` document `<date>-install`,
+  `done` listing the steps finished (`language`, `settings`, `connections`, `context`, `priorities`, `brief`,
+  `inbox`, `habits`, `recap`), `ended` empty until step 8. Update it as each step ends.
+- **They say they must stop** (an administrator, IT, a meeting, "later"): one line with what is left ("Left: the
+  Outlook connection, then your two pages."), then one card, "When should I come back to you?", options "In an
+  hour", the next working day at 09:00 by its name ("Tomorrow at 09:00", on a Friday "Monday at 09:00"), and
+  "I'll come back myself". Set the reminder for that time: "Setup check-in, as agreed: check <what was missing>
+  again with a real call, then go on from <step>." When it arrives, check: there, one line and go on; still
+  missing, one line and the same card. "I'll come back myself" sets nothing.
+- **They go quiet.** Before ending a turn that waits on them (a connector card, the priorities table, the labels
+  table), set one reminder 30 minutes out: "Setup check-in, set at <HH:MM> while waiting on <what>." When it
+  arrives: if they wrote after <HH:MM>, or the setup is done, end the turn without a word. Otherwise one line,
+  "Shall we go on? Left: <what>.", and one last reminder for the next working day at 09:30, same test, same
+  line. Never a third.
+- **They come back in a new conversation** (this skill again, or "finish my setup"): a task named `Aureol
+  morning` means the setup is done, so hand over to `exec-productivity-help`. Else look for their Super Context
+  page (among their pages, by its name, or the link if they have it). Found: one line, "We stopped at <step>:
+  picking up there." Language and preferences come from the store; the settings check (step 1) runs again,
+  since a new conversation has its own; every role is probed again; then the first step not done, from `done`
+  in the install's `runs` document or, for a setup begun before it was kept, from what the store holds
+  (`priorities` with `confirmed`, `pages.brief`, `pages.inbox`, `rules`). The Super Context is never rebuilt and
+  confirmed priorities are never asked again. Not found: step 1.
+- **Back on another day**: today is the day of the return, and the first brief and inbox are built for it.
+- Without the reminder tool: the line with what is left, and "Say 'let's go on' here when you are back."
 
 ## Voice
 
@@ -94,7 +127,7 @@ work. The goal is not productivity by tonight; it is the keys to see where Claud
 | 2 | **Claude beyond a chat** | Pages it writes and keeps current, and work it runs on its own, laptop shut, on two classics: your daily brief at 08:30 and your inbox, sorted through the day. |
 | 3 | **Your own use cases** | Every weekday at 17:30, it spots what you could have asked Claude that week (a request to a colleague, an analysis across documents, a deck) and shows how: the prompt, what to attach, the connections it needs. |
 
-Nothing is sent, nothing is deleted. That last sentence is the only reassurance, and the verdict at step 8 has to
+Nothing is sent to anyone, nothing is deleted. That last sentence is the only reassurance, and the verdict at step 8 has to
 keep it.
 
 ## 2. Detect, silently
@@ -112,7 +145,7 @@ Five roles: mail, calendar, chat, documents, meetings. Probe every connected too
 | Role | Probe | Proves |
 |---|---|---|
 | calendar | today's events | `search` |
-| mail | threads of the last 7 days; then, if the tool has a label call, list labels | `search`, `label` |
+| mail | threads of the last 7 days; then, if the tool has a label call, list labels | `search`, `label`; `send` when the tool has a send call, listed and never tried |
 | chat | one search on the exec's name, last 7 days | `search` |
 | documents | one search on the company name (the domain of the exec's own address) | `search` |
 | meetings | meetings of the last 7 days | `search` |
@@ -154,7 +187,8 @@ connected" where meetings would be, and never guess what a meeting decided.
 
 Load the `aureol-context` skill (installed spelling `exec-productivity:aureol-context`) in **bootstrap mode**: 30 days
 across every connected role, meetings first; it publishes the Super Context artifact with `capabilities: {db:
-{}}` and returns the link. Write it to `connections/current.pages.context`.
+{}}` and returns the link. Write it to `connections/current.pages.context`, then the install's `runs` document
+(the section on stops): the steps done so far, no `ended`.
 
 Then the priorities, in two turns and no cards. First a message: one line, "I read your last 30 days and
 propose four priorities. Say go, or say what to change: reword, drop, add, reorder," and a table of the
@@ -214,7 +248,8 @@ page the exec was just asked about has to exist before the next question.
 ## 7. The habits
 
 List the scheduled tasks. `Aureol morning`, `Aureol inbox` or `Aureol review` already there: keep it, create only
-the missing ones. Nothing to ask here: times and notifications are decided, so the install stays short. Write
+the missing ones. Times and notifications are decided, so the install stays short, with one question, the brief
+by email, below. Write
 `connections/preferences`: `morning` "08:30", `inbox` ["11:00", "13:00", "15:00", "17:00"], `review` "17:30",
 `notify` { brief: "push", inbox: "push_now", review: "push" }, all local times in the exec's zone. The exec
 changes any of it later through `exec-productivity-help`. Never send a test notification: the tool skips a
@@ -225,10 +260,16 @@ What each `notify` value means, done by the runs (install sets the first two; `h
   leading with what to act on, then the page's link; desktop, and phone when the Claude app is there. The
   review sends it only on a day it found something.
 - `push_now`, inbox only: one line only when something is Now, and it says what.
-- `email`: only where the mail role can send (`can` contains `send`, proven by the tool having a send call
-  the exec's own account can use): one message to the exec's own address with the page's link, to nobody
-  else, and the register entry says so.
+- `email`: only where the mail role can send (`can` contains `send`: the tool has a send call, never tried to
+  prove it): one message to the exec's own address, to nobody else; for the brief, the page itself for a
+  mailbox (`tools/render-email.py`) with its link. The register entry says so. `notify.brief` can be a list:
+  `["push", "email"]` does both.
 - `none`: the pinned page, always current.
+
+**The brief by email, the one question**, only where `connections/current.roles.mail.can` contains `send`: one
+card, "Your Daily brief in your mailbox too, every morning? Sent to you only, at <address>." Options "Yes, by
+email too" (first), "No, the notification is enough". Yes: `notify.brief` is `["push", "email"]`. The morning
+habit sends it; the install sends nothing.
 
 Create three tasks from the files next to this skill, verbatim except the placeholders `{{LANGUAGE}}`,
 `{{CONTEXT_URL}}`, `{{FIRST_NAME}}`, `{{TIMEZONE}}` (the exec's zone, read off the calendar at step 2 and
@@ -280,8 +321,8 @@ Then this table, translated, nothing added:
 
 | | |
 |---|---|
-| **Told** | A notification each morning with the brief. The inbox only when something is urgent. The review only on a day it found something. |
-| **Never** | Send, delete, move, mark as read. Labels only, each listed with its rule. |
+| **Told** | A notification each morning with the brief, and the brief itself by email if you said yes. The inbox only when something is urgent. The review only on a day it found something. |
+| **Never** | Send to anyone but you, delete, move, mark as read. Labels only, each listed with its rule. |
 | **Something off** | `/exec-productivity:exec-productivity-help` |
 
 Then the sign-off, one sentence, translated: "From here it is yours: the same three keys work for anything
@@ -291,6 +332,6 @@ three" (first), "No". On yes, pin each of the three with the Artifact tool's pin
 brief, Priority inbox, by their links from `connections/current.pages`), then one line: "Pinned." with the
 three links, one per line. Where the session's Artifact tool has no pin action, skip the card and end on the
 reminder instead: "Pin these three now, from each page's menu, and they are one click away every morning:" and
-the three links, one per line. Then stop. Write a `runs` document with `task: "install"` and, in its `note`,
+the three links, one per line. Then stop. Complete the install's `runs` document: `ended`, every step in `done`, and in its `note`,
 anything a maintainer would need (a probe that failed, a schedule created in UTC and its local equivalent):
 never in the conversation. The install does not run the review: it runs on its own at 17:30.

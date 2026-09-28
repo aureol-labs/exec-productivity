@@ -69,7 +69,8 @@ last `runs` document of this task.
 
 Window: 30 days in bootstrap mode, since the last morning run in morning mode (7 days on the first morning), and
 nothing in render mode. Order: meetings first when a recorder is connected (that is where decisions are taken),
-then calendar (the past 7 days and the next 7), mail, chat, and documents only when a topic points at one.
+then calendar (the past 7 days and the next 7, on every calendar the store lists), mail, chat, and documents only
+when a topic points at one.
 Read from the exec's side: what they sent, what was sent to them, what they were in the room for. Mail means
 the main inbox only (`preferences.mail_scope`, the store says which categories are out): a newsletter never
 becomes a topic. Cap the read

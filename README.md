@@ -27,7 +27,7 @@ In the Claude desktop app:
 
    Install **Exec productivity**.
 2. Type `/`, choose **make-me-productive**, and answer its questions. 10 to 15 minutes. It ends on your first
-   brief.
+   brief. If you have to stop, say so: it reminds you in the same conversation and picks up where you were.
 3. Say yes when it offers to pin the three pages.
 
 The guide with screenshots, in French: [guide/guide-fr.md](guide/guide-fr.md).
@@ -37,8 +37,8 @@ The guide with screenshots, in French: [guide/guide-fr.md](guide/guide-fr.md).
 Reads, through your own connections: mail, calendar, internal chat, documents, meetings (a notetaker such as
 Granola). Writes only its three pages and their store. Where your mailbox allows it and only from rules you
 wrote, it applies labels, each one listed on the inbox page with its rule. It never sends, deletes, moves,
-archives or marks as read. The one exception: one mail a day to your own address with the brief's link, only
-if you ask for it.
+archives or marks as read. The one exception: your brief, once a day, to your own address, only if you say yes
+at install.
 
 ## The habits
 
@@ -49,9 +49,10 @@ if you ask for it.
 | review | weekdays 17:30 | the review, on Super Context; a notification only when it found something |
 
 Each habit runs in the cloud, so it runs with the laptop shut. Its result is the pinned page. Install sets the
-times and how the exec is told without asking: a one-line notification each morning with the brief (desktop,
-and phone when the Claude app is there), the inbox only when something is urgent, the review only on a day it
-found something worth it. `exec-productivity-help` changes any of it, an email to their own address included.
+times and how the exec is told, with one question, the brief by email too where the mailbox can send: a
+one-line notification each morning with the brief (desktop, and phone when the Claude app is there), the inbox
+only when something is urgent, the review only on a day it found something worth it. `exec-productivity-help`
+changes any of it.
 Nothing is automatic: each run decides from the stored choice.
 
 ## How the habits fit together
@@ -94,9 +95,11 @@ is checked by `tools/check-page.py`.
 
 ## Updating
 
-Customize, Plugins, then Update on the marketplace; the app also checks it on its own. Skills and templates
-apply on the next run. A habit's prompt is stored on the scheduled task at creation, so a release that changes
-one says so, and `exec-productivity-help` recreates the tasks.
+The marketplace syncs on its own; the plugin the habits run does not. Update it: Customize, Plugins,
+exec-productivity, Update. Until then every habit runs the version installed (seen on 2026-09-28: runs on 0.4.0,
+the marketplace on 0.6.1). Skills and templates apply on the next run after the update. A habit's prompt is
+stored on the scheduled task at creation, so a release that changes one says so in `releases.md`, and
+`exec-productivity-help` updates the prompts, keeping what the exec added to them.
 
 ## Rules of this repo
 

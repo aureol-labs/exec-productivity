@@ -2,6 +2,7 @@
   "_": "Every UI string on the three pages, in English and French. Data (names, decisions, topics) is never translated by a page. Plural entries are pairs, singular first. French keeps the no-break space before : ? ! as U+00A0. No em dash anywhere. Curly apostrophes.",
   "en": {
     "page_brief": "Daily brief",
+    "open_brief": "Open the brief",
     "page_inbox": "Priority inbox",
     "page_context": "Super Context",
     "by": "Built by",
@@ -252,6 +253,7 @@
   },
   "fr": {
     "page_brief": "Brief du jour",
+    "open_brief": "Ouvrir le brief",
     "page_inbox": "Boîte prioritaire",
     "page_context": "Super Context",
     "by": "Conçu par",

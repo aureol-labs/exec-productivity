@@ -43,7 +43,12 @@ Rules that hold for every document:
 `url` so the link holds. A missing entry means the page has not been published yet.
 
 `tool` is the connector's display name or `null`. `can` lists only capabilities proven by a real call. A tool that
-is connected but answered nothing is `null` with a `note`.
+is connected but answered nothing is `null` with a `note`. `send` is the one capability never proven by a call:
+it is listed when the mail tool has a send call, and nothing is ever sent to prove it. `calendar.calendars`,
+optional, lists calendar ids when the exec uses more than one through the one connection (a second address shared
+into the first): every calendar read then covers each id and merges them, one event per event id and one for the
+same title at the same start, double bookings counted across them. A probe rewrites `tool`, `can` and `checked`
+and keeps every other field.
 
 `connections/preferences`, written by install, edited only through install or the `exec-productivity-help` skill:
 
@@ -59,9 +64,10 @@ is connected but answered nothing is `null` with a `note`.
 
 `notify.<habit>` is `push` (the run ends by sending one notification with the session's notification tool, one
 line under 200 characters, desktop and phone when the Claude app is on the phone), `push_now` (inbox only: a
-notification only when something is Now), `email` (one message to the exec's own address with the page's link,
-only where the mail role can send, never for the inbox), or `none` (the pinned page). Install sets `push`,
-`push_now`, `push` without asking; the exec changes any of it through `exec-productivity-help`. Nothing is
+notification only when something is Now), `email` (one message to the exec's own address, only where the mail
+role can send, never for the inbox; for the brief, the page itself rendered for a mailbox, with its link), or
+`none` (the pinned page). `notify.brief` can be a list, `["push", "email"]`: both. Install sets `push`,
+`push_now`, `push` and asks one thing, the brief by email too, where the mail role can send; the exec changes any of it through `exec-productivity-help`. Nothing is
 automatic: the run decides from this value. `installed` is the day of the install and
 `plugin_version` the manifest's version that day, both written by install.
 
@@ -80,6 +86,20 @@ metrics block while it is `null`.
 `gesture` is `copy` (the briefing is copied to the clipboard, the default, written at install step 2) or `link`
 (a `https://claude.ai/new?q=` link). `enrich` is `"public"` (the default: web lookups on organisations and on the public professional information
 of the people on the page) or `"none"`; changed through `exec-productivity-help`.
+
+`connections/in_place`, what the exec already has in Claude, written by any session that can list it (the
+review when its task tool answers, `exec-productivity-help`), read by the review before it proposes anything:
+
+```json
+{ "checked": "2026-09-28",
+  "tasks": [ { "name": "Newsletter digest", "schedule": "weekdays 07:30",
+               "does": "Gathers the morning's newsletters into one digest mail." } ],
+  "skills": [ { "name": "consulting-report", "from": "yours", "does": "The prep note before a client meeting." } ] }
+```
+
+`tasks` lists every scheduled task on the account, the assistant's three included; `does` is one line on what
+its prompt produces, in the store's own words. `skills` lists the skills this session offers, `from` the plugin
+that brings them or `yours`. A stale stock is better than none: the review never proposes what it lists.
 
 ### `priorities`
 
@@ -209,7 +229,8 @@ skill from the Claude catalog that already covers the ask (`name`, `path`: where
 the card); it comes before a custom skill whenever one exists. A skill suggestion carries `name` and `pattern`
 (the ask that repeats, reached for on demand, and nothing on the shelf covers it). A routine suggestion carries `name`, `pattern` (the cadence and what it
 produces: "every Monday before 09:00, the pipeline numbers as a page") and a `briefing` that lets Claude create
-the scheduled task with its prompt drafted. A declined suggestion is never proposed again. The page's
+the scheduled task with its prompt drafted. A suggestion that changes a task or skill already in place carries `extends`, its name; the review never
+proposes a second one beside it. A declined suggestion is never proposed again. The page's
 "Connections, skills and routines to add" list renders `status: proposed`, three at most.
 
 ### `dismissals`, one per line the exec dropped, in each page's own store
@@ -246,7 +267,9 @@ on the page carries `reason` (`not_a_decision | not_important`).
   "version": "0.6.0", "note": "Ten lines at most." }
 ```
 
-`task` is one of `install | morning | inbox | review`, the habit that wrote the document. `version` is the
+`task` is one of `install | morning | inbox | review`, the habit that wrote the document. The install's document,
+`<date>-install`, is written as soon as the store exists and kept current: `done` lists the steps finished and
+`ended` stays empty until the install ends, so a setup that stopped is picked up where it was. `version` is the
 newest entry of `releases.md` when the run ended: the next run of the same task compares it to decide which
 release steps it still owes.
 
