@@ -9,6 +9,11 @@ Fewest words. Read before answering. Fix before explaining. The voice is `../aur
 the same as install: the assistant, its habits, its connections; no plugin, skill, task, connector or artifact
 in the exec's half.
 
+Whenever this session lists the scheduled tasks, for any row below, it also takes stock for the review: every
+task with its schedule and what its prompt produces, and the skills and plugins this session lists, written to
+`connections/in_place` with `checked` today. A cloud run cannot list tasks; this is how the review learns what
+is already in place.
+
 ## Where the answer is
 
 | The exec says | Read | Then |
@@ -18,12 +23,14 @@ in the exec's half.
 | Change the morning time, the inbox times | `connections/preferences` | Update the task's schedule with the task tools and the preference, in local time, one task per habit; an inbox rhythm must share one minute value (11:00, 13:00, 15:00, 17:00), else move it to the nearest that does and say so. If two inbox tasks exist, delete the extra one. One line back. |
 | Change my priorities | `priorities` | Point at the page's Edit button. Or take it on the question tool, keep, reword, drop, ahead of what, and write the store; a dropped one gets a proposed decision. |
 | Change a label rule, add or remove a label | `rules`, `connections/current.roles.mail.can` | Question tool, then write `rules`. Without `label` in `can`: one line, the mailbox cannot take labels. |
-| Change how I am told (more, less, by email, never) | `connections/preferences.notify`, `connections/current.roles.mail.can` | Question tool, one habit at a time: `push` (a notification each run; the review only on a day it found something), `push_now` (inbox only, when something is urgent), `email` (only where the mail role can send, to their own address), `none`. Write it; one line back. |
+| Change how I am told (more, less, by email, never) | `connections/preferences.notify`, `connections/current.roles.mail.can` | Question tool, one habit at a time: `push` (a notification each run; the review only on a day it found something), `push_now` (inbox only, when something is urgent), `email` (only where the mail role can send, to their own address; for the brief, the page itself, alone or with the notification: `["push", "email"]`), `none`. A list needs this version's morning prompt: if `releases.md` still owes the morning task a prompt update, do it first. Write it; one line back. |
 | Stop the web lookups, or turn them back on | `connections/preferences.enrich` | One line, write `none` or `public`. |
 | Reopen a closed topic | `topics/<id>` | Set `live: true`, clear `closed_reason`, one `so_far` line "reopened by you", republish. |
 | Add a connection, add a notetaker | `connections/current` | One card (`search_mcp_registry`, `suggest_connectors`), then re-probe with a real call and write `connections/current`. |
+| Read another calendar | `connections/current.roles.calendar` | List the calendars the tool reaches; add the one the exec names to `calendars`, the first one kept; probe each with a real call. One line back. |
+| Finish my setup, the setup stopped | the scheduled tasks; the Super Context and the install's `runs` document | No `Aureol morning` task: load `make-me-productive`, which picks up where the setup stopped. The task exists: nothing to finish, say so in one line. |
 | What do you know about my work | `context/summary` | The Super Context link and three lines. |
-| Update the assistant, or bring my setup up to date | the scheduled tasks; the last `runs` of each task, their `version` and `note`; `connections/preferences` | First Customize, Plugins, then Update on the marketplace, if the exec has not. Then for each of the three habits, the steps `../aureol-context/references/releases.md` owes it: update the task's prompt from its reference file in `../make-me-productive/references/`, placeholders filled from the store; its name and schedule as install step 7 sets them, keeping the times in `connections/preferences`; write `plugin_version`. Then run the morning task now so the three pages rebuild on this version. One line back: what changed. |
+| Update the assistant, or bring my setup up to date | the scheduled tasks; the last `runs` of each task, their `version` and `note`; `connections/preferences` | First Customize, Plugins, then Update on the marketplace, if the exec has not. Then for each of the three habits, the steps `../aureol-context/references/releases.md` owes it: update the task's prompt from its reference file in `../make-me-productive/references/`, placeholders filled from the store, and what the exec added to the old prompt stays theirs: a paragraph the reference never had (a second calendar, an email they asked for, a step of their own) becomes the setting this version has for it (`connections/current.roles.calendar.calendars`, `notify.brief` with `email`) or is kept word for word at the end of the new prompt, and the line back names it; its name and schedule as install step 7 sets them, keeping the times in `connections/preferences`; write `plugin_version`. Then run the morning task now so the three pages rebuild on this version. One line back: what changed. |
 | Stop everything | the scheduled tasks | Delete the three tasks. The pages stay; say so. To remove the pages too, the exec deletes them from their pages list. |
 | Is it reading my mail | `connections/current`, the register entry | The register entry `../make-me-productive/references/register-fr.md`, filled, in one message. |
 

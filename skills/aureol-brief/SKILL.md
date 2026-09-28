@@ -62,7 +62,8 @@ two at most, twelve words each. A tool that was never connected is not a notice.
 ## 1. Read the day
 
 Calendar: today from 00:00 to 24:00 in the exec's timezone, and tomorrow for context (a prep item today can come
-from tomorrow's meeting). Mail and chat since yesterday 18:00 (48 hours on the first run), from the exec's side, the main inbox only
+from tomorrow's meeting), on every calendar `connections/current.roles.calendar.calendars` lists, merged as the store
+says. Mail and chat since yesterday 18:00 (48 hours on the first run), from the exec's side, the main inbox only
 (`preferences.mail_scope`).
 Meetings of yesterday when a recorder is connected; names in transcripts are resolved against the store's
 people and entities (their `aka` carry the notetaker's mis-hearings), never written as heard. Only today's

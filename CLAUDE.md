@@ -31,6 +31,12 @@ procedure, the plugin is how it reaches a session. Read `README.md` first, then 
   that touches `skills/make-me-productive/references/task-*.md` says so in its first line, and adds its step to
   `skills/aureol-context/references/releases.md`, so installed habits update their own prompt on their next
   run. Every release adds an entry there, steps or none, and its version matches `plugin.json`.
+- **A setup that stops is brought back in its own conversation**, by the reminder tool (`send_later`, a message
+  re-delivered into the same conversation later, tested by Paul on 2026-09-28), never by a scheduled task. The
+  install's `runs` document keeps `done`, so a new conversation picks up where the setup stopped.
+- **The marketplace syncs; the installed plugin does not.** A habit runs the version the exec installed until
+  they click Update on the plugin (2026-09-28: runs on 0.4.0 while the marketplace showed 0.6.1). A release is
+  live for an exec only once they update.
 - **Never document a value that lives in the store.** Shapes and reasons here, values there.
 - **Bump the version on every push that changes a skill, a prompt or a template**: patch for a fix, minor
   for a behaviour change, in `.claude-plugin/plugin.json`. The marketplace card shows the version and the synced

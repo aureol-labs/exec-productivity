@@ -17,6 +17,18 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.7.0
+
+- **morning**: update this task's prompt to `task-morning.md`, filled as above, keeping what the exec added to
+  it (help's rule): step 3's labels are no longer undone by a "label nothing" further down, and the brief goes by
+  email where `notify.brief` lists `email`.
+- No step for **inbox** or **review**. The install now picks up a setup that stopped, reminds the exec in the
+  same conversation, and asks one question more, the brief by email: none of it touches a running setup.
+- **review**: no step, the skill carries it. Before proposing, the review takes stock of what the exec already
+  has (every scheduled task, their skills and plugins) and never proposes what is in place; it writes the stock
+  to `connections/in_place` when it can list the tasks, and holds a routine or a skill as `found` while no stock
+  exists.
+
 ## 0.6.2
 
 - No task step: the skills and the checker carry it. A notice only for a channel not read, two at most; a `sub`

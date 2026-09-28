@@ -51,6 +51,10 @@ il vérifie ensuite lui-même.
 
 Si une connexion demande un administrateur, envoyez-lui le lien ; l'assistant continue sans elle.
 
+S'il faut s'arrêter en cours de route (un administrateur à attendre, une réunion), dites-le : l'assistant vous
+demande quand revenir vers vous et vous relance dans la même conversation. Si vous partez sans rien dire, il vous
+relance une demi-heure plus tard, puis le lendemain matin, et reprend là où vous en étiez.
+
 [capture : une carte de connexion]
 
 ## 3. Épingler les trois pages
@@ -58,7 +62,8 @@ Si une connexion demande un administrateur, envoyez-lui le lien ; l'assistant co
 **Super Context**, **Brief du jour**, **Inbox prioritaire**. À la fin de l'installation, l'assistant propose de
 les épingler : dites oui. Elles sont toujours à jour. Vous êtes prévenu par une notification (ordinateur, et
 téléphone si l'app Claude y est) : chaque matin avec le brief, pour l'inbox seulement quand quelque chose est
-urgent, pour la revue seulement quand elle a trouvé quelque chose. Pour changer, demandez à l'assistant.
+urgent, pour la revue seulement quand elle a trouvé quelque chose. Si vous le choisissez à l'installation, le
+brief arrive aussi chaque matin dans votre boîte mail, envoyé à vous seul. Pour changer, demandez à l'assistant.
 
 [capture : les trois pages épinglées]
 
