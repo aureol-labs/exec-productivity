@@ -17,6 +17,11 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.6.2
+
+- No task step: the skills and the checker carry it. A notice only for a channel not read, two at most; a `sub`
+  of twenty words at most; twelve inbox lines at most; a bounce is a line.
+
 ## 0.6.1
 
 - **morning**, **inbox**: update this task's prompt to its reference file, `task-morning.md` or `task-inbox.md`,

@@ -33,13 +33,15 @@ document (shape in its head comment and `references/example.json`).
    answer. A group ask anyone could answer is not the exec's. A thread the exec already replied to or reacted to
    is out. Check the thread before ranking it, not the snippet. **Unread first**: the queue is built from unread
    mail and unread messages; a thread the exec has read but not answered enters only when someone is visibly
-   still waiting (a follow-up, a question with no reply), and the h1's counts are the real unread counts from
-   the tools, never estimated.
+   still waiting (a follow-up, a question with no reply), with `read: true`, and the h1's counts are the real
+   unread counts from the tools, never estimated. **A bounce is the exception**: a message of the exec's that did
+   not arrive is a line even on a thread they answered or dropped, until they send it again, with the bounce's
+   own id as `ref` (`message:<id>`) and `read: true` once they opened it.
 5. **A dropped line stays dropped.** Read `dismissals` from the inbox page's store before ranking (the store is
    the page's own, at `connections/current.pages.inbox`). A thread dropped as done or not important never comes
    back on this run or any later one, because every run reads the whole collection; a `done` also covers its
    follow-ups for 7 days, after which a genuinely new message on the thread may enter again. Give every queue
-   line the thread id as `ref`, the same on every run, so the page can record the drop and the next runs find
+   line the thread id as `ref` (a bounce: rule 4), the same on every run, so the page can record the drop and the next runs find
    it; a merged line (rule 9) joins its thread ids with `+`, mail first, and a dismissal whose `ref` carries `+`
    drops each thread in it. Prune `done` dismissals older than 30 days; keep `not_important` ones.
 6. **Now is a clock the exec does not control**: an offer that lapses tonight, a deck that locks tomorrow, a
@@ -59,7 +61,10 @@ document (shape in its head comment and `references/example.json`).
    even when one is 0. A channel that could not be read is `null` in `counts` with one line in `notices`, in
    the exec's language ("Slack could not be read this morning"), never a 0 and never a missing key: a chat that
    silently disappears reads as a broken connection. A notice says what could not be read, never how it was
-   checked; a channel read and empty is a 0 and no notice. The unread set is the whole main inbox's unread, not only
+   checked: two at most, twelve words each, and only when a count is null; check-page refuses a notice when both
+   channels were read. What the exec should act on is a queue line with its fact, a bounce included (rule 4).
+   Never said: a zero, a thread explained, what was not labelled, what lies outside the main inbox, a tool that
+   was never connected. The unread set is the whole main inbox's unread, not only
    what arrived since the last run: the window decides what is re-read and re-ranked, never what is counted.
    Chat unread: what the tool marks unread; where it cannot say, every message that came to the exec (a direct
    message, a mention, a thread or channel they are in) after their own last message in that conversation, over
@@ -69,11 +74,11 @@ document (shape in its head comment and `references/example.json`).
    thread about the same thing (the same ask, the same deal, the same person on the same subject) are one
    queue line, `channel` the thread the ask sits in, `channels` both, `sources` both threads, `ref` the two
    thread ids joined with `+`; never two threads of one channel in one line. Queue (each line counted once per
-   channel it carries) plus filed plus others equals the title, mail and chat separately; `check-page` refuses
+   channel it carries, `read` lines aside) plus filed plus others equals the title, mail and chat separately; `check-page` refuses
    a page where it does not. Filing is not judging, so the filed list is "labelled, still unread".
 10. **Nothing about the page.** No line explains the page, how to read it, or what was or was not done to the
     mailbox ("left unread", "nothing moved or deleted"). A field with nothing to say is left out, never filled
-    with "nothing to do". No `sub` unless it carries one fact the page cannot show. A source is something the
+    with "nothing to do". No `sub` unless it carries one fact the page cannot show, 20 words at most. A source is something the
     exec can open, never the rule or the run ("your rules, in your words", "label applied, 09:05").
 
 ## 0. Read, probe
@@ -96,7 +101,8 @@ Open every candidate thread once to check rule 3. Nothing new since the last run
 
 ## 2. Rank
 
-Nine to twelve lines is a page; more means the test was too loose. Each line: the tier, the channel (mail,
+Nine to twelve lines is a page: check-page refuses a thirteenth, and the weakest leave the queue (an unread
+one goes to the rest). Each line: the tier, the channel (mail,
 slack, teams), `channels` when it is one topic on two, the ask with the name, the arrival time or date, the fact
 and its `type`, sources, briefing. One topic is one line: check-page refuses two lines on one ref. The page draws
 its filter (all, mail, the chat tool) from the channels; there is nothing to write for it.

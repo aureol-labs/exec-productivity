@@ -59,10 +59,10 @@
     counts        { mail: 61, chat: 41 }      unread, read off the connectors on every
                   run: 0 when a channel was read and is empty, null when it could not
                   be read (the title then says "chat not read"), never absent
-    notices       [ "one line" ]   what the run could not read, in the exec's language,
-                  under the title; required when a count is null
-    queue         [ row ]   ordered: tier, then oldest first inside a tier
-      a row       { id, ref, tier: now|today|week, channel: mail|slack|teams, channels,
+    notices       [ "one line" ]   only when a count is null: what could not be read, in
+                  the exec's language, under the title; two at most, twelve words each
+    queue         [ row ]   ordered: tier, then oldest first inside a tier; twelve at most
+      a row       { id, ref, read, tier: now|today|week, channel: mail|slack|teams, channels,
                     say, meta: { kind: "time" | "date", value }, type, argument: [fact],
                     sources, briefing }
       say         the ask with the name; argument, one entry, the fact it is on the
@@ -72,9 +72,13 @@
                   most one thread per channel; the sentence carries one mark per
                   channel and the title counts the line once per channel
       ref         optional string, the stable key Drop is remembered under: the
-                  thread id ("thread:...") or its link; a merged line joins its
-                  thread ids with "+", mail first; absent, the page falls back
-                  to the first source href, then to the row id
+                  thread id ("thread:...") or its link; a bounce, its own id
+                  ("message:..."); a merged line joins its thread ids with "+",
+                  mail first; absent, the page falls back to the first source
+                  href, then to the row id
+      read        optional, true when the exec already opened what the line stands
+                  for: it still needs them (someone visibly waiting, a bounce) and
+                  is not counted as unread
       type        precedent | knock_on | pattern | history      never absent
       meta        when the message arrived: a clock for today, a date before that
     filed         [ label ]  only where the mail role could write labels
@@ -94,8 +98,8 @@
     next_run      "13:00"
     others        { mail: 3, chat: 2, items: [ { channel, from, what, href, when } ] }  every
                   unread that is neither waiting on the exec nor filed, the full list, newest
-                  first, so the title's counts reconcile: counts.mail = queue lines carrying
-                  mail + filed mail + others.mail, same for chat. The page shows 3 lines and
+                  first, so the title's counts reconcile: counts.mail = unread queue lines
+                  carrying mail + filed mail + others.mail, same for chat. The page shows 3 lines and
                   "show all N" opens the rest. Absent or zero: nothing rendered.
       ref         { id } same page (opens the target) or { page, id } another page
       src         { kind: mail|chat|calendar|doc|meeting|file|you, via, label, href }
@@ -330,7 +334,8 @@ var DICT={{DICT}};
 
     header(page,'page_inbox', headline(q.length, q.filter(function(it){ return tierOf(it)==='now'; }).length));
     H1=page.querySelector('h1');
-    (d.notices||[]).forEach(function(s){ if(s) add(page, el('p','sub',String(s))); });
+    /* what could not be read, two lines at most; everything else is a line below */
+    (d.notices||[]).slice(0,2).forEach(function(s){ if(s) add(page, el('p','sub',String(s))); });
 
     /* the filter, only when there is something on both sides */
     var hasMail=(mail|0)>0 || q.some(function(it){ return chans(it).indexOf('mail')>=0; });
@@ -367,7 +372,8 @@ var DICT={{DICT}};
     }
 
     var foot=[countWord('mail',mail)+', '+countWord('chat',chat), d.next_run ? F(L('next_run'),{t:d.next_run}) : ''];
-    if(!d.wrote) foot.push(L('nothing_written'));
+    /* said only where the mailbox cannot take labels and there was something to file */
+    if(!d.wrote && grouped.length) foot.push(L('nothing_written'));
     add(page, footer(foot), credit());
 
     setFilter(SEG ? readFilter() : 'all', false);
