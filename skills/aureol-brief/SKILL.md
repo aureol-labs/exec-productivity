@@ -48,7 +48,7 @@ ones that bite are below.
 9. **Nothing about the page.** No line explains the page, how to read it, or what the assistant does not do
    ("sends nothing"). A cell or field with nothing to say is left out, never filled with "nothing to prepare"
    or "nothing to decide": a workout on the calendar is a block with its head line and nothing else. No `sub`
-   unless it carries one fact the page cannot show, never a line already on it. A line and its fact are 12 words
+   unless it carries one fact the page cannot show, 20 words at most, never a line already on it. A line and its fact are 12 words
    each at most: check-page warns past that and refuses past 16 and 20, and a refused page is shortened and checked
    again, never cut off.
 
@@ -56,7 +56,8 @@ ones that bite are below.
 
 `connections/current`, `connections/preferences`, `priorities`, `topics`, `people`, `entities`, kept
 `decisions`, `context/summary`. Probe calendar, mail, chat and meetings with one real call each. A failed role
-is a missing section and one line in `data.notices`, saying what could not be read, never how it was checked.
+is a missing section and one line in `data.notices`, saying what could not be read, never how it was checked:
+two at most, twelve words each. A tool that was never connected is not a notice.
 
 ## 1. Read the day
 

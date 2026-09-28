@@ -72,7 +72,7 @@ class Report:
 
 # ---------- words ----------
 
-BUDGET = {'line': (12, 16), 'fact': (14, 20), 'card': (14, 20), 'prompt': (40, 60)}
+BUDGET = {'line': (12, 16), 'fact': (14, 20), 'card': (14, 20), 'prompt': (40, 60), 'notice': (12, 16), 'sub': (16, 20)}
 
 
 def words(s):
@@ -183,9 +183,16 @@ def check_common(d, r, kind):
     for i, s in enumerate(d.get('footer') or []):
         if isinstance(s, str) and NUMBER_WORDS.search(s):
             r.bad('$.footer[%d]' % i, 'a count spelled out: "%s"' % NUMBER_WORDS.search(s).group(0))
-    for i, s in enumerate(d.get('notices') or []):
+    # the head of a page is its title: a sub is one fact at most, and a notice only says
+    # what could not be read, two at most; what the exec should act on is a line below
+    budget(r, '$.sub', d.get('sub'), 'sub')
+    notices = d.get('notices') or []
+    if len(notices) > 2:
+        r.bad('$.notices', '%d notices, 2 at most: a notice says what could not be read, nothing else' % len(notices))
+    for i, s in enumerate(notices):
         if not isinstance(s, str) or not s.strip():
             r.bad('$.notices[%d]' % i, 'a notice is one line of text')
+        budget(r, '$.notices[%d]' % i, s, 'notice')
 
 
 def ids_of(d, kind):
@@ -359,6 +366,8 @@ def check_inbox(d, r, others):
     own = check_ids(d, r, 'inbox')
     counts = d.get('counts') or {}
     notices = d.get('notices') or []
+    if notices and all(counts.get(k) is not None for k in ('mail', 'chat')):
+        r.bad('$.notices', 'both channels were read: no notice; what matters is a queue line, the rest goes unsaid')
     for k in ('mail', 'chat'):
         if k not in counts:
             r.bad('$.counts.' + k, 'missing: 0 when the channel was read and is empty, null when it could not be read')
@@ -369,9 +378,15 @@ def check_inbox(d, r, others):
             r.bad('$.counts.' + k, 'not a numeral')
     q = d.get('queue') or []
     row_types(q, '$.queue', r)
+    if len(q) > 12:
+        r.bad('$.queue', '%d lines, 12 at most: the test was too loose; the weakest leave the queue' % len(q))
+    elif len(q) > 9:
+        r.warn('$.queue', '%d lines, aim for 9' % len(q))
+    # a line on a message the exec already opened still needs them, but is not an unread
+    unread = [row for row in q if row.get('read') is not True]
     total = (counts.get('mail') or 0) + (counts.get('chat') or 0)
-    if len(q) > total:
-        r.bad('$.queue', '%d rows need you out of %d unread' % (len(q), total))
+    if len(unread) > total:
+        r.bad('$.queue', '%d unread rows need you out of %d unread' % (len(unread), total))
     order = {'now': 0, 'today': 1, 'week': 2}
     last = -1
     for i, row in enumerate(q):
@@ -392,6 +407,8 @@ def check_inbox(d, r, others):
         check_meta(p + '.meta', row.get('meta'), r, {'time', 'date'})
         if row.get('meta') is None:
             r.bad(p + '.meta', 'the right column is when it arrived')
+        if 'read' in row and not isinstance(row['read'], bool):
+            r.bad(p + '.read', 'true when the exec already opened what the line stands for, else absent')
         lb = row.get('label')
         if lb is not None and (not isinstance(lb, dict) or not lb.get('name')):
             r.bad(p + '.label', 'a label carries a name and a tint')
@@ -484,9 +501,9 @@ def check_inbox(d, r, others):
         return row.get('channels') or [row.get('channel')]
     bulk = filed or grouped
     on_page = {
-        'mail': sum(1 for row in q if 'mail' in carries(row))
+        'mail': sum(1 for row in unread if 'mail' in carries(row))
                 + sum(((x.get('by_channel') or {}).get('mail') or 0) for x in bulk) + oth_n['mail'],
-        'chat': sum(sum(1 for c in carries(row) if c in ('slack', 'teams')) for row in q)
+        'chat': sum(sum(1 for c in carries(row) if c in ('slack', 'teams')) for row in unread)
                 + sum(((x.get('by_channel') or {}).get('slack') or 0) + ((x.get('by_channel') or {}).get('teams') or 0)
                       for x in bulk) + oth_n['chat'],
     }
@@ -766,6 +783,19 @@ def selftest():
         else:
             fails += 1
 
+    def passes(kind, name, mutate):
+        nonlocal fails
+        d = copy.deepcopy(data[kind])
+        mutate(d)
+        new = [l for l in check(d, kind, others).lines if l not in base[kind]]
+        print('%-8s %-52s %s' % (kind, name, 'passes' if not new else 'REFUSED'))
+        if new:
+            print('   ' + new[0])
+            fails += 1
+
+    def read_line(d, n, read=True):
+        return dict(d['queue'][-1], id='rr%d' % n, ref='message:read-%d' % n, read=read)
+
     broken('brief', 'em dash in a sentence', lambda d: d['decisions'][0].__setitem__('say', 'A ' + EM_DASH + ' B'))
     broken('brief', 'untyped job', lambda d: d['jobs'][0].pop('type'))
     broken('brief', 'four sources', lambda d: d['decisions'][0]['sources'].extend([{'kind': 'doc', 'label': 'x', 'href': ''}] * 2))
@@ -783,6 +813,12 @@ def selftest():
     broken('brief', 'a decision and a job on one ref', lambda d: d['jobs'][0].__setitem__('ref', d['decisions'][0]['ref']))
     broken('inbox', 'two queue lines on one ref', lambda d: d['queue'][1].__setitem__('ref', d['queue'][0]['ref']))
     broken('inbox', 'an ask past the word cap', lambda d: d['queue'][0].__setitem__('say', ' '.join(['word'] * 17)))
+    broken('inbox', 'a notice when both channels were read', lambda d: d.__setitem__('notices', ['Main inbox at zero unread.']))
+    passes('inbox', 'a line on a message already read', lambda d: d['queue'].append(read_line(d, 1)))
+    broken('inbox', 'a line on a read message counted as unread', lambda d: d['queue'].append(read_line(d, 1, read=False)))
+    broken('inbox', 'thirteen queue lines', lambda d: d['queue'].extend(read_line(d, n) for n in range(4)))
+    broken('inbox', 'three notices', lambda d: (d['counts'].__setitem__('chat', None), d.__setitem__('notices', ['a', 'b', 'c'])))
+    broken('brief', 'a sub past the word cap', lambda d: d.__setitem__('sub', ' '.join(['mot'] * 21)))
     broken('inbox', 'ref that is not a string', lambda d: d['queue'][0].__setitem__('ref', {'id': 'x'}))
     broken('context', 'ref that is not a string on a topic', lambda d: d['topics'][0].__setitem__('ref', ''))
     broken('inbox', 'untyped queue row', lambda d: d['queue'][8].__setitem__('type', None))

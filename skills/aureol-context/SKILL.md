@@ -59,8 +59,8 @@ organisations off the page once no live topic holds them; and flags every priori
 
 Read `connections/current` and `connections/preferences`. Probe each role's tool with one real call (the same
 five probes as install) and refresh `checked`. A role that fails: its section is missing from the page with one
-line in `data.notices`, saying what could not be read, never how it was checked, and the run continues. Never a
-page that pretends.
+line in `data.notices`, saying what could not be read, never how it was checked, two at most, twelve words
+each; a tool that was never connected is not a notice. The run continues. Never a page that pretends.
 
 Then read: `priorities` (live and dropped), `topics`, `people`, `entities`, `decisions`, `suggestions`, and the
 last `runs` document of this task.
