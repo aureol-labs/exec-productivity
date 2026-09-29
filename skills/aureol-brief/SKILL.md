@@ -94,7 +94,12 @@ events are drawn.
 - **Jobs**: the cap; the wall on the strip; `argument` one entry, the fact; type. A job whose briefing would only
   summarise the thing it asks the exec to read has no Claude button.
 - **Footer**: what the assistant read this morning, in numerals ("Read at 06:52: 61 mails, 41 messages, 6
-  invites").
+  invites"). Its second span, only when a newer version of the assistant is published, in the exec's language:
+  "A new version of your assistant is ready: type /exec-productivity:exec-productivity-update". Where the session
+  can fetch a web page, compare the `version` in
+  `https://raw.githubusercontent.com/aureol-labs/exec-productivity/main/.claude-plugin/plugin.json` with the
+  newest heading of `../aureol-context/references/releases.md`, and write both to `connections/current.plugin`.
+  Without web fetch, nothing: never a notice, never a guess.
 - **h1**: numerals only. "6 meetings, 1 clash, 3 decisions, 3 jobs." `sub`: absent, unless one fact the page
   cannot show.
 
