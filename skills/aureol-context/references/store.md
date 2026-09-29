@@ -39,6 +39,10 @@ Rules that hold for every document:
   "pages": { "context": "https://claude.ai/...", "brief": "https://claude.ai/...", "inbox": "https://claude.ai/..." } }
 ```
 
+`plugin`, `{ "installed": "0.8.0", "published": "0.8.0", "checked": "2026-09-29" }`, is written by the morning
+brief and by `exec-productivity-update` when the session can fetch the published manifest; `installed` is the
+newest heading of `releases.md`. Absent, nobody could check.
+
 `pages` holds the link of each page once published; a routine reads the page at that link and publishes to its
 `url` so the link holds. A missing entry means the page has not been published yet.
 

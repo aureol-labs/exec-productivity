@@ -19,8 +19,9 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 
 ## 0.8.0
 
-- No task step. Asked to update, `exec-productivity-help` shows the plugin's own card in the conversation
-  (Manage, then Update) before it brings the habits up to date.
+- No task step. A new skill, `exec-productivity-update`, does the update: the plugin's own card (Manage, then
+  Update), then the habits and pages brought up to date; help hands over to it. The Daily brief's footer says
+  when a newer version is published, where the morning run can read the published manifest.
 - No task step: the pages pick it up on their next publish. The Claude button says what it does: Prepare with
   Claude on a meeting, Decide with Claude on a call, Continue with Claude elsewhere. Every briefing hands over
   what the pages found as a starting point, never the frame; a meeting's asks Claude to look with fresh eyes

@@ -89,7 +89,8 @@ Taper `/exec-productivity:exec-productivity-help` et dire ce que vous avez vu.
 
 ## Mettre à jour
 
-Demander à l'assistant de se mettre à jour. Il affiche la carte du plugin dans la conversation : cliquer sur
-Manage, puis Update, et le lui dire. Il remet ensuite vos habitudes à jour lui-même.
+Quand le brief du matin l'annonce, taper `/exec-productivity:exec-productivity-update`. L'assistant affiche la
+carte du plugin dans la conversation : cliquer sur Manage, puis Update, et le lui dire. Il remet ensuite vos
+habitudes et vos pages à jour lui-même.
 
 [capture : la carte Exec productivity, bouton Manage]

@@ -88,6 +88,7 @@ suggestion. The routines propose; the exec decides.
 | `aureol-inbox` | the Priority inbox |
 | `aureol-review` | the end-of-day review: what Claude could have done, with the prompt, what to attach and the connections |
 | `exec-productivity-help` | the assistant explaining and fixing itself |
+| `exec-productivity-update` | the update: the plugin's card, then the habits and pages brought up to date |
 
 The store every skill reads and writes: [skills/aureol-context/references/store.md](skills/aureol-context/references/store.md).
 The design system: `design/`, inlined into every page template by `tools/build-templates.py`. Every generated page
@@ -95,9 +96,10 @@ is checked by `tools/check-page.py`.
 
 ## Updating
 
-The marketplace syncs on its own; the plugin the habits run does not. Update it: ask the assistant to update
-itself, and it shows the plugin's own card in the conversation, Manage, then Update; or Customize, Plugins,
-exec-productivity, Update. Until then every habit runs the version installed (seen on 2026-09-28: runs on 0.4.0,
+The marketplace syncs on its own; the plugin the habits run does not. Update it: type
+`/exec-productivity:exec-productivity-update` (the Daily brief says when a new version is ready). It shows the
+plugin's own card, Manage, then Update, then brings the habits and pages up to date; or Customize, Plugins,
+exec-productivity, Update, then the same command. Until then every habit runs the version installed (seen on 2026-09-28: runs on 0.4.0,
 the marketplace on 0.6.1). Skills and templates apply on the next run after the update. A habit's prompt is
 stored on the scheduled task at creation, so a release that changes one says so in `releases.md`, and
 `exec-productivity-help` updates the prompts, keeping what the exec added to them.
