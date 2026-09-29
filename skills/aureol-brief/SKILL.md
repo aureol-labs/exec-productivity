@@ -1,7 +1,7 @@
 ---
 name: aureol-brief
 user-invocable: false
-description: Write today's Daily brief for the executive: the day strip from the calendar with double bookings designed for, the calls to make (three, each asked with its options, the one fact it is on the page for under it: a precedent, a knock-on, a pattern or a history), the jobs to do before a wall on the strip, no advice anywhere, every line opening on its sources and an Ask Claude briefing. Reads the Super Context store first, then calendar, mail, chat and meetings. Load from the morning task, from install for the first brief, or when the exec asks for their day.
+description: Write today's Daily brief for the executive: the day strip from the calendar with double bookings designed for, the calls to make (three, each asked with its options, the one fact it is on the page for under it: a precedent, a knock-on, a pattern or a history), the jobs to do before a wall on the strip, no advice anywhere, every line opening on its sources and a briefing for Claude that hands over what the brief found as a starting point. Reads the Super Context store first, then calendar, mail, chat and meetings. Load from the morning task, from install for the first brief, or when the exec asks for their day.
 ---
 
 # Daily brief
@@ -32,9 +32,15 @@ ones that bite are below.
    was asked; neither, empty. Brick only once the time has gone by, with the word: "Was due 10:00". Never "6 days
    late".
 5. **Caps.** `preferences.caps`, three and three by default. The day is whatever the calendar says.
-6. **Three sources per line.** Your own summary in the briefing, never a message body. A briefing on a call asks
-   Claude for the case on each side, never for an answer. Every briefing that drafts something ends "do not
-   send".
+6. **Three sources per line.** Your own summary in the briefing, never a message body. What the brief found is
+   the starting point, never the frame (voice). A meeting's briefing (Prepare with Claude): the meeting, who and
+   their role, what the exec knows so far in two or three facts, then an open ask: the topics likely to come up,
+   the decisions to make, what each person wants from the exec, the context to have in mind, anything the brief
+   did not see, from the recent exchanges, the documents and the past meetings looked at with fresh eyes; it ends
+   asking where the exec wants to go deeper, and never narrows to the one call the page found. A call's briefing
+   (Decide with Claude) asks for the case on each side and anything else that bears on it, options the page did
+   not list included, never for an answer. A job's (Continue with Claude) asks for the work and for anything the
+   brief missed. Every briefing that drafts something ends "do not send".
 7. **A dropped line stays dropped.** Read `dismissals` from the brief page's own store
    (`connections/current.pages.brief`) before selecting. A job or decision dropped as done or not important is
    not proposed again on this run or any later one, because every run reads the whole collection. That only
@@ -86,7 +92,7 @@ events are drawn.
 - **Decisions**: the cap, ranked against the priorities; `say` the call with its options; `argument` one entry,
   the fact; `type`; sources; briefing. No `lede`, `plain` or `go`: the page shows none of them.
 - **Jobs**: the cap; the wall on the strip; `argument` one entry, the fact; type. A job whose briefing would only
-  summarise the thing it asks the exec to read has no Ask Claude.
+  summarise the thing it asks the exec to read has no Claude button.
 - **Footer**: what the assistant read this morning, in numerals ("Read at 06:52: 61 mails, 41 messages, 6
   invites").
 - **h1**: numerals only. "6 meetings, 1 clash, 3 decisions, 3 jobs." `sub`: absent, unless one fact the page

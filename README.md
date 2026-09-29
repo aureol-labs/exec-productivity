@@ -95,7 +95,8 @@ is checked by `tools/check-page.py`.
 
 ## Updating
 
-The marketplace syncs on its own; the plugin the habits run does not. Update it: Customize, Plugins,
+The marketplace syncs on its own; the plugin the habits run does not. Update it: ask the assistant to update
+itself, and it shows the plugin's own card in the conversation, Manage, then Update; or Customize, Plugins,
 exec-productivity, Update. Until then every habit runs the version installed (seen on 2026-09-28: runs on 0.4.0,
 the marketplace on 0.6.1). Skills and templates apply on the next run after the update. A habit's prompt is
 stored on the scheduled task at creation, so a release that changes one says so in `releases.md`, and

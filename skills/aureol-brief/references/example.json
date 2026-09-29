@@ -31,7 +31,7 @@
             { "kind": "chat", "via": "Slack", "label": "#deals-emea, Nadia", "href": "" },
             { "kind": "calendar", "label": "08:45 invite", "href": "" }
           ],
-          "briefing": "Get me ready for the 08:45 pipeline review with Nadia, VP Sales.\n\nFrom this morning’s brief:\n- She has raised the Halden Mutual discount in 3 of the last 4 reviews.\n- Halden Mutual want 19% off. Bergen asked the same in July; I held, and it closed at 79k.\n\nRead the Halden Mutual procurement thread from 10 September and #deals-emea yourself. Then give me the case for granting and the case for holding, and what Nadia needs from me either way."
+          "briefing": "Help me prepare my 08:45 pipeline review with Nadia, VP Sales.\n\nWhat I know so far, from this morning’s brief:\n- She has raised the Halden Mutual discount in 3 of the last 4 reviews.\n- Halden Mutual want 19% off. Bergen asked the same in July; I held, and it closed at 79k.\n\nThat is a starting point, not the agenda. Start with the Halden Mutual procurement thread from 10 September and #deals-emea, then look at our recent exchanges and past reviews with fresh eyes. Tell me the topics likely to come up, the decisions to make, what Nadia wants from me, and the context I should have in mind, including anything the brief did not see. Then ask me where I want to go deeper."
         }
       },
       {
@@ -47,7 +47,7 @@
             { "kind": "chat", "via": "Slack", "label": "Elena, Friday 17:40", "href": "" },
             { "kind": "calendar", "label": "10:00 invite", "href": "" }
           ],
-          "briefing": "Get me ready for the 10:00 one to one with Elena, Head of Customer Success, six months in.\n\nFrom this morning’s brief:\n- I have moved this meeting twice.\n- She has chased the renewal playbook three times. Her last message was not a question, it said the playbook ships without me.\n- Nothing to land. She sets the agenda.\n\nRead her recent Slack messages to me yourself. I do not want talking points. Tell me what she is actually asking for underneath the playbook chase, and what I should say first to acknowledge that I have been the blocker."
+          "briefing": "Help me prepare my 10:00 one to one with Elena, Head of Customer Success, six months in.\n\nWhat I know so far, from this morning’s brief:\n- I have moved this meeting twice.\n- She has chased the renewal playbook three times. Her last message was not a question, it said the playbook ships without me.\n- Nothing to land. She sets the agenda.\n\nThat is a starting point, not the agenda. Start with her recent Slack messages to me, then look at our exchanges and past one to ones with fresh eyes. Tell me the topics likely to come up, what she wants from me underneath the playbook chase, and the context I should have in mind, including anything the brief did not see. Then ask me where I want to go deeper."
         }
       },
       {
@@ -68,7 +68,7 @@
             { "kind": "chat", "via": "Slack", "label": "#infra-migration", "href": "" },
             { "kind": "calendar", "label": "11:00 invite", "href": "" }
           ],
-          "briefing": "Get me ready for the 11:00 migration go or no go. 45 minutes, six people, Tomas chairing.\n\nFrom this morning’s brief:\n- Slipped from 28 August. The room has picked October twice.\n- To land: the 4 October weekend, or November.\n- November collides with nine renewals, and nobody in that room owns renewals. If I say nothing, the collision does not get raised.\n\nRead Tomas’s migration plan v3 and #infra-migration yourself. Then tell me the one question I should put to the room to surface the renewal collision without making it sound like I am overruling them, and what support needs from me either way."
+          "briefing": "Help me prepare the 11:00 migration go or no go. 45 minutes, six people, Tomas chairing.\n\nWhat I know so far, from this morning’s brief:\n- Slipped from 28 August. The room has picked October twice.\n- To land: the 4 October weekend, or November.\n- November collides with nine renewals, and nobody in that room owns renewals.\n\nThat is a starting point, not the agenda. Start with Tomas’s migration plan v3 and #infra-migration, then look at the other threads on the migration with fresh eyes. Tell me the topics likely to come up, the decisions to make, what each person in the room wants, and the context I should have in mind, including anything the brief did not see. Then ask me where I want to go deeper."
         }
       },
       {
@@ -88,7 +88,7 @@
             { "kind": "mail", "label": "Marc, pack outline", "href": "" },
             { "kind": "calendar", "label": "14:00 invite", "href": "" }
           ],
-          "briefing": "Get me ready for 14:00 board prep with Julien (CFO) and Marc (Chief of staff). 1 h 30.\n\nFrom this morning’s brief:\n- The pack is due Thursday. Two of five sections exist.\n- Third quarter running that this gets built in the final two days.\n- Julien needs the cohort numbers before this starts, not during it.\n\nRead the Q3 board pack and Marc’s outline yourself. Then give me a running order for the 90 minutes that gets all five sections owned and dated by the end of it, and what cutting each section would cost."
+          "briefing": "Help me prepare the 14:00 board prep with Julien (CFO) and Marc (Chief of staff). 1 h 30.\n\nWhat I know so far, from this morning’s brief:\n- The pack is due Thursday. Two of five sections exist.\n- Third quarter running that this gets built in the final two days.\n- Julien needs the cohort numbers before this starts, not during it.\n\nThat is a starting point, not the agenda. Start with the Q3 board pack and Marc’s outline, then look at the last board packs and our exchanges with fresh eyes. Tell me the topics likely to come up, the decisions to make, what Julien and Marc want from me, and the context I should have in mind, including anything the brief did not see. Then ask me where I want to go deeper."
         }
       },
       {
@@ -114,7 +114,7 @@
           { "kind": "calendar", "label": "16:45 Corvid Capital", "href": "" },
           { "kind": "mail", "label": "Corvid Capital, term sheet", "href": "" }
         ],
-        "briefing": "I am double booked at 16:30 and need to decide which one I keep before 09:00.\n\n- 16:30, VP Marketing stage two interview, 45 min, Priya sits in. The candidate was moved once already.\n- 16:45, Corvid Capital term sheet walkthrough, 45 min. They offered Thursday first.\n\nTell me what moving each one costs, then draft the message for the one I move. Do not send anything."
+        "briefing": "I am double booked at 16:30 and need to decide which one I keep before 09:00.\n\n- 16:30, VP Marketing stage two interview, 45 min, Priya sits in. The candidate was moved once already.\n- 16:45, Corvid Capital term sheet walkthrough, 45 min. They offered Thursday first.\n\nTell me what moving each one costs, and anything else in my day that bears on it, then draft the message for the one I move. Do not send anything."
       }
     ]
   },
@@ -130,7 +130,7 @@
         { "kind": "mail", "label": "Halden Mutual procurement, 10 Sept", "href": "" },
         { "kind": "mail", "label": "Bergen, 14 July", "href": "" }
       ],
-      "briefing": "Help me decide on Halden Mutual’s discount: grant 19% off, or hold the price.\n\nFrom this morning’s brief:\n- Halden Mutual want 19% off. Nadia, VP Sales, wants to give it.\n- Bergen asked for the same discount in July. I held, and it closed at 79k eleven days later.\n\nRead the Halden Mutual procurement thread from 10 September and the Bergen thread from July yourself. Then give me the case for each side, and what each one does to the renewals that come after it. Do not send anything."
+      "briefing": "Help me decide on Halden Mutual’s discount: grant 19% off, or hold the price.\n\nFrom this morning’s brief:\n- Halden Mutual want 19% off. Nadia, VP Sales, wants to give it.\n- Bergen asked for the same discount in July. I held, and it closed at 79k eleven days later.\n\nRead the Halden Mutual procurement thread from 10 September and the Bergen thread from July yourself. Then give me the case for each side, what each one does to the renewals that come after it, and anything else that bears on it, an option I have not listed included. Do not send anything."
     },
     {
       "id": "c2",
@@ -143,7 +143,7 @@
         { "kind": "chat", "via": "Slack", "label": "#infra-migration", "href": "" },
         { "kind": "calendar", "label": "Renewal cycle, November", "href": "" }
       ],
-      "briefing": "Help me decide the migration date: the 4 October weekend, or November. I have to call it at 11:00.\n\nFrom this morning’s brief:\n- November lands inside the renewal cycle for nine accounts.\n- Elena has been told neither date.\n- Support needs a week to staff whichever I pick.\n\nRead #infra-migration and pull the nine November renewals from the calendar yourself. Then lay out the two dates side by side on the things that actually differ: renewal exposure, how much notice support gets, and what breaks if it slips again."
+      "briefing": "Help me decide the migration date: the 4 October weekend, or November. I have to call it at 11:00.\n\nFrom this morning’s brief:\n- November lands inside the renewal cycle for nine accounts.\n- Elena has been told neither date.\n- Support needs a week to staff whichever I pick.\n\nRead #infra-migration and pull the nine November renewals from the calendar yourself. Then lay out the two dates side by side on the things that actually differ: renewal exposure, how much notice support gets, and what breaks if it slips again. Tell me anything else that bears on it, a third date included if there is one."
     },
     {
       "id": "c3",
@@ -156,7 +156,7 @@
         { "kind": "doc", "label": "Q3 board pack", "href": "" },
         { "kind": "doc", "label": "August pack, market section", "href": "" }
       ],
-      "briefing": "Help me decide how to finish the board pack for Thursday: cut a section, or write all five.\n\nFrom this morning’s brief:\n- Two of five sections exist.\n- The same sections were missing last quarter, and I wrote them the night before.\n\nRead the Q3 board pack and Marc’s outline yourself. Then tell me what each option costs, and which section the board would miss least if one goes."
+      "briefing": "Help me decide how to finish the board pack for Thursday: cut a section, or write all five.\n\nFrom this morning’s brief:\n- Two of five sections exist.\n- The same sections were missing last quarter, and I wrote them the night before.\n\nRead the Q3 board pack and Marc’s outline yourself. Then tell me what each option costs, which section the board would miss least if one goes, and any other way through I have not listed."
     }
   ],
   "jobs": [
