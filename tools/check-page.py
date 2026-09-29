@@ -588,7 +588,7 @@ def check_context(d, r, others):
         if t.get('gesture', 'none') not in ('ask', 'add_priority', 'none'):
             r.bad(tp + '.gesture', 'ask, add_priority or none')
         if t.get('gesture') == 'ask' and not t.get('briefing'):
-            r.bad(tp + '.briefing', 'Ask Claude needs a briefing')
+            r.bad(tp + '.briefing', 'the Claude button needs a briefing')
         check_ref(tp, t, r)
         check_who(tp + '.who', t.get('who'))
         check_dated(tp + '.so_far', t.get('so_far'))
@@ -683,7 +683,7 @@ def check_context(d, r, others):
             if not isinstance(x, dict) or not x.get('name') or not isinstance(x.get('connected'), bool):
                 r.bad('%s.needs[%d]' % (sp, j), 'a connection it needs has a name and connected true or false')
         if s.get('kind') == 'prompt' and not s.get('briefing'):
-            r.bad(sp + '.briefing', 'a prompt carries itself as the briefing Ask Claude copies')
+            r.bad(sp + '.briefing', 'a prompt carries itself as the briefing the Claude button copies')
         if not s.get('say'):
             r.bad(sp, 'a suggestion has a sentence')
         if not s.get('evidence'):

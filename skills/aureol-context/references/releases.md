@@ -17,6 +17,15 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.8.0
+
+- No task step. Asked to update, `exec-productivity-help` shows the plugin's own card in the conversation
+  (Manage, then Update) before it brings the habits up to date.
+- No task step: the pages pick it up on their next publish. The Claude button says what it does: Prepare with
+  Claude on a meeting, Decide with Claude on a call, Continue with Claude elsewhere. Every briefing hands over
+  what the pages found as a starting point, never the frame; a meeting's asks Claude to look with fresh eyes
+  and ends asking where to go deeper.
+
 ## 0.7.0
 
 - **morning**: update this task's prompt to `task-morning.md`, filled as above, keeping what the exec added to

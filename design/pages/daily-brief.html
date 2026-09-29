@@ -131,7 +131,8 @@ var DICT={{DICT}};
   /* a list row: the call or the job, its time, and under it the one fact that
      matters: the precedent, the knock-on, the pattern or the history the line is on
      the page for. No advice: the call stays the exec's. The reveal is its sources,
-     Ask Claude and Drop. `kind` is decision or job, for the store. */
+     the Claude button (Decide with Claude on a call, Continue with Claude on a job)
+     and Drop. `kind` is decision or job, for the store. */
   function row(it,i,kind){
     var r=el('div','row'); r.id=it.id;
     var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
@@ -141,7 +142,7 @@ var DICT={{DICT}};
     add(b, el('span','n',String(i+1)), dec, metaEl(it.meta));
     add(r,b);
     var w=el('div','why');
-    add(w, srcRow(it.sources,it.briefing));
+    add(w, srcRow(it.sources,it.briefing, kind==='decision' ? L('ask_decide') : null));
     add(r,w);
     dropUI(r, {page:'brief', kind:kind, ref: it.ref || ('brief:'+it.id), say:it.say||''});
     return r;
@@ -273,7 +274,7 @@ var DICT={{DICT}};
         });
         goCell(card,L('to_land'),mt.to_land);
         goCell(card,L('in_mind'),mt.in_mind,'plain');
-        add(card, srcRow(mt.sources,mt.briefing));
+        add(card, srcRow(mt.sources,mt.briefing,L('ask_decide')));
       } else {
         b.className='mt'+(mt.key?' key':'');
         b.style.setProperty('--l',pct(minutes(mt.start))+'%');
@@ -287,7 +288,7 @@ var DICT={{DICT}};
         textCell(card,L('before'),br.before);
         goCell(card,L('to_land'),br.to_land);
         goCell(card,L('in_mind'),br.in_mind,'plain');
-        add(card, srcRow(br.sources,br.briefing));
+        add(card, srcRow(br.sources,br.briefing,L('ask_prepare')));
       }
       add(st,b); briefs.push(card);
     });

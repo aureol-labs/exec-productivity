@@ -129,7 +129,7 @@ must not equal any topic or entity name. A dropped priority keeps its document w
   "next": [ { "date": "2026-09-15", "event": "Pipeline review", "late": false } ],
   "sources": [ { "kind": "mail", "label": "Aviva procurement, 10 Sept", "href": "" } ],
   "gesture": "ask", "proposal": null,
-  "briefing": "The Ask Claude text, the routine's summary plus pointers.",
+  "briefing": "What the Claude button hands over: the routine's summary plus pointers.",
   "live": true }
 ```
 
@@ -224,7 +224,7 @@ as `connector` or `plugin`, and the next `exec-productivity-help` session resolv
 value, the words the page and the run's table show. Every suggestion carries its how: `prompt`, the words the
 exec could have typed; `attach`, what to give it, absent when nothing; `needs`, `[{ "name": "Google Drive",
 "connected": true }]`, each connection it uses. A prompt suggestion needs nothing added: its `briefing` is the
-prompt, which Ask Claude copies. A plugin suggestion names an off-the-shelf plugin or
+prompt, which the Claude button copies. A plugin suggestion names an off-the-shelf plugin or
 skill from the Claude catalog that already covers the ask (`name`, `path`: where to add it, the marketplace or
 the card); it comes before a custom skill whenever one exists. A skill suggestion carries `name` and `pattern`
 (the ask that repeats, reached for on demand, and nothing on the shelf covers it). A routine suggestion carries `name`, `pattern` (the cadence and what it

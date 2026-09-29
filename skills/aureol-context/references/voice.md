@@ -34,6 +34,12 @@ A briefing is the exec talking to Claude: first person, their register, the fact
 for a draft says how the exec writes to that person, read off their last messages to them: tu or vous, how
 long, how they sign.
 
+A briefing hands Claude what the pages found as a starting point, never as the frame. It says so in the exec's
+words ("what I know so far", "a starting point, not the agenda"), names where to look first, and asks Claude to
+look with fresh eyes and raise what the pages did not see: other topics, other options, other people. One call
+on the page never narrows the ask to that call. It is also how the exec learns to ask: a broad ask with the
+context, then going deeper where it matters.
+
 ## Words and sentences
 
 - The plain word: "use", not "leverage"; faire, not procéder à; avant, not en amont de.
