@@ -30,7 +30,8 @@ Rules that hold for every document:
 
 ```json
 { "roles": {
-    "mail":      { "tool": "Gmail",         "can": ["search", "label"], "checked": "2026-09-22" },
+    "mail":      { "tool": "Gmail",         "can": ["search", "label"], "checked": "2026-09-22",
+                   "main": { "clovis@example.com": "primary" } },
     "calendar":  { "tool": "Google Calendar","can": ["search"],          "checked": "2026-09-22" },
     "chat":      { "tool": "Slack",         "can": ["search"],          "checked": "2026-09-22" },
     "documents": { "tool": "Google Drive",  "can": ["search"],          "checked": "2026-09-22" },
@@ -87,10 +88,20 @@ up to five `people/<id>` refs the inbox never cuts when its page is full; absent
 then nobody is protected. Both change through `exec-productivity-help`. `inbox` is a
 list of weekday times that share one minute value, so they fit one schedule line. The review's notification
 fires only on a day something worth it qualified. `mail_scope` is `"main"` (the
-default) or `"all"`: every skill that reads mail, context, brief, inbox and review, reads the mailbox's main
-inbox only under `main`, Gmail's Primary category, Outlook's Focused inbox where it exists, and leaves the
-mailbox's own bulk categories out (Promotions, Social, Updates, Forums, Other, Junk, Clutter): not read, not
-counted, not ranked. An exec who runs inbox zero on their main inbox must never see 4,182 unread on the page.
+default) or `"all"`. Under `main`, every skill that reads mail, context, brief, inbox and review, reads each
+mailbox's main inbox only, in the form `connections/current.roles.mail.main` names for that mailbox:
+
+- `primary`: the mailbox's own main view, what the exec sees first. Gmail: `in:inbox category:primary`, which
+  follows the tabs they turned on (an Updates mail shows there when they have no Updates tab). Outlook: the
+  Focused inbox.
+- `minus_categories`: the inbox without the mailbox's bulk categories. Gmail: `in:inbox -category:promotions
+  -category:social -category:updates -category:forums`. Outlook: the inbox without Other, Junk or Clutter.
+
+Every run's probe counts both forms over its window, per mailbox, and writes `main`: `primary` when it returns
+mail; `minus_categories` when it is empty while the other form is not (Gmail with its tabs turned off has an
+empty Primary, seen on 2026-10-01; Outlook with Focused off). The exec can change their settings any day, so the
+check is never cached across runs. Either way the bulk categories stay out: not read, not counted, not ranked.
+An exec who runs inbox zero on their main inbox must never see 4,182 unread on the page.
 `mailboxes` lists the connected mail accounts read; the page names any address the exec uses that is not
 connected. `metrics` is `null` until a business metric source is named and proven by a real call; the brief renders no
 metrics block while it is `null`.

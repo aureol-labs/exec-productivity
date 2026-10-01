@@ -23,10 +23,11 @@ document (shape in its head comment and `references/example.json`).
 2. **Every write is listed** on the page, under the label, with its count and the rule in the exec's words.
    A label without a rule is not applied.
 3. **The main inbox only.** Unless `connections/preferences.mail_scope` is `all`, every read, every count and
-   every queue line comes from the mailbox's main inbox. On Gmail that is the query `in:inbox is:unread
-   category:primary` for the count and `in:inbox category:primary` plus the date window for the read; on a
-   mailbox without tabs the same query returns the plain inbox, which is right. On Outlook, the Focused inbox
-   where it exists. Never Promotions, Social, Updates, Forums, Other, Junk or Clutter. The h1's unread count is
+   every queue line comes from each mailbox's main inbox, in the form `connections/current.roles.mail.main`
+   names for it, as the store defines both: Gmail's Primary while it returns mail, else the inbox without
+   Promotions, Social, Updates and Forums (tabs turned off leave Primary empty); Outlook's Focused inbox, else
+   the inbox without Other. The read is that form plus the date window; the unread count is the same form with
+   `is:unread`. Never Promotions, Social, Updates, Forums, Other, Junk or Clutter. The h1's unread count is
    that query's count, never the account's total. A page that says 4,000 unread to an exec who runs inbox zero
    has used the wrong query.
 4. **The test for the queue**: someone is blocked, a promise is late, or only the exec can
@@ -86,6 +87,8 @@ document (shape in its head comment and `references/example.json`).
 **Release steps.** Before anything else, read `../aureol-context/references/releases.md` and apply what it says for the `inbox` task.
 
 `connections/current`, `connections/preferences` (tiers), `rules`, `topics`, `people`, the last inbox run.
+For mail, the probe also checks each mailbox's main inbox (the store, `mail_scope`): both forms counted over the
+window, `connections/current.roles.mail.main` rewritten, every run.
 Probe mail and chat with one real call each, on every run, whatever the last run found. A probe that fails is
 `null` and a notice (rule 9), and the run goes on with the other channel.
 
