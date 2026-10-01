@@ -50,7 +50,9 @@ proposals.
    last stock a session took; with no stock at all, a routine or a skill is recorded as `found` and neither
    shown nor notified until a session with the task tool has checked it.
 5. **Evidence or nothing.** Every finding carries the two or three moments it comes from, dated, in the exec's
-   words. Ranked by how much work it takes off the exec: how often, times how long.
+   words. Ranked by how much work it takes off the exec: how often, times how long. An ask with
+   `source.kind: "you"` is evidence on its own: the exec named it. It qualifies without two or three moments,
+   ranks first on the first run that sees it, and its finding says so ("You asked at setup").
 6. **Declined is final.** Read `suggestions` with `status: declined` before proposing; never the same system,
    plugin, routine or skill twice.
 7. **Three on the page, all new ones in the message.** The Super Context list shows the three strongest; the run's

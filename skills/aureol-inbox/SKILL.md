@@ -102,7 +102,9 @@ Open every candidate thread once to check rule 3. Nothing new since the last run
 ## 2. Rank
 
 Nine to twelve lines is a page: check-page refuses a thirteenth, and the weakest leave the queue (an unread
-one goes to the rest). Each line: the tier, the channel (mail,
+one goes to the rest). A line from a person in `connections/preferences.key_people` is never the one cut: when
+the page is full, the weakest line that is not theirs leaves first. It changes nothing else: a key person's line
+keeps its tier and its place in it (rule 6). Without `key_people`, nobody is protected. Each line: the tier, the channel (mail,
 slack, teams), `channels` when it is one topic on two, the ask with the name, the arrival time or date, the fact
 and its `type`, sources, briefing. One topic is one line: check-page refuses two lines on one ref. The page draws
 its filter (all, mail, the chat tool) from the channels; there is nothing to write for it.

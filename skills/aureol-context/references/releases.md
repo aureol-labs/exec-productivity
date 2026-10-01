@@ -17,6 +17,14 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.9.0
+
+- No task step. Install reads the exec's rhythm (first meeting, mail peaks, end of day) and sets the three
+  habits' times from it, defaults when there is not enough to read; installs already done keep their times.
+  Install also proposes up to five key people, whom the inbox never cuts when the page is full, and asks one
+  question, a task to take off the exec's hands, recorded as an ask the review ranks first. Without
+  `key_people` the inbox behaves as before.
+
 ## 0.8.0
 
 - No task step. A new skill, `exec-productivity-update`, does the update: the plugin's own card (Manage, then

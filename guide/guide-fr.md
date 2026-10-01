@@ -71,9 +71,9 @@ brief arrive aussi chaque matin dans votre boîte mail, envoyé à vous seul. Po
 
 | Habitude | Quand |
 |---|---|
-| le matin | en semaine à 08:30 : les trois pages |
-| l'inbox | en semaine, avec le brief puis à 11:00, 13:00, 15:00 et 17:00 : tous vos non-lus, mails et messages, ce qui vous attend en haut |
-| la revue | en semaine à 17:30 : ce que vous auriez pu demander à Claude dans la semaine, avec le prompt, quoi joindre et les connexions ; une notification seulement quand elle a trouvé quelque chose |
+| le matin | en semaine, avant votre premier rendez-vous : les trois pages |
+| l'inbox | en semaine, avec le brief puis avant vos heures de mails : tous vos non-lus, mails et messages, ce qui vous attend en haut |
+| la revue | en semaine, en fin de journée : ce que vous auriez pu demander à Claude dans la semaine, avec le prompt, quoi joindre et les connexions ; une notification seulement quand elle a trouvé quelque chose |
 
 L'ordinateur peut être fermé : les habitudes tournent dans le cloud.
 

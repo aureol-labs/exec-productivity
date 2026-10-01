@@ -58,7 +58,10 @@ and keeps every other field.
 
 ```json
 { "language": "fr", "timezone": "Europe/Paris", "first_name": "Clovis",
-  "morning": "08:30", "inbox": ["11:00", "13:00", "15:00", "17:00"], "review": "17:30",
+  "morning": "08:15", "inbox": ["12:45", "18:45"], "review": "18:00",
+  "rhythm": { "read": "2026-10-01", "first_meeting": "08:45", "mail_peaks": ["13:00", "19:00"],
+              "day_end": "18:30", "source": "inferred" },
+  "key_people": ["people/nadia", "people/tomas", "people/julien"],
   "caps": { "decisions": 3, "jobs": 3 }, "tiers": ["Now", "Today", "This week"],
   "mail_scope": "main", "mailboxes": ["clovis@example.com"], "enrich": "public",
   "gesture": "copy", "metrics": null,
@@ -75,8 +78,13 @@ role can send, never for the inbox; for the brief, the page itself rendered for 
 automatic: the run decides from this value. `installed` is the day of the install and
 `plugin_version` the manifest's version that day, both written by install.
 
-`morning`, `inbox` and `review` are set by install without asking: 08:30, then 11:00, 13:00, 15:00 and 17:00
-(the morning run is the inbox's first pass), then 17:30; changed through `exec-productivity-help`. `inbox` is a
+`morning`, `inbox` and `review` are read by install from the exec's last 30 days (the first meeting, the hours
+their mail goes out, the end of their day) and shown under the priorities for the same go, never asked; with
+not enough to read, 08:30, then 11:00, 13:00, 15:00 and 17:00 (the morning run is the inbox's first pass), then
+17:30. `rhythm` keeps what was read: a field is `null` when nothing was read for it, and `source` is `inferred`,
+`default` or `yours` (the exec changed it, at install or through `exec-productivity-help`). `key_people` lists
+up to five `people/<id>` refs the inbox never cuts when its page is full; absent on installs before 0.9.0, and
+then nobody is protected. Both change through `exec-productivity-help`. `inbox` is a
 list of weekday times that share one minute value, so they fit one schedule line. The review's notification
 fires only on a day something worth it qualified. `mail_scope` is `"main"` (the
 default) or `"all"`: every skill that reads mail, context, brief, inbox and review, reads the mailbox's main
@@ -214,7 +222,9 @@ the colour slot and never shows. `archive: true` is the To archive label, drawn 
   "source": { "kind": "mail", "label": "To Julien, 17 Sept", "href": "" }, "status": "found" }
 ```
 
-`status` is `found | proposed | declined | connected`. `plugin` names the ready-made plugin or skill from the
+`status` is `found | proposed | declined | connected`. `source.kind` is `"you"` for an ask the exec named
+themselves (the install's one question): `to` is `null`, `what` their words verbatim, and the review ranks it
+first. `plugin` names the ready-made plugin or skill from the
 Claude catalog that covers the ask, when one does. A scheduled run without the catalog tools writes `"unknown"`
 as `connector` or `plugin`, and the next `exec-productivity-help` session resolves it. `suggestions/<id>`:
 
