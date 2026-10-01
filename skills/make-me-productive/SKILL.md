@@ -25,8 +25,9 @@ inbox page reads mail and chat together. What do you use for chat?", and the car
 judge as a whole (the labels) is one table and one go, never a card per item: cards only where each item
 needs its own answer.
 Autopilot: the first thing after the language is the settings check (the model and Auto mode, step 1), and
-every connection the exec adds is one more thing the assistant does without them. Times and notifications are
-decided, never asked, but for one question: the brief by email (step 7).
+every connection the exec adds is one more thing the assistant does without them. Times are read from the
+exec's last 30 days and shown for their go (step 4), notifications are decided; neither is asked, but for one
+question: the brief by email (step 7).
 
 ## Hard rules for the whole session
 
@@ -52,8 +53,8 @@ same conversation later) brings it back. Every time here is the exec's local tim
 in the chosen language.
 
 - **Progress lives in the store** once the Super Context exists (step 4): the `runs` document `<date>-install`,
-  `done` listing the steps finished (`language`, `settings`, `connections`, `context`, `priorities`, `brief`,
-  `inbox`, `habits`, `recap`), `ended` empty until step 8. Update it as each step ends.
+  `done` listing the steps finished (`language`, `settings`, `connections`, `context`, `priorities` (the rhythm and the
+  key people with them), `ask`, `brief`, `inbox`, `habits`, `recap`), `ended` empty until step 8. Update it as each step ends.
 - **They say they must stop** (an administrator, IT, a meeting, "later"): one line with what is left ("Left: the
   Outlook connection, then your two pages."), then one card, "When should I come back to you?", options "In an
   hour", the next working day at 09:00 by its name ("Tomorrow at 09:00", on a Friday "Monday at 09:00"), and
@@ -124,8 +125,8 @@ work. The goal is not productivity by tonight; it is the keys to see where Claud
 | | The key | Here, for you |
 |---|---|---|
 | 1 | **Context makes the difference** | Claude reads your mail, calendar, chat, documents and meetings with your own access, and keeps what matters on one page, updated every morning: your Super Context. A meeting recorder adds what is said in the room. |
-| 2 | **Claude beyond a chat** | Pages it writes and keeps current, and work it runs on its own, laptop shut, on two classics: your daily brief at 08:30 and your inbox, sorted through the day. |
-| 3 | **Your own use cases** | Every weekday at 17:30, it spots what you could have asked Claude that week (a request to a colleague, an analysis across documents, a deck) and shows how: the prompt, what to attach, the connections it needs. |
+| 2 | **Claude beyond a chat** | Pages it writes and keeps current, and work it runs on its own, laptop shut, on two classics: your daily brief, before your first meeting, and your inbox, sorted through the day. |
+| 3 | **Your own use cases** | Every weekday at the end of your day, it spots what you could have asked Claude that week (a request to a colleague, an analysis across documents, a deck) and shows how: the prompt, what to attach, the connections it needs. |
 
 Nothing is sent to anyone, nothing is deleted. That last sentence is the only reassurance, and the verdict at step 8 has to
 keep it.
@@ -190,16 +191,65 @@ across every connected role, meetings first; it publishes the Super Context arti
 {}}` and returns the link. Write it to `connections/current.pages.context`, then the install's `runs` document
 (the section on stops): the steps done so far, no `ended`.
 
+**The rhythm and the key people, read from the same 30 days**, working days only, in the exec's local time
+(`connections/preferences.timezone`):
+
+- **First meeting**: each working day, the start of the first event they accepted or organised with at least one
+  other attendee, never all-day, never declined. The median, from 10 such days at least, else nothing is read.
+- **Mail**: the hours their sent mail went out, in one-hour buckets. From 40 sent at least, else nothing is read.
+- **End of day**: each working day, the end of the last event they accepted or organised. The median, from 10
+  days at least.
+
+| Habit | Rule | Bounds | When nothing is read |
+|---|---|---|---|
+| `morning` | the first meeting's median less 30 minutes, rounded down to the quarter hour | 07:00 to 09:00 | 08:30 |
+| `inbox` | the 2 to 4 densest mail buckets, at least 2 hours apart, each less 15 minutes | 09:00 to 19:00, after `morning` | 11:00, 13:00, 15:00, 17:00 |
+| `review` | the end of day's median less 30 minutes, rounded down to the quarter hour | 16:30 to 19:00 | 17:30 |
+
+The inbox times share one minute value, one schedule line: whole-hour buckets less 15 minutes all fall on :45. A
+bucket that holds the morning time is dropped, since the morning run is the inbox's first pass, and no inbox
+time comes before `morning`.
+
+**Key people**, five at most, from the `people` the bootstrap wrote, never the exec: first anyone who sits on a
+`board` entity or belongs to a company with `relationship: investor`; then those the exec answers fastest, the
+median over at least 3 threads they answered. Never an assistant, never a generic address (no-reply, support@,
+a list).
+
 Then the priorities, in two turns and no cards. First a message: one line, "I read your last 30 days and
 propose four priorities. Say go, or say what to change: reword, drop, add, reorder," and a table of the
 proposals: the priority, what it comes before as read, the evidence in a few words, in the order you read
-them, the strongest first. End the turn. The exec's reply is the answer: "go" (or any yes) applies the table as
-it stands; anything else is read as changes, applied, and the table shown once more with the same one line.
-Never a card per priority: the table is the question, and nothing is asked after it. Write `priorities` in the
+them, the strongest first. Under it, in the same message, one line, "Your rhythm, read from the same 30
+days:", and a second table:
+
+| | Read from your 30 days | Sets |
+|---|---|---|
+| First meeting | around 08:45 | Daily brief at 08:15 |
+| Mail | mostly around 13:00 and 19:00 | Inbox at 12:45 and 18:45 |
+| End of day | last meeting ends around 18:30 | Evening review at 18:00 |
+| Key people | Nadia, Tomas, Julien | Never cut from your inbox page |
+
+A row with nothing read says "not enough to read" in the middle and its default on the right. The message still
+ends on "Say go, or say what to change". End the turn. The exec's reply is the answer: "go" (or any yes) applies
+both tables as they stand; anything else is read as changes to either ("brief at 07:30", "take Julien out"),
+applied, and both tables shown once more with the same one line, never a card. Never a card per priority: the
+tables are the question, and nothing else is asked about them. Write `priorities` in the
 exec's own words where they reworded, `ahead` as read or as changed, `order` as the table stands once the exec
-said go, the strongest first, `confirmed` today, `yours` verbatim, a unique `short` name that is not a topic or entity name. Republish the
+said go, the strongest first, `confirmed` today, `yours` verbatim, a unique `short` name that is not a topic or entity name. Write
+`connections/preferences`: `morning`, `inbox`, `review` as validated; `rhythm` with what was read (`null` on a
+row with nothing read) and `source` `inferred`, `default` when nothing was read, `yours` when the exec changed
+it; `key_people`, their `people/<id>` refs in the validated order. Republish the
 page. Then one line and the link: "Your Super Context. Your assistant starts every conversation from it. The
 Edit button changes any line, including what each priority comes before."
+
+**One task to take off their hands.** Then one question card, no prose around it. Its options come from the
+same 30 days, what the exec does by hand again and again: outgoing mail on the same subject or template, 3 times
+at least (chasers, a report sent on a rhythm); documents made from one model, 2 times at least; the same
+preparation before a recurring meeting (a document or a mail of theirs in the 24 hours before). Three at most,
+8 words each at most, in their words. The card: "One thing you'd like your assistant to take off your hands?
+Read from your last 30 days." Options: the candidates, then "Nothing for now"; free entry stays open. Fewer
+than 2 candidates: those found and "Nothing for now". None: no card. Any answer but "Nothing for now" writes
+`asks/<id>`: `{date: today, to: null, what: their answer verbatim, source: {kind: "you", label: "Asked at
+setup", href: ""}, status: "found"}`; the first evening review ranks it first.
 
 ## 5. The first brief
 
@@ -248,10 +298,10 @@ page the exec was just asked about has to exist before the next question.
 ## 7. The habits
 
 List the scheduled tasks. `Aureol morning`, `Aureol inbox` or `Aureol review` already there: keep it, create only
-the missing ones. Times and notifications are decided, so the install stays short, with one question, the brief
-by email, below. Write
-`connections/preferences`: `morning` "08:30", `inbox` ["11:00", "13:00", "15:00", "17:00"], `review` "17:30",
-`notify` { brief: "push", inbox: "push_now", review: "push" }, all local times in the exec's zone. The exec
+the missing ones. Times were read and shown at step 4 and notifications are decided, so the install stays
+short, with one question, the brief by email, below. The times are `connections/preferences.morning`, `inbox`
+and `review` as validated at step 4, all local times in the exec's zone. Write `notify` { brief: "push", inbox:
+"push_now", review: "push" }. The exec
 changes any of it later through `exec-productivity-help`. Never send a test notification: the tool skips a
 notification while the exec is active in the session, so a test always reads as failed.
 
@@ -279,11 +329,11 @@ not the exec's, which is why the prompts carry the zone.
 
 | Task | File | Schedule |
 |---|---|---|
-| `Aureol morning` | `references/task-morning.md` | weekdays 08:30; it refreshes all three pages, the inbox's first pass included |
-| `Aureol inbox` | `references/task-inbox.md` | weekdays 11:00, 13:00, 15:00 and 17:00, one schedule line |
-| `Aureol review` | `references/task-review.md` | weekdays 17:30 |
+| `Aureol morning` | `references/task-morning.md` | weekdays at `morning`; it refreshes all three pages, the inbox's first pass included |
+| `Aureol inbox` | `references/task-inbox.md` | weekdays at the `inbox` times, one schedule line |
+| `Aureol review` | `references/task-review.md` | weekdays at `review` |
 
-`{{RUN_TIME}}` is "08:30", "11:00, 13:00, 15:00, 17:00" and "17:30". Settings, decided, not asked: cloud
+`{{RUN_TIME}}` is each habit's time or times from `connections/preferences`. Settings, decided, not asked: cloud
 execution ("Require this computer" off), permissions approve automatically, model Opus 5.5 (or the newest
 Opus) where the task form offers a model, connectors inherited, no folder. Exactly three tasks with exactly
 these names: never a fourth, never "Aureol inbox midday" or any variant; the inbox is one task with several
@@ -304,18 +354,19 @@ For anything about my work, start from my Super Context: {{CONTEXT_URL}}, rewrit
 
 One of:
 
-- **"All good. Tomorrow at 08:30 your three pages are ready."**
+- **"All good. Tomorrow at <morning> your three pages are ready."** (`connections/preferences.morning`)
 - **"Before it can run:"** the blockers, numbered, one line each, then "Want me to do it?"
 
 Then the recap. The exec went through the install fast: this is where they learn it, on their own numbers,
 the same three keys as the start. One line, translated, "The three keys, now on your work:", then this table,
-every N a real number from the page just published, the recorder line only when no recorder is connected:
+every N a real number from the page just published, every time from `connections/preferences`, the recorder
+line only when no recorder is connected:
 
 | | Now, for you | When |
 |---|---|---|
-| **1 · Context** | Your Super Context: N priorities, N live topics, N people, from N connections. Every conversation starts from it; Edit corrects any line. No meeting recorder yet: it is the connection that adds the most. | rewritten every weekday at 08:30 |
-| **2 · Beyond a chat** | Your Daily brief (N meetings, N calls to make, N jobs) and your Priority inbox (N need you, mail and chat together or apart): pages Claude keeps current, laptop shut. | 08:30; the inbox also 11:00, 13:00, 15:00, 17:00 |
-| **3 · Your use cases** | The evening review: what you could have asked Claude this week, with the prompt, what to attach and the connections. Silent on a day it found nothing. | weekdays 17:30 |
+| **1 · Context** | Your Super Context: N priorities, N live topics, N people, from N connections. Every conversation starts from it; Edit corrects any line. No meeting recorder yet: it is the connection that adds the most. | rewritten every weekday at <morning> |
+| **2 · Beyond a chat** | Your Daily brief (N meetings, N calls to make, N jobs) and your Priority inbox (N need you, mail and chat together or apart): pages Claude keeps current, laptop shut. | <morning>; the inbox also at the <inbox> times |
+| **3 · Your use cases** | The evening review: what you could have asked Claude this week, with the prompt, what to attach and the connections. Silent on a day it found nothing. | weekdays <review> |
 
 Then this table, translated, nothing added:
 
@@ -334,4 +385,4 @@ three links, one per line. Where the session's Artifact tool has no pin action, 
 reminder instead: "Pin these three now, from each page's menu, and they are one click away every morning:" and
 the three links, one per line. Then stop. Complete the install's `runs` document: `ended`, every step in `done`, and in its `note`,
 anything a maintainer would need (a probe that failed, a schedule created in UTC and its local equivalent):
-never in the conversation. The install does not run the review: it runs on its own at 17:30.
+never in the conversation. The install does not run the review: it runs on its own at `review`.

@@ -44,9 +44,11 @@ at install.
 
 | Habit | When | Page |
 |---|---|---|
-| morning | weekdays 08:30 | Super Context refreshed, the Daily brief, the day's first Priority inbox |
-| inbox | weekdays 11:00, 13:00, 15:00 and 17:00 | Priority inbox, and what it learned into Super Context |
-| review | weekdays 17:30 | the review, on Super Context; a notification only when it found something |
+| morning | weekdays, 30 minutes before the usual first meeting (08:30 when the calendar says too little) | Super Context refreshed, the Daily brief, the day's first Priority inbox |
+| inbox | weekdays, just before the hours the exec sends most mail (11:00, 13:00, 15:00 and 17:00 by default) | Priority inbox, and what it learned into Super Context |
+| review | weekdays, 30 minutes before the usual end of day (17:30 by default) | the review, on Super Context; a notification only when it found something |
+
+The install reads these times from the last 30 days and shows them under the priorities, for the same go.
 
 Each habit runs in the cloud, so it runs with the laptop shut. Its result is the pinned page. Install sets the
 times and how the exec is told, with one question, the brief by email too where the mailbox can send: a
@@ -60,17 +62,17 @@ Nothing is automatic: each run decides from the stored choice.
 One store, three habits, one order. Super Context is built first, inside the install, because everything else
 ranks against it. Then:
 
-1. **Morning, 08:30**: the deep harvest. `aureol-context` reads the night and the last seven days across every
+1. **Morning, before the first meeting**: the deep harvest. `aureol-context` reads the night and the last seven days across every
    connection, meetings first, rewrites the live topics, the people and organisations and the summary, proposes
    decisions, republishes Super Context. Then `aureol-brief` reads that store and today's calendar and writes the
    Daily brief. Then `aureol-inbox` once, so the three pages are fresh together. One session, one message.
-2. **Inbox, four more times a day, 11:00, 13:00, 15:00 and 17:00**: the light pass. `aureol-inbox` reads
+2. **Inbox, two to four more times a day, before the exec's mail hours**: the light pass. `aureol-inbox` reads
    what arrived since the last run, ranks what needs the exec on top, lists every other unread mail and message
    below, publishes the Priority inbox, and writes what it
    learned into the store: a reply from the exec, a new fact on a topic, a decision taken in a thread. It never
    adds a topic or touches the priorities; that judgement stays with the morning. Nothing new, nothing
    published.
-3. **End of day, 17:30**: `aureol-review` looks at the last seven days for the work Claude could have done instead of
+3. **End of day**: `aureol-review` looks at the last seven days for the work Claude could have done instead of
    the exec and shows each on Super Context with its prompt, what to attach and the connections, or the one
    thing to add first; it notifies only for a finding worth it, said as what
    Claude would do for the exec; nothing new, one line and no notification.
