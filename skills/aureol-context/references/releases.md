@@ -17,6 +17,13 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.9.1
+
+- No task step: the skills and the store carry it. Each mailbox's main inbox is checked on every run: Gmail's
+  Primary while it returns mail, else the inbox without Promotions, Social, Updates and Forums (Gmail with tabs
+  turned off has an empty Primary); Outlook's Focused inbox, else the inbox without Other. The form per mailbox
+  is kept in `connections/current.roles.mail.main`.
+
 ## 0.9.0
 
 - No task step. Install reads the exec's rhythm (first meeting, mail peaks, end of day) and sets the three
