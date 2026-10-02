@@ -17,6 +17,10 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.11.4
+
+- No task step. On the French inbox page, a thread is an « échange »: « Résumer l’échange ».
+
 ## 0.11.3
 
 - No task step. The inbox page has a demo mode, for showing it without any connection: `design/demo/`.
