@@ -536,6 +536,10 @@ def check_live(d, q, r):
     mail, chat = live.get('mail'), live.get('chat')
     if mail is not None and (not isinstance(mail, dict) or not mail.get('server') or mail.get('api') not in ('aureol', 'gmail')):
         r.bad('$.live.mail', 'null, or {server, api: aureol|gmail, label}: the connector as the exec named it')
+    if isinstance(mail, dict) and 'read' in mail and not isinstance(mail['read'], bool):
+        r.bad('$.live.mail.read', 'true when the page may mark a thread as read on the exec\'s click')
+    if isinstance(mail, dict) and mail.get('read') and mail.get('api') != 'gmail' and not live.get('demo'):
+        r.bad('$.live.mail.read', 'only the Gmail connector can mark as read today')
     if chat is not None and (not isinstance(chat, dict) or not chat.get('server') or chat.get('api') != 'slack'):
         r.bad('$.live.chat', 'null, or {server, api: slack}')
     rules = live.get('rules') or []
@@ -885,6 +889,7 @@ def selftest():
     broken('inbox', 'a kind the page does not know', lambda d: d['queue'][0].__setitem__('kind', 'urgent'))
     broken('inbox', 'a live page without the run time', lambda d: d.pop('generated'))
     broken('inbox', 'a mail connector the page cannot read', lambda d: d['live']['mail'].__setitem__('api', 'outlook'))
+    broken('inbox', 'mark as read on a connector that cannot', lambda d: (d['live']['mail'].__setitem__('api', 'aureol'), d['live']['mail'].__setitem__('read', True)))
     broken('inbox', 'tiers out of order', lambda d: d['queue'][0].__setitem__('tier', 'week'))
     broken('inbox', 'others still uses examples', lambda d: d['others'].__setitem__('examples', []))
     broken('inbox', 'others items tally off by one', lambda d: d['others']['items'].pop())

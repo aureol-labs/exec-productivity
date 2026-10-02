@@ -369,7 +369,9 @@
     "lx_brief": "{say} What I know: {fact}\n\nOpen {where} from {from}, {when} ({href}), and read it whole. It is a starting point, not the frame: look with fresh eyes and raise what I did not see.\nThen:\n1. Tell me what is actually asked, by whom, and by when.\n2. Give me the options and what each implies.\n3. Draft the reply for the option I pick. Do not send it.",
     "lx_label_brief": "My inbox filed {n} unread under \"{label}\", by my rule: \"{rule}\". Nothing was archived or marked as read.\n\nOpen them and tell me whether any of them is actually waiting on me, and which.",
     "lx_retry": "Try again",
-    "lx_refresh": "Refresh"
+    "lx_refresh": "Refresh",
+    "lx_mark_read": "Mark as read",
+    "lx_read_failed": "Not marked as read: {x}"
   },
   "fr": {
     "page_brief": "Brief du jour",
@@ -740,6 +742,8 @@
     "lx_brief": "{say} Ce que je sais : {fact}\n\nOuvre {where} de {from}, {when} ({href}), et lis-le en entier. C’est un point de départ, pas le cadre : regarde avec un œil neuf et signale ce que je n’ai pas vu.\nPuis :\n1. Dis-moi ce qui est réellement demandé, par qui, et pour quand.\n2. Donne-moi les options, avec ce que chacune implique.\n3. Rédige la réponse pour l’option que je choisis. Ne l’envoie pas.",
     "lx_label_brief": "Ma boîte a classé {n} non lus sous « {label} », selon ma règle : « {rule} ». Rien n’a été archivé ni marqué comme lu.\n\nOuvre-les et dis-moi si l’un d’eux attend en fait quelque chose de moi, et lequel.",
     "lx_retry": "Réessayer",
-    "lx_refresh": "Actualiser"
+    "lx_refresh": "Actualiser",
+    "lx_mark_read": "Marquer comme lu",
+    "lx_read_failed": "Non marqué comme lu : {x}"
   }
 }

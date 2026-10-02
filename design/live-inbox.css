@@ -40,15 +40,41 @@
      on their own line as small outlined pills; an open one is tinted; Drop stays quiet at the
      right. Light on purpose: one filled button at most on the page, in the reply. */
   .src .lxacts{flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px 8px;margin-top:4px}
-  .src .lxacts a.lxa,.src .lxacts a.ask,.lxp a.lxout.go{font-size:12.5px;line-height:1.3;font-weight:500;color:var(--pine-ink);
+  .lxacts a.lxa,.lxacts a.ask,.lxp a.lxout.go{font-size:12.5px;line-height:1.3;font-weight:500;color:var(--pine-ink);
      padding:4px 11px;border-radius:999px;border:1px solid rgba(46,107,98,.30);background:rgba(255,255,255,.55);
      text-decoration:none;white-space:nowrap;transition:background .12s,border-color .12s}
-  .src .lxacts a.lxa:hover,.src .lxacts a.ask:hover,.lxp a.lxout.go:hover{border-color:var(--pine);background:#fff}
-  .src .lxacts a.lxa[aria-expanded="true"]{background:var(--pine-pale);border-color:var(--pine-pale)}
+  .lxacts a.lxa:hover,.lxacts a.ask:hover,.lxp a.lxout.go:hover{border-color:var(--pine);background:#fff}
+  .lxacts a.lxa[aria-expanded="true"]{background:var(--pine-pale);border-color:var(--pine-pale)}
   .src .lxacts a.ask{margin-left:0;font-weight:600}
-  .src .lxacts a.ask.ok{color:var(--ink-3);border-color:var(--hair);font-weight:500}
+  .lxacts{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+  .lxacts a.lxout{font-size:12.5px;color:var(--pine);text-decoration:none;border-bottom:1px solid rgba(46,107,98,.22);margin-left:4px}
+  .lxacts a.lxout:hover{color:var(--pine-ink);border-bottom-color:var(--pine)}
+  .lxacts a.ask.ok{color:var(--ink-3);border-color:var(--hair);font-weight:500}
   .src .lxacts a.drop{margin-left:auto;padding:4px 2px;border:0;background:none}
   .src .lxacts .dropq{flex-basis:100%;justify-content:flex-end}
+
+  /* ---- the rest and the labels, worked in place ----
+     Each line is a block: the line itself, a check that marks it read on hover, and the
+     same actions as a queue line, opened under it. */
+  .mini>.lxm{position:relative;border-bottom:1px solid rgba(46,107,98,.11)}
+  .mini>.lxm:first-child{border-top:1px solid rgba(46,107,98,.11)}
+  .mini>.lxm[hidden],.mini>.lxm.tk{display:none}
+  .mini .lxm>a{display:flex;align-items:baseline;padding:7px 0;font-size:13.5px;line-height:1.45;color:var(--ink-2);
+     text-decoration:none;transition:color .12s}
+  .mini .lxm>a:hover,.mini .lxm.on>a{color:var(--ink)}
+  .mini .lxm>a:hover b,.mini .lxm.on>a b{color:var(--pine)}
+  .mini .lxm>a:focus-visible{outline:2px solid var(--pine);outline-offset:2px;border-radius:2px}
+  .lxmp{padding:2px 0 14px 23px}
+  .lxmp>.lxacts{margin-top:2px}
+  .lxmr{all:unset;cursor:pointer;position:absolute;right:0;top:6px;display:none;align-items:center;justify-content:center;
+     width:22px;height:22px;border-radius:999px;color:var(--pine);border:1px solid rgba(46,107,98,.30);background:var(--paper)}
+  .lxmr svg{width:13px;height:13px;display:block}
+  .lxmr:hover{background:var(--pine-pale);border-color:var(--pine-pale)}
+  .lxmr:focus-visible{display:inline-flex;outline:2px solid var(--pine);outline-offset:2px}
+  @media (hover:hover){
+    .mini>.lxm:hover>.lxmr{display:inline-flex}
+    .mini>.lxm:hover>a .when{visibility:hidden}
+  }
 
   /* a panel hangs under the sources row, inside the reveal */
   .lxp{margin-top:14px;padding-top:12px;border-top:1px solid rgba(46,107,98,.16)}
@@ -98,6 +124,8 @@
   .lxlensbox .lxta{min-height:160px;font-size:13.5px}
 
   @media (max-width:660px){
+    .mini .lxm>a{display:block}
+    .lxmp{padding-left:0}
     .lxskel{grid-template-columns:var(--num) 1fr}
     .lxskel i:nth-child(3){display:none}
   }

@@ -369,7 +369,7 @@
     "slack:D0TOMAS1": "2026-09-14T11:38:00+02:00"
   },
   "live": {
-    "mail": { "server": "Gmail", "api": "gmail", "label": true },
+    "mail": { "server": "Gmail", "api": "gmail", "label": true, "read": true },
     "chat": { "server": "Slack", "api": "slack" },
     "rules": [
       { "label": "Sales", "rule": "Anything on a deal Nadia owns goes to Sales, unless it names me and asks a question." },

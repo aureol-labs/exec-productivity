@@ -367,7 +367,8 @@
   "mail": {
    "server": "Aureol Connect",
    "api": "aureol",
-   "label": true
+   "label": true,
+   "read": true
   },
   "chat": {
    "server": "Slack",
