@@ -8,7 +8,7 @@
     "brief": "https://claude.ai/code/artifact/example-daily-brief",
     "context": "https://claude.ai/code/artifact/example-super-context"
   },
-  "counts": { "mail": 65, "chat": 43 },
+  "counts": { "mail": 67, "chat": 41 },
   "queue": [
     {
       "id": "r1",
@@ -236,23 +236,6 @@
     },
     {
       "id": "f5",
-      "label": "Hiring",
-      "tint": "hiring",
-      "count": 7,
-      "by_channel": { "mail": 5, "teams": 2 },
-      "lede": "Two offers are live.",
-      "rule": "Offers, candidate schedules and recruiting threads go to Hiring, unless the signature is mine.",
-      "plain": [],
-      "contents": [
-        { "channel": "mail", "from": "Offers", "what": "VP Marketing, stage two done", "href": "" },
-        { "channel": "mail", "from": "Offers", "what": "Senior PM, verbal accepted", "href": "" },
-        { "channel": "teams", "from": "Recruiting", "what": "Four candidate slots for next week", "href": "" }
-      ],
-      "href": "",
-      "briefing": "My inbox routine labelled 7 unread items Hiring this morning, 5 mails and 2 Teams messages, under a rule I wrote: offers, candidate schedules and recruiting threads go to Hiring unless the signature is mine. Two offers are live: VP Marketing past stage two, and a Senior PM who accepted verbally. Four candidate slots were proposed for next week.\n\nRead them and tell me what is waiting on my signature or my calendar, and by when. Nothing else."
-    },
-    {
-      "id": "f6",
       "label": "Read later",
       "tint": "later",
       "count": 8,
@@ -266,6 +249,23 @@
       ],
       "href": "",
       "briefing": "My inbox routine filed 8 unread mails under Read later this morning, under a rule I wrote: newsletters and product updates go to Read later unless I subscribed to it this month. Nothing was deleted and all 8 are still unread.\n\nOpen them and tell me whether that rule is still right, or whether it should be tightened or loosened. Give me the new wording if so."
+    },
+    {
+      "id": "f6",
+      "label": "Receipts",
+      "tint": "receipts",
+      "count": 8,
+      "by_channel": { "mail": 8 },
+      "rule": "Invoices, payment receipts, order and delivery confirmations go to Receipts.",
+      "plain": [],
+      "contents": [
+        { "channel": "mail", "from": "Datastack", "what": "Your September invoice is ready", "href": "" },
+        { "channel": "mail", "from": "Qonto", "what": "Card payment receipt, Eurostar", "href": "" },
+        { "channel": "mail", "from": "Apple", "what": "Order confirmed, MacBook Air for Priya", "href": "" },
+        { "channel": "mail", "from": "DHL", "what": "Delivered: two monitors, Paris office", "href": "" }
+      ],
+      "href": "",
+      "briefing": "My inbox routine filed 8 unread mails under Receipts this morning, under a rule I wrote: invoices, payment receipts, order and delivery confirmations go to Receipts. Nothing was deleted and all 8 are still unread.\n\nOpen them and list each one with its sender, its amount and its date, so I can forward what finance needs."
     },
     {
       "id": "f7",
@@ -302,7 +302,7 @@
   ],
   "grouped": [],
   "others": {
-    "mail": 3,
+    "mail": 2,
     "chat": 2,
     "items": [
       {
@@ -311,13 +311,6 @@
         "what": "Office closed Friday 25 for the electrical works",
         "href": "",
         "when": "10:05"
-      },
-      {
-        "channel": "mail",
-        "from": "Datastack",
-        "what": "Your September invoice is ready",
-        "href": "",
-        "when": "08:12"
       },
       {
         "channel": "mail",
