@@ -349,10 +349,12 @@
   /* ---------- the banner: always in the same place, so nothing below it moves ---------- */
   var RUN=el('div','lxrun'), RUN_T=el('span',null,''), RUN_B=el('span','lxbar'), RUN_S=el('span','lxsecs',''), RUN_I=null;
   RUN.setAttribute('role','status'); RUN.setAttribute('aria-live','polite');
-  RUN_B.appendChild(el('i')); add(RUN,RUN_T,RUN_B,RUN_S);
-  function runShow(text){ var t0=performance.now(); RUN.classList.remove('done'); RUN_T.textContent=text; RUN_S.textContent='';
+  var RUN_R=el('button','lxq',L('lx_retry')); RUN_R.type='button'; RUN_R.hidden=true;
+  RUN_R.onclick=function(){ RUN_R.hidden=true; SORTED=false; maybeSort(); };
+  RUN_B.appendChild(el('i')); add(RUN,RUN_T,RUN_B,RUN_S,RUN_R);
+  function runShow(text){ var t0=performance.now(); RUN.classList.remove('done'); RUN_R.hidden=true; RUN_T.textContent=text; RUN_S.textContent='';
     clearInterval(RUN_I); RUN_I=setInterval(function(){ RUN_S.textContent=since(t0); },500); }
-  function runDone(text){ clearInterval(RUN_I); RUN.classList.add('done'); RUN_T.textContent=text; RUN_S.textContent=''; store(CACHE_KEY+':said',text); }
+  function runDone(text,retry){ clearInterval(RUN_I); RUN.classList.add('done'); RUN_T.textContent=text; RUN_S.textContent=''; RUN_R.hidden=!retry; if(!retry) store(CACHE_KEY+':said',text); }
 
   /* ---------- what the sort knows about you: the run's text, and the exec's own additions ---------- */
   var LENS_A=el('a','lxlens',''), LENS_BOX=el('div','lxlensbox'), LENS_RUN=el('p','lxlensrun',''), LENS_TA=el('textarea','lxta'),
@@ -377,7 +379,7 @@
     if(c==='not_granted'||c==='sampling_disabled') return L('lx_s_grant');
     if(c==='rate_limited') return L('lx_s_rate');
     if(c==='invalid_json') return L('lx_s_json');
-    return T('lx_s_stop',{c:c||'error'}); }
+    return T('lx_s_stop',{c:c||cut(String((e&&e.message)||e||'error'),140)}); }
   async function slackText(ch){
     var r=await LX.mcp.callTool(CHAT.server,'slack_read_channel',{channel_id:ch,limit:20,response_format:'concise'});
     var p=(r||{}).payload; return typeof p==='string' ? p : String((p&&p.messages)||'');
@@ -678,7 +680,7 @@
         +' · '+since(t0,true)+'.';
       if(f.failed.length) msg+=' '+T('lx_not_filed',{x:f.failed.join('; ')});
       runDone(msg);
-    }catch(e){ runDone(sampleCopy(e)); }
+    }catch(e){ try{ console.error('live inbox sort', e); }catch(x){} runDone(sampleCopy(e), true); }
     finally{ SORTING=false; LAST=''; redraw(); }
   }
   function seenOf(all){ var s={}; all.forEach(function(x){ var r=refOf(x), d=x.date&&!isNaN(x.date)?x.date.toISOString():''; if(!s[r]||s[r]<d) s[r]=d; }); return s; }

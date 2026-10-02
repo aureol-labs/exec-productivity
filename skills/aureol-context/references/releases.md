@@ -17,6 +17,10 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.11.1
+
+- No task step. When the live inbox's sort fails, its banner says why and offers to try again.
+
 ## 0.11.0
 
 - `inbox`: the next run publishes the Priority inbox even when nothing arrived since the last run, so the page
