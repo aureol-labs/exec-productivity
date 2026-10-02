@@ -17,6 +17,11 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.13.5
+
+- No task step. A line of the rest or of a label opens its panel only, no longer the mailbox as well; Open in the
+  panel leads to the message.
+
 ## 0.13.4
 
 - `inbox`: the queue is unread only (aureol-inbox rule 4): a thread the exec has read leaves it, whoever is waiting.
