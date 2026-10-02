@@ -41,10 +41,10 @@ published, nothing more.
    has used the wrong query.
 4. **The test for the queue**: someone is blocked, a promise is late, or only the exec can
    answer. A group ask anyone could answer is not the exec's. A thread the exec already replied to or reacted to
-   is out. Check the thread before ranking it, not the snippet. **Unread first**: the queue is built from unread
-   mail and unread messages; a thread the exec has read but not answered enters only when someone is visibly
-   still waiting (a follow-up, a question with no reply), with `read: true`, and the h1's counts are the real
-   unread counts from the tools, never estimated. **A bounce is the exception**: a message of the exec's that did
+   is out. Check the thread before ranking it, not the snippet. **Unread only**: the queue is built from unread
+   mail and unread messages; a thread the exec has read leaves the queue, whoever is waiting on it (the page
+   folds it as read). The h1's counts are the real unread counts from the tools, never estimated. **A bounce is
+   the exception**: a message of the exec's that did
    not arrive is a line even on a thread they answered or dropped, until they send it again, with the bounce's
    own id as `ref` (`message:<id>`) and `read: true` once they opened it.
 5. **The exec's priority holds.** A line leaves the inbox when it is read; the exec's one judgement on the page is

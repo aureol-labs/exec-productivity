@@ -1943,7 +1943,8 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
       || /\(via Google (Drive|Docs|Sheets|Slides|Forms)\)/i.test(x.from||'') || /@(docs|drive)\.google\.com$/i.test(a);
   }
   /* read mail from an automated sender is never a candidate; nor a thread you answered last */
-  function candidate(x){ return !(x.kind==='mail'&&!x.unread&&isAuto(x)) && !droppedIn(DISMISSED,x) && !x.mine && !prioOf(refOf(x),x); }
+  /* the inbox is what is unread: a read mail is never a candidate, nor a thread you answered last */
+  function candidate(x){ return !(x.kind==='mail'&&!x.unread) && !droppedIn(DISMISSED,x) && !x.mine && !prioOf(refOf(x),x); }
   var READ_HERE={};
   function liveItems(){ return LIVE.mail.map(function(x){ return READ_HERE[refOf(x)]&&x.unread ? Object.assign({},x,{unread:false}) : x; }).concat(LIVE.slack.items); }
   function itemFor(l,byRef){ var refs=String(l.ref||'').split('+'); for(var i=0;i<refs.length;i++) if(byRef[refs[i]]) return byRef[refs[i]]; return null; }
@@ -2007,7 +2008,7 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
       if(l.channel==='mail'||!l.channel){ if(mailFresh&&l.thread){
         if(x&&x.mine) state='answered';
         else if(!x&&Date.now()-Date.parse(l.dateIso)<6*864e5) state='archived';
-        else if(x&&l.wasUnread&&!x.unread) state='read'; } }
+        else if(x&&!x.unread) state='read'; } }
       else if(chatFresh&&LIVE.slack.replied[l.ref]) state='answered';
       if(!state&&droppedNow(l.ref)) state='dropped';
       String(l.ref).split('+').forEach(function(r){ taken[r]=1; });
@@ -2015,7 +2016,7 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
     });
     all.forEach(function(x){ if(taken[refOf(x)]||!isNew(x)) return; var v=PROV.verdicts[keyOf(x)];
       if(!v||!v.tier||v.tier==='rest'||droppedIn(DISMISSED_BOOT,x)||prioOf(refOf(x),x)==='down') return;
-      taken[refOf(x)]=1; out.push({l:lineFrom(x,v), state:droppedNow(refOf(x))?'dropped':''}); });
+      taken[refOf(x)]=1; out.push({l:lineFrom(x,v), state:droppedNow(refOf(x))?'dropped':(x.kind==='mail'&&!x.unread?'read':'')}); });
     all.forEach(function(x){ if(taken[refOf(x)]||!x.unread||prioOf(refOf(x),x)!=='up') return; taken[refOf(x)]=1; out.push({l:upLine(x), state:''}); });
     var ORD={now:0,today:1,week:2};
     return out.sort(function(a,b){ return (ORD[a.l.tier]-ORD[b.l.tier]) || (Date.parse(a.l.dateIso)-Date.parse(b.l.dateIso)); });
@@ -2487,10 +2488,9 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
     'You sort an executive’s recent messages into the few that need them. A message needs them only when someone is',
     'blocked waiting on them, a promise of theirs is late, or only they can answer. A group ask anyone could answer,',
     'a newsletter, a notification, a receipt or marketing does not, unless it blocks one of their priorities.',
-    'Automated senders (no-reply addresses, notifications, Google Drive or Docs shares, calendar notices) never need them',
-    'once read, and while unread only when they block a priority.',
-    'Unread first: a message they already read enters only when someone is visibly still waiting on them (a follow-up,',
-    'a question with no reply).',
+    'Automated senders (no-reply addresses, notifications, Google Drive or Docs shares, calendar notices) need them only',
+    'when they block a priority.',
+    'Every message below is unread: the inbox is what they have not read, and a message leaves it once read.',
     'Tiers: "now" is a clock they do not control (lapses today or tomorrow); "today"; "week". Importance is not a tier.',
     'Key people named in their lens are never the ones left out when the list is full.',
     'For each line, in '+LANG_NAME+', addressing the executive directly'+(LANG==='fr'?' in "vous"':'')+':',

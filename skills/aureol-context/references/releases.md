@@ -17,6 +17,11 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.13.4
+
+- `inbox`: the queue is unread only (aureol-inbox rule 4): a thread the exec has read leaves it, whoever is waiting.
+  A bounce stays the exception. On the page, a line whose mail is read folds as read, read before the sort or after.
+
 ## 0.13.3
 
 - `inbox`: the next run publishes the Priority inbox even when nothing arrived since the last run, so a page on Aureol
