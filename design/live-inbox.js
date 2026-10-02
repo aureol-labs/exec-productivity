@@ -297,6 +297,8 @@
       sources:[{kind:l.channel==='slack'?'chat':'mail', via:l.channel==='slack'?CHAT_NAME:undefined, label:l.from+', '+when(d), href:l.href}],
       briefing:briefingOf(l)};
   }
+  /* dropped on this page since it opened: the line folds with the others handled */
+  function droppedNow(ref){ return String(ref).split('+').some(function(r){ return DISMISSED[r]&&!DISMISSED_BOOT[r]; }); }
   function queueNow(){
     var all=liveItems(), byRef={}; all.forEach(function(x){ byRef[refOf(x)]=x; });
     var mailFresh=READY.mail.fresh, chatFresh=READY.slack.fresh, out=[], taken={};
@@ -309,12 +311,13 @@
         else if(!x&&Date.now()-Date.parse(l.dateIso)<6*864e5) state='archived';
         else if(x&&l.wasUnread&&!x.unread) state='read'; } }
       else if(chatFresh&&LIVE.slack.replied[l.ref]) state='answered';
+      if(!state&&droppedNow(l.ref)) state='dropped';
       String(l.ref).split('+').forEach(function(r){ taken[r]=1; });
       out.push({l:l, state:state});
     });
     all.forEach(function(x){ if(taken[refOf(x)]||!isNew(x)) return; var v=PROV.verdicts[keyOf(x)];
       if(!v||!v.tier||v.tier==='rest'||droppedIn(DISMISSED_BOOT,x)) return;
-      out.push({l:lineFrom(x,v), state:''}); });
+      out.push({l:lineFrom(x,v), state:droppedNow(refOf(x))?'dropped':''}); });
     var ORD={now:0,today:1,week:2};
     return out.sort(function(a,b){ return (ORD[a.l.tier]-ORD[b.l.tier]) || (Date.parse(a.l.dateIso)-Date.parse(b.l.dateIso)); });
   }
@@ -336,6 +339,8 @@
   function buildData(){
     ROWS={};
     var q=queueNow(), all=liveItems(), inQ={}, mailRead=!!READY.mail.any, chatRead=!!READY.slack.any;
+    /* a line handled since the sort (answered, read, archived, dropped) leaves its tier for the fold */
+    DONE=q.filter(function(r){ return r.state; });
     q.forEach(function(r){ String(r.l.ref).split('+').forEach(function(x){ inQ[x]=1; }); });
     var groups={}, others=[];
     all.forEach(function(x){ if(!x.unread||inQ[refOf(x)]) return; var f=filedUnder(x); if(f) (groups[f.label]=groups[f.label]||{rule:f,xs:[]}).xs.push(x); else others.push(x); });
@@ -363,7 +368,7 @@
     if(READY.slack.absent) counts.chat=(BASE.counts||{}).chat;
     var at=READY.mail.at&&isFinite(READY.mail.at)?new Date(READY.mail.at):new Date(BASE.generated||Date.now());
     return {lang:BASE.lang, sub:BASE.sub, date_label:dateLabel(new Date()), time_label:hhmm(at), today:dayOf(new Date()), gesture:BASE.gesture, links:BASE.links,
-      counts:counts, notices:notices.slice(0,2), queue:q.map(rowOf), filed:filed, grouped:mailRead?[]:(BASE.grouped||[]),
+      counts:counts, notices:notices.slice(0,2), queue:q.filter(function(r){ return !r.state; }).map(rowOf), filed:filed, grouped:mailRead?[]:(BASE.grouped||[]),
       wrote:filed.length>0||!!BASE.wrote, next_run:BASE.next_run,
       others:{mail:items.filter(function(x){ return x.channel==='mail'; }).length, chat:items.filter(function(x){ return x.channel!=='mail'; }).length, items:items}};
   }
@@ -623,7 +628,19 @@
     draw(json);
     if(READY.mail.any||READY.slack.any) store(CACHE_KEY,{base:BASE.generated, json:json, rows:ROWS});
   }
-  var MARK={answered:'lx_m_answered', archived:'lx_m_archived', read:'lx_m_read'};
+  var MARK={answered:'lx_m_answered', archived:'lx_m_archived', read:'lx_m_read', dropped:'lx_m_dropped'};
+  /* the fold: one quiet line under the queue, "2 handled since the sort", the lines struck through inside */
+  var DONE=[], DONE_OPEN=false;
+  function doneFold(){
+    var box=el('div','lxdone'), b=el('button','lxq lxdonet',P('lx_done_n',DONE.length)), list=el('div','lxdonel');
+    b.type='button'; b.setAttribute('aria-expanded',DONE_OPEN?'true':'false'); list.hidden=!DONE_OPEN;
+    DONE.forEach(function(q){ var l=q.l, c=l.channel==='slack'?(DEMO&&DEMO_CTX.chat==='teams'?'teams':'slack'):'mail', r=el('div','lxdr'), t=el('span','lxds');
+      r.dataset.ch=c==='mail'?'mail':'chat';
+      add(t, el('span','say',l.say||''), el('span','rel',L(MARK[q.state])));
+      add(r, channel(c), t, el('span','meta',when(new Date(l.dateIso)))); add(list,r); });
+    b.onclick=function(){ DONE_OPEN=!DONE_OPEN; list.hidden=!DONE_OPEN; b.setAttribute('aria-expanded',DONE_OPEN?'true':'false'); };
+    add(box,b,list); return box;
+  }
   function decorate(openId){
     document.title=TITLE;
     var page=$('page'), h1=page.querySelector('h1'), at=h1;
@@ -631,8 +648,6 @@
     page.insertBefore(RUN, at.nextSibling);
     Array.prototype.forEach.call(page.querySelectorAll('.queue .row'),function(row){
       var r=ROWS[row.id]; if(!r) return;
-      if(r.state){ row.classList.add('gone','lxstruck'); var dz=row.querySelector('.src .drop'); if(dz) dz.parentNode.removeChild(dz);
-        var dec=row.querySelector('.dec'); if(dec) add(dec, el('span','rel',L(MARK[r.state]))); }
       var why=row.querySelector(':scope > .why'), src=why&&why.querySelector('.src'); if(!src) return;
       /* the actions on their own line, drawn as buttons; the sources above stay links */
       var ask=src.querySelector('.ask'), drop=src.querySelector('.drop'), p=PANELS[row.id]||{}, acts=el('div','lxacts');
@@ -650,6 +665,7 @@
       if(p.thread) why.appendChild(p.thread); if(p.reply) why.appendChild(p.reply);
     });
     /* placeholder lines only on an empty page: a page with lines keeps them still */
+    if(DONE.length){ var anchor=QL||SEG||RUN; anchor.parentNode.insertBefore(doneFold(),anchor.nextSibling); }
     if(SORTING&&!QL){ var list=el('div','list queue'); RUN.parentNode.insertBefore(list,(SEG||RUN).nextSibling);
       for(var i=0;i<3;i++){ var sk=el('div','lxskel'); add(sk,el('i'),el('i'),el('i')); list.appendChild(sk); } }
     decorateMinis();
@@ -955,7 +971,8 @@
       else if(prov) PROV={verdicts:{}, filed:prov.filed||{}};
       OWN=String((val(2)||{}).own||''); LENS_TA.value=OWN;
       if(r[3].status==='fulfilled') DISMISSED=DISMISSED_BOOT=readDismissals(r[3].value);
-      try{ LX.db.collection('dismissals').onSnapshot(function(s){ DISMISSED=readDismissals(s); },function(){}); }catch(e){}
+      /* a drop folds its line once the page has said "remembered" */
+      try{ LX.db.collection('dismissals').onSnapshot(function(s){ DISMISSED=readDismissals(s); setTimeout(function(){ LAST=''; redraw(); },1500); },function(){}); }catch(e){}
     }
     if(!LAST) redrawNow();
     if(!LX.mcp){ runDone(L('lx_open_in_claude')); return; }

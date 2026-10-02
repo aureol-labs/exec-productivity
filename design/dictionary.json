@@ -378,7 +378,12 @@
     "lx_demo_chat": "Chat:",
     "lx_demo_mail": "Mail:",
     "lx_cat_labelled": "Categorised, still unread",
-    "lx_cat_more": "and {n} more in this category"
+    "lx_cat_more": "and {n} more in this category",
+    "lx_done_n": [
+      "{n} handled since the sort",
+      "{n} handled since the sort"
+    ],
+    "lx_m_dropped": "Dropped"
   },
   "fr": {
     "page_brief": "Brief du jour",
@@ -758,6 +763,11 @@
     "lx_demo_chat": "Messagerie :",
     "lx_demo_mail": "Mail :",
     "lx_cat_labelled": "Catégorisés, toujours non lus",
-    "lx_cat_more": "et {n} de plus dans cette catégorie"
+    "lx_cat_more": "et {n} de plus dans cette catégorie",
+    "lx_done_n": [
+      "{n} traité depuis le tri",
+      "{n} traités depuis le tri"
+    ],
+    "lx_m_dropped": "Écarté"
   }
 }
