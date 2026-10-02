@@ -17,6 +17,11 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.12.8
+
+- No task step. On the inbox page, a line handled since the sort (answered, read, archived, dropped) leaves its tier for one
+  quiet fold under the queue, "N handled since the sort"; the next sort clears it.
+
 ## 0.12.7
 
 - No task step. The inbox demo on Outlook speaks of categories, not labels.

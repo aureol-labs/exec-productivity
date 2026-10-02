@@ -31,7 +31,18 @@
   .lxskel i:nth-child(1){width:15px}.lxskel i:nth-child(2){width:68%}.lxskel i:nth-child(3){width:40px}
   @keyframes lxsk{0%,100%{opacity:.5}50%{opacity:1}}
 
-  .row.lxstruck .say{text-decoration:line-through;text-decoration-color:var(--ink-3)}
+
+  /* ---- handled since the sort: folded under the queue ---- */
+  .lxdone{--num:40px;margin-top:12px}
+  .lxdone .lxdonet{font-size:12.5px;color:var(--ink-3)}
+  .lxdonel{margin-top:8px;border-top:1px solid var(--hair)}
+  .lxdr{display:grid;grid-template-columns:var(--num) 1fr auto;column-gap:var(--gap);align-items:baseline;
+     padding:10px 6px 10px 0;border-bottom:1px solid var(--hair)}
+  .lxdr .ch{color:var(--ink-3)}
+  .lxdr .say{display:block;font-size:14.5px;line-height:1.5;color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--ink-3)}
+  .lxdr .rel{display:block;margin-top:2px;font-size:11.5px;color:var(--ink-3)}
+  .lxdr .meta{font-size:12.5px;color:var(--ink-3);white-space:nowrap}
+  @media (max-width:660px){ .lxdr{grid-template-columns:var(--num) 1fr} .lxdr .meta{grid-column:2} }
 
   /* the two gestures sit in the sources row in the source type: look, not go */
 
