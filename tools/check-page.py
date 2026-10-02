@@ -511,8 +511,61 @@ def check_inbox(d, r, others):
         if isinstance(counts.get(k), int) and counts[k] != on_page[k]:
             r.bad('$.counts.' + k, 'the title says %d unread %s, the page accounts for %d: every unread is waiting, filed, or in others'
                   % (counts[k], k, on_page[k]))
+    check_live(d, q, r)
     check_refs(d, r, 'inbox', own, others)
     return own
+
+
+# ---------- the inbox's live block ----------
+KINDS = {'decision', 'info', 'action', 'fyi', 'unclear'}
+STAMP = re.compile(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}')
+
+
+def check_live(d, q, r):
+    """The live block: what the page needs to read the exec's connections itself. Optional;
+    when present, every queue line carries its thread so live reads find it again."""
+    for i, row in enumerate(q):
+        if row.get('kind') is not None and row['kind'] not in KINDS:
+            r.bad('$.queue[%d].kind' % i, 'kind is one of %s' % sorted(KINDS))
+    live = d.get('live')
+    if live is None:
+        return
+    if not isinstance(live, dict):
+        r.bad('$.live', 'an object: mail, chat, rules, lens')
+        return
+    mail, chat = live.get('mail'), live.get('chat')
+    if mail is not None and (not isinstance(mail, dict) or not mail.get('server') or mail.get('api') not in ('aureol', 'gmail')):
+        r.bad('$.live.mail', 'null, or {server, api: aureol|gmail, label}: the connector as the exec named it')
+    if chat is not None and (not isinstance(chat, dict) or not chat.get('server') or chat.get('api') != 'slack'):
+        r.bad('$.live.chat', 'null, or {server, api: slack}')
+    rules = live.get('rules') or []
+    if not isinstance(rules, list) or any(not isinstance(x, dict) or not x.get('label') or not x.get('rule') for x in rules):
+        r.bad('$.live.rules', 'the exec\'s confirmed rules, each {label, rule} in their words')
+    if isinstance(mail, dict) and mail.get('label') and not rules:
+        r.warn('$.live.rules', 'the mail connection can label but no rule is given: the page will file nothing')
+    lens = live.get('lens')
+    if lens is not None and (not isinstance(lens, str) or len(lens) > 2500):
+        r.bad('$.live.lens', 'one text, 2500 characters at most')
+    if not STAMP.match(str(d.get('generated') or '')):
+        r.bad('$.generated', 'the run\'s time, ISO with the hour: the page sorts only what arrived after it')
+    seen = d.get('seen')
+    if not isinstance(seen, dict) or any(not STAMP.match(str(v)) for v in seen.values()):
+        r.bad('$.seen', 'every thread the run read, {ref: newest message time, ISO}')
+    for i, row in enumerate(q):
+        p = '$.queue[%d]' % i
+        v = row.get('live')
+        if not isinstance(v, dict) or not STAMP.match(str(v.get('at') or '')):
+            r.bad(p + '.live', '{at, from, thread or channel_id}: when the message arrived and where it sits')
+            continue
+        if row.get('kind') is None:
+            r.bad(p + '.kind', 'what is asked: %s' % sorted(KINDS))
+        refs = str(row.get('ref') or '').split('+')
+        if any(x.startswith('message:') for x in refs):
+            continue  # a bounce is keyed by its own message, not its thread
+        if row.get('channel') == 'mail' and (not v.get('thread') or 'thread:' + str(v['thread']) not in refs):
+            r.bad(p + '.live.thread', 'a mail line carries its thread id, and its ref is thread:<that id>')
+        if row.get('channel') == 'slack' and (not v.get('channel_id') or 'slack:' + str(v['channel_id']) not in refs):
+            r.bad(p + '.live.channel_id', 'a Slack line carries its conversation id, and its ref is slack:<that id>')
 
 
 # ---------- super context ----------
@@ -828,6 +881,10 @@ def selftest():
     broken('inbox', 'per-channel counts do not add up', lambda d: d['filed'][0]['by_channel'].__setitem__('mail', 3))
     broken('inbox', 'more than 5 contents', lambda d: d['filed'][0]['contents'].append(dict(d['filed'][0]['contents'][0])))
     broken('inbox', 'lateness arithmetic in a briefing', lambda d: d['queue'][0].__setitem__('briefing', 'No reply in five days.'))
+    broken('inbox', 'a live line without its thread', lambda d: d['queue'][1]['live'].pop('thread'))
+    broken('inbox', 'a kind the page does not know', lambda d: d['queue'][0].__setitem__('kind', 'urgent'))
+    broken('inbox', 'a live page without the run time', lambda d: d.pop('generated'))
+    broken('inbox', 'a mail connector the page cannot read', lambda d: d['live']['mail'].__setitem__('api', 'outlook'))
     broken('inbox', 'tiers out of order', lambda d: d['queue'][0].__setitem__('tier', 'week'))
     broken('inbox', 'others still uses examples', lambda d: d['others'].__setitem__('examples', []))
     broken('inbox', 'others items tally off by one', lambda d: d['others']['items'].pop())

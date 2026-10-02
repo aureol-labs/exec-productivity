@@ -17,6 +17,16 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.11.0
+
+- `inbox`: the next run publishes the Priority inbox even when nothing arrived since the last run, so the page
+  moves to the live template: the `live` block, `generated`, `seen`, and `kind` and `live` on every line, as the
+  inbox skill's section 5 says, published with the capabilities it lists. No task prompt changes.
+- The page itself now reads mail and chat when the exec opens it in Claude, sorts what arrived since the run,
+  files under the exec's rules, and summarises a thread or drafts a reply on request. It asks the exec once to
+  use their connections and Claude. Where the mail connection is one it cannot read, it is the page the run
+  published. The pre-0.11.0 inbox is kept in `archive/inbox-static-0.10.0/`.
+
 ## 0.10.0
 
 - No task step: the skills and the store carry it. Install proposes three fixed labels, Read later, Receipts

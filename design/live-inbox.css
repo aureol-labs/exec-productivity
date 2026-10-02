@@ -1,0 +1,84 @@
+  /* ================ THE LIVE LAYER ================
+     What the live page adds: the banner under the title, placeholder lines on an
+     empty page while Claude sorts, the struck lines, the two gestures in each
+     reveal's sources row and the panels they open, and the lens as a quiet link.
+     Built only from the design system's tokens and type sizes. */
+  .lxrun{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;margin-top:16px;
+     padding:9px 14px;border-radius:5px;background:var(--wash);font-size:13px;line-height:1.5;
+     color:var(--ink-2);max-width:72ch}
+  .lxrun .lxbar{flex:1 1 90px;height:2px;align-self:center;background:var(--pine-pale);
+     position:relative;overflow:hidden;border-radius:2px}
+  .lxrun .lxbar i{position:absolute;top:0;bottom:0;left:-30%;width:30%;background:var(--pine);
+     animation:lxbar 1.3s ease-in-out infinite}
+  .lxrun .lxsecs{font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .lxrun.done .lxbar,.lxrun.done .lxsecs{display:none}
+  @keyframes lxbar{from{left:-30%}to{left:100%}}
+
+  .lxskel{display:grid;grid-template-columns:var(--num) 1fr auto;column-gap:var(--gap);
+     align-items:center;padding:19px 6px 19px 0;border-top:1px solid var(--hair)}
+  .lxskel:first-child{border-top:none}
+  .lxskel i{display:block;height:10px;border-radius:5px;background:var(--hair);
+     animation:lxsk 1.4s ease-in-out infinite}
+  .lxskel i:nth-child(1){width:15px}.lxskel i:nth-child(2){width:68%}.lxskel i:nth-child(3){width:40px}
+  @keyframes lxsk{0%,100%{opacity:.5}50%{opacity:1}}
+
+  .row.lxstruck .say{text-decoration:line-through;text-decoration-color:var(--ink-3)}
+
+  /* the two gestures sit in the sources row in the source type: look, not go */
+  .src a.lxa[aria-expanded="true"]{color:var(--pine-ink);border-bottom-color:var(--pine)}
+
+  /* a panel hangs under the sources row, inside the reveal */
+  .lxp{margin-top:14px;padding-top:12px;border-top:1px solid rgba(46,107,98,.16)}
+  .lxline{display:flex;flex-wrap:wrap;align-items:baseline;gap:7px 16px;font-size:12.5px;
+     line-height:1.5;color:var(--ink-3)}
+  .lxline+.lxline,.lxta+.lxline{margin-top:10px}
+  .lxmeter{font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .lxline .lxmeter:last-child{margin-left:auto}
+  .lxq{all:unset;cursor:pointer;font-size:12.5px;color:var(--ink-3);white-space:nowrap;
+     border-bottom:1px solid transparent}
+  .lxq:hover{color:var(--pine);border-bottom-color:var(--pine)}
+  .lxq:disabled{opacity:.45;cursor:default;border-bottom-color:transparent}
+  .lxq:focus-visible,.lxgo:focus-visible,.lxlens:focus-visible{outline:2px solid var(--pine);outline-offset:3px;border-radius:2px}
+  .lxgo{all:unset;cursor:pointer;font-size:12.5px;font-weight:600;line-height:1.4;color:#fff;
+     background:var(--pine);border:1px solid var(--pine);border-radius:999px;padding:4px 13px;white-space:nowrap}
+  .lxgo:hover{background:var(--pine-ink);border-color:var(--pine-ink)}
+  .lxgo:disabled{font-weight:500;color:var(--ink-3);background:none;border-color:var(--hair);cursor:default}
+  .lxta{display:block;box-sizing:border-box;width:100%;min-height:150px;margin-top:2px;padding:10px 12px;
+     font:14.5px/1.6 var(--sans);color:var(--ink);background:var(--paper);border:1px solid var(--hair);
+     border-radius:4px;resize:vertical}
+  .lxta:focus{outline:none;border-color:var(--pine-pale)}
+  .lxin{flex:1 1 180px;min-width:0;font:12.5px var(--sans);padding:2px 0;color:var(--ink);background:transparent;
+     border:0;border-bottom:1px solid var(--hair);border-radius:0}
+  .lxin:focus{outline:none;border-bottom-color:var(--pine)}
+  .lxin::placeholder{color:var(--ink-3);opacity:1}
+  .lxskip{font-size:13.5px;color:var(--ink-2)}
+  .lxnote{margin-top:8px;font-size:12px;font-weight:600;color:var(--pine)}
+  .lxnote:empty{display:none}
+  .lxnote.bad{color:var(--brick)}
+  .lxp a.lxout{font-size:12.5px;color:var(--pine);text-decoration:none;border-bottom:1px solid rgba(46,107,98,.22)}
+  .lxp a.lxout:hover{color:var(--pine-ink);border-bottom-color:var(--pine)}
+
+  /* the thread, summarised: the design system's typed rows */
+  .lxsum .ctx{margin-top:2px}
+  .lxsum .ctx ol li span{color:var(--ink-2)}
+  .lxsum .ctx .land{margin-top:0;color:var(--brick);font-weight:600}
+  .lxsum .ctx div p+p{margin-top:4px}
+  .lxsum:empty{display:none}
+
+  /* the lens: one quiet line under the footer */
+  .lxlens{display:inline-block;margin-top:14px;font-size:12px;color:var(--ink-3);text-decoration:none;
+     border-bottom:1px solid var(--hair);cursor:pointer}
+  .lxlens:hover{color:var(--pine);border-bottom-color:var(--pine-pale)}
+  .lxlensbox{margin-top:10px;max-width:620px}
+  .lxlensrun{font-size:12.5px;line-height:1.6;color:var(--ink-3);white-space:pre-line;margin-bottom:10px}
+  .lxlensbox .lxta{min-height:160px;font-size:13.5px}
+
+  @media (max-width:660px){
+    .lxskel{grid-template-columns:var(--num) 1fr}
+    .lxskel i:nth-child(3){display:none}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .lxrun .lxbar i{animation:none;left:0;width:100%;opacity:.35}
+    .lxskel i{animation:none}
+  }
+  @media print{ .lxrun,.lxp,.src a.lxa,.lxlens,.lxlensbox{display:none!important} }

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Priority inbox</title>
+<!--
+  THE PRIORITY INBOX. Template, built by tools/build-templates.py from design/. Do
+  not edit the built file: edit design/pages/inbox.html, design/partial.css,
+  design/partial.js or design/dictionary.json and rebuild.
+
+  WHAT THIS IS
+  Everything unread, in one queue, categorised and ranked. Two jobs, and they are
+  different jobs. Categorising keeps the mailbox clean. Ranking decides what you
+  touch. The page never lets the first pretend to be the second: the lead is a
+  count, not a claim, and the bulk is called "labelled, still unread", which says
+  exactly what happened and exactly what did not. Mail, Slack and Teams on one page,
+  ranked as one queue, with a filter to see one channel at a time. The channel is a
+  monochrome mark in the left column.
+
+  THE WRITES
+  Labels only. Never a delete, never a send, never a mark as read, never a move.
+  The routine does not archive: it labels To archive under rules the exec wrote,
+  and the exec clears the label in their own mailbox. Every label opens on the rule
+  that filed it and on what is inside. Where the mail role cannot write labels, the
+  page shows "The rest, grouped" instead, without rules, and the footer says
+  nothing was written.
+
+  DROP
+  Every queue row carries one gesture of the exec's own, Drop, at the end of its
+  sources row after Ask Claude. It asks why, inline (Done, Not important), and
+  writes dismissals/<slug of ref> {page: "inbox", kind: "queue", ref, say, reason:
+  done|not_important, date} to this artifact's store; the row greys where it stands
+  and says "remembered". The inbox routine reads that collection before it ranks
+  and never brings a dropped thread back (a done thread also keeps its follow-ups
+  out for 7 days). Nothing is written to the mailbox. Published with the db
+  capability (capabilities: {db: {}}) so Drop is remembered; without it Drop copies
+  a line for Claude and the row says "waiting for Claude".
+  At load the page reads its store and applies what the exec did since publish, so
+  a drop or a save survives a reload; the next routine run publishes a page without
+  those rows. Once the store resolves, every dismissals document whose page is
+  "inbox" and whose ref is a queue row's ref leaves that row as a fresh drop does:
+  closed, greyed, "remembered", no Drop word. Recounted from the rows still
+  standing: the title's "N need you, K now" and the filter's counts. The unread counts
+  are the connectors' and stay: a drop marks nothing read. A read that fails, or a
+  store that is null, changes nothing and shows nothing.
+
+  HOW IT RENDERS
+  The routine never hand-writes rows. It builds one JSON document and puts it in the
+  <script id="data" type="application/json"> element in place of the DATA_JSON placeholder, with
+  every "<" in the serialised JSON escaped as \u003c. render() builds the whole DOM
+  from that JSON. When the placeholder is left unreplaced, the page renders the example
+  embedded in <script id="example">. Every UI string comes from the dictionary,
+  English or French from data.lang. Data is never translated by the page.
+  tools/check-page.py refuses a document that breaks a rule below.
+
+  THE JSON, IN SHORT (the full fixture is skills/aureol-inbox/references/example.json)
+    lang, date_label, time_label, today, sub, gesture, links   as on every page
+    counts        { mail: 61, chat: 41 }      unread, read off the connectors on every
+                  run: 0 when a channel was read and is empty, null when it could not
+                  be read (the title then says "chat not read"), never absent
+    notices       [ "one line" ]   only when a count is null: what could not be read, in
+                  the exec's language, under the title; two at most, twelve words each
+    queue         [ row ]   ordered: tier, then oldest first inside a tier; twelve at most
+      a row       { id, ref, read, tier: now|today|week, channel: mail|slack|teams, channels,
+                    say, meta: { kind: "time" | "date", value }, type, argument: [fact],
+                    sources, briefing }
+      say         the ask with the name; argument, one entry, the fact it is on the
+                  page for, shown when the line opens; no advice
+      channels    optional, ["mail","slack"]: one topic on two channels is one line.
+                  It lists every channel the line stands for, contains channel, at
+                  most one thread per channel; the sentence carries one mark per
+                  channel and the title counts the line once per channel
+      ref         optional string, the stable key Drop is remembered under: the
+                  thread id ("thread:...") or its link; a bounce, its own id
+                  ("message:..."); a merged line joins its thread ids with "+",
+                  mail first; absent, the page falls back to the first source
+                  href, then to the row id
+      read        optional, true when the exec already opened what the line stands
+                  for: it still needs them (someone visibly waiting, a bounce) and
+                  is not counted as unread
+      type        precedent | knock_on | pattern | history      never absent
+      meta        when the message arrived: a clock for today, a date before that
+    filed         [ label ]  only where the mail role could write labels
+      a label     { id, label, tint, count, by_channel: { mail, slack, teams },
+                    lede, rule, contents: [item], href, briefing }
+                  the row is the tally and the label; lede only when something
+                  inside deserves the exec's eye; no sources, the contents are the
+                  sources;
+                  tint is one of sales|product|board|customers|hiring|later|receipts|arch;
+                  arch is To archive, drawn as an outline, and carries rules: [{count,
+                  rule}] instead of one rule; every other label carries its rule, in
+                  the exec's words
+      an item     { channel, from, what, href }   3 to 5 of them, every one a link;
+                  the count minus the items shown is "and N more in this label"
+    grouped       [ group ]  the same shape without rule, when filed is empty
+    wrote         true when labels were written, false otherwise
+    next_run      "13:00"
+    others        { mail: 3, chat: 2, items: [ { channel, from, what, href, when } ] }  every
+                  unread that is neither waiting on the exec nor filed, the full list, newest
+                  first, so the title's counts reconcile: counts.mail = unread queue lines
+                  carrying mail + filed mail + others.mail, same for chat. The page shows 3 lines and
+                  "show all N" opens the rest. Absent or zero: nothing rendered.
+      ref         { id } same page (opens the target) or { page, id } another page
+      src         { kind: mail|chat|calendar|doc|meeting|file|you, via, label, href }
+
+  THE FILTER
+  All, Mail, and the chat tool (Slack, Teams, or "Chat" when both), each with its
+  count of lines waiting on the exec. Built from the data, nothing to write for it. A
+  line on two channels stands under both and shows only the filtered channel's mark.
+  The title stays the whole inbox. The choice is the viewer's, kept in this browser
+  when the page may keep it, and the page starts on All when it may not. It never
+  uses the hidden attribute, which "show all" owns.
+
+  THE RIGHT COLUMN IS WHEN IT ARRIVED
+  Precise due times and computed lateness were tried and cut. A receipt time is a
+  fact. Brick left this page with the lateness mark: nothing an inbox page can see
+  proves that time is broken. No strip either: an inbox has no axis.
+
+  DESIGN
+  See design/partial.css. No em dashes. Numerals in the title and the tallies.
+  Self-contained: no webfonts, no assets, no network.
+
+{{SECURITY}}
+-->
+<style>
+{{CSS}}
+</style>
+</head>
+<body>
+{{GLYPHS}}
+<div class="page" id="page"></div>
+
+<script id="data" type="application/json">{{DATA_JSON}}</script>
+<script id="example" type="application/json">{{EXAMPLE_JSON}}</script>
+<script>
+var DICT={{DICT}};
+{{JS}}
+
+  /* ================ THE PRIORITY INBOX ================ */
+  function chip(label,tint){ return el('span','cat'+(tint?' '+tint:''),label||''); }
+  function quoted(s){ return L('q_open')+s+L('q_close'); }
+  /* the filter's word for a channel: mail, or chat for Slack and Teams alike */
+  function fk(c){ return c==='mail' ? 'mail' : 'chat'; }
+  /* the filter words a line stands for: "mail", "chat", or "mail chat" for one topic on both */
+  function chans(it){
+    var out=[]; (it.channels||[it.channel]).forEach(function(c){ var k=fk(c); if(out.indexOf(k)<0) out.push(k); });
+    return out.join(' ');
+  }
+  function tierOf(it){ return it.tier==='now'?'now':it.tier==='today'?'today':'week'; }
+  function matches(chs){ return FILTER==='all' || (' '+(chs||'')+' ').indexOf(' '+FILTER+' ')>=0; }
+
+  /* a queue line: the channel marks, the ask, when it arrived. The reveal: what to
+     do, why in one line, then the sources, Ask Claude and Drop. */
+  function queueRow(it){
+    var r=el('div','row'); r.id=it.id; r.dataset.ch=chans(it); r.dataset.tier=tierOf(it);
+    var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
+    b.onclick=function(){ t(b); };
+    var marks=el('span','chs');
+    /* each mark carries its own channel, so a filtered view shows only its own */
+    (it.channels||[it.channel]).forEach(function(c){ var g=channel(c); g.setAttribute('data-ch',fk(c)); add(marks,g); });
+    var dec=el('span','dec'); add(dec, el('span','say',it.say||''));
+    add(b, marks, dec, el('span','meta', it.meta && it.meta.value!=null ? String(it.meta.value) : ''));
+    add(r,b);
+    var w=el('div','why');
+    if(it.lede) add(w, el('p','lede',it.lede));
+    var why=(it.argument||[])[0]; if(why) add(w, el('p',null,why));
+    add(w, srcRow(it.sources,it.briefing));
+    add(r,w);
+    var first=(it.sources||[])[0];
+    dropUI(r, {page:'inbox', kind:'queue', ref: it.ref || (first && first.href) || it.id, say:it.say||''});
+    return r;
+  }
+
+  /* one line of a label's contents or of the rest: the channel mark, who, what, and
+     when it arrived; every line is a link to its own thread */
+  function miniLine(x){
+    var a=link(x.href,''); a.textContent='';
+    add(a, channel(x.channel), el('b',null,x.from||''), x.what||'');
+    if(x.when) add(a, el('span','when',String(x.when)));
+    if(a.getAttribute('href')!=='#'){ a.setAttribute('target','_blank'); a.setAttribute('rel','noopener'); }
+    return a;
+  }
+
+  /* ---- the filter: All, Mail, Slack. The viewer's choice, kept on this device when
+     the page may keep it; a page that may not starts on All. ---- */
+  var FILTER='all', FKEY='aureol-inbox-filter', PAGE=null, SEG=null;
+  function readFilter(){ try{ var v=window.localStorage.getItem(FKEY); return v==='mail'||v==='chat' ? v : 'all'; }catch(e){ return 'all'; } }
+  function keepFilter(v){ try{ window.localStorage.setItem(FKEY,v); }catch(e){} }
+  function chatName(d){
+    var seen={};
+    (d.queue||[]).forEach(function(it){ (it.channels||[it.channel]).forEach(function(c){ if(c!=='mail') seen[c]=1; }); });
+    (d.filed||[]).concat(d.grouped||[]).forEach(function(f){ var bc=f.by_channel||{}; for(var c in bc){ if(c!=='mail' && bc[c]) seen[c]=1; } });
+    ((d.others||{}).items||[]).forEach(function(x){ if(x.channel!=='mail') seen[x.channel]=1; });
+    var ks=Object.keys(seen);
+    if(ks.length===1 && ks[0]==='slack') return 'Slack';
+    if(ks.length===1 && ks[0]==='teams') return 'Teams';
+    return L('f_chat');
+  }
+  function segBar(name){
+    var bar=el('div','seg'); bar.setAttribute('role','group');
+    [['all',L('f_all')],['mail',L('f_mail')],['chat',name]].forEach(function(x){
+      var bt=el('button'); bt.type='button'; bt.dataset.f=x[0]; bt.setAttribute('aria-pressed','false');
+      add(bt, x[1], el('b',null,''));
+      bt.onclick=function(){ setFilter(x[0],true); };
+      add(bar,bt);
+    });
+    return bar;
+  }
+  function setFilter(f,keep){
+    FILTER=f; if(keep) keepFilter(f);
+    PAGE.dataset.f=f;
+    if(SEG) Array.prototype.forEach.call(SEG.querySelectorAll('button'),function(bt){
+      var on=bt.dataset.f===f; bt.classList.toggle('on',on); bt.setAttribute('aria-pressed',on?'true':'false');
+    });
+    document.querySelectorAll('.row.open').forEach(closeRow);
+    syncTiers(); syncFiled(); retuck();
+  }
+  /* a tier with nothing left under the filter says nothing */
+  function syncTiers(){
+    if(!QL) return;
+    var firstSeen=false;
+    Array.prototype.forEach.call(QL.querySelectorAll('.tierh'),function(th){
+      var any=Array.prototype.some.call(QL.querySelectorAll('.row[data-tier="'+th.dataset.tier+'"]'),function(r){ return matches(r.dataset.ch); });
+      th.classList.toggle('off',!any);
+      th.classList.toggle('first', any && !firstSeen);
+      if(any) firstSeen=true;
+    });
+  }
+
+  /* ---- what was filed: one short row per label, its tally and its name. The row
+     opens on the rule and on what is inside; the tally and the lines follow the
+     filter. ---- */
+  var FROWS=[], FILED_H=null, FSEC=null, WITH_RULE=true;
+  function labelCount(f){
+    if(FILTER==='all') return f.count|0;
+    var bc=f.by_channel||{}, n=0;
+    for(var c in bc){ if(fk(c)===FILTER) n+=(bc[c]|0); }
+    return n;
+  }
+  function filedRow(f){
+    var r=el('div','row'); r.id=f.id;
+    var b=el('button'); b.type='button'; b.setAttribute('aria-expanded','false');
+    b.onclick=function(){ t(b); };
+    var n=el('span','n','');
+    var dec=el('span','dec'); add(dec, el('span','say', null)); dec.firstChild.appendChild(chip(f.label,f.tint));
+    add(b, n, dec, el('span','meta',''));
+    var w=el('div','why');
+    add(r, b, w);
+    FROWS.push({f:f, r:r, n:n, w:w});
+    return r;
+  }
+  function fillFiled(x){
+    var f=x.f, w=x.w; w.textContent='';
+    if(f.lede) add(w, el('p','lede',f.lede));
+    if(WITH_RULE && f.tint==='arch' && f.rules && f.rules.length){
+      add(w, typeTag('rule'));
+      var tight=el('div','tight');
+      f.rules.forEach(function(x){ var p=el('p'); add(p, el('b',null,String(x.count)), quoted(x.rule||'')); add(tight,p); });
+      add(w,tight);
+    } else if(WITH_RULE && f.rule){
+      add(w, typeTag('rule'), el('p',null,quoted(f.rule)));
+    }
+    paras(w,f.plain,'plain');
+    var items=(f.contents||[]).filter(function(y){ return FILTER==='all' || fk(y.channel)===FILTER; }).slice(0,5);
+    if(items.length){
+      var mini=el('div','mini');
+      items.forEach(function(y){ add(mini, miniLine(y)); });
+      var more=labelCount(f)-items.length;
+      if(more>0){
+        var ma=link(f.href, F(L(WITH_RULE?'more_label':'more_group'),{n:more}), 'more');
+        if(ma.getAttribute('href')!=='#'){ ma.setAttribute('target','_blank'); ma.setAttribute('rel','noopener'); }
+        add(mini,ma);
+      }
+      add(w,mini);
+    }
+    add(w, srcRow(f.sources,f.briefing));
+  }
+  function syncFiled(){
+    if(!FSEC) return;
+    var sum=0, firstSeen=false;
+    FROWS.forEach(function(x){
+      var n=labelCount(x.f); x.n.textContent=String(n);
+      x.r.classList.toggle('off', n===0);
+      x.r.classList.toggle('first', n>0 && !firstSeen); if(n>0) firstSeen=true;
+      sum+=n; fillFiled(x);
+    });
+    FILED_H.textContent=String(sum);
+    FSEC.classList.toggle('off', sum===0);
+  }
+
+  /* ---- the rest, every line of it: three show, "show all N" opens the rest of the
+     channel in view. Its own mark, never the hidden attribute. ---- */
+  var OM=null, REST=null;
+  function retuck(){
+    if(!OM) return;
+    var old=OM.querySelector('.more'); if(old) OM.removeChild(old);
+    var vis=[];
+    Array.prototype.forEach.call(OM.children,function(a){ a.classList.remove('tk'); if(matches(a.dataset.ch)) vis.push(a); });
+    REST.textContent=P('others_line',vis.length);
+    REST.classList.toggle('off',!vis.length); OM.classList.toggle('off',!vis.length);
+    if(vis.length>3){
+      vis.slice(3).forEach(function(a){ a.classList.add('tk'); });
+      var more=el('a','more',F(L('show_all_n'),{n:vis.length})); more.setAttribute('href','#');
+      more.onclick=function(e){ e.preventDefault(); vis.forEach(function(a){ a.classList.remove('tk'); }); if(more.parentNode) more.parentNode.removeChild(more); return false; };
+      add(OM,more);
+    }
+  }
+
+  /* ---- the counts. The h1 is the whole inbox, whatever the filter, so it says what
+     the notification said; the filter's segments carry each channel's share. Both
+     recounted from the rows still standing once the store has said what was dropped. ---- */
+  var H1=null, QL=null, MAIL=0, CHAT=0;
+  /* a count in the footer: a numeral when the channel was read, "not read" when it
+     could not be, so a zero can only mean read and empty */
+  function countWord(k,n){ return n==null ? L(k+'_not_read') : P('unread_'+k+'_n',n); }
+  function headline(n,k){ return !n ? L('none_need_you') : k ? P('need_you_now',n,{k:k}) : P('need_you_n',n); }
+  function recount(){
+    var rows=QL ? Array.prototype.slice.call(QL.querySelectorAll('.row:not(.gone)')) : [];
+    var k=rows.filter(function(r){ return r.dataset.tier==='now'; }).length;
+    H1.textContent=headline(rows.length,k);
+    if(SEG){
+      var c={all:rows.length, mail:0, chat:0};
+      rows.forEach(function(r){ var s=' '+r.dataset.ch+' '; if(s.indexOf(' mail ')>=0) c.mail++; if(s.indexOf(' chat ')>=0) c.chat++; });
+      Array.prototype.forEach.call(SEG.querySelectorAll('button'),function(bt){ bt.querySelector('b').textContent=String(c[bt.dataset.f]); });
+    }
+  }
+
+  function render(){
+    var d=loadData(), page=$('page'); PAGE=page;
+    var q=d.queue||[], filed=d.filed||[], grouped=d.grouped||[], counts=d.counts||{};
+    var mail=counts.mail==null?null:(counts.mail|0), chat=counts.chat==null?null:(counts.chat|0);
+    MAIL=mail; CHAT=chat;
+
+    header(page,'page_inbox', headline(q.length, q.filter(function(it){ return tierOf(it)==='now'; }).length));
+    H1=page.querySelector('h1');
+    /* what could not be read, two lines at most; everything else is a line below */
+    (d.notices||[]).slice(0,2).forEach(function(s){ if(s) add(page, el('p','sub',String(s))); });
+
+    /* the filter, only when there is something on both sides */
+    var hasMail=(mail|0)>0 || q.some(function(it){ return chans(it).indexOf('mail')>=0; });
+    var hasChat=(chat|0)>0 || q.some(function(it){ return chans(it).indexOf('chat')>=0; });
+    if(hasMail && hasChat){ SEG=segBar(chatName(d)); add(page,SEG); }
+
+    /* the queue: the tier said once, over its lines, in rank order */
+    if(q.length){
+      var ql=el('div','list queue'); QL=ql;
+      ['now','today','week'].forEach(function(tr){
+        var rows=q.filter(function(it){ return tierOf(it)===tr; });
+        if(!rows.length) return;
+        var th=el('div','tierh '+tr, L('tier_'+tr)); th.dataset.tier=tr; add(ql,th);
+        rows.forEach(function(it){ add(ql, queueRow(it)); });
+      });
+      add(page,ql);
+    }
+
+    /* what was filed, or grouped where nothing can be written: one short row a label */
+    var bulk = filed.length ? filed : grouped; WITH_RULE = filed.length>0;
+    if(bulk.length){
+      FSEC=el('div','fsec');
+      var hb=h2(L(WITH_RULE?'labelled':'grouped'),''); FILED_H=hb.querySelector('b');
+      var fl=el('div','list filed'); bulk.forEach(function(f){ add(fl, filedRow(f)); });
+      add(FSEC, hb, fl); add(page,FSEC);
+    }
+
+    /* the rest, every line of it, so every unread is somewhere on the page */
+    var items=(d.others||{}).items||[];
+    if(items.length){
+      REST=el('p','rest'); OM=el('div','mini others');
+      items.forEach(function(x){ var a=miniLine(x); a.dataset.ch=fk(x.channel); add(OM,a); });
+      add(page, REST, OM);
+    }
+
+    var foot=[countWord('mail',mail)+', '+countWord('chat',chat), d.next_run ? F(L('next_run'),{t:d.next_run}) : ''];
+    /* said only where the mailbox cannot take labels and there was something to file */
+    if(!d.wrote && grouped.length) foot.push(L('nothing_written'));
+    add(page, footer(foot), credit());
+
+    setFilter(SEG ? readFilter() : 'all', false);
+    recount();
+    dbInit(function(){ hydrateDrops(recount); });
+  }
+  render();
+</script>
+</body>
+</html>

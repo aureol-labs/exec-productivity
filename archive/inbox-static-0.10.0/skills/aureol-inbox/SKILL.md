@@ -1,0 +1,145 @@
+---
+name: aureol-inbox
+user-invocable: false
+description: Write the executive's Priority inbox: mail and chat on one page, ranked by who is blocked and for how long, in three tiers (Now, Today, This week), each line the ask with the one fact it is on the page for, and a filter for mail or chat alone. Applies labels only where the mail connection can write them and only from rules the exec confirmed, and lists every write with its rule; never archives, deletes, moves, sends or marks as read. Load from the inbox task, or when the exec asks what needs them.
+---
+
+# Priority inbox
+
+Two jobs, and they are different jobs. Ranking decides what the exec touches. Categorising keeps the mailbox
+clean. The page never lets the second pretend to be the first. Template `references/inbox.html`, one JSON
+document (shape in its head comment and `references/example.json`).
+
+**Voice.** Every word the exec reads, on the page, in a notification or a briefing, follows
+`../aureol-context/references/voice.md`. Read it before you write.
+
+## Rules that override anything you infer
+
+0. **Label names are the mailbox's, in the exec's language**, exactly as `rules` spells them; the page shows
+   that spelling on every chip and never a translation of it.
+1. **Labels only, and only where the mail role can write them** (`connections/current.roles.mail.can` contains
+   `label`) **and only from `rules`.** One write, applied over and over. Never a delete, never a send, never a
+   mark as read, never a move, never an archive. `To archive` is a label the exec clears in their own mailbox.
+2. **Every write is listed** on the page, under the label, with its count and the rule in the exec's words.
+   A label without a rule is not applied.
+3. **The main inbox only.** Unless `connections/preferences.mail_scope` is `all`, every read, every count and
+   every queue line comes from each mailbox's main inbox, in the form `connections/current.roles.mail.main`
+   names for it, as the store defines both: Gmail's Primary while it returns mail, else the inbox without
+   Promotions, Social, Updates and Forums (tabs turned off leave Primary empty); Outlook's Focused inbox, else
+   the inbox without Other. The read is that form plus the date window; the unread count is the same form with
+   `is:unread`. Never Promotions, Social, Updates, Forums, Other, Junk or Clutter. The h1's unread count is
+   that query's count, never the account's total. A page that says 4,000 unread to an exec who runs inbox zero
+   has used the wrong query.
+4. **The test for the queue**: someone is blocked, a promise is late, or only the exec can
+   answer. A group ask anyone could answer is not the exec's. A thread the exec already replied to or reacted to
+   is out. Check the thread before ranking it, not the snippet. **Unread first**: the queue is built from unread
+   mail and unread messages; a thread the exec has read but not answered enters only when someone is visibly
+   still waiting (a follow-up, a question with no reply), with `read: true`, and the h1's counts are the real
+   unread counts from the tools, never estimated. **A bounce is the exception**: a message of the exec's that did
+   not arrive is a line even on a thread they answered or dropped, until they send it again, with the bounce's
+   own id as `ref` (`message:<id>`) and `read: true` once they opened it.
+5. **A dropped line stays dropped.** Read `dismissals` from the inbox page's store before ranking (the store is
+   the page's own, at `connections/current.pages.inbox`). A thread dropped as done or not important never comes
+   back on this run or any later one, because every run reads the whole collection; a `done` also covers its
+   follow-ups for 7 days, after which a genuinely new message on the thread may enter again. Give every queue
+   line the thread id as `ref` (a bounce: rule 4), the same on every run, so the page can record the drop and the next runs find
+   it; a merged line (rule 9) joins its thread ids with `+`, mail first, and a dismissal whose `ref` carries `+`
+   drops each thread in it. Prune `done` dismissals older than 30 days; keep `not_important` ones.
+6. **Now is a clock the exec does not control**: an offer that lapses tonight, a deck that locks tomorrow, a
+   build that starts after lunch. Importance is not a tier. Then Today, then This week. Inside a tier, oldest
+   first.
+7. **The right column is when it arrived.** A time if today, a date otherwise. No due time you invented, no
+   computed lateness, no brick on this page.
+8. **The line is the ask; opened, it is the fact.** `say` is the ask with the name, 12 words at most ("Halden
+   Mutual: Nadia needs a yes or no on the 19%."). `argument` is one entry, the fact the line is on the page for,
+   the precedent, knock-on, pattern or history, 12 words at most, and `type` names it. No `lede`, `plain`, `go`
+   or `label` on a queue line: the page shows none of them. Never advice: not what to answer, not what to do. Then
+   three sources and a briefing that is your summary plus pointers, asks Claude for both sides on a call, and ends
+   "do not send" when it drafts.
+9. **The title is a count, not a claim, and every unread is on the page, one line each.** The page titles itself
+   from the queue ("9 need you, 3 now.") and prints the unread counts in its footer. The page is where the exec sees all of it: what needs them on top, everything
+   else below, nothing missing. Count mail and chat with one real call each on every run, and write both numbers
+   even when one is 0. A channel that could not be read is `null` in `counts` with one line in `notices`, in
+   the exec's language ("Slack could not be read this morning"), never a 0 and never a missing key: a chat that
+   silently disappears reads as a broken connection. A notice says what could not be read, never how it was
+   checked: two at most, twelve words each, and only when a count is null; check-page refuses a notice when both
+   channels were read. What the exec should act on is a queue line with its fact, a bounce included (rule 4).
+   Never said: a zero, a thread explained, what was not labelled, what lies outside the main inbox, a tool that
+   was never connected. The unread set is the whole main inbox's unread, not only
+   what arrived since the last run: the window decides what is re-read and re-ranked, never what is counted.
+   Chat unread: what the tool marks unread; where it cannot say, every message that came to the exec (a direct
+   message, a mention, a thread or channel they are in) after their own last message in that conversation, over
+   the last 7 days. Each unread lands in exactly one place: the queue, a label (or a group where labels cannot
+   be written), or `others.items`, the full list, newest first, the channel mark on every line; the page shows
+   3 and "show all N" opens the rest. **One topic on two channels is one line**: a mail thread and a chat
+   thread about the same thing (the same ask, the same deal, the same person on the same subject) are one
+   queue line, `channel` the thread the ask sits in, `channels` both, `sources` both threads, `ref` the two
+   thread ids joined with `+`; never two threads of one channel in one line. Queue (each line counted once per
+   channel it carries, `read` lines aside) plus filed plus others equals the title, mail and chat separately; `check-page` refuses
+   a page where it does not. Filing is not judging, so the filed list is "labelled, still unread".
+10. **Nothing about the page.** No line explains the page, how to read it, or what was or was not done to the
+    mailbox ("left unread", "nothing moved or deleted"). A field with nothing to say is left out, never filled
+    with "nothing to do". No `sub` unless it carries one fact the page cannot show, 20 words at most. A source is something the
+    exec can open, never the rule or the run ("your rules, in your words", "label applied, 09:05").
+
+## 0. Read, probe
+
+**Release steps.** Before anything else, read `../aureol-context/references/releases.md` and apply what it says for the `inbox` task.
+
+`connections/current`, `connections/preferences` (tiers), `rules`, `topics`, `people`, the last inbox run.
+For mail, the probe also checks each mailbox's main inbox (the store, `mail_scope`): both forms counted over the
+window, `connections/current.roles.mail.main` rewritten, every run.
+Probe mail and chat with one real call each, on every run, whatever the last run found. A probe that fails is
+`null` and a notice (rule 9), and the run goes on with the other channel.
+
+## 1. Read since the last run
+
+Mail and chat since the last inbox run (48 hours on the first run), both directions, the exec's threads only:
+for chat, their direct messages, their mentions, and the threads and channels they are in, whatever the mail
+scope. Chat is read even when mail has nothing new.
+Every time on the page is the exec's local time (`connections/preferences.timezone`); the run may execute in
+another zone.
+Open every candidate thread once to check rule 3. Nothing new since the last run: publish nothing, write a
+`runs` document, end with one line.
+
+## 2. Rank
+
+Nine to twelve lines is a page: check-page refuses a thirteenth, and the weakest leave the queue (an unread
+one goes to the rest). A line from a person in `connections/preferences.key_people` is never the one cut: when
+the page is full, the weakest line that is not theirs leaves first. It changes nothing else: a key person's line
+keeps its tier and its place in it (rule 6). Without `key_people`, nobody is protected. Each line: the tier, the channel (mail,
+slack, teams), `channels` when it is one topic on two, the ask with the name, the arrival time or date, the fact
+and its `type`, sources, briefing. One topic is one line: check-page refuses two lines on one ref. The page draws
+its filter (all, mail, the chat tool) from the channels; there is nothing to write for it.
+
+## 3. File, where allowed
+
+With `label` and `rules`: apply each rule, count the writes, and render `data.filed` with each label's rule, its
+count per channel, three to five content lines each a link, and the `To archive` label listing every rule that
+filed into it. A label's row is its tally and its name: no `say`. A `lede` only when something inside deserves
+the exec's eye (who holds it, what is live); no `sources`, the content lines are its sources. Without `label`: no write, `data.filed` empty, `data.grouped` carries the same grouping as a
+reading aid, `data.wrote` false and the footer says nothing was written to the mailbox.
+
+## 4. Tell the context
+
+The inbox reads the world several times a day; the morning pass reads it once. So what the inbox sees goes into the store,
+lightly and by the store's rules. On the topics and people this run's lines touched: `last_from_you` when the
+exec replied, one `so_far` entry per new fact with its date and source, `state` when it changed. A fact that
+settles a topic (signed, decided, cancelled, past) is written as that, with its date, so the morning pass closes
+the topic the same day: a Super Context that only grows stops being read. A decision found
+in a message, with what it was decided against: one `decisions` document with `status: "proposed"`. Update in
+place with `if_version`; never rewrite a topic, never add a topic (that is the morning's judgement), never touch
+`priorities`, `rules`, `asks` or `suggestions`. If anything was written, load the `aureol-context` skill in
+render mode so the Super Context page shows it.
+
+## 5. Check, publish, record
+
+`lang` from `preferences.language`; `date_label` and `time_label` in that language with the real time of this
+run. Then `python3 tools/fill-page.py --kind inbox skills/aureol-inbox/references/inbox.html DATA.json OUT.html --links
+brief=<link> context=<link>` from the plugin's root folder (the one holding `skills/` and `tools/`) when a
+shell exists (it checks the data and fills the template); without a shell, apply check-page's list by
+hand and replace the single `{{DATA_JSON}}` with every `<` written as `\u003c`. Read the page at
+`connections/current.pages.inbox`, publish to its `url` with `capabilities: {db: {}}`, or publish new the same
+way and write the link. Write a `runs`
+document with the counts read and the writes made. The task prompt says how the run ends: the Now count
+first, so whatever preview the exec sees says what matters.
