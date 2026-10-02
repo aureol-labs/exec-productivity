@@ -799,7 +799,21 @@
   .row.lxstruck .say{text-decoration:line-through;text-decoration-color:var(--ink-3)}
 
   /* the two gestures sit in the sources row in the source type: look, not go */
-  .src a.lxa[aria-expanded="true"]{color:var(--pine-ink);border-bottom-color:var(--pine)}
+
+  /* ---- buttons, not links ----
+     In the sources row, a link opens a source and a button does something. The actions sit
+     on their own line as small outlined pills; an open one is tinted; Drop stays quiet at the
+     right. Light on purpose: one filled button at most on the page, in the reply. */
+  .src .lxacts{flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px 8px;margin-top:4px}
+  .src .lxacts a.lxa,.src .lxacts a.ask,.lxp a.lxout.go{font-size:12.5px;line-height:1.3;font-weight:500;color:var(--pine-ink);
+     padding:4px 11px;border-radius:999px;border:1px solid rgba(46,107,98,.30);background:rgba(255,255,255,.55);
+     text-decoration:none;white-space:nowrap;transition:background .12s,border-color .12s}
+  .src .lxacts a.lxa:hover,.src .lxacts a.ask:hover,.lxp a.lxout.go:hover{border-color:var(--pine);background:#fff}
+  .src .lxacts a.lxa[aria-expanded="true"]{background:var(--pine-pale);border-color:var(--pine-pale)}
+  .src .lxacts a.ask{margin-left:0;font-weight:600}
+  .src .lxacts a.ask.ok{color:var(--ink-3);border-color:var(--hair);font-weight:500}
+  .src .lxacts a.drop{margin-left:auto;padding:4px 2px;border:0;background:none}
+  .src .lxacts .dropq{flex-basis:100%;justify-content:flex-end}
 
   /* a panel hangs under the sources row, inside the reveal */
   .lxp{margin-top:14px;padding-top:12px;border-top:1px solid rgba(46,107,98,.16)}
@@ -839,7 +853,6 @@
   .lxsum .ctx div p+p{margin-top:4px}
   .lxsum:empty{display:none}
   .lxp .lxsum~.lxline{margin-top:18px}
-  .lxp a.lxout.go{font-weight:600}
 
   /* the lens: one quiet line under the footer */
   .lxlens{display:inline-block;margin-top:14px;font-size:12px;color:var(--ink-3);text-decoration:none;
@@ -2201,13 +2214,15 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
       var r=ROWS[row.id]; if(!r) return;
       if(r.state){ row.classList.add('gone','lxstruck'); var dz=row.querySelector('.src .drop'); if(dz) dz.parentNode.removeChild(dz);
         var dec=row.querySelector('.dec'); if(dec) add(dec, el('span','rel',L(MARK[r.state]))); }
-      var why=row.querySelector(':scope > .why'), src=why&&why.querySelector('.src'); if(!src||!liveFor(r.l)) return;
-      var ask=src.querySelector('.ask'), p=PANELS[row.id]||{};
-      [['thread','lx_thread'],['reply','lx_reply']].forEach(function(k){
-        var a=el('a','lxa',L(k[1])); a.setAttribute('href','#'); a.setAttribute('aria-expanded',p[k[0]]&&!p[k[0]].hidden?'true':'false');
+      var why=row.querySelector(':scope > .why'), src=why&&why.querySelector('.src'); if(!src) return;
+      /* the actions on their own line, drawn as buttons; the sources above stay links */
+      var ask=src.querySelector('.ask'), drop=src.querySelector('.drop'), p=PANELS[row.id]||{}, acts=el('div','lxacts');
+      if(liveFor(r.l)) [['thread','lx_thread'],['reply','lx_reply']].forEach(function(k){
+        var a=el('a','lxa',L(k[1])); a.setAttribute('href','#'); a.setAttribute('role','button'); a.setAttribute('aria-expanded',p[k[0]]&&!p[k[0]].hidden?'true':'false');
         a.onclick=function(e){ e.preventDefault(); togglePanel(row.id,k[0],a); return false; };
-        src.insertBefore(a, ask||null);
+        add(acts,a);
       });
+      if(ask) add(acts,ask); if(drop) add(acts,drop); src.appendChild(acts);
       if(p.thread) why.appendChild(p.thread); if(p.reply) why.appendChild(p.reply);
     });
     /* placeholder lines only on an empty page: a page with lines keeps them still */

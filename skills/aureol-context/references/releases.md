@@ -17,6 +17,10 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.11.6
+
+- No task step. On the inbox page, a line's actions sit on their own line as light buttons; its sources stay links.
+
 ## 0.11.5
 
 - No task step. Under a thread's summary, Reply with Claude comes first, then the link to the thread.
