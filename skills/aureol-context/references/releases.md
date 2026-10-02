@@ -17,6 +17,10 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.12.1
+
+- No task step. Mark as read has a tooltip on its check, and a short toast once done.
+
 ## 0.12.0
 
 - `inbox`: the next run publishes the Priority inbox even when nothing arrived since the last run, so the page gets
