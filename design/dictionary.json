@@ -386,7 +386,7 @@
     "lx_m_dropped": "Dropped",
     "lx_down": "Lower priority",
     "lx_down_tip": "Moves to the other unread",
-    "lx_up": "Higher priority"
+    "lx_up": "Prioritise"
   },
   "fr": {
     "page_brief": "Brief du jour",
@@ -774,6 +774,6 @@
     "lx_m_dropped": "Écarté",
     "lx_down": "Moins prioritaire",
     "lx_down_tip": "Passe dans les autres non lus",
-    "lx_up": "Plus prioritaire"
+    "lx_up": "Prioriser"
   }
 }
