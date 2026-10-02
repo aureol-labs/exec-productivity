@@ -88,7 +88,9 @@
         catch(e){ if(e&&e.code==='tool_error'&&/label/i.test(String(e.message||''))){
           await LX.mcp.callTool(MAIL_CFG.server,'gmail_create_label',{account:account,name:name}); await call(); } else throw e; }
       },
-      labelHref:function(account,name){ return 'https://mail.google.com/mail/?authuser='+encodeURIComponent(ACCT[account]||'')+'#label/'+encodeURIComponent(name); }
+      labelHref:function(account,name){ return 'https://mail.google.com/mail/?authuser='+encodeURIComponent(ACCT[account]||'')+'#label/'+encodeURIComponent(name); },
+      /* Aureol Connect refuses the read state today; the run sets read only once it has a tool for it */
+      markRead:async function(x){ await LX.mcp.callTool(MAIL_CFG.server,'gmail_mark_read',{account:x.account,thread_ids:[x.thread]}); }
     },
     /* the Gmail connector: one account, labels written by id only */
     gmail:{
@@ -135,12 +137,15 @@
           (LIVE.labels.gmail=LIVE.labels.gmail||{})[id]=name; }
         for(var i=0;i<threads.length;i++) await LX.mcp.callTool(MAIL_CFG.server,'label_thread',{threadId:threads[i],labelIds:[id]});
       },
-      labelHref:function(account,name){ return 'https://mail.google.com/mail/#label/'+encodeURIComponent(name); }
+      labelHref:function(account,name){ return 'https://mail.google.com/mail/#label/'+encodeURIComponent(name); },
+      /* the one system label this page ever removes: UNREAD. Never INBOX, which would archive. */
+      markRead:async function(x){ await LX.mcp.callTool(MAIL_CFG.server,'unlabel_thread',{threadId:x.thread,labelIds:['UNREAD']}); }
     }
   };
   function threadUrl(email,id){ if(DEMO) return ''; try{ return 'https://mail.google.com/mail/?authuser='+encodeURIComponent(email)+'#all/thread-f:'+BigInt('0x'+id).toString(); }catch(e){ return 'https://mail.google.com/mail/?authuser='+encodeURIComponent(email); } }
   var MAIL=MAIL_CFG&&ADAPTERS[MAIL_CFG.api] ? ADAPTERS[MAIL_CFG.api] : null;
   var CHAT=CHAT_CFG&&CHAT_CFG.api==='slack' ? CHAT_CFG : null;
+  var CAN_READ=!!(MAIL&&MAIL_CFG.read);
   var CAN_LABEL=!!(MAIL&&MAIL_CFG.label&&(CFG.rules||[]).length);
   var RULES=(CFG.rules||[]).filter(function(x){ return x&&x.label&&x.rule; });
   var MAIL_NAME='Gmail', CHAT_NAME=CHAT ? CHAT.server : L('f_chat');
@@ -255,7 +260,8 @@
   }
   /* read mail from an automated sender is never a candidate; nor a thread you answered last */
   function candidate(x){ return !(x.kind==='mail'&&!x.unread&&isAuto(x)) && !droppedIn(DISMISSED,x) && !x.mine; }
-  function liveItems(){ return LIVE.mail.concat(LIVE.slack.items); }
+  var READ_HERE={};
+  function liveItems(){ return LIVE.mail.map(function(x){ return READ_HERE[refOf(x)]&&x.unread ? Object.assign({},x,{unread:false}) : x; }).concat(LIVE.slack.items); }
   function itemFor(l,byRef){ var refs=String(l.ref||'').split('+'); for(var i=0;i<refs.length;i++) if(byRef[refs[i]]) return byRef[refs[i]]; return null; }
 
   /* ---------- the page's JSON ---------- */
@@ -329,12 +335,14 @@
       var xs=groups[r.label].xs.sort(byDate), tint=tintFor(r.label,used); used[tint]=1;
       var f={id:'f-'+slugOf(r.label), label:r.label, tint:tint, count:xs.length, by_channel:{mail:xs.length},
         contents:xs.slice(0,5).map(function(x){ return {channel:'mail', from:x.from, what:x.subject, href:x.href}; }),
+        lx:xs.slice(0,5),
         href:MAIL.labelHref(xs[0].account,r.label), briefing:T('lx_label_brief',{n:xs.length, label:r.label, rule:r.rule})};
       if(tint==='arch') f.rules=[{count:xs.length, rule:r.rule}]; else f.rule=r.rule;
       return f;
     }).sort(function(a,b){ return (a.tint==='arch')-(b.tint==='arch'); }) : (BASE.filed||[]);
     others.sort(byDate);
     var baseOthers=((BASE.others||{}).items||[]).filter(function(x){ return x.channel==='mail' ? !mailRead : !chatRead; });
+    MINI_OTHERS=others.slice();
     var items=others.map(function(x){ return {channel:x.kind==='slack'?'slack':'mail', from:x.from, what:x.kind==='mail'?x.subject:cut(x.snippet,90), href:x.href, when:when(x.date)}; }).concat(baseOthers);
     var counts={mail:READY.mail.failed?null:(mailRead?all.filter(function(x){ return x.kind==='mail'&&x.unread; }).length:(BASE.counts||{}).mail),
                 chat:READY.slack.failed?null:(chatRead?LIVE.slack.items.length:(BASE.counts||{}).chat)};
@@ -395,7 +403,7 @@
   function lensText(){ return [CFG.lens||'', OWN?(L('lx_lens_own')+': '+OWN):''].filter(Boolean).join('\n'); }
 
   /* ---------- the panels: the thread, summarised, and the reply ---------- */
-  var PANELS={};
+  var PANELS={}, MINI_OTHERS=[], MINI={}, MINI_FILED={};
   function liveOf(l){ var byRef={}; liveItems().forEach(function(x){ byRef[refOf(x)]=x; }); return itemFor(l,byRef); }
   function sampleCopy(e){ var c=e&&e.code;
     if(c==='not_granted'||c==='sampling_disabled') return L('lx_s_grant');
@@ -429,7 +437,7 @@
     var foot=el('div','lxline'), open=outLink(l.href, T('lx_open_in',{s:l.channel==='slack'?CHAT_NAME:MAIL_NAME}),'lxout'), redo=quiet(L('lx_redo_sum'));
     /* after reading the summary, the next gesture is the reply: it opens under it, or is brought back into view */
     var rep=el('a','lxout go',L('lx_reply')); rep.setAttribute('href','#');
-    rep.onclick=function(e){ e.preventDefault(); var rid=l.id, row=document.getElementById(rid), p=PANELS[rid];
+    rep.onclick=function(e){ e.preventDefault(); if(l.onReply){ l.onReply(); return false; } var rid=l.id, row=document.getElementById(rid), p=PANELS[rid];
       if(p&&p.reply&&!p.reply.hidden){ p.reply.scrollIntoView({behavior:'smooth',block:'nearest'}); return false; }
       var a=row&&row.querySelectorAll('.src a.lxa')[1]; if(a) a.click(); return false; };
     add(st,meter); add(foot,rep,open,redo); add(b,st,body,note,foot);
@@ -595,7 +603,9 @@
   }
   function redrawNow(){
     if(typing()){ PENDING=true; return; }
-    var data=buildData(), json=JSON.stringify(data);
+    var data=buildData();
+    MINI_FILED={}; (data.filed||[]).forEach(function(f){ if(f.lx){ MINI_FILED[f.label]=f.lx; delete f.lx; } });
+    var json=JSON.stringify(data);
     /* nothing moves when nothing changed: the clock in the header is not a change */
     var cmp=function(s){ return s.replace(/"time_label":"[^"]*"/,''); };
     if(LAST&&cmp(json)===cmp(LAST)){ return; }
@@ -620,15 +630,83 @@
         a.onclick=function(e){ e.preventDefault(); togglePanel(row.id,k[0],a); return false; };
         add(acts,a);
       });
+      var lx=liveOf(r.l);
+      if(CAN_READ&&!r.state&&lx&&lx.kind==='mail'&&lx.unread){ var mr=el('a','lxa',L('lx_mark_read')); mr.setAttribute('href','#'); mr.setAttribute('role','button');
+        mr.onclick=function(e){ e.preventDefault(); markRead(lx); return false; }; add(acts,mr); }
       if(ask) add(acts,ask); if(drop) add(acts,drop); src.appendChild(acts);
       if(p.thread) why.appendChild(p.thread); if(p.reply) why.appendChild(p.reply);
     });
     /* placeholder lines only on an empty page: a page with lines keeps them still */
     if(SORTING&&!QL){ var list=el('div','list queue'); RUN.parentNode.insertBefore(list,(SEG||RUN).nextSibling);
       for(var i=0;i<3;i++){ var sk=el('div','lxskel'); add(sk,el('i'),el('i'),el('i')); list.appendChild(sk); } }
+    decorateMinis();
     var by=page.querySelector('.by'); page.insertBefore(LENS_A,by); page.insertBefore(LENS_BOX,by);
     if(openId){ var o=document.getElementById(openId), ob=o&&o.querySelector(':scope > button'); if(ob&&!o.classList.contains('open')) t(ob); }
     recount();
+  }
+
+  /* ---------- the rest, worked in place ----------
+     A line of the rest or of a label opens under itself the same actions as a queue line,
+     instead of leaving for the mailbox: sum up, reply, mark as read, open. Each line is
+     wrapped in its own block so its panel sits under it; the block carries the line's
+     channel and the page's tuck class, so the filter and "show all" still find it. */
+  function miniLine(x){ return {id:'m-'+slugOf(refOf(x)), ref:refOf(x), channel:x.kind, from:x.from, account:x.account, href:x.href,
+    dateIso:x.date.toISOString(), wasUnread:!!x.unread, thread:x.thread||null, channelId:x.channel||null, ts:x.ts||null}; }
+  function tick(){ var NS='http://www.w3.org/2000/svg', sv=document.createElementNS(NS,'svg'), pa=document.createElementNS(NS,'path');
+    sv.setAttribute('viewBox','0 0 16 16'); sv.setAttribute('aria-hidden','true'); pa.setAttribute('d','M3.5 8.5l3 3 6-7');
+    pa.setAttribute('fill','none'); pa.setAttribute('stroke','currentColor'); pa.setAttribute('stroke-width','1.6');
+    pa.setAttribute('stroke-linecap','round'); pa.setAttribute('stroke-linejoin','round'); sv.appendChild(pa); return sv; }
+  function miniPanel(l,x){
+    var key=l.id, m=MINI[key]; if(m) return m;
+    var box=el('div','lxmp'), acts=el('div','lxacts'), p={};
+    var open=function(kind,a){
+      if(!p[kind]){ p[kind]=kind==='thread'?threadPanel(l):replyPanel(l);
+        if(kind==='thread'&&p.reply) box.insertBefore(p.thread,p.reply); else box.appendChild(p[kind]); p[kind].lxStart(); }
+      else p[kind].hidden=!p[kind].hidden;
+      a.setAttribute('aria-expanded',p[kind].hidden?'false':'true');
+    };
+    var ta=el('a','lxa',L('lx_thread')), ra=el('a','lxa',L('lx_reply'));
+    [ta,ra].forEach(function(a){ a.setAttribute('href','#'); a.setAttribute('role','button'); a.setAttribute('aria-expanded','false'); });
+    ta.onclick=function(e){ e.preventDefault(); open('thread',ta); return false; };
+    ra.onclick=function(e){ e.preventDefault(); open('reply',ra); return false; };
+    l.onReply=function(){ if(p.reply&&!p.reply.hidden) p.reply.scrollIntoView({behavior:'smooth',block:'nearest'}); else open('reply',ra); };
+    add(acts,ta,ra);
+    if(CAN_READ&&x.kind==='mail'&&x.unread){ var mr=el('a','lxa',L('lx_mark_read')); mr.setAttribute('href','#'); mr.setAttribute('role','button');
+      mr.onclick=function(e){ e.preventDefault(); markRead(x); return false; }; add(acts,mr); }
+    add(acts, outLink(l.href, T('lx_open_in',{s:x.kind==='slack'?CHAT_NAME:MAIL_NAME}), 'lxout'));
+    box.appendChild(acts); box.hidden=true;
+    m=MINI[key]={box:box, l:l}; return m;
+  }
+  function wrapMini(a,x){
+    if(!a||!x||a.parentNode.classList.contains('lxm')) return;
+    var l=miniLine(x), m=miniPanel(l,x), d=el('div','lxm');
+    d.dataset.ch=a.dataset.ch||''; if(a.classList.contains('tk')) d.classList.add('tk'); if(a.hidden) d.hidden=true;
+    a.classList.remove('tk'); a.hidden=false;
+    a.parentNode.insertBefore(d,a); d.appendChild(a);
+    if(!m.box.hidden) d.classList.add('on');
+    a.setAttribute('aria-expanded',m.box.hidden?'false':'true');
+    a.onclick=function(e){ e.preventDefault(); m.box.hidden=!m.box.hidden; d.classList.toggle('on',!m.box.hidden); a.setAttribute('aria-expanded',m.box.hidden?'false':'true'); return false; };
+    if(CAN_READ&&x.kind==='mail'&&x.unread){ var rb=el('button','lxmr'); rb.type='button'; rb.title=L('lx_mark_read'); rb.setAttribute('aria-label',L('lx_mark_read')+' : '+(x.subject||''));
+      rb.appendChild(tick()); rb.onclick=function(e){ e.stopPropagation(); markRead(x); }; d.appendChild(rb); }
+    d.appendChild(m.box);
+  }
+  function decorateMinis(){
+    if(OM){ var i=0, wrapped=false; Array.prototype.slice.call(OM.children).forEach(function(a){ if(a.tagName==='A'&&!a.classList.contains('more')){ if(MINI_OTHERS[i]){ wrapMini(a,MINI_OTHERS[i]); wrapped=true; } i++; } });
+      /* "show all" holds the lines it was built over: build it again over the blocks */
+      if(wrapped) retuck(); }
+    FROWS.forEach(function(fr){ var xs=MINI_FILED[fr.f.label]||[], mini=fr.w.querySelector('.mini'); if(!mini) return; var i=0;
+      Array.prototype.slice.call(mini.children).forEach(function(a){ if(a.tagName==='A'&&!a.classList.contains('more')){ wrapMini(a,xs[i]); i++; } }); });
+  }
+  /* the filter rebuilds a label's lines: wrap them again after it */
+  var pageSetFilter=setFilter;
+  setFilter=function(f,keep){ pageSetFilter(f,keep); try{ decorateMinis(); }catch(e){} };
+
+  /* mark as read: the exec's own gesture, mail only; the line moves at once, the mailbox follows */
+  async function markRead(x){
+    if(!CAN_READ||!x||x.kind!=='mail') return;
+    var r=refOf(x); READ_HERE[r]=1; LAST=''; redraw();
+    try{ await MAIL.markRead(x); if(typeof LX.mcp.invalidate==='function') LX.mcp.invalidate(MAIL_CFG.server).catch(function(){}); }
+    catch(e){ delete READ_HERE[r]; LAST=''; redraw(); runDone(T('lx_read_failed',{x:e&&e.code==='tool_error'?cut(e.message,140):mcpCopy(e,MAIL_CFG.server)})); }
   }
 
   /* ---------- the sort: what arrived since the run; the whole inbox when no run has passed today ---------- */
@@ -789,6 +867,7 @@
           (input.thread_ids||[]).forEach(function(id){ var x=(D.mail||[]).filter(function(y){ return y.id===id; })[0], lb=(D.labels||[]).filter(function(y){ return (input.add||[]).indexOf(y.name)>=0; });
             if(x) lb.forEach(function(y){ x.labels=(x.labels||[]).concat([y.id]); }); });
           return {payload:{}}; }
+        if(tool==='gmail_mark_read'){ (input.thread_ids||[]).forEach(function(id){ var x=(D.mail||[]).filter(function(y){ return y.id===id; })[0]; if(x) x.unread=[false,false]; }); return {payload:{}}; }
         if(tool==='slack_read_channel'){ var c=(D.slack||[]).filter(function(y){ return y.channel===input.channel_id; })[0];
           return {payload:{messages:c ? (c.history||[]).concat([c.from+': '+c.text]).join('\n\n') : ''}}; }
         return {payload:{}};

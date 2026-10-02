@@ -379,7 +379,7 @@ Then this table, translated, nothing added:
 | | |
 |---|---|
 | **Told** | A notification each morning with the brief, and the brief itself by email if you said yes. The inbox only when something is urgent. The review only on a day it found something. |
-| **Never** | Send to anyone but you, delete, move, mark as read. Labels only, each listed with its rule. |
+| **Never** | Send to anyone but you, delete, move, or mark as read on its own. Labels only, each listed with its rule. |
 | **Something off** | `/exec-productivity:exec-productivity-help` |
 
 Then the sign-off, one sentence, translated: "From here it is yours: the same three keys work for anything

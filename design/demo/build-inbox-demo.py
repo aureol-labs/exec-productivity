@@ -296,7 +296,7 @@ doc = {
     'queue': QUEUE, 'filed': filed, 'wrote': True,
     'others': {'mail': len(items), 'chat': 0, 'items': items},
     'generated': RUN, 'seen': seen,
-    'live': {'mail': {'server': 'Aureol Connect', 'api': 'aureol', 'label': True},
+    'live': {'mail': {'server': 'Aureol Connect', 'api': 'aureol', 'label': True, 'read': True},
              'chat': {'server': 'Slack', 'api': 'slack'},
              'rules': RULES, 'lens': LENS,
              'demo': {'run_minutes_ago': 40, 'account': ME, 'me_id': 'U0CAMILLE', 'labels': LABELS,

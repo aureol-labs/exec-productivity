@@ -17,6 +17,14 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.12.0
+
+- `inbox`: the next run publishes the Priority inbox even when nothing arrived since the last run, so the page gets
+  `live.mail.read` and the `unlabel_thread` tool where the mail connection is the Gmail connector.
+- On the inbox page, a line of the rest or of a label opens under itself the same actions as a queue line: sum up,
+  reply, mark as read, open. Mark as read is the exec's own click, mail only, on the Gmail connector; a check on
+  hover does it too.
+
 ## 0.11.6
 
 - No task step. On the inbox page, a line's actions sit on their own line as light buttons; its sources stay links.

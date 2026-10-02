@@ -13,8 +13,8 @@ document (shape in its head comment and `references/example.json`).
 **The page is live.** This run ranks and publishes, as it always did, and the page shows exactly that. Opened in
 Claude, the page then reads mail and chat itself through the exec's connections: it strikes what was answered,
 read or archived since the run, sorts with Claude only what arrived after it, files new mail under the rules, and
-on every line summarises the thread and drafts a reply when asked (a mail draft, a chat reply copied; never
-sent). For that it needs what only this run knows: the `live` block, each line's thread, and what the run read
+on every line, the rest and the labels included, summarises the thread and drafts a reply when asked (a mail
+draft, a chat reply copied; never sent), and marks a mail as read when the exec clicks it. For that it needs what only this run knows: the `live` block, each line's thread, and what the run read
 (section 5). Where the mail connection is one the page cannot read (Outlook today), the page is what this run
 published, nothing more.
 
@@ -28,6 +28,7 @@ published, nothing more.
 1. **Labels only, and only where the mail role can write them** (`connections/current.roles.mail.can` contains
    `label`) **and only from `rules`.** One write, applied over and over. Never a delete, never a send, never a
    mark as read, never a move, never an archive. `To archive` is a label the exec clears in their own mailbox.
+   Mark as read on the live page is the exec's own click, never this run's.
 2. **Every write is listed** on the page, under the label, with its count and the rule in the exec's words.
    A label without a rule is not applied.
 3. **The main inbox only.** Unless `connections/preferences.mail_scope` is `all`, every read, every count and
@@ -162,7 +163,8 @@ run.
 - `live`, read off the store:
   - `mail`: from `connections/current.roles.mail.tool`. `Aureol Connect` is `{server: "Aureol Connect", api:
     "aureol"}`, `Gmail` is `{server: "Gmail", api: "gmail"}`, with `label: true` when `roles.mail.can` has
-    `label`. Any other tool: `null`.
+    `label`, and on `gmail` only `read: true`: the exec may mark a thread as read from the page, with their own
+    click; the page removes `UNREAD` and nothing else, and no run ever does. Any other tool: `null`.
   - `chat`: `Slack` is `{server: "Slack", api: "slack"}`; any other tool, or none: `null`.
   - `rules`: the exec's confirmed `rules`, each `{label, rule}` in their words; `[]` without `label`.
   - `lens`: what the page's sort knows about the exec, rebuilt on every run from the store, in the exec's
@@ -176,7 +178,7 @@ below, for the servers it has.
 | `api` | Tools to declare |
 |---|---|
 | `aureol` | `gmail_search`, `gmail_get_thread`, `gmail_create_draft`, `gmail_update_draft`, `gmail_list_labels`; with `label`, also `gmail_modify_labels`, `gmail_create_label` |
-| `gmail` | `search_threads`, `get_thread`, `create_draft`, `update_draft`, `list_labels`; with `label`, also `label_thread`, `create_label` |
+| `gmail` | `search_threads`, `get_thread`, `create_draft`, `update_draft`, `list_labels`, `unlabel_thread` (the exec's Mark as read); with `label`, also `label_thread`, `create_label` |
 | `slack` | `slack_search_public_and_private`, `slack_read_channel` | Then `python3 tools/fill-page.py --kind inbox skills/aureol-inbox/references/inbox.html DATA.json OUT.html --links
 brief=<link> context=<link>` from the plugin's root folder (the one holding `skills/` and `tools/`) when a
 shell exists (it checks the data and fills the template); without a shell, apply check-page's list by
