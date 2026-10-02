@@ -166,8 +166,9 @@ run.
 - `live`, read off the store:
   - `mail`: from `connections/current.roles.mail.tool`. `Aureol Connect` is `{server: "Aureol Connect", api:
     "aureol"}`, `Gmail` is `{server: "Gmail", api: "gmail"}`, with `label: true` when `roles.mail.can` has
-    `label`, and on `gmail` only `read: true`: the exec may mark a thread as read from the page, with their own
-    click; the page removes `UNREAD` and nothing else, and no run ever does. Any other tool: `null`.
+    `label`, and `read: true`: the exec may mark a thread as read from the page, with their own click (Aureol
+    Connect's `gmail_mark_read`, the Gmail connector's `unlabel_thread` on `UNREAD` and nothing else); no run ever
+    does. Any other tool: `null`.
   - `chat`: `Slack` is `{server: "Slack", api: "slack"}`; any other tool, or none: `null`.
   - `rules`: the exec's confirmed `rules`, each `{label, rule}` in their words; `[]` without `label`.
   - `lens`: what the page's sort knows about the exec, rebuilt on every run from the store, in the exec's
@@ -180,7 +181,7 @@ below, for the servers it has.
 
 | `api` | Tools to declare |
 |---|---|
-| `aureol` | `gmail_search`, `gmail_get_thread`, `gmail_create_draft`, `gmail_update_draft`, `gmail_list_labels`; with `label`, also `gmail_modify_labels`, `gmail_create_label` |
+| `aureol` | `gmail_search`, `gmail_get_thread`, `gmail_create_draft`, `gmail_update_draft`, `gmail_list_labels`, `gmail_mark_read` (the exec's Mark as read); with `label`, also `gmail_modify_labels`, `gmail_create_label` |
 | `gmail` | `search_threads`, `get_thread`, `create_draft`, `update_draft`, `list_labels`, `unlabel_thread` (the exec's Mark as read); with `label`, also `label_thread`, `create_label` |
 | `slack` | `slack_search_public_and_private`, `slack_read_channel` | Then `python3 tools/fill-page.py --kind inbox skills/aureol-inbox/references/inbox.html DATA.json OUT.html --links
 brief=<link> context=<link>` from the plugin's root folder (the one holding `skills/` and `tools/`) when a
