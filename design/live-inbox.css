@@ -73,7 +73,8 @@
   .lxsum .ctx .land{margin-top:0;color:var(--brick);font-weight:600}
   .lxsum .ctx div p+p{margin-top:4px}
   .lxsum:empty{display:none}
-  .lxp .lxsum~.lxline{margin-top:12px}
+  .lxp .lxsum~.lxline{margin-top:18px}
+  .lxp a.lxout.go{font-weight:600}
 
   /* the lens: one quiet line under the footer */
   .lxlens{display:inline-block;margin-top:14px;font-size:12px;color:var(--ink-3);text-decoration:none;
