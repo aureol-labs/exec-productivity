@@ -29,7 +29,7 @@ EXAMPLES = {
 EM_DASH = chr(0x2014)  # the em dash, never written literally here
 TYPES = {'precedent', 'knock_on', 'pattern', 'history'}
 SRC_KINDS = {'mail', 'chat', 'calendar', 'doc', 'meeting', 'file', 'you', 'web'}
-TINTS = {'sales', 'product', 'board', 'customers', 'hiring', 'later', 'arch'}
+TINTS = {'sales', 'product', 'board', 'customers', 'hiring', 'later', 'receipts', 'arch'}
 REL_INVERSE = {'contact_for': 'contact', 'contact': 'contact_for', 'member_of': 'member',
                'member': 'member_of', 'leads': 'led_by', 'led_by': 'leads',
                'sits_on': 'seat', 'seat': 'sits_on'}

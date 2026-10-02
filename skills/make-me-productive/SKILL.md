@@ -273,9 +273,11 @@ show up in the read (a signature, a forwarded account) and are not connected, on
 mailbox." Then straight to the first page below.
 
 With `label`: read 30 days by counterparty and subject (never by the most frequent word, which catches
-everything and files nothing). Propose seven at most: five work labels that cut across the work, plus the two fixed ones, Read later
-and To archive. Every label name is in the chosen language, because it is written into the exec's mailbox:
-in French, "À lire plus tard" and "À archiver", and the work labels in French words ("Recrutement", never
+everything and files nothing). Propose seven at most: four work labels that cut across the work, plus the three fixed ones, Read later,
+Receipts and To archive. A label is for finding something again, not for throwing it away: anything carrying an
+amount, an order reference or an attachment gets looked up again, so it goes to Receipts or a work label, never
+to To archive. Every label name is in the chosen language, because it is written into the exec's mailbox:
+in French, "À lire plus tard", "Factures" and "À archiver", and the work labels in French words ("Recrutement", never
 "Hiring"). Not a card per label: one table in the conversation, then one go. One line above it: "Your inbox
 page can file what is not for you under labels, in your own mailbox, never archived. Here is what I propose
 from your last 30 days." Then the table:
@@ -284,7 +286,8 @@ from your last 30 days." Then the table:
 |---|---|---|---|
 | Builds (new) | GitHub, Vercel, Sentry alerts | "Alerts from the build tools, unless they name me" | 4 |
 | Read later (new) | newsletters | "Newsletters and digests I did not subscribe to this month" | 9 |
-| To archive (new) | promotions, receipts, surveys | "Promos, receipts already paid, surveys" | 19 |
+| Receipts (new) | invoices, payment receipts, order and delivery confirmations | "Invoices, payment receipts, order and delivery confirmations" | 6 |
+| To archive (new) | promotions, surveys; a label, never archived | "Promos and surveys" | 13 |
 
 A label that already exists in the mailbox is marked "(yours)" and reused under its own name, never renamed,
 never deleted. The line under the table: "Say go, or say what to change: rename, drop, reword a rule. Say none for no
