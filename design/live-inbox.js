@@ -626,7 +626,7 @@
       /* the actions on their own line, drawn as buttons; the sources above stay links */
       var ask=src.querySelector('.ask'), drop=src.querySelector('.drop'), p=PANELS[row.id]||{}, acts=el('div','lxacts');
       if(liveFor(r.l)) [['thread','lx_thread'],['reply','lx_reply']].forEach(function(k){
-        var a=el('a','lxa',L(k[1])); a.setAttribute('href','#'); a.setAttribute('role','button'); a.setAttribute('aria-expanded',p[k[0]]&&!p[k[0]].hidden?'true':'false');
+        var a=el('a','lxa main',L(k[1])); a.setAttribute('href','#'); a.setAttribute('role','button'); a.setAttribute('aria-expanded',p[k[0]]&&!p[k[0]].hidden?'true':'false');
         a.onclick=function(e){ e.preventDefault(); togglePanel(row.id,k[0],a); return false; };
         add(acts,a);
       });
@@ -667,7 +667,7 @@
       else p[kind].hidden=!p[kind].hidden;
       a.setAttribute('aria-expanded',p[kind].hidden?'false':'true');
     };
-    var ta=el('a','lxa',L('lx_thread')), ra=el('a','lxa',L('lx_reply'));
+    var ta=el('a','lxa main',L('lx_thread')), ra=el('a','lxa main',L('lx_reply'));
     [ta,ra].forEach(function(a){ a.setAttribute('href','#'); a.setAttribute('role','button'); a.setAttribute('aria-expanded','false'); });
     ta.onclick=function(e){ e.preventDefault(); open('thread',ta); return false; };
     ra.onclick=function(e){ e.preventDefault(); open('reply',ra); return false; };

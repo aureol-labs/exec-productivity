@@ -17,6 +17,10 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.12.5
+
+- No task step. On the inbox page, Sum up the thread and Reply with Claude are the strong buttons.
+
 ## 0.12.4
 
 - No task step. The inbox page sums up a thread on the quick model; sorting and drafting stay on default.

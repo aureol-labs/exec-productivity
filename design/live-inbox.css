@@ -45,7 +45,9 @@
      text-decoration:none;white-space:nowrap;transition:background .12s,border-color .12s}
   .lxacts a.lxa:hover,.lxacts a.ask:hover,.lxp a.lxout.go:hover{border-color:var(--pine);background:#fff}
   .lxacts a.lxa[aria-expanded="true"]{background:var(--pine-pale);border-color:var(--pine-pale)}
-  .src .lxacts a.ask{margin-left:0;font-weight:600}
+  /* the two that start the work are the strong ones: sum up and reply */
+  .src .lxacts a.ask{margin-left:0}
+  .lxacts a.lxa.main,.lxp a.lxout.go{font-weight:600}
   .lxacts{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
   .lxacts a.lxout{font-size:12.5px;color:var(--pine);text-decoration:none;border-bottom:1px solid rgba(46,107,98,.22);margin-left:4px}
   .lxacts a.lxout:hover{color:var(--pine-ink);border-bottom-color:var(--pine)}
