@@ -297,7 +297,8 @@ shown. Write `rules`. `To archive` is a label, never an archive, and its row say
 
 **Then the first Priority inbox, now, on every mailbox.** Load the `aureol-inbox` skill and run it once on the
 last 48 hours: it publishes the page (with the labels applied where rules exist, sorting only otherwise),
-writes the link to `connections/current.pages.inbox`. The link, on its own line, and one line: "N need you." A
+writes the link to `connections/current.pages.inbox`. The link, on its own line, and one line: "N need you.
+Opened in Claude, the page reads your mail and chat itself and asks you once to allow it." A
 page the exec was just asked about has to exist before the next question.
 
 ## 7. The habits

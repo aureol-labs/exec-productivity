@@ -12,9 +12,7 @@
   "queue": [
     {
       "id": "r1",
-      "ref": "slack:D0ELENA1",
-      "kind": "decision",
-      "live": { "at": "2026-09-08T17:40:00+02:00", "from": "Elena", "channel_id": "D0ELENA1" },
+      "ref": "thread:slack-elena-renewal-playbook",
       "tier": "now",
       "channel": "slack",
       "say": "Elena’s renewal playbook is still unsigned.",
@@ -31,8 +29,6 @@
     {
       "id": "r2",
       "ref": "thread:mail-julien-cohort-numbers",
-      "kind": "info",
-      "live": { "at": "2026-09-14T09:31:00+02:00", "from": "Julien", "thread": "mail-julien-cohort-numbers", "account": "work" },
       "tier": "now",
       "channel": "mail",
       "say": "Julien has no cohort numbers for the 14:00 board prep.",
@@ -48,9 +44,7 @@
     },
     {
       "id": "r3",
-      "ref": "thread:mail-halden-procurement-76k+slack:D0NADIA1",
-      "kind": "decision",
-      "live": { "at": "2026-09-14T11:02:00+02:00", "from": "Nadia", "thread": "mail-halden-procurement-76k", "account": "work", "channel_id": "D0NADIA1" },
+      "ref": "thread:mail-halden-procurement-76k+thread:slack-nadia-halden-76k",
       "tier": "now",
       "channel": "slack",
       "channels": [ "mail", "slack" ],
@@ -67,9 +61,7 @@
     },
     {
       "id": "r4",
-      "ref": "slack:D0PRIYA1",
-      "kind": "decision",
-      "live": { "at": "2026-09-06T08:40:00+02:00", "from": "Priya", "channel_id": "D0PRIYA1" },
+      "ref": "thread:slack-priya-q4-roadmap",
       "tier": "today",
       "channel": "slack",
       "say": "Priya cannot order the Q4 roadmap until you answer Nadia.",
@@ -85,8 +77,6 @@
     {
       "id": "r5",
       "ref": "thread:mail-bergen-extend-early",
-      "kind": "decision",
-      "live": { "at": "2026-09-09T10:12:00+02:00", "from": "Bergen", "thread": "mail-bergen-extend-early", "account": "work" },
       "tier": "today",
       "channel": "mail",
       "say": "Bergen want to extend early. Nobody has replied.",
@@ -102,8 +92,6 @@
     {
       "id": "r6",
       "ref": "thread:mail-marc-board-pack-owners",
-      "kind": "action",
-      "live": { "at": "2026-09-10T16:05:00+02:00", "from": "Marc", "thread": "mail-marc-board-pack-owners", "account": "work" },
       "tier": "today",
       "channel": "mail",
       "say": "Marc has no owners for three board pack sections.",
@@ -119,8 +107,6 @@
     {
       "id": "r7",
       "ref": "thread:mail-halden-security-review",
-      "kind": "info",
-      "live": { "at": "2026-09-11T14:20:00+02:00", "from": "Halden Mutual", "thread": "mail-halden-security-review", "account": "work" },
       "tier": "today",
       "channel": "mail",
       "say": "Halden Mutual asked where their data sits. Only you can answer.",
@@ -136,8 +122,6 @@
     {
       "id": "r8",
       "ref": "thread:teams-corvid-term-sheet",
-      "kind": "action",
-      "live": { "at": "2026-09-12T09:15:00+02:00", "from": "Corvid Capital" },
       "tier": "week",
       "channel": "teams",
       "say": "Corvid Capital want the term sheet redline and a new slot.",
@@ -153,9 +137,7 @@
     },
     {
       "id": "r9",
-      "ref": "slack:D0TOMAS1",
-      "kind": "action",
-      "live": { "at": "2026-09-14T11:38:00+02:00", "from": "Tomas", "channel_id": "D0TOMAS1" },
+      "ref": "thread:slack-tomas-migration-date",
       "tier": "week",
       "channel": "slack",
       "say": "Tomas needs the migration date in writing.",
@@ -354,32 +336,5 @@
     ]
   },
   "wrote": true,
-  "next_run": "13:00",
-  "generated": "2026-09-14T12:40:00+02:00",
-  "seen": {
-    "slack:D0ELENA1": "2026-09-08T17:40:00+02:00",
-    "thread:mail-julien-cohort-numbers": "2026-09-14T09:31:00+02:00",
-    "thread:mail-halden-procurement-76k": "2026-09-14T11:02:00+02:00",
-    "slack:D0NADIA1": "2026-09-14T11:02:00+02:00",
-    "slack:D0PRIYA1": "2026-09-06T08:40:00+02:00",
-    "thread:mail-bergen-extend-early": "2026-09-09T10:12:00+02:00",
-    "thread:mail-marc-board-pack-owners": "2026-09-10T16:05:00+02:00",
-    "thread:mail-halden-security-review": "2026-09-11T14:20:00+02:00",
-    "thread:teams-corvid-term-sheet": "2026-09-12T09:15:00+02:00",
-    "slack:D0TOMAS1": "2026-09-14T11:38:00+02:00"
-  },
-  "live": {
-    "mail": { "server": "Gmail", "api": "gmail", "label": true },
-    "chat": { "server": "Slack", "api": "slack" },
-    "rules": [
-      { "label": "Sales", "rule": "Anything on a deal Nadia owns goes to Sales, unless it names me and asks a question." },
-      { "label": "Product", "rule": "Standups, doc comments and shares from Tomas’s and Priya’s teams go to Product, unless one asks me for a date or a decision." },
-      { "label": "Board", "rule": "Pack drafts, agendas and the investor data room go to Board. Marc runs them." },
-      { "label": "Customers", "rule": "Renewal notices and escalations Elena runs go to Customers, unless an account names me." },
-      { "label": "Read later", "rule": "Newsletters and product updates go to Read later, unless I subscribed to it this month." },
-      { "label": "Receipts", "rule": "Invoices, payment receipts, order and delivery confirmations go to Receipts." },
-      { "label": "To archive", "rule": "Zendesk alerts with no mention of me; Event invites from vendors I have never bought from; Calendar accepts with no message" }
-    ],
-    "lens": "Priorities, in order: close Halden Mutual at a price that does not set every renewal; ship the Q4 roadmap; a clean board pack on Thursday. Live: Halden Mutual (Nadia), Q4 roadmap (Priya), migration (Tomas), board pack (Marc), Corvid Capital term sheet. Key people: Nadia, Tomas, Julien."
-  }
+  "next_run": "13:00"
 }

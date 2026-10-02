@@ -101,27 +101,8 @@
                   first, so the title's counts reconcile: counts.mail = unread queue lines
                   carrying mail + filed mail + others.mail, same for chat. The page shows 3 lines and
                   "show all N" opens the rest. Absent or zero: nothing rendered.
-    generated     the run's time, ISO with the hour: the live page sorts only what is newer
-    seen          { ref: newest message time } for every thread the run read
-    live          { mail: {server, api: aureol|gmail, label} | null, chat: {server, api:
-                  slack} | null, rules: [{label, rule}], lens }   what the live page needs;
-                  absent, the page is what the run published and nothing more
-    a row, live   kind (decision|info|action|fyi|unclear, shown before the time) and live:
-                  { at, from, thread, account } for mail, { at, from, channel_id, ts } for
-                  Slack, so the page finds the thread again
       ref         { id } same page (opens the target) or { page, id } another page
       src         { kind: mail|chat|calendar|doc|meeting|file|you, via, label, href }
-
-  LIVE
-  Opened in Claude with its capabilities (db, sample, mcp on the servers in live),
-  the page reads mail and chat itself: it strikes a line answered, read or archived
-  since the run, sorts with Claude only what arrived after it (the whole inbox on
-  a day no run has published yet), files new mail under live.rules, and adds to
-  every line it can read See the thread (a summary: who said what, agreement,
-  disagreement, what is left to decide) and Reply with Claude (a mail draft, a chat
-  reply copied, never sent). It keeps the last page it drew in this browser and
-  redraws only when something changed. The code is design/live-inbox.js; what it
-  keeps in its store is in the store's reference.
 
   THE FILTER
   All, Mail, and the chat tool (Slack, Teams, or "Chat" when both), each with its
@@ -144,7 +125,6 @@
 -->
 <style>
 {{CSS}}
-{{LIVE_CSS}}
 </style>
 </head>
 <body>
@@ -401,9 +381,6 @@ var DICT={{DICT}};
     dbInit(function(){ hydrateDrops(recount); });
   }
   render();
-</script>
-<script>
-{{LIVE_JS}}
 </script>
 </body>
 </html>

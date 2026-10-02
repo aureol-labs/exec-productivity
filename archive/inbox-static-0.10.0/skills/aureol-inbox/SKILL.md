@@ -1,7 +1,7 @@
 ---
 name: aureol-inbox
 user-invocable: false
-description: Write the executive's Priority inbox: mail and chat on one page, ranked by who is blocked and for how long, in three tiers (Now, Today, This week), each line the ask with the one fact it is on the page for, and a filter for mail or chat alone. The page is live: opened in Claude, it reads the exec's mail and chat itself, sorts what arrived since the run, summarises a thread and drafts a reply on request. Applies labels only where the mail connection can write them and only from rules the exec confirmed, and lists every write with its rule; never archives, deletes, moves, sends or marks as read. Load from the inbox task, or when the exec asks what needs them.
+description: Write the executive's Priority inbox: mail and chat on one page, ranked by who is blocked and for how long, in three tiers (Now, Today, This week), each line the ask with the one fact it is on the page for, and a filter for mail or chat alone. Applies labels only where the mail connection can write them and only from rules the exec confirmed, and lists every write with its rule; never archives, deletes, moves, sends or marks as read. Load from the inbox task, or when the exec asks what needs them.
 ---
 
 # Priority inbox
@@ -9,14 +9,6 @@ description: Write the executive's Priority inbox: mail and chat on one page, ra
 Two jobs, and they are different jobs. Ranking decides what the exec touches. Categorising keeps the mailbox
 clean. The page never lets the second pretend to be the first. Template `references/inbox.html`, one JSON
 document (shape in its head comment and `references/example.json`).
-
-**The page is live.** This run ranks and publishes, as it always did, and the page shows exactly that. Opened in
-Claude, the page then reads mail and chat itself through the exec's connections: it strikes what was answered,
-read or archived since the run, sorts with Claude only what arrived after it, files new mail under the rules, and
-on every line summarises the thread and drafts a reply when asked (a mail draft, a chat reply copied; never
-sent). For that it needs what only this run knows: the `live` block, each line's thread, and what the run read
-(section 5). Where the mail connection is one the page cannot read (Outlook today), the page is what this run
-published, nothing more.
 
 **Voice.** Every word the exec reads, on the page, in a notification or a briefing, follows
 `../aureol-context/references/voice.md`. Read it before you write.
@@ -50,9 +42,7 @@ published, nothing more.
    the page's own, at `connections/current.pages.inbox`). A thread dropped as done or not important never comes
    back on this run or any later one, because every run reads the whole collection; a `done` also covers its
    follow-ups for 7 days, after which a genuinely new message on the thread may enter again. Give every queue
-   line the thread id as `ref` (a bounce: rule 4), the same on every run: `thread:<id>` for mail, the thread id the
-mail connection gives; `slack:<conversation id>` for a Slack direct message, `slack:<channel id>:<thread ts>` for a
-Slack thread, so the page can record the drop and the next runs find
+   line the thread id as `ref` (a bounce: rule 4), the same on every run, so the page can record the drop and the next runs find
    it; a merged line (rule 9) joins its thread ids with `+`, mail first, and a dismissal whose `ref` carries `+`
    drops each thread in it. Prune `done` dismissals older than 30 days; keep `not_important` ones.
 6. **Now is a clock the exec does not control**: an offer that lapses tonight, a deck that locks tomorrow, a
@@ -108,8 +98,7 @@ Mail and chat since the last inbox run (48 hours on the first run), both directi
 for chat, their direct messages, their mentions, and the threads and channels they are in, whatever the mail
 scope. Chat is read even when mail has nothing new.
 Every time on the page is the exec's local time (`connections/preferences.timezone`); the run may execute in
-another zone. Keep, for every thread read (mail and chat, in the queue or not), its ref (rule 5) and the time of
-its newest message: that is `seen` (section 5), and the page sorts only what is newer.
+another zone.
 Open every candidate thread once to check rule 3. Nothing new since the last run: publish nothing, write a
 `runs` document, end with one line.
 
@@ -122,10 +111,6 @@ keeps its tier and its place in it (rule 6). Without `key_people`, nobody is pro
 slack, teams), `channels` when it is one topic on two, the ask with the name, the arrival time or date, the fact
 and its `type`, sources, briefing. One topic is one line: check-page refuses two lines on one ref. The page draws
 its filter (all, mail, the chat tool) from the channels; there is nothing to write for it.
-
-Each line also says what is asked of the exec, as `kind`: `decision` (they must choose), `info` (someone needs
-information or context from them), `action` (they must do or send something), `fyi` (an update, nothing asked),
-`unclear`. The page shows it before the time.
 
 ## 3. File, where allowed
 
@@ -150,40 +135,11 @@ render mode so the Super Context page shows it.
 ## 5. Check, publish, record
 
 `lang` from `preferences.language`; `date_label` and `time_label` in that language with the real time of this
-run.
-
-**What the live page needs**, written into the same document:
-
-- `generated`: this run's time, ISO with the hour and the offset.
-- `seen`: `{ref: newest message time}` for every thread this run read, ISO.
-- On every queue line, `kind` (section 2) and `live`: `at` (when its newest message arrived, ISO), `from` (the
-  sender's first name or organisation), and where it sits: `thread` and `account` (the mailbox's alias or address)
-  for mail, `channel_id` (and `ts` for a thread) for Slack. A merged line carries the mail thread.
-- `live`, read off the store:
-  - `mail`: from `connections/current.roles.mail.tool`. `Aureol Connect` is `{server: "Aureol Connect", api:
-    "aureol"}`, `Gmail` is `{server: "Gmail", api: "gmail"}`, with `label: true` when `roles.mail.can` has
-    `label`. Any other tool: `null`.
-  - `chat`: `Slack` is `{server: "Slack", api: "slack"}`; any other tool, or none: `null`.
-  - `rules`: the exec's confirmed `rules`, each `{label, rule}` in their words; `[]` without `label`.
-  - `lens`: what the page's sort knows about the exec, rebuilt on every run from the store, in the exec's
-    language, 2,500 characters at most: the priorities in order with what each comes before, the live topics with
-    their state and people, `key_people` by name, the exec's own names for their world, and what never enters the
-    queue unless it blocks a priority. The exec's own additions live in the page's store and are never touched.
-
-The server name is the connector's name as the exec's session shows it, exactly; a page declares only the tools
-below, for the servers it has.
-
-| `api` | Tools to declare |
-|---|---|
-| `aureol` | `gmail_search`, `gmail_get_thread`, `gmail_create_draft`, `gmail_update_draft`, `gmail_list_labels`; with `label`, also `gmail_modify_labels`, `gmail_create_label` |
-| `gmail` | `search_threads`, `get_thread`, `create_draft`, `update_draft`, `list_labels`; with `label`, also `label_thread`, `create_label` |
-| `slack` | `slack_search_public_and_private`, `slack_read_channel` | Then `python3 tools/fill-page.py --kind inbox skills/aureol-inbox/references/inbox.html DATA.json OUT.html --links
+run. Then `python3 tools/fill-page.py --kind inbox skills/aureol-inbox/references/inbox.html DATA.json OUT.html --links
 brief=<link> context=<link>` from the plugin's root folder (the one holding `skills/` and `tools/`) when a
 shell exists (it checks the data and fills the template); without a shell, apply check-page's list by
 hand and replace the single `{{DATA_JSON}}` with every `<` written as `\u003c`. Read the page at
-`connections/current.pages.inbox`, publish to its `url` with `capabilities: {db: {}, sample: {}, mcp: {servers:
-[{server, tools}]}}` from the table above (`{db: {}}` alone when `live.mail` and `live.chat` are both `null`), or
-publish new the same way and write the link. The exec is asked once, on the page, to let it use their
-connections and Claude; a page they did not allow is what this run published. Write a `runs`
+`connections/current.pages.inbox`, publish to its `url` with `capabilities: {db: {}}`, or publish new the same
+way and write the link. Write a `runs`
 document with the counts read and the writes made. The task prompt says how the run ends: the Now count
 first, so whatever preview the exec sees says what matters.

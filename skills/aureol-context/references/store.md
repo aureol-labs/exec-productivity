@@ -284,6 +284,20 @@ reads a `done` records it as a fact where it can: a `so_far` entry on the topic 
 dropped in the editor carries `dropped_reason` on its own document (`done | not_a_priority`); a decision dropped
 on the page carries `reason` (`not_a_decision | not_important`).
 
+### What the live inbox keeps in its own store
+
+The Priority inbox page writes these itself, in its own artifact's store; no routine writes them, and a routine
+reads none of them except `dismissals`.
+
+- `inbox/provisional`: what the page sorted since the run, `{verdicts: {"<ref>@<message time>": {tier, say,
+  fact, type, kind}}, filed: {<ref>: label}, at}`. A run that publishes again makes its verdicts old: the page
+  keeps only those newer than the run.
+- `inbox/snapshot`: the page's own whole sort, on a day it was opened before any run: `{scope, day, at, seen,
+  lines}`. Ignored once a run of the same day has published.
+- `inbox/lens`: `{own, updated}`, what the exec added on the page to what the sort knows about them. The run's
+  part is `live.lens` in the page's data; the page reads both and never lets a run overwrite `own`.
+- `threads/<slug of ref>`: a thread's summary, `{ref, key, at, summary}`, kept until the thread moves.
+
 ### `runs`, one per run
 
 ```json
