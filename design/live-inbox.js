@@ -351,10 +351,28 @@
   RUN.setAttribute('role','status'); RUN.setAttribute('aria-live','polite');
   var RUN_R=el('button','lxq',L('lx_retry')); RUN_R.type='button'; RUN_R.hidden=true;
   RUN_R.onclick=function(){ RUN_R.hidden=true; SORTED=false; maybeSort(); };
-  RUN_B.appendChild(el('i')); add(RUN,RUN_T,RUN_B,RUN_S,RUN_R);
+  /* the refresh arrow: re-reads the inboxes now, then sorts what is new; it spins until the banner settles */
+  var RUN_F=el('button','lxref'); RUN_F.type='button'; RUN_F.setAttribute('aria-label',L('lx_refresh')); RUN_F.title=L('lx_refresh');
+  (function(){ var NS='http://www.w3.org/2000/svg', sv=document.createElementNS(NS,'svg'), pa=document.createElementNS(NS,'path');
+    sv.setAttribute('viewBox','0 0 16 16'); sv.setAttribute('aria-hidden','true');
+    pa.setAttribute('d','M13.2 9.4A5.4 5.4 0 1 1 11.9 4.2M12.4 1.6v2.9H9.5'); pa.setAttribute('fill','none'); pa.setAttribute('stroke','currentColor');
+    pa.setAttribute('stroke-width','1.5'); pa.setAttribute('stroke-linecap','round'); pa.setAttribute('stroke-linejoin','round');
+    sv.appendChild(pa); RUN_F.appendChild(sv); })();
+  RUN_F.onclick=function(){ refreshNow(); };
+  RUN_B.appendChild(el('i')); add(RUN,RUN_T,RUN_B,RUN_S,RUN_R,RUN_F);
+  function refreshNow(){
+    if(!RUN.classList.contains('done')||!LX.mcp) return;
+    RUN_F.classList.add('busy');
+    var keys=['prim','minus','slack','labels'], back=function(){ keys.forEach(function(k){ if(READY[k]&&READY[k].any) READY[k]=Object.assign({},READY[k],{fresh:true}); }); syncMail(); maybeSort(); };
+    keys.forEach(function(k){ if(READY[k]&&READY[k].any) READY[k]=Object.assign({},READY[k],{fresh:false}); });
+    syncMail(); SORTED=false; runShow(L('lx_checking'));
+    var servers=[MAIL_CFG&&MAIL?MAIL_CFG.server:null,CHAT?CHAT.server:null].filter(Boolean);
+    Promise.all(servers.map(function(sv){ return typeof LX.mcp.invalidate==='function' ? LX.mcp.invalidate(sv) : Promise.reject(); })).catch(back);
+    setTimeout(function(){ if(!SORTED) back(); },20000);
+  }
   function runShow(text){ var t0=performance.now(); RUN.classList.remove('done'); RUN_R.hidden=true; RUN_T.textContent=text; RUN_S.textContent='';
     clearInterval(RUN_I); RUN_I=setInterval(function(){ RUN_S.textContent=since(t0); },500); }
-  function runDone(text,retry){ clearInterval(RUN_I); RUN.classList.add('done'); RUN_T.textContent=text; RUN_S.textContent=''; RUN_R.hidden=!retry; if(!retry) store(CACHE_KEY+':said',text); }
+  function runDone(text,retry){ clearInterval(RUN_I); RUN_F.classList.remove('busy'); RUN.classList.add('done'); RUN_T.textContent=text; RUN_S.textContent=''; RUN_R.hidden=!retry; if(!retry) store(CACHE_KEY+':said',text); }
 
   /* ---------- what the sort knows about you: the run's text, and the exec's own additions ---------- */
   var LENS_A=el('a','lxlens',''), LENS_BOX=el('div','lxlensbox'), LENS_RUN=el('p','lxlensrun',''), LENS_TA=el('textarea','lxta'),
