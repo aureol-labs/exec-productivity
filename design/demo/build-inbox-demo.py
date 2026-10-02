@@ -174,8 +174,8 @@ QUEUE = [
     mail_row('r1', 'ostral', 'now', 'decision', 'precedent',
              "Claire et Hugo attendent votre arbitrage sur la remise Ostral.",
              "Brenner a signé à 15 % l'an dernier, sur 3 ans.",
-             [src('Claire Martin, fil Ostral'), src('Hugo Lefèvre, fil Ostral'), src('Contrat Brenner, 2025', 'doc')],
-             "Ostral demande 18 % de remise pour renouveler sur 3 ans, à 240 k€ par an. Hugo veut accepter entre 15 et 18 % pour signer demain ; Claire refuse au-delà de 12 % pour garder la marge du compte au-dessus de 60 %. Brenner a signé à 15 % l'an dernier. C'est ce que je sais, un point de départ, pas le cadre.\n\nOuvre le fil Ostral et le contrat Brenner. Puis :\n1. Dis-moi ce que chaque option fait à la marge et au trimestre.\n2. Donne-moi le meilleur argument pour chacune.\n3. Rédige ma réponse à Claire et Hugo pour l'option que je choisis. Ne l'envoie pas."),
+             [src('Claire Martin, échange Ostral'), src('Hugo Lefèvre, échange Ostral'), src('Contrat Brenner, 2025', 'doc')],
+             "Ostral demande 18 % de remise pour renouveler sur 3 ans, à 240 k€ par an. Hugo veut accepter entre 15 et 18 % pour signer demain ; Claire refuse au-delà de 12 % pour garder la marge du compte au-dessus de 60 %. Brenner a signé à 15 % l'an dernier. C'est ce que je sais, un point de départ, pas le cadre.\n\nOuvre l'échange Ostral et le contrat Brenner. Puis :\n1. Dis-moi ce que chaque option fait à la marge et au trimestre.\n2. Donne-moi le meilleur argument pour chacune.\n3. Rédige ma réponse à Claire et Hugo pour l'option que je choisis. Ne l'envoie pas."),
     slack_row('r2', 'D0SOFIA1', 'now', 'action', 'history',
               "Sofia attend votre go écrit pour la mise en production de demain.",
               "Go écrit exigé depuis l'incident de juin.",
@@ -203,7 +203,7 @@ QUEUE = [
              "Antoine relance sur Kerys sans dire ce qu'il attend.",
              "Troisième relance depuis la mi-septembre.",
              [src('Antoine Roche, Kerys')],
-             "Antoine, de Kerys, m'a relancé trois fois depuis la mi-septembre au sujet d'un partenariat, sans dire ce qu'il attend de moi. C'est un point de départ.\n\nOuvre le fil Kerys. Puis :\n1. Dis-moi ce qu'il propose réellement.\n2. Rédige une réponse qui lui demande ce qu'il attend, ou qui décline. Ne l'envoie pas."),
+             "Antoine, de Kerys, m'a relancé trois fois depuis la mi-septembre au sujet d'un partenariat, sans dire ce qu'il attend de moi. C'est un point de départ.\n\nOuvre l'échange avec Antoine. Puis :\n1. Dis-moi ce qu'il propose réellement.\n2. Rédige une réponse qui lui demande ce qu'il attend, ou qui décline. Ne l'envoie pas."),
 ]
 
 # the run's filed labels and the rest, as the run saw them
