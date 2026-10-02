@@ -17,6 +17,11 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.13.3
+
+- `inbox`: the next run publishes the Priority inbox even when nothing arrived since the last run, so a page on Aureol
+  Connect gets `live.mail.read` and the `gmail_mark_read` tool: Mark as read now works there too.
+
 ## 0.13.2
 
 - No task step. A thread's summary names a question to settle only when the thread asks the exec to choose or approve;

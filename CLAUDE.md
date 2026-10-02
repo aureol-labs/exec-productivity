@@ -20,8 +20,8 @@ procedure, the plugin is how it reaches a session. Read `README.md` first, then 
 - **Zero writes outside the pages and their store**, except labels where the mail role can write them and only
   from confirmed rules, each listed, and one self-addressed email per habit run where the exec chose it at
   install and the mail role can send. Never send to anyone else, never delete, move, archive, mark as read. One
-  exception is the exec's own: Mark as read on the live inbox page, on their click, mail only, removing `UNREAD`
-  and nothing else; no routine ever does it.
+  exception is the exec's own: Mark as read on the live inbox page, on their click, mail only, changing the read
+  state and nothing else; no routine ever does it.
 - **Notifications are sent by the run, never assumed.** Nothing notifies on its own. A run reads
   `connections/preferences.notify` and sends, at most, one line under 200 characters with the session's
   notification tool, leading with what to act on. The inbox notifies only when something is Now unless the exec

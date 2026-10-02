@@ -1763,7 +1763,7 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
           await LX.mcp.callTool(MAIL_CFG.server,'gmail_create_label',{account:account,name:name}); await call(); } else throw e; }
       },
       labelHref:function(account,name){ return 'https://mail.google.com/mail/?authuser='+encodeURIComponent(ACCT[account]||'')+'#label/'+encodeURIComponent(name); },
-      /* Aureol Connect refuses the read state today; the run sets read only once it has a tool for it */
+      /* the read state has its own tool on Aureol Connect: {account, thread_ids, read} (D22 there) */
       markRead:async function(x){ await LX.mcp.callTool(MAIL_CFG.server,'gmail_mark_read',{account:x.account,thread_ids:[x.thread]}); }
     },
     /* the Gmail connector: one account, labels written by id only */
