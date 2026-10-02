@@ -612,13 +612,15 @@
       var r=ROWS[row.id]; if(!r) return;
       if(r.state){ row.classList.add('gone','lxstruck'); var dz=row.querySelector('.src .drop'); if(dz) dz.parentNode.removeChild(dz);
         var dec=row.querySelector('.dec'); if(dec) add(dec, el('span','rel',L(MARK[r.state]))); }
-      var why=row.querySelector(':scope > .why'), src=why&&why.querySelector('.src'); if(!src||!liveFor(r.l)) return;
-      var ask=src.querySelector('.ask'), p=PANELS[row.id]||{};
-      [['thread','lx_thread'],['reply','lx_reply']].forEach(function(k){
-        var a=el('a','lxa',L(k[1])); a.setAttribute('href','#'); a.setAttribute('aria-expanded',p[k[0]]&&!p[k[0]].hidden?'true':'false');
+      var why=row.querySelector(':scope > .why'), src=why&&why.querySelector('.src'); if(!src) return;
+      /* the actions on their own line, drawn as buttons; the sources above stay links */
+      var ask=src.querySelector('.ask'), drop=src.querySelector('.drop'), p=PANELS[row.id]||{}, acts=el('div','lxacts');
+      if(liveFor(r.l)) [['thread','lx_thread'],['reply','lx_reply']].forEach(function(k){
+        var a=el('a','lxa',L(k[1])); a.setAttribute('href','#'); a.setAttribute('role','button'); a.setAttribute('aria-expanded',p[k[0]]&&!p[k[0]].hidden?'true':'false');
         a.onclick=function(e){ e.preventDefault(); togglePanel(row.id,k[0],a); return false; };
-        src.insertBefore(a, ask||null);
+        add(acts,a);
       });
+      if(ask) add(acts,ask); if(drop) add(acts,drop); src.appendChild(acts);
       if(p.thread) why.appendChild(p.thread); if(p.reply) why.appendChild(p.reply);
     });
     /* placeholder lines only on an empty page: a page with lines keeps them still */
