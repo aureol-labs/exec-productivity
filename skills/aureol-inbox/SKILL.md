@@ -47,15 +47,18 @@ published, nothing more.
    unread counts from the tools, never estimated. **A bounce is the exception**: a message of the exec's that did
    not arrive is a line even on a thread they answered or dropped, until they send it again, with the bounce's
    own id as `ref` (`message:<id>`) and `read: true` once they opened it.
-5. **A dropped line stays dropped.** Read `dismissals` from the inbox page's store before ranking (the store is
-   the page's own, at `connections/current.pages.inbox`). A thread dropped as done or not important never comes
-   back on this run or any later one, because every run reads the whole collection; a `done` also covers its
-   follow-ups for 7 days, after which a genuinely new message on the thread may enter again. Give every queue
-   line the thread id as `ref` (a bounce: rule 4), the same on every run: `thread:<id>` for mail, the thread id the
-mail connection gives; `slack:<conversation id>` for a Slack direct message, `slack:<channel id>:<thread ts>` for a
-Slack thread, so the page can record the drop and the next runs find
-   it; a merged line (rule 9) joins its thread ids with `+`, mail first, and a dismissal whose `ref` carries `+`
-   drops each thread in it. Prune `done` dismissals older than 30 days; keep `not_important` ones.
+5. **The exec's priority holds.** A line leaves the inbox when it is read; the exec's one judgement on the page is
+   its priority. Read `priority` from the inbox page's store before ranking (the store is the page's own, at
+   `connections/current.pages.inbox`): `{ref, level: up|down, at}`. A thread marked `down` never enters the queue
+   while its newest message is older than `at`; it stays in the rest, unread. A message after `at` makes it a new
+   candidate. A thread marked `up` enters the queue while it is unread, at Today unless the test puts it higher,
+   with its ask and fact like any line. Older pages also wrote `dismissals` (Done, Not important): they still
+   hold as before (a `done` covers follow-ups for 7 days; prune `done` after 30 days, keep `not_important`).
+   Give every queue line the thread id as `ref` (a bounce: rule 4), the same on every run: `thread:<id>` for mail,
+   the thread id the mail connection gives; `slack:<conversation id>` for a Slack direct message,
+   `slack:<channel id>:<thread ts>` for a Slack thread, so the page records the priority and the next runs find
+   it; a merged line (rule 9) joins its thread ids with `+`, mail first, and a priority on either thread holds
+   for the line.
 6. **Now is a clock the exec does not control**: an offer that lapses tonight, a deck that locks tomorrow, a
    build that starts after lunch. Importance is not a tier. Then Today, then This week. Inside a tier, oldest
    first.

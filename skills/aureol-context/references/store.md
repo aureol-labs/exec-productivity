@@ -297,6 +297,8 @@ reads none of them except `dismissals`.
 - `inbox/lens`: `{own, updated}`, what the exec added on the page to what the sort knows about them. The run's
   part is `live.lens` in the page's data; the page reads both and never lets a run overwrite `own`.
 - `threads/<slug of ref>`: a thread's summary, `{ref, key, at, summary}`, kept until the thread moves.
+- `priority/<slug of ref>`: the exec's priority on a line, `{page: "inbox", ref, level: up|down, at}`. The inbox run
+  reads it before ranking (aureol-inbox rule 5); the page writes it and nothing else does.
 
 ### `runs`, one per run
 

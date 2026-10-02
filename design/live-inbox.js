@@ -269,7 +269,7 @@
       || /\(via Google (Drive|Docs|Sheets|Slides|Forms)\)/i.test(x.from||'') || /@(docs|drive)\.google\.com$/i.test(a);
   }
   /* read mail from an automated sender is never a candidate; nor a thread you answered last */
-  function candidate(x){ return !(x.kind==='mail'&&!x.unread&&isAuto(x)) && !droppedIn(DISMISSED,x) && !x.mine; }
+  function candidate(x){ return !(x.kind==='mail'&&!x.unread&&isAuto(x)) && !droppedIn(DISMISSED,x) && !x.mine && !prioOf(refOf(x),x); }
   var READ_HERE={};
   function liveItems(){ return LIVE.mail.map(function(x){ return READ_HERE[refOf(x)]&&x.unread ? Object.assign({},x,{unread:false}) : x; }).concat(LIVE.slack.items); }
   function itemFor(l,byRef){ var refs=String(l.ref||'').split('+'); for(var i=0;i<refs.length;i++) if(byRef[refs[i]]) return byRef[refs[i]]; return null; }
@@ -284,7 +284,8 @@
   }
   function briefingOf(l){
     var w=when(new Date(l.dateIso));
-    return T('lx_brief',{say:l.say, fact:l.fact||'', where:l.channel==='slack'?T('lx_where_chat',{s:CHAT_NAME}):L('lx_where_mail'), from:l.from, when:w, href:l.href||''});
+    var b=T('lx_brief',{say:l.say, fact:l.fact||'', where:l.channel==='slack'?T('lx_where_chat',{s:CHAT_NAME}):L('lx_where_mail'), from:l.from, when:w, href:l.href||''});
+    return l.fact ? b : b.replace(/\s*(What I know|Ce que je sais)[\s\u00a0]*:\s*(?=\n)/,'');
   }
   function kindMeta(l,d){ return (KINDS[l.kind]?L('lx_k_'+l.kind)+' · ':'')+when(d); }
   function rowOf(q){
@@ -297,6 +298,28 @@
       sources:[{kind:l.channel==='slack'?'chat':'mail', via:l.channel==='slack'?CHAT_NAME:undefined, label:l.from+', '+when(d), href:l.href}],
       briefing:briefingOf(l)};
   }
+  /* ---- priority: the exec's one judgement on a line ----
+     Down: the line leaves the queue for the rest, unread, until a message arrives after the mark.
+     Up: an unread line of the rest or of a label joins the queue, at Today. Kept in the page's
+     store, priority/<slug of ref>, so the page's sort and the inbox run both respect it. */
+  var PRIO={};
+  function readPrio(snap){ var m={}; ((snap&&snap.docs)||[]).forEach(function(d){ if(!d.exists) return; var v=d.data()||{};
+    if(v.page==='inbox'&&v.ref&&(v.level==='up'||v.level==='down')) m[String(v.ref)]={level:v.level, at:v.at}; }); return m; }
+  function prioOf(ref,x){ var parts=String(ref).split('+');
+    for(var i=0;i<parts.length;i++){ var p=PRIO[parts[i]]; if(!p) continue;
+      if(p.level==='down'&&x&&x.date&&x.date.getTime()>Date.parse(p.at||0)+1000) continue; return p.level; }
+    return null; }
+  async function setPriority(ref,level){
+    var r=String(ref).split('+')[0], at=new Date().toISOString(); PRIO[r]={level:level, at:at}; LAST=''; redraw();
+    if(LX.db){ try{ await LX.db.doc('priority/'+slugOf(r)).set({page:'inbox', ref:r, level:level, at:at}); }
+      catch(e){ runDone(L('not_saved')+' ('+(e&&e.code||'error')+')'); } }
+  }
+  function upLine(x){
+    var what=x.kind==='mail'?x.subject:cut(x.snippet,70);
+    return {id:'q-'+slugOf(refOf(x)), ref:refOf(x), tier:'today', say:x.from+' \u00b7 '+what, fact:'', type:'history', kind:null,
+      channel:x.kind, from:x.from, account:x.account, href:x.href, dateIso:x.date.toISOString(), wasUnread:!!x.unread,
+      thread:x.thread||null, channelId:x.channel||null, ts:x.ts||null};
+  }
   /* dropped on this page since it opened: the line folds with the others handled */
   function droppedNow(ref){ return String(ref).split('+').some(function(r){ return DISMISSED[r]&&!DISMISSED_BOOT[r]; }); }
   function queueNow(){
@@ -305,6 +328,7 @@
     SNAP.lines.forEach(function(l){
       var x=itemFor(l,byRef), state='';
       if(String(l.ref).split('+').some(function(r){ return DISMISSED_BOOT[r]&&(!x||droppedIn(DISMISSED_BOOT,x)); })) return;
+      if(prioOf(l.ref,x)==='down') return;
       if(x&&x.kind==='mail'&&!x.unread&&isAuto(x)) return;
       if(l.channel==='mail'||!l.channel){ if(mailFresh&&l.thread){
         if(x&&x.mine) state='answered';
@@ -316,8 +340,9 @@
       out.push({l:l, state:state});
     });
     all.forEach(function(x){ if(taken[refOf(x)]||!isNew(x)) return; var v=PROV.verdicts[keyOf(x)];
-      if(!v||!v.tier||v.tier==='rest'||droppedIn(DISMISSED_BOOT,x)) return;
-      out.push({l:lineFrom(x,v), state:droppedNow(refOf(x))?'dropped':''}); });
+      if(!v||!v.tier||v.tier==='rest'||droppedIn(DISMISSED_BOOT,x)||prioOf(refOf(x),x)==='down') return;
+      taken[refOf(x)]=1; out.push({l:lineFrom(x,v), state:droppedNow(refOf(x))?'dropped':''}); });
+    all.forEach(function(x){ if(taken[refOf(x)]||!x.unread||prioOf(refOf(x),x)!=='up') return; taken[refOf(x)]=1; out.push({l:upLine(x), state:''}); });
     var ORD={now:0,today:1,week:2};
     return out.sort(function(a,b){ return (ORD[a.l.tier]-ORD[b.l.tier]) || (Date.parse(a.l.dateIso)-Date.parse(b.l.dateIso)); });
   }
@@ -661,7 +686,11 @@
         if(PENDING_READ[refOf(lx)]){ row.classList.add('lxpend'); add(acts,undoEl(refOf(lx))); }
         else { var mr=el('a','lxa',L('lx_mark_read')); mr.setAttribute('href','#'); mr.setAttribute('role','button');
           mr.onclick=function(e){ e.preventDefault(); markRead(lx); return false; }; add(acts,mr); } }
-      if(ask) add(acts,ask); if(drop) add(acts,drop); src.appendChild(acts);
+      if(drop) drop.parentNode.removeChild(drop);
+      if(ask) add(acts,ask);
+      var dn=el('a','lxdown',L('lx_down')); dn.setAttribute('href','#'); dn.setAttribute('role','button'); dn.title=L('lx_down_tip');
+      dn.onclick=function(e){ e.preventDefault(); setPriority(r.l.ref,'down'); return false; }; add(acts,dn);
+      src.appendChild(acts);
       if(p.thread) why.appendChild(p.thread); if(p.reply) why.appendChild(p.reply);
     });
     /* placeholder lines only on an empty page: a page with lines keeps them still */
@@ -682,6 +711,10 @@
      channel and the page's tuck class, so the filter and "show all" still find it. */
   function miniLine(x){ return {id:'m-'+slugOf(refOf(x)), ref:refOf(x), channel:x.kind, from:x.from, account:x.account, href:x.href,
     dateIso:x.date.toISOString(), wasUnread:!!x.unread, thread:x.thread||null, channelId:x.channel||null, ts:x.ts||null}; }
+  function arrowUp(){ var NS='http://www.w3.org/2000/svg', sv=document.createElementNS(NS,'svg'), pa=document.createElementNS(NS,'path');
+    sv.setAttribute('viewBox','0 0 16 16'); sv.setAttribute('aria-hidden','true'); pa.setAttribute('d','M8 12.5V3.8M4.4 7.3L8 3.7l3.6 3.6');
+    pa.setAttribute('fill','none'); pa.setAttribute('stroke','currentColor'); pa.setAttribute('stroke-width','1.6');
+    pa.setAttribute('stroke-linecap','round'); pa.setAttribute('stroke-linejoin','round'); sv.appendChild(pa); return sv; }
   function tick(){ var NS='http://www.w3.org/2000/svg', sv=document.createElementNS(NS,'svg'), pa=document.createElementNS(NS,'path');
     sv.setAttribute('viewBox','0 0 16 16'); sv.setAttribute('aria-hidden','true'); pa.setAttribute('d','M3.5 8.5l3 3 6-7');
     pa.setAttribute('fill','none'); pa.setAttribute('stroke','currentColor'); pa.setAttribute('stroke-width','1.6');
@@ -700,7 +733,9 @@
     ta.onclick=function(e){ e.preventDefault(); open('thread',ta); return false; };
     ra.onclick=function(e){ e.preventDefault(); open('reply',ra); return false; };
     l.onReply=function(){ if(p.reply&&!p.reply.hidden) p.reply.scrollIntoView({behavior:'smooth',block:'nearest'}); else open('reply',ra); };
-    add(acts,ta,ra);
+    var ua=el('a','lxa',L('lx_up')); ua.setAttribute('href','#'); ua.setAttribute('role','button');
+    ua.onclick=function(e){ e.preventDefault(); setPriority(l.ref,'up'); return false; };
+    add(acts,ta,ra,ua);
     if(CAN_READ&&x.kind==='mail'&&x.unread){ var mr=el('a','lxa',L('lx_mark_read')); mr.setAttribute('href','#'); mr.setAttribute('role','button');
       mr.onclick=function(e){ e.preventDefault(); markRead(x); return false; }; add(acts,mr); }
     add(acts, outLink(l.href, T('lx_open_in',{s:x.kind==='slack'?CHAT_NAME:MAIL_NAME}), 'lxout'));
@@ -717,9 +752,13 @@
     a.setAttribute('aria-expanded',m.box.hidden?'false':'true');
     a.onclick=function(e){ e.preventDefault(); m.box.hidden=!m.box.hidden; d.classList.toggle('on',!m.box.hidden); a.setAttribute('aria-expanded',m.box.hidden?'false':'true'); return false; };
     if(CAN_READ&&x.kind==='mail'&&x.unread&&PENDING_READ[refOf(x)]){ d.classList.add('pend'); d.appendChild(undoEl(refOf(x))); }
-    else if(CAN_READ&&x.kind==='mail'&&x.unread){ var rb=el('button','lxmr'); rb.type='button'; rb.title=L('lx_mark_read'); rb.setAttribute('aria-label',L('lx_mark_read')+' : '+(x.subject||''));
-      rb.dataset.tip=L('lx_mark_read'); rb.removeAttribute('title');
-      rb.appendChild(tick()); rb.onclick=function(e){ e.stopPropagation(); markRead(x); }; d.appendChild(rb); }
+    else {
+      var hv=el('span','lxmh'), mk=function(tip,icon,fn){ var b=el('button','lxmr'); b.type='button'; b.dataset.tip=tip; b.setAttribute('aria-label',tip+' : '+(x.subject||x.from||''));
+        b.appendChild(icon); b.onclick=function(e){ e.preventDefault(); e.stopPropagation(); fn(); }; return b; };
+      add(hv, mk(L('lx_up'), arrowUp(), function(){ setPriority(refOf(x),'up'); }));
+      if(CAN_READ&&x.kind==='mail'&&x.unread) add(hv, mk(L('lx_mark_read'), tick(), function(){ markRead(x); }));
+      d.appendChild(hv);
+    }
     d.appendChild(m.box);
   }
   function decorateMinis(){
@@ -962,7 +1001,9 @@
     LX.db=got[0].value||null; LX.mcp=got[1].value||null; LX.sample=got[2].value||null;
     if(DEMO){ LX.db=memDb(); LX.mcp=demoMcp(); dbInit=function(cb){ DB=LX.db; DB_KNOWN=true; (cb||function(){})(); }; }
     if(LX.db){
-      var r=await Promise.allSettled([LX.db.doc('inbox/snapshot').get(), LX.db.doc('inbox/provisional').get(), LX.db.doc('inbox/lens').get(), LX.db.collection('dismissals').get()]);
+      var r=await Promise.allSettled([LX.db.doc('inbox/snapshot').get(), LX.db.doc('inbox/provisional').get(), LX.db.doc('inbox/lens').get(), LX.db.collection('dismissals').get(), LX.db.collection('priority').get()]);
+      if(r[4].status==='fulfilled') PRIO=readPrio(r[4].value);
+      try{ LX.db.collection('priority').onSnapshot(function(s2){ var m=readPrio(s2); Object.keys(PRIO).forEach(function(k){ if(!m[k]) m[k]=PRIO[k]; }); PRIO=m; LAST=''; redraw(); },function(){}); }catch(e){}
       var val=function(i){ return r[i].status==='fulfilled'&&r[i].value&&r[i].value.exists ? r[i].value.data() : null; };
       var own=val(0), prov=val(1);
       /* this page's own sort wins only when it is newer than the run's */

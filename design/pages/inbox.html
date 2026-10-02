@@ -26,6 +26,14 @@
   page shows "The rest, grouped" instead, without rules, and the footer says
   nothing was written.
 
+  PRIORITY (0.13.0)
+  The inbox has no Drop: a line leaves when it is read. The exec's one judgement is its
+  priority: Lower priority on a queue line sends it to the rest, Higher priority on a
+  line of the rest or of a label brings it into the queue at Today. The live layer writes
+  priority/<slug of ref> {page: "inbox", ref, level: up|down, at} to this artifact's store;
+  the inbox run reads that collection before it ranks. What follows describes Drop as the
+  other pages still have it, and dismissals an older inbox wrote, which still hold.
+
   DROP
   Every queue row carries one gesture of the exec's own, Drop, at the end of its
   sources row after Ask Claude. It asks why, inline (Done, Not important), and
@@ -188,7 +196,7 @@ var DICT={{DICT}};
     add(w, srcRow(it.sources,it.briefing));
     add(r,w);
     var first=(it.sources||[])[0];
-    dropUI(r, {page:'inbox', kind:'queue', ref: it.ref || (first && first.href) || it.id, say:it.say||''});
+    /* no Drop on the inbox since 0.13.0: a line leaves when it is read; the live layer offers Lower priority */
     return r;
   }
 
