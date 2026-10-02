@@ -17,6 +17,11 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.13.2
+
+- No task step. A thread's summary names a question to settle only when the thread asks the exec to choose or approve;
+  a request for information is summed up, never turned into a decision. One entry per person. Summaries are redone once.
+
 ## 0.13.1
 
 - No task step. Raising a line reads « Prioriser » / "Prioritise": « Plus prioritaire » could be read as « no longer a priority ».
