@@ -269,7 +269,7 @@ SUMMARIES = {
         'agree': [], 'disagree': [], 'decide': ''},
     'thread:kerys': {'who': [
         {'name': 'Antoine', 'date': 'depuis la mi-septembre', 'said': fr("Trois relances sur une proposition de partenariat Kerys, sans dire ce qu'il attend.")}],
-        'agree': [], 'disagree': [], 'decide': fr("Voulez-vous ouvrir la discussion avec Kerys, ou décliner ?")},
+        'agree': [], 'disagree': [], 'decide': ''},
     'thread:roux': {'who': [
         {'name': 'Hélène Roux', 'date': "à l'instant", 'said': fr("Pacte d'associés final signé par tous les investisseurs ; manque votre signature pour clôturer la levée demain.")}],
         'agree': [], 'disagree': [], 'decide': ''},
