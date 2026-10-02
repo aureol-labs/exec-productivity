@@ -71,6 +71,16 @@
   .lxmr svg{width:13px;height:13px;display:block}
   .lxmr:hover{background:var(--pine-pale);border-color:var(--pine-pale)}
   .lxmr:focus-visible{display:inline-flex;outline:2px solid var(--pine);outline-offset:2px}
+  /* the check's tooltip: a word, on hover and on focus */
+  .lxmr[data-tip]:hover::after,.lxmr[data-tip]:focus-visible::after{content:attr(data-tip);position:absolute;right:0;bottom:calc(100% + 6px);
+     white-space:nowrap;font:500 11.5px/1.3 var(--sans);color:#fff;background:var(--ink);padding:4px 8px;border-radius:4px;pointer-events:none}
+  /* the toast: bottom centre, clear of the phone's bars */
+  .lxtoast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,8px);opacity:0;
+     max-width:min(92vw,520px);padding:9px 16px;border-radius:999px;background:var(--ink);color:#fff;font:500 13px/1.4 var(--sans);
+     box-shadow:0 4px 16px rgba(38,41,46,.18);transition:opacity .2s,transform .2s;z-index:20;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .lxtoast.in{opacity:1;transform:translate(-50%,0)}
+  .lxtoast.bad{background:var(--brick)}
+  @media (prefers-reduced-motion: reduce){ .lxtoast{transition:none} }
   @media (hover:hover){
     .mini>.lxm:hover>.lxmr{display:inline-flex}
     .mini>.lxm:hover>a .when{visibility:hidden}

@@ -687,6 +687,7 @@
     a.setAttribute('aria-expanded',m.box.hidden?'false':'true');
     a.onclick=function(e){ e.preventDefault(); m.box.hidden=!m.box.hidden; d.classList.toggle('on',!m.box.hidden); a.setAttribute('aria-expanded',m.box.hidden?'false':'true'); return false; };
     if(CAN_READ&&x.kind==='mail'&&x.unread){ var rb=el('button','lxmr'); rb.type='button'; rb.title=L('lx_mark_read'); rb.setAttribute('aria-label',L('lx_mark_read')+' : '+(x.subject||''));
+      rb.dataset.tip=L('lx_mark_read'); rb.removeAttribute('title');
       rb.appendChild(tick()); rb.onclick=function(e){ e.stopPropagation(); markRead(x); }; d.appendChild(rb); }
     d.appendChild(m.box);
   }
@@ -701,12 +702,20 @@
   var pageSetFilter=setFilter;
   setFilter=function(f,keep){ pageSetFilter(f,keep); try{ decorateMinis(); }catch(e){} };
 
+  /* a toast: one line at the bottom of the screen, gone after a few seconds */
+  var TOAST=el('div','lxtoast'), TOAST_T=null; TOAST.setAttribute('role','status'); TOAST.setAttribute('aria-live','polite'); TOAST.hidden=true;
+  document.body.appendChild(TOAST);
+  function toast(text,bad){ TOAST.textContent=text; TOAST.classList.toggle('bad',!!bad); TOAST.hidden=false;
+    requestAnimationFrame(function(){ TOAST.classList.add('in'); });
+    clearTimeout(TOAST_T); TOAST_T=setTimeout(function(){ TOAST.classList.remove('in'); setTimeout(function(){ TOAST.hidden=true; },250); },bad?6000:4000); }
+
   /* mark as read: the exec's own gesture, mail only; the line moves at once, the mailbox follows */
   async function markRead(x){
     if(!CAN_READ||!x||x.kind!=='mail') return;
     var r=refOf(x); READ_HERE[r]=1; LAST=''; redraw();
-    try{ await MAIL.markRead(x); if(typeof LX.mcp.invalidate==='function') LX.mcp.invalidate(MAIL_CFG.server).catch(function(){}); }
-    catch(e){ delete READ_HERE[r]; LAST=''; redraw(); runDone(T('lx_read_failed',{x:e&&e.code==='tool_error'?cut(e.message,140):mcpCopy(e,MAIL_CFG.server)})); }
+    try{ await MAIL.markRead(x); toast(T('lx_marked',{x:cut(x.subject||x.from,60)}));
+      if(typeof LX.mcp.invalidate==='function') LX.mcp.invalidate(MAIL_CFG.server).catch(function(){}); }
+    catch(e){ delete READ_HERE[r]; LAST=''; redraw(); toast(T('lx_read_failed',{x:e&&e.code==='tool_error'?cut(e.message,140):mcpCopy(e,MAIL_CFG.server)}),true); }
   }
 
   /* ---------- the sort: what arrived since the run; the whole inbox when no run has passed today ---------- */
