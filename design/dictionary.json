@@ -376,7 +376,9 @@
     "lx_undo": "Undo ({n} s)",
     "lx_demo": "Demo",
     "lx_demo_chat": "Chat:",
-    "lx_demo_mail": "Mail:"
+    "lx_demo_mail": "Mail:",
+    "lx_cat_labelled": "Categorised, still unread",
+    "lx_cat_more": "and {n} more in this category"
   },
   "fr": {
     "page_brief": "Brief du jour",
@@ -754,6 +756,8 @@
     "lx_undo": "Annuler ({n} s)",
     "lx_demo": "Démo",
     "lx_demo_chat": "Messagerie :",
-    "lx_demo_mail": "Mail :"
+    "lx_demo_mail": "Mail :",
+    "lx_cat_labelled": "Catégorisés, toujours non lus",
+    "lx_cat_more": "et {n} de plus dans cette catégorie"
   }
 }
