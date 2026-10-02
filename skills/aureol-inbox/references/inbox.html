@@ -2105,7 +2105,7 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
         var text; try{ text=await threadText(l); }catch(e){ note.textContent=mcpCopy(e,l.channel==='slack'?CHAT.server:MAIL_CFG.server); note.className='lxnote bad'; return; }
         word=L('lx_summing');
         var who=l.channel==='slack' ? 'in this direct message, everything not from '+l.from+' is from them' : 'they write from the account the thread sits in';
-        var s=await LX.sample.json(SUM_ASK+'\nThe person who received it: '+who+'.\n\n--- The thread ---\n'+text,{modelTier:'default',cache:false});
+        var s=await LX.sample.json(SUM_ASK+'\nThe person who received it: '+who+'.\n\n--- The thread ---\n'+text,{modelTier:'quick',cache:false});
         s=s&&typeof s==='object'?s:{}; show(s);
         if(doc){ try{ await doc.set({ref:l.ref, key:key, at:new Date().toISOString(), summary:{who:s.who||[], agree:s.agree||[], disagree:s.disagree||[], decide:String(s.decide||'')}}); }catch(e){} }
       }catch(e){ note.textContent=sampleCopy(e); note.className='lxnote bad'; }
