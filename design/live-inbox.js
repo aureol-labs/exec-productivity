@@ -152,7 +152,13 @@
   /* the demo's context: which chat and mail tools it shows, the viewer's choice, kept in this browser */
   var DEMO_CTX={chat:'slack', mail:'gmail'};
   if(DEMO){ try{ var dc=JSON.parse(window.localStorage.getItem('aureol-inbox-demo-ctx')||'null'); if(dc) DEMO_CTX={chat:dc.chat==='teams'?'teams':'slack', mail:dc.mail==='outlook'?'outlook':'gmail'}; }catch(e){}
-    CHAT_NAME=DEMO_CTX.chat==='teams'?'Teams':'Slack'; MAIL_NAME=DEMO_CTX.mail==='outlook'?'Outlook':'Gmail'; }
+    CHAT_NAME=DEMO_CTX.chat==='teams'?'Teams':'Slack'; MAIL_NAME=DEMO_CTX.mail==='outlook'?'Outlook':'Gmail'; demoWords(); }
+  /* Outlook files mail in categories, not labels: the demo says so when it shows Outlook */
+  function demoWords(){
+    var d=DICT[LANG]||DICT.en, o=DEMO_CTX.mail==='outlook';
+    if(!demoWords.orig) demoWords.orig={labelled:d.labelled, more_label:d.more_label};
+    d.labelled=o?L('lx_cat_labelled'):demoWords.orig.labelled; d.more_label=o?L('lx_cat_more'):demoWords.orig.more_label;
+  }
 
   /* ---------- reading: watched, so the last result draws at once and then refreshes ---------- */
   var LIVE={mail:[], prim:[], minus:[], slack:{items:[],replied:{}}, labels:{}, errors:{}};
@@ -915,7 +921,7 @@
       b.setAttribute('aria-pressed',DEMO_CTX[key]===val?'true':'false');
       b.onclick=function(){ if(DEMO_CTX[key]===val) return; DEMO_CTX[key]=val;
         try{ window.localStorage.setItem('aureol-inbox-demo-ctx',JSON.stringify(DEMO_CTX)); }catch(e){}
-        CHAT_NAME=DEMO_CTX.chat==='teams'?'Teams':'Slack'; MAIL_NAME=DEMO_CTX.mail==='outlook'?'Outlook':'Gmail';
+        CHAT_NAME=DEMO_CTX.chat==='teams'?'Teams':'Slack'; MAIL_NAME=DEMO_CTX.mail==='outlook'?'Outlook':'Gmail'; demoWords();
         PANELS={}; MINI={}; LAST=''; redraw(); };
       return b; };
     add(p, el('span',null,L('lx_demo')+' \u00b7 '+L('lx_demo_chat')), pick('chat','slack','Slack'), pick('chat','teams','Teams'),
