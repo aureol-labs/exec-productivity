@@ -17,6 +17,11 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.12.3
+
+- No task step. The Claude button that copies a briefing reads "Think it through with Claude" (« Réfléchir avec
+  Claude »), on every page; Prepare and Decide keep theirs.
+
 ## 0.12.2
 
 - No task step. Mark as read waits 5 seconds in place with Undo before anything reaches the mailbox; the toast is gone.

@@ -39,7 +39,7 @@ ones that bite are below.
    did not see, from the recent exchanges, the documents and the past meetings looked at with fresh eyes; it ends
    asking where the exec wants to go deeper, and never narrows to the one call the page found. A call's briefing
    (Decide with Claude) asks for the case on each side and anything else that bears on it, options the page did
-   not list included, never for an answer. A job's (Continue with Claude) asks for the work and for anything the
+   not list included, never for an answer. A job's (Think it through with Claude) asks for the work and for anything the
    brief missed. Every briefing that drafts something ends "do not send".
 7. **A dropped line stays dropped.** Read `dismissals` from the brief page's own store
    (`connections/current.pages.brief`) before selecting. A job or decision dropped as done or not important is
