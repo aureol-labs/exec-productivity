@@ -22,8 +22,12 @@
   'use strict';
   var BASE=null;
   try{ var raw=$('data').textContent; if(raw.indexOf('{{')!==0) BASE=JSON.parse(raw); }catch(e){ BASE=null; }
-  /* only a page a run filled, with its live block, goes live; the template preview never does */
-  if(!BASE||!BASE.live||!window.claude||typeof window.claude.use!=='function') return;
+  /* only a page a run filled, with its live block, goes live; the template preview never does.
+     A demo page (live.demo) goes live anywhere: its connections are simulated from its own data. */
+  if(!BASE||!BASE.live) return;
+  var DEMO=BASE.live.demo||null;
+  if(!DEMO&&(!window.claude||typeof window.claude.use!=='function')) return;
+  if(DEMO) demoShift();
   var CFG=BASE.live, MAIL_CFG=CFG.mail||null, CHAT_CFG=CFG.chat||null;
   var LX={db:null, mcp:null, sample:null}, TITLE=document.title, SCOPE='live-1';
   var LANG_NAME={en:'English', fr:'French'}[LANG]||'English';
@@ -42,7 +46,7 @@
   function since(t0,dec){ var s=(performance.now()-t0)/1000; var v=dec?s.toFixed(1):s.toFixed(0); return (LANG==='fr'?v.replace('.',','):v)+' s'; }
   function quiet(text){ var b=el('button','lxq',text); b.type='button'; return b; }
   function slugOf(s){ return slug(s)||'x'; }
-  function store(k,v){ try{ if(v===undefined) return JSON.parse(window.localStorage.getItem(k)||'null'); window.localStorage.setItem(k,JSON.stringify(v)); }catch(e){ return null; } }
+  function store(k,v){ if(DEMO) return null; try{ if(v===undefined) return JSON.parse(window.localStorage.getItem(k)||'null'); window.localStorage.setItem(k,JSON.stringify(v)); }catch(e){ return null; } }
 
   /* ---------- the mail connection: one adapter per connector the run named ---------- */
   var ACCT={};
@@ -134,7 +138,7 @@
       labelHref:function(account,name){ return 'https://mail.google.com/mail/#label/'+encodeURIComponent(name); }
     }
   };
-  function threadUrl(email,id){ try{ return 'https://mail.google.com/mail/?authuser='+encodeURIComponent(email)+'#all/thread-f:'+BigInt('0x'+id).toString(); }catch(e){ return 'https://mail.google.com/mail/?authuser='+encodeURIComponent(email); } }
+  function threadUrl(email,id){ if(DEMO) return ''; try{ return 'https://mail.google.com/mail/?authuser='+encodeURIComponent(email)+'#all/thread-f:'+BigInt('0x'+id).toString(); }catch(e){ return 'https://mail.google.com/mail/?authuser='+encodeURIComponent(email); } }
   var MAIL=MAIL_CFG&&ADAPTERS[MAIL_CFG.api] ? ADAPTERS[MAIL_CFG.api] : null;
   var CHAT=CHAT_CFG&&CHAT_CFG.api==='slack' ? CHAT_CFG : null;
   var CAN_LABEL=!!(MAIL&&MAIL_CFG.label&&(CFG.rules||[]).length);
@@ -340,7 +344,7 @@
     if(READY.mail.absent&&counts.mail==null) counts.mail=(BASE.counts||{}).mail;
     if(READY.slack.absent) counts.chat=(BASE.counts||{}).chat;
     var at=READY.mail.at&&isFinite(READY.mail.at)?new Date(READY.mail.at):new Date(BASE.generated||Date.now());
-    return {lang:BASE.lang, date_label:dateLabel(new Date()), time_label:hhmm(at), today:dayOf(new Date()), gesture:BASE.gesture, links:BASE.links,
+    return {lang:BASE.lang, sub:BASE.sub, date_label:dateLabel(new Date()), time_label:hhmm(at), today:dayOf(new Date()), gesture:BASE.gesture, links:BASE.links,
       counts:counts, notices:notices.slice(0,2), queue:q.map(rowOf), filed:filed, grouped:mailRead?[]:(BASE.grouped||[]),
       wrote:filed.length>0||!!BASE.wrote, next_run:BASE.next_run,
       others:{mail:items.filter(function(x){ return x.channel==='mail'; }).length, chat:items.filter(function(x){ return x.channel!=='mail'; }).length, items:items}};
@@ -440,6 +444,7 @@
       var key=freshKey(), t0=performance.now(), word='', tick=setInterval(function(){ if(word) meter.textContent=word+' '+since(t0); },500);
       try{
         if(!force&&doc){ try{ var got=await doc.get(); if(got.exists){ var d=got.data()||{}; if(d.key===key&&d.summary){ show(d.summary); return; } } }catch(e){} }
+        if(DEMO&&(DEMO.summaries||{})[l.ref]){ word=L('lx_reading'); meter.textContent=word; await pause(900); word=L('lx_summing'); await pause(1100); show(DEMO.summaries[l.ref]); return; }
         if(!LX.sample){ note.textContent=L('lx_no_claude_here'); note.className='lxnote bad'; return; }
         word=L('lx_reading'); meter.textContent=word;
         var text; try{ text=await threadText(l); }catch(e){ note.textContent=mcpCopy(e,l.channel==='slack'?CHAT.server:MAIL_CFG.server); note.className='lxnote bad'; return; }
@@ -486,6 +491,7 @@
     function lock(on){ busy=on; [put,redo,copy].concat(tws).forEach(function(x){ x.disabled=on; }); inp.disabled=on; stop.hidden=!on; }
     function bad(s){ note.textContent=s; note.className='lxnote bad'; }
     async function run(input,tier,m){
+      if(!LX.sample&&DEMO&&tier==='default'&&(DEMO.drafts||{})[l.ref]) return demoType(DEMO.drafts[l.ref],m);
       if(!LX.sample){ bad(L('lx_no_claude_here')); return null; }
       ctl=new AbortController(); lock(true); note.textContent=''; note.className='lxnote';
       var t0=performance.now(), first=null; m.textContent=L('lx_drafting');
@@ -495,6 +501,12 @@
         m.textContent=''; return r.text;
       }catch(e){ if(e&&e.text&&!hidesNo(e.text)) ta.value=e.text; m.textContent=''; if(e&&e.code!=='cancelled') bad(sampleCopy(e)); return null; }
       finally{ clearInterval(tick); lock(false); }
+    }
+    async function demoType(text,m){
+      lock(true); m.textContent=L('lx_drafting'); await pause(900); ta.hidden=false;
+      var words=String(text).split(/(\s+)/), acc='';
+      for(var i=0;i<words.length;i++){ acc+=words[i]; ta.value=acc; if(i%6===0) await pause(40); }
+      m.textContent=''; lock(false); return text;
     }
     async function context(){
       var g=target(l);
@@ -637,6 +649,7 @@
   }
   function itemLine(x,fileIt){ return x.id+' | '+(x.unread?'unread':'read')+(fileIt?' | to file':'')+' | '+(x.kind==='mail'?'mail':'chat')+' | '+x.from+(x.fromAddr?' <'+x.fromAddr+'>':'')+' | '+(x.date&&!isNaN(x.date)?x.date.toISOString().slice(0,16):'')+' | '+x.subject+' | '+x.snippet; }
   async function sortWith(items,max,toFile){
+    if(DEMO) return demoSort(items,max,toFile);
     var fileAny=Object.keys(toFile).length>0;
     var prompt=SORT_ASK+' At most '+max+' lines.\nReply with only JSON: {"lines":[{"id":"…","tier":"now|today|week","say":"…","fact":"…","type":"…","kind":"…"}]'+(fileAny?',"labels":[…]':'')+'}, an empty list when none.'
       +'\n\nWhat matters to them (their lens):\n'+(lensText()||'(none)')
@@ -666,7 +679,7 @@
   async function sortNow(){
     var today=dayOf(new Date()), full=SNAP.day!==today, all=liveItems();
     if(READY.mail.failed&&READY.slack.failed){ runDone(L('lx_nothing_read')); return; }
-    if(!LX.sample){ runDone(L('lx_no_claude')); return; }
+    if(!LX.sample&&!DEMO){ runDone(L('lx_no_claude')); return; }
     var cands=all.filter(candidate), todo=full?cands:cands.filter(function(x){ return isNew(x)&&!PROV.verdicts[keyOf(x)]; });
     if(!todo.length){
       if(full){ SNAP={scope:SCOPE, day:today, at:new Date().toISOString(), seen:seenOf(all), lines:[]}; PROV={verdicts:{}, filed:PROV.filed, at:SNAP.at};
@@ -703,6 +716,85 @@
   }
   function seenOf(all){ var s={}; all.forEach(function(x){ var r=refOf(x), d=x.date&&!isNaN(x.date)?x.date.toISOString():''; if(!s[r]||s[r]<d) s[r]=d; }); return s; }
 
+  /* ---------- the demo: simulated connections, a store that forgets, a scripted sort ----------
+     A demo page carries live.demo: a mailbox and Slack DMs (each message dated), what the
+     sort answers for what arrives after the run, a summary per thread and a fallback draft.
+     Times are moved so the run happened 40 minutes ago; messages marked `later` (and threads
+     marked `incoming`) arrive 1.5 s after opening, so the page shows itself catching up.
+     Nothing is written anywhere: every reload replays it. Drafting uses Claude when the page
+     may, the fallback draft when it may not. */
+  function pause(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
+  function demoShift(){
+    var D=BASE.live.demo, now=Date.now(), delta=now-(D.run_minutes_ago||40)*60000-Date.parse(BASE.generated);
+    var sh=function(x){ return x ? new Date(Date.parse(x)+delta).toISOString() : x; };
+    BASE.generated=sh(BASE.generated); BASE.today=dayOf(new Date(now));
+    Object.keys(BASE.seen||{}).forEach(function(k){ BASE.seen[k]=sh(BASE.seen[k]); });
+    (BASE.queue||[]).forEach(function(r){ if(r.live) r.live.at=sh(r.live.at); });
+    (D.mail||[]).forEach(function(t){ (t.messages||[]).forEach(function(m){ m.at=sh(m.at); }); });
+    (D.slack||[]).forEach(function(c){ c.at=sh(c.at); });
+  }
+  function memDb(){
+    var m={}, subs=[];
+    var docs=function(c){ return Object.keys(m).filter(function(k){ return k.indexOf(c+'/')===0; }).map(function(k){ return {id:k.slice(c.length+1), exists:true, metadata:{}, data:function(){ return JSON.parse(JSON.stringify(m[k])); }}; }); };
+    var tell=function(){ subs.forEach(function(f){ try{ f(); }catch(e){} }); };
+    return {
+      doc:function(p){ return {get:async function(){ return {exists:p in m, data:function(){ return JSON.parse(JSON.stringify(m[p])); }}; },
+                               set:async function(v){ m[p]=JSON.parse(JSON.stringify(v)); tell(); }}; },
+      collection:function(c){ return {get:async function(){ return {docs:docs(c)}; },
+        onSnapshot:function(cb){ var f=function(){ cb({docs:docs(c)}); }; subs.push(f); setTimeout(f,0); return function(){ subs=subs.filter(function(x){ return x!==f; }); }; }}; }
+    };
+  }
+  function demoMcp(){
+    var D=DEMO, acct={alias:D.account.alias, email:D.account.email}, after=false, handlers=[];
+    function threads(){
+      return {threads:(D.mail||[]).filter(function(t){ return after||!t.incoming; }).map(function(t){
+        var ms=(t.messages||[]).filter(function(x){ return after||!x.later; }), m=ms[ms.length-1]||{};
+        return {thread_id:t.id, subject:t.subject, from:m.from, date:m.at, snippet:cut(m.body,200),
+          labels:(t.labels||[]).concat(['INBOX']).concat((after?t.unread[1]:t.unread[0])?['UNREAD']:[]),
+          unread:after?t.unread[1]:t.unread[0], message_count:ms.length, account:acct}; })};
+    }
+    function slack(){
+      return {results:'# Results\n'+(D.slack||[]).filter(function(c){ return after||!c.incoming; }).map(function(c,i){
+        return '### Result '+(i+1)+'\nChannel: DM (ID: '+c.channel+')\nParticipants: '+D.account.name+' (ID: '+D.me_id+'), '+c.from+' (ID: '+c.uid+')\nFrom: '+c.from+' (ID: '+c.uid+')\nTime: '+c.at
+          +'\nMessage_ts: '+(Date.parse(c.at)/1000).toFixed(6)+'\nPermalink: [link](#)\nText: \n'+c.text+'\n---\n'; }).join('')};
+    }
+    function payload(tool){
+      if(tool==='gmail_search') return threads();
+      if(tool==='gmail_list_labels') return {labels:(D.labels||[]).map(function(l){ return {id:l.id, name:l.name, type:'user', account:acct}; })};
+      if(tool==='slack_search_public_and_private') return slack();
+      return {};
+    }
+    function deliver(h,fresh){ h.fn({type:'data', result:{payload:payload(h.tool), cache:{storedAt:Date.now(), revalidating:!fresh}}}); }
+    return {
+      watchTool:function(server,tool,input,fn){ var h={server:server, tool:tool, fn:fn}; handlers.push(h);
+        setTimeout(function(){ deliver(h,false); },0);
+        setTimeout(function(){ after=true; deliver(h,true); },1500);
+        return function(){ handlers=handlers.filter(function(x){ return x!==h; }); }; },
+      invalidate:async function(server){ setTimeout(function(){ handlers.filter(function(h){ return !server||h.server===server; }).forEach(function(h){ deliver(h,true); }); },700); },
+      callTool:async function(server,tool,input){
+        await pause(300);
+        var t=(D.mail||[]).filter(function(x){ return x.id===(input&&input.thread_id); })[0];
+        if(tool==='gmail_get_thread'&&t) return {payload:{messages:(t.messages||[]).filter(function(x){ return after||!x.later; }).map(function(m){ return {from:m.from, date:m.at, subject:t.subject, body:m.body}; })}};
+        if(tool==='gmail_create_draft'||tool==='gmail_update_draft'){
+          var th=(D.mail||[]).filter(function(x){ return x.id===input.reply_to_thread_id; })[0], last=th&&th.messages[th.messages.length-1];
+          return {payload:{draft_token:input.draft_token||'demo', gmail_url:'', to:last?[addrOf(last.from)]:[]}}; }
+        if(tool==='gmail_modify_labels'){ await pause(500);
+          (input.thread_ids||[]).forEach(function(id){ var x=(D.mail||[]).filter(function(y){ return y.id===id; })[0], lb=(D.labels||[]).filter(function(y){ return (input.add||[]).indexOf(y.name)>=0; });
+            if(x) lb.forEach(function(y){ x.labels=(x.labels||[]).concat([y.id]); }); });
+          return {payload:{}}; }
+        if(tool==='slack_read_channel'){ var c=(D.slack||[]).filter(function(y){ return y.channel===input.channel_id; })[0];
+          return {payload:{messages:c ? (c.history||[]).concat([c.from+': '+c.text]).join('\n\n') : ''}}; }
+        return {payload:{}};
+      }
+    };
+  }
+  async function demoSort(items,max,toFile){
+    await pause(2400);
+    var ids={}, S=DEMO.sort||{}; items.forEach(function(x){ ids[x.id]=1; });
+    return {lines:(S.lines||[]).filter(function(l){ return ids[l.id]; }).slice(0,max),
+            labels:(S.labels||[]).filter(function(l){ return toFile[l.id]; })};
+  }
+
   /* ---------- boot: the last page this browser drew, the store, then the live reads, then the sort ---------- */
   (async function(){
     var cached=store(CACHE_KEY);
@@ -712,6 +804,7 @@
     var use=function(n){ try{ return window.claude.use(n); }catch(e){ return Promise.resolve(null); } };
     var got=await Promise.allSettled([use('db'),use('mcp'),use('sample')]);
     LX.db=got[0].value||null; LX.mcp=got[1].value||null; LX.sample=got[2].value||null;
+    if(DEMO){ LX.db=memDb(); LX.mcp=demoMcp(); dbInit=function(cb){ DB=LX.db; DB_KNOWN=true; (cb||function(){})(); }; }
     if(LX.db){
       var r=await Promise.allSettled([LX.db.doc('inbox/snapshot').get(), LX.db.doc('inbox/provisional').get(), LX.db.doc('inbox/lens').get(), LX.db.collection('dismissals').get()]);
       var val=function(i){ return r[i].status==='fulfilled'&&r[i].value&&r[i].value.exists ? r[i].value.data() : null; };

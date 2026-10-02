@@ -59,3 +59,6 @@ points at it: a CEO's chief of staff, in the exec's own register. Change the voi
 `python3 tools/check-page.py --kind <kind> <json>` on every example and on every generated page. Open the built
 templates in a browser with the example data before shipping a design change. The end-to-end test is an install
 in Cowork on a real account, then one cloud run of each habit.
+
+The inbox demo (`design/demo/build-inbox-demo.py`, then `tools/fill-page.py`) is the live page on simulated
+connections and fictional data: publish it with `capabilities: {sample: {}}` only; every reload replays it.

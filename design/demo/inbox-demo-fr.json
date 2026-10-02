@@ -1,0 +1,881 @@
+{
+ "lang": "fr",
+ "date_label": "jeudi 1 octobre",
+ "time_label": "11:30",
+ "today": "2026-10-01",
+ "gesture": "copy",
+ "sub": "Démonstration : personnes, entreprises et messages fictifs.",
+ "links": {},
+ "counts": {
+  "mail": 14,
+  "chat": 2
+ },
+ "queue": [
+  {
+   "id": "r1",
+   "ref": "thread:ostral",
+   "tier": "now",
+   "channel": "mail",
+   "kind": "decision",
+   "live": {
+    "at": "2026-10-01T09:32:00+02:00",
+    "from": "Claire",
+    "thread": "ostral",
+    "account": "pro"
+   },
+   "say": "Claire et Hugo attendent votre arbitrage sur la remise Ostral.",
+   "meta": {
+    "kind": "time",
+    "value": "09:32"
+   },
+   "type": "precedent",
+   "argument": [
+    "Brenner a signé à 15 % l’an dernier, sur 3 ans."
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Claire Martin, fil Ostral",
+     "href": ""
+    },
+    {
+     "kind": "mail",
+     "label": "Hugo Lefèvre, fil Ostral",
+     "href": ""
+    },
+    {
+     "kind": "doc",
+     "label": "Contrat Brenner, 2025",
+     "href": ""
+    }
+   ],
+   "briefing": "Ostral demande 18 % de remise pour renouveler sur 3 ans, à 240 k€ par an. Hugo veut accepter entre 15 et 18 % pour signer demain ; Claire refuse au-delà de 12 % pour garder la marge du compte au-dessus de 60 %. Brenner a signé à 15 % l’an dernier. C’est ce que je sais, un point de départ, pas le cadre.\n\nOuvre le fil Ostral et le contrat Brenner. Puis :\n1. Dis-moi ce que chaque option fait à la marge et au trimestre.\n2. Donne-moi le meilleur argument pour chacune.\n3. Rédige ma réponse à Claire et Hugo pour l’option que je choisis. Ne l’envoie pas."
+  },
+  {
+   "id": "r2",
+   "ref": "slack:D0SOFIA1",
+   "tier": "now",
+   "channel": "slack",
+   "kind": "action",
+   "live": {
+    "at": "2026-10-01T10:41:00+02:00",
+    "from": "Sofia",
+    "channel_id": "D0SOFIA1"
+   },
+   "say": "Sofia attend votre go écrit pour la mise en production de demain.",
+   "meta": {
+    "kind": "time",
+    "value": "10:41"
+   },
+   "type": "history",
+   "argument": [
+    "Go écrit exigé depuis l’incident de juin."
+   ],
+   "sources": [
+    {
+     "kind": "chat",
+     "via": "Slack",
+     "label": "Sofia, message direct",
+     "href": ""
+    }
+   ],
+   "briefing": "Sofia met en production la nouvelle facturation demain à 7 h et attend mon go écrit sur Slack, exigé depuis l’incident de juin. Les tests de charge sont passés. C’est un point de départ.\n\nOuvre ma conversation avec Sofia. Puis :\n1. Dis-moi ce qui pourrait encore bloquer, et qui serait d’astreinte.\n2. Rédige mon go, ou mes conditions, en une ligne. Ne l’envoie pas."
+  },
+  {
+   "id": "r3",
+   "ref": "thread:espagne",
+   "tier": "today",
+   "channel": "mail",
+   "kind": "decision",
+   "live": {
+    "at": "2026-09-29T15:20:00+02:00",
+    "from": "Julie",
+    "thread": "espagne",
+    "account": "pro"
+   },
+   "say": "Julie attend votre choix entre les deux finalistes Espagne.",
+   "meta": {
+    "kind": "date",
+    "value": "29 sept."
+   },
+   "type": "knock_on",
+   "argument": [
+    "Carmen a une autre offre ; le lancement Espagne en dépend."
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Julie Moreau, finalistes Espagne",
+     "href": ""
+    }
+   ],
+   "briefing": "Julie attend mon choix entre Carmen (10 ans chez un concurrent, 160 k€) et Pablo (startup, plus junior, 120 k€) pour diriger les ventes en Espagne. L’équipe penche pour Carmen, Hugo pour Pablo, et Carmen a une autre offre. C’est un point de départ.\n\nOuvre le mail de Julie. Puis :\n1. Donne-moi le meilleur argument pour chacun, au regard du lancement Espagne.\n2. Dis-moi ce qu’il faudrait vérifier avant de trancher.\n3. Rédige ma réponse à Julie. Ne l’envoie pas."
+  },
+  {
+   "id": "r4",
+   "ref": "thread:vellmar",
+   "tier": "today",
+   "channel": "mail",
+   "kind": "info",
+   "live": {
+    "at": "2026-09-30T17:05:00+02:00",
+    "from": "Marc",
+    "thread": "vellmar",
+    "account": "pro"
+   },
+   "say": "Marc (Vellmar) veut la rétention par cohorte avant son comité.",
+   "meta": {
+    "kind": "date",
+    "value": "30 sept."
+   },
+   "type": "history",
+   "argument": [
+    "Même demande au dernier trimestre, envoyée la veille du comité."
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Marc Delorme, Vellmar Capital",
+     "href": ""
+    }
+   ],
+   "briefing": "Marc, de Vellmar Capital, veut la rétention nette par cohorte sur 8 trimestres avant son comité d’investissement, avec un regard sur la cohorte 2024. Au dernier trimestre, je l’avais envoyée la veille du comité. C’est un point de départ.\n\nOuvre le mail de Marc. Puis :\n1. Dis-moi qui chez nous peut produire ces chiffres, et d’où ils viennent.\n2. Rédige ma réponse à Marc avec un délai. Ne l’envoie pas."
+  },
+  {
+   "id": "r5",
+   "ref": "slack:D0THOMAS1",
+   "tier": "today",
+   "channel": "slack",
+   "kind": "info",
+   "live": {
+    "at": "2026-10-01T09:05:00+02:00",
+    "from": "Thomas",
+    "channel_id": "D0THOMAS1"
+   },
+   "say": "Thomas demande si le budget du séminaire est validé.",
+   "meta": {
+    "kind": "time",
+    "value": "09:05"
+   },
+   "type": "knock_on",
+   "argument": [
+    "Le lieu ne tient l’option que jusqu’à après-demain."
+   ],
+   "sources": [
+    {
+     "kind": "chat",
+     "via": "Slack",
+     "label": "Thomas, message direct",
+     "href": ""
+    }
+   ],
+   "briefing": "Thomas demande sur Slack si le budget du séminaire de direction, 18 k€, est validé ; le lieu tient l’option jusqu’à après-demain. C’est un point de départ.\n\nOuvre ma conversation avec Thomas. Puis rédige ma réponse, oui ou non avec une condition. Ne l’envoie pas."
+  },
+  {
+   "id": "r6",
+   "ref": "thread:brenner",
+   "tier": "week",
+   "channel": "mail",
+   "kind": "action",
+   "live": {
+    "at": "2026-09-28T11:00:00+02:00",
+    "from": "Étienne",
+    "thread": "brenner",
+    "account": "pro"
+   },
+   "say": "Brenner Logistique attend votre signature sur l’avenant.",
+   "meta": {
+    "kind": "date",
+    "value": "28 sept."
+   },
+   "type": "history",
+   "argument": [
+    "Avenant relu par les juristes des deux côtés."
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Étienne Girard, Brenner Logistique",
+     "href": ""
+    }
+   ],
+   "briefing": "Brenner Logistique attend ma signature sur l’avenant au contrat de transport, relu par les juristes des deux côtés. C’est un point de départ.\n\nOuvre le mail d’Étienne et l’avenant. Puis dis-moi ce qui change par rapport au contrat, en trois lignes."
+  },
+  {
+   "id": "r7",
+   "ref": "thread:kerys",
+   "tier": "week",
+   "channel": "mail",
+   "kind": "unclear",
+   "live": {
+    "at": "2026-10-01T08:12:00+02:00",
+    "from": "Antoine",
+    "thread": "kerys",
+    "account": "pro"
+   },
+   "say": "Antoine relance sur Kerys sans dire ce qu’il attend.",
+   "meta": {
+    "kind": "time",
+    "value": "08:12"
+   },
+   "type": "pattern",
+   "argument": [
+    "Troisième relance depuis la mi-septembre."
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Antoine Roche, Kerys",
+     "href": ""
+    }
+   ],
+   "briefing": "Antoine, de Kerys, m’a relancé trois fois depuis la mi-septembre au sujet d’un partenariat, sans dire ce qu’il attend de moi. C’est un point de départ.\n\nOuvre le fil Kerys. Puis :\n1. Dis-moi ce qu’il propose réellement.\n2. Rédige une réponse qui lui demande ce qu’il attend, ou qui décline. Ne l’envoie pas."
+  }
+ ],
+ "filed": [
+  {
+   "id": "f1",
+   "label": "Factures",
+   "tint": "receipts",
+   "count": 2,
+   "by_channel": {
+    "mail": 2
+   },
+   "contents": [
+    {
+     "channel": "mail",
+     "from": "Nimbus Cloud",
+     "what": "Nimbus Cloud : votre facture de septembre",
+     "href": ""
+    },
+    {
+     "channel": "mail",
+     "from": "RailGo",
+     "what": "Votre reçu de paiement, Paris-Lyon",
+     "href": ""
+    }
+   ],
+   "href": "",
+   "briefing": "Ma boîte a classé 2 non lus sous « Factures », selon ma règle : « Factures, reçus de paiement, confirmations de commande et de livraison ». Rien n’a été archivé ni marqué comme lu.\n\nOuvre-les et dis-moi si l’un d’eux attend en fait quelque chose de moi.",
+   "rule": "Factures, reçus de paiement, confirmations de commande et de livraison"
+  },
+  {
+   "id": "f2",
+   "label": "À lire plus tard",
+   "tint": "later",
+   "count": 3,
+   "by_channel": {
+    "mail": 3
+   },
+   "contents": [
+    {
+     "channel": "mail",
+     "from": "La Lettre du DAF",
+     "what": "La Lettre du DAF, n° 118",
+     "href": ""
+    },
+    {
+     "channel": "mail",
+     "from": "Décideurs IA",
+     "what": "Décideurs IA : l’édition de la semaine",
+     "href": ""
+    },
+    {
+     "channel": "mail",
+     "from": "Revue SaaS France",
+     "what": "Revue SaaS France, n° 42",
+     "href": ""
+    }
+   ],
+   "href": "",
+   "briefing": "Ma boîte a classé 3 non lus sous « À lire plus tard », selon ma règle : « Newsletters et presse ». Rien n’a été archivé ni marqué comme lu.\n\nOuvre-les et dis-moi si l’un d’eux attend en fait quelque chose de moi.",
+   "rule": "Newsletters et presse"
+  },
+  {
+   "id": "f3",
+   "label": "À archiver",
+   "tint": "arch",
+   "count": 2,
+   "by_channel": {
+    "mail": 2
+   },
+   "contents": [
+    {
+     "channel": "mail",
+     "from": "Salon Tech Paris",
+     "what": "Salon Tech Paris : moins 30 % jusqu’à dimanche",
+     "href": ""
+    },
+    {
+     "channel": "mail",
+     "from": "Optima Software",
+     "what": "Invitation : l’IA générative pour les équipes finance",
+     "href": ""
+    }
+   ],
+   "href": "",
+   "briefing": "Ma boîte a classé 2 non lus sous « À archiver », selon ma règle : « Promotions et invitations de fournisseurs ». Rien n’a été archivé ni marqué comme lu.\n\nOuvre-les et dis-moi si l’un d’eux attend en fait quelque chose de moi.",
+   "rules": [
+    {
+     "count": 2,
+     "rule": "Promotions et invitations de fournisseurs"
+    }
+   ]
+  }
+ ],
+ "wrote": true,
+ "others": {
+  "mail": 2,
+  "chat": 0,
+  "items": [
+   {
+    "channel": "mail",
+    "from": "Léa Fontaine",
+    "what": "Migration CRM : point d’avancement",
+    "href": "",
+    "when": "10:15"
+   },
+   {
+    "channel": "mail",
+    "from": "Équipe RH",
+    "what": "Planning des entretiens annuels",
+    "href": "",
+    "when": "30 sept."
+   }
+  ]
+ },
+ "generated": "2026-10-01T11:30:00+02:00",
+ "seen": {
+  "thread:ostral": "2026-10-01T09:32:00+02:00",
+  "thread:vellmar": "2026-09-30T17:05:00+02:00",
+  "thread:espagne": "2026-09-29T15:20:00+02:00",
+  "thread:brenner": "2026-09-28T11:00:00+02:00",
+  "thread:kerys": "2026-10-01T08:12:00+02:00",
+  "thread:crm": "2026-10-01T10:15:00+02:00",
+  "thread:rh": "2026-09-30T14:00:00+02:00",
+  "thread:nimbus1": "2026-10-01T06:02:00+02:00",
+  "thread:rail": "2026-09-30T19:20:00+02:00",
+  "thread:lettredaf": "2026-10-01T07:00:00+02:00",
+  "thread:decideurs": "2026-09-30T08:00:00+02:00",
+  "thread:saas": "2026-09-29T07:30:00+02:00",
+  "thread:salon": "2026-09-30T12:00:00+02:00",
+  "thread:webinar": "2026-09-29T16:00:00+02:00",
+  "slack:D0SOFIA1": "2026-10-01T10:41:00+02:00",
+  "slack:D0THOMAS1": "2026-10-01T09:05:00+02:00"
+ },
+ "live": {
+  "mail": {
+   "server": "Aureol Connect",
+   "api": "aureol",
+   "label": true
+  },
+  "chat": {
+   "server": "Slack",
+   "api": "slack"
+  },
+  "rules": [
+   {
+    "label": "Factures",
+    "rule": "Factures, reçus de paiement, confirmations de commande et de livraison"
+   },
+   {
+    "label": "À lire plus tard",
+    "rule": "Newsletters et presse"
+   },
+   {
+    "label": "À archiver",
+    "rule": "Promotions et invitations de fournisseurs"
+   }
+  ],
+  "lens": "Camille Durand, directrice générale de Norvel, éditeur de logiciel de facturation (180 personnes), soutenu par le fonds Vellmar Capital.\nPriorités, dans l’ordre : 1. Clôturer la levée de série B ce mois-ci, avant tout nouveau recrutement. 2. Tenir la marge brute au-dessus de 60 %, avant la croissance à tout prix. 3. Lancer l’Espagne au premier trimestre.\nSujets en cours : renouvellement Ostral (Hugo, Claire), mise en production de la facturation (Sofia), comité Vellmar (Marc), recrutement Espagne (Julie), partenariat Kerys (Antoine), levée de série B (Maître Roux).\nPersonnes clés : Claire, Hugo, Sofia, Marc.\nJamais dans la file sauf s’ils bloquent une priorité : newsletters, notifications, reçus, promotions.",
+  "demo": {
+   "run_minutes_ago": 40,
+   "account": {
+    "alias": "pro",
+    "email": "camille@norvel.example",
+    "name": "Camille Durand"
+   },
+   "me_id": "U0CAMILLE",
+   "labels": [
+    {
+     "id": "Label_1",
+     "name": "Factures"
+    },
+    {
+     "id": "Label_2",
+     "name": "À lire plus tard"
+    },
+    {
+     "id": "Label_3",
+     "name": "À archiver"
+    }
+   ],
+   "mail": [
+    {
+     "id": "ostral",
+     "subject": "Ostral : remise demandée sur le renouvellement",
+     "unread": [
+      true,
+      true
+     ],
+     "messages": [
+      {
+       "from": "Hugo Lefèvre <hugo@norvel.example>",
+       "at": "2026-09-30T16:10:00+02:00",
+       "body": "Camille, Ostral demande 18 % de remise pour renouveler sur 3 ans. Le contrat actuel est à 240 k€ par an. Leur DAF dit avoir une offre concurrente à moins 20 %. Si on accepte avant la fin du mois, le trimestre est sécurisé."
+      },
+      {
+       "from": "Claire Martin <claire@norvel.example>",
+       "at": "2026-09-30T18:40:00+02:00",
+       "body": "Je ne suis pas d’accord sur 18 %. À ce niveau, la marge brute du compte passe sous 60 %. Je propose 12 % avec un engagement de 3 ans et une indexation ensuite. Pour mémoire, Brenner a signé à 15 % l’an dernier."
+      },
+      {
+       "from": "Hugo Lefèvre <hugo@norvel.example>",
+       "at": "2026-10-01T08:05:00+02:00",
+       "body": "À 12 % on risque de les perdre. Je peux aller chercher 15 % avec un engagement ferme de 3 ans, mais il me faut une réponse aujourd’hui : ils veulent signer demain."
+      },
+      {
+       "from": "Claire Martin <claire@norvel.example>",
+       "at": "2026-10-01T09:32:00+02:00",
+       "body": "Camille, il nous faut ton arbitrage avant ce soir : 18 %, 15 % ou 12 % ?"
+      }
+     ]
+    },
+    {
+     "id": "vellmar",
+     "subject": "Comité d’investissement : rétention par cohorte",
+     "unread": [
+      true,
+      true
+     ],
+     "messages": [
+      {
+       "from": "Marc Delorme <marc.delorme@vellmar.example>",
+       "at": "2026-09-30T17:05:00+02:00",
+       "body": "Bonjour Camille, avant notre comité d’investissement, pourriez-vous m’envoyer la rétention nette par cohorte sur les 8 derniers trimestres ? Le comité regardera de près la cohorte 2024. Merci, Marc"
+      }
+     ]
+    },
+    {
+     "id": "espagne",
+     "subject": "Head of Sales Espagne : les deux finalistes",
+     "unread": [
+      true,
+      true
+     ],
+     "messages": [
+      {
+       "from": "Julie Moreau <julie@norvel.example>",
+       "at": "2026-09-29T15:20:00+02:00",
+       "body": "Camille, voici les deux finalistes pour diriger les ventes en Espagne. Carmen : 10 ans chez un concurrent direct, 160 k€. Pablo : parcours startup, plus junior, 120 k€. L’équipe penche pour Carmen, Hugo pour Pablo. Carmen a une autre offre et attend une réponse cette semaine."
+      }
+     ]
+    },
+    {
+     "id": "brenner",
+     "subject": "Avenant au contrat de transport",
+     "unread": [
+      true,
+      false
+     ],
+     "messages": [
+      {
+       "from": "Étienne Girard <e.girard@brenner-logistique.example>",
+       "at": "2026-09-28T11:00:00+02:00",
+       "body": "Bonjour Madame Durand, vous trouverez ci-joint l’avenant relu par nos juristes et les vôtres. Pouvez-vous le signer d’ici la fin de la semaine ? Bien cordialement, Étienne Girard"
+      },
+      {
+       "from": "Camille Durand <camille@norvel.example>",
+       "at": "2026-10-01T11:50:00+02:00",
+       "body": "Bonjour Étienne, signé et renvoyé ce matin. Bonne journée, Camille",
+       "later": true
+      }
+     ]
+    },
+    {
+     "id": "kerys",
+     "subject": "Kerys",
+     "unread": [
+      true,
+      false
+     ],
+     "messages": [
+      {
+       "from": "Antoine Roche <antoine@kerys.example>",
+       "at": "2026-09-14T10:00:00+02:00",
+       "body": "Camille, as-tu eu le temps de regarder notre proposition de partenariat ?"
+      },
+      {
+       "from": "Antoine Roche <antoine@kerys.example>",
+       "at": "2026-09-22T09:30:00+02:00",
+       "body": "Je me permets de revenir vers toi au sujet de Kerys."
+      },
+      {
+       "from": "Antoine Roche <antoine@kerys.example>",
+       "at": "2026-10-01T08:12:00+02:00",
+       "body": "Camille, on en reparle ?"
+      }
+     ]
+    },
+    {
+     "id": "roux",
+     "subject": "Pacte d’associés, version finale",
+     "unread": [
+      true,
+      true
+     ],
+     "incoming": true,
+     "messages": [
+      {
+       "from": "Hélène Roux <h.roux@roux-avocats.example>",
+       "at": "2026-10-01T11:55:00+02:00",
+       "body": "Madame, le pacte d’associés dans sa version finale est prêt. Tous les investisseurs l’ont signé ; il manque votre signature pour clôturer la levée demain. Le lien de signature électronique est dans mon message précédent. Bien à vous, Hélène Roux"
+      }
+     ]
+    },
+    {
+     "id": "crm",
+     "subject": "Migration CRM : point d’avancement",
+     "unread": [
+      true,
+      true
+     ],
+     "messages": [
+      {
+       "from": "Léa Fontaine <lea@norvel.example>",
+       "at": "2026-10-01T10:15:00+02:00",
+       "body": "Point migration CRM : 92 % des comptes migrés, aucun blocage, bascule prévue la semaine prochaine. Rien à faire de ton côté."
+      }
+     ]
+    },
+    {
+     "id": "rh",
+     "subject": "Planning des entretiens annuels",
+     "unread": [
+      true,
+      true
+     ],
+     "messages": [
+      {
+       "from": "Équipe RH <rh@norvel.example>",
+       "at": "2026-09-30T14:00:00+02:00",
+       "body": "Le planning des entretiens annuels est en ligne. Merci de valider vos créneaux avant la fin du mois."
+      }
+     ]
+    },
+    {
+     "id": "nimbus1",
+     "subject": "Nimbus Cloud : votre facture de septembre",
+     "unread": [
+      true,
+      true
+     ],
+     "labels": [
+      "Label_1"
+     ],
+     "messages": [
+      {
+       "from": "Nimbus Cloud <factures@nimbus.example>",
+       "at": "2026-10-01T06:02:00+02:00",
+       "body": "Votre facture de septembre est disponible : 4 812 € HT."
+      }
+     ]
+    },
+    {
+     "id": "rail",
+     "subject": "Votre reçu de paiement, Paris-Lyon",
+     "unread": [
+      true,
+      true
+     ],
+     "labels": [
+      "Label_1"
+     ],
+     "messages": [
+      {
+       "from": "RailGo <recus@railgo.example>",
+       "at": "2026-09-30T19:20:00+02:00",
+       "body": "Merci pour votre achat. Montant : 124 €."
+      }
+     ]
+    },
+    {
+     "id": "nimbus2",
+     "subject": "Nimbus Cloud : reçu de paiement",
+     "unread": [
+      true,
+      true
+     ],
+     "incoming": true,
+     "messages": [
+      {
+       "from": "Nimbus Cloud <recus@nimbus.example>",
+       "at": "2026-10-01T11:45:00+02:00",
+       "body": "Nous avons bien reçu votre paiement de 4 812 €."
+      }
+     ]
+    },
+    {
+     "id": "lettredaf",
+     "subject": "La Lettre du DAF, n° 118",
+     "unread": [
+      true,
+      true
+     ],
+     "labels": [
+      "Label_2"
+     ],
+     "messages": [
+      {
+       "from": "La Lettre du DAF <news@lettredaf.example>",
+       "at": "2026-10-01T07:00:00+02:00",
+       "body": "Au sommaire : trésorerie, affacturage, clôtures plus rapides."
+      }
+     ]
+    },
+    {
+     "id": "decideurs",
+     "subject": "Décideurs IA : l’édition de la semaine",
+     "unread": [
+      true,
+      true
+     ],
+     "labels": [
+      "Label_2"
+     ],
+     "messages": [
+      {
+       "from": "Décideurs IA <hebdo@decideurs-ia.example>",
+       "at": "2026-09-30T08:00:00+02:00",
+       "body": "Cinq cas d’usage en finance, et ce qu’ils ont coûté."
+      }
+     ]
+    },
+    {
+     "id": "saas",
+     "subject": "Revue SaaS France, n° 42",
+     "unread": [
+      true,
+      true
+     ],
+     "labels": [
+      "Label_2"
+     ],
+     "messages": [
+      {
+       "from": "Revue SaaS France <revue@saas-france.example>",
+       "at": "2026-09-29T07:30:00+02:00",
+       "body": "Les multiples de valorisation au troisième trimestre."
+      }
+     ]
+    },
+    {
+     "id": "salon",
+     "subject": "Salon Tech Paris : moins 30 % jusqu’à dimanche",
+     "unread": [
+      true,
+      true
+     ],
+     "labels": [
+      "Label_3"
+     ],
+     "messages": [
+      {
+       "from": "Salon Tech Paris <promo@salontech.example>",
+       "at": "2026-09-30T12:00:00+02:00",
+       "body": "Dernières places à prix réduit."
+      }
+     ]
+    },
+    {
+     "id": "webinar",
+     "subject": "Invitation : l’IA générative pour les équipes finance",
+     "unread": [
+      true,
+      true
+     ],
+     "labels": [
+      "Label_3"
+     ],
+     "messages": [
+      {
+       "from": "Optima Software <events@optima.example>",
+       "at": "2026-09-29T16:00:00+02:00",
+       "body": "Rejoignez notre webinar de 45 minutes."
+      }
+     ]
+    }
+   ],
+   "slack": [
+    {
+     "channel": "D0SOFIA1",
+     "uid": "U0SOFIA",
+     "from": "Sofia Benali",
+     "at": "2026-10-01T10:41:00+02:00",
+     "text": "Camille, on est prêts pour la mise en production de la nouvelle facturation demain à 7 h. J’ai besoin de ton go écrit ici, le comité des changements l’exige depuis l’incident de juin. Tu confirmes ?",
+     "history": [
+      "Sofia Benali : Les tests de charge sont passés, aucune erreur sur 50 000 factures."
+     ]
+    },
+    {
+     "channel": "D0THOMAS1",
+     "uid": "U0THOMAS",
+     "from": "Thomas Petit",
+     "at": "2026-10-01T09:05:00+02:00",
+     "text": "Bonjour Camille, le budget du séminaire de direction (18 k€) est-il validé ? Le lieu ne tient l’option que jusqu’à après-demain.",
+     "history": []
+    },
+    {
+     "channel": "D0HUGO1",
+     "uid": "U0HUGO",
+     "from": "Hugo Lefèvre",
+     "at": "2026-10-01T12:02:00+02:00",
+     "incoming": true,
+     "text": "Tu as 5 minutes avant ton call de 14 h ? Rien d’urgent.",
+     "history": []
+    }
+   ],
+   "sort": {
+    "lines": [
+     {
+      "id": "m:roux",
+      "tier": "now",
+      "say": "Maître Roux attend votre signature sur le pacte d’associés.",
+      "fact": "Tous les investisseurs ont signé ; le closing est demain.",
+      "type": "knock_on",
+      "kind": "action"
+     }
+    ],
+    "labels": [
+     {
+      "id": "m:nimbus2",
+      "label": "Factures"
+     }
+    ]
+   },
+   "summaries": {
+    "thread:ostral": {
+     "who": [
+      {
+       "name": "Hugo",
+       "date": "hier",
+       "said": "Ostral demande 18 % pour renouveler 3 ans à 240 k€ par an ; il vise 15 % avec un engagement ferme, signature demain."
+      },
+      {
+       "name": "Claire",
+       "date": "ce matin",
+       "said": "Refuse 18 % : la marge passerait sous 60 %. Propose 12 % sur 3 ans, puis indexation."
+      }
+     ],
+     "agree": [
+      "Renouveler Ostral sur 3 ans, avec un engagement ferme."
+     ],
+     "disagree": [
+      "Hugo accepte 15 à 18 % pour signer demain ; Claire tient à 12 % pour protéger la marge."
+     ],
+     "decide": "Quelle remise accordez-vous à Ostral : 18 %, 15 % ou 12 % ?"
+    },
+    "slack:D0SOFIA1": {
+     "who": [
+      {
+       "name": "Sofia",
+       "date": "ce matin",
+       "said": "Mise en production de la facturation demain à 7 h, tests de charge passés sans erreur ; attend votre go écrit."
+      }
+     ],
+     "agree": [],
+     "disagree": [],
+     "decide": "Donnez-vous le go pour la mise en production de demain matin ?"
+    },
+    "thread:espagne": {
+     "who": [
+      {
+       "name": "Julie",
+       "date": "avant-hier",
+       "said": "Deux finalistes : Carmen, 10 ans chez un concurrent, 160 k€ ; Pablo, plus junior, 120 k€. Carmen a une autre offre."
+      }
+     ],
+     "agree": [],
+     "disagree": [
+      "L’équipe penche pour Carmen, Hugo pour Pablo."
+     ],
+     "decide": "Carmen ou Pablo pour diriger les ventes en Espagne ?"
+    },
+    "thread:vellmar": {
+     "who": [
+      {
+       "name": "Marc",
+       "date": "hier",
+       "said": "Veut la rétention nette par cohorte sur 8 trimestres avant le comité d’investissement, surtout la cohorte 2024."
+      }
+     ],
+     "agree": [],
+     "disagree": [],
+     "decide": ""
+    },
+    "slack:D0THOMAS1": {
+     "who": [
+      {
+       "name": "Thomas",
+       "date": "ce matin",
+       "said": "Demande si le budget du séminaire de direction, 18 k€, est validé ; option sur le lieu jusqu’à après-demain."
+      }
+     ],
+     "agree": [],
+     "disagree": [],
+     "decide": "Validez-vous le budget de 18 k€ pour le séminaire ?"
+    },
+    "thread:brenner": {
+     "who": [
+      {
+       "name": "Étienne",
+       "date": "il y a 3 jours",
+       "said": "Envoie l’avenant relu par les deux juristes et demande la signature avant la fin de semaine."
+      },
+      {
+       "name": "Vous",
+       "date": "aujourd'hui",
+       "said": "Avenant signé et renvoyé ce matin."
+      }
+     ],
+     "agree": [],
+     "disagree": [],
+     "decide": ""
+    },
+    "thread:kerys": {
+     "who": [
+      {
+       "name": "Antoine",
+       "date": "depuis la mi-septembre",
+       "said": "Trois relances sur une proposition de partenariat Kerys, sans dire ce qu’il attend."
+      }
+     ],
+     "agree": [],
+     "disagree": [],
+     "decide": "Voulez-vous ouvrir la discussion avec Kerys, ou décliner ?"
+    },
+    "thread:roux": {
+     "who": [
+      {
+       "name": "Hélène Roux",
+       "date": "à l'instant",
+       "said": "Pacte d’associés final signé par tous les investisseurs ; manque votre signature pour clôturer la levée demain."
+      }
+     ],
+     "agree": [],
+     "disagree": [],
+     "decide": ""
+    }
+   },
+   "drafts": {
+    "thread:ostral": "Claire, Hugo,\n\nJ’ai regardé vos arguments. On propose 15 % à Ostral, avec un engagement ferme de 3 ans et une indexation à partir de la deuxième année. Pas en dessous. Hugo, tu peux leur faire l’offre aujourd’hui.\n\nCamille",
+    "slack:D0SOFIA1": "Go pour demain 7 h. Préviens-moi dès que c’est en ligne, et s’il y a le moindre écart sur les premières factures, on revient en arrière.",
+    "thread:espagne": "Julie,\n\nMerci pour ce travail. Je pars sur Carmen : l’expérience du marché compte plus que l’écart de salaire pour le lancement. Peux-tu lui faire une offre d’ici demain ?\n\nCamille",
+    "thread:vellmar": "Bonjour Marc,\n\nC’est noté. Claire vous envoie la rétention nette par cohorte sur 8 trimestres d’ici deux jours, avec le détail de la cohorte 2024.\n\nBien à vous,\nCamille",
+    "slack:D0THOMAS1": "Oui, budget validé à 18 k€. Tu peux confirmer le lieu.",
+    "thread:kerys": "Bonjour Antoine,\n\nMerci pour tes relances. Avant d’aller plus loin, peux-tu me dire en deux lignes ce que tu attends de Norvel et dans quel délai ?\n\nCamille",
+    "thread:roux": "Bonjour Maître,\n\nMerci. Je signe dans l’heure.\n\nBien à vous,\nCamille Durand"
+   }
+  }
+ }
+}
