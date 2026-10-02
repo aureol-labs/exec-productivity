@@ -17,6 +17,10 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.12.2
+
+- No task step. Mark as read waits 5 seconds in place with Undo before anything reaches the mailbox; the toast is gone.
+
 ## 0.12.1
 
 - No task step. Mark as read has a tooltip on its check, and a short toast once done.
