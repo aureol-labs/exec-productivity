@@ -760,6 +760,9 @@
     a.classList.remove('tk'); a.hidden=false;
     a.parentNode.insertBefore(d,a); d.appendChild(a);
     if(!m.box.hidden) d.classList.add('on');
+    /* the line opens its panel and nothing else: Claude's viewer opens an outside link before the page can stop
+       it, so the line keeps no address; Open in the panel is the way to the mailbox */
+    a.setAttribute('href','#'); a.removeAttribute('target'); a.removeAttribute('rel'); a.setAttribute('role','button');
     a.setAttribute('aria-expanded',m.box.hidden?'false':'true');
     a.onclick=function(e){ e.preventDefault(); m.box.hidden=!m.box.hidden; d.classList.toggle('on',!m.box.hidden); a.setAttribute('aria-expanded',m.box.hidden?'false':'true'); return false; };
     if(CAN_READ&&x.kind==='mail'&&x.unread&&PENDING_READ[refOf(x)]){ d.classList.add('pend'); d.appendChild(undoEl(refOf(x))); }
