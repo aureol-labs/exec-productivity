@@ -17,6 +17,10 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.12.6
+
+- No task step. The inbox demo has a quiet switch at the bottom: Slack or Teams, Gmail or Outlook. Real pages are unchanged.
+
 ## 0.12.5
 
 - No task step. On the inbox page, Sum up the thread and Reply with Claude are the strong buttons.
