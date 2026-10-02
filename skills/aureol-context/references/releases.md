@@ -17,12 +17,16 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.13.1
+
+- No task step. Raising a line reads « Prioriser » / "Prioritise": « Plus prioritaire » could be read as « no longer a priority ».
+
 ## 0.13.0
 
 - `inbox`: before ranking, read `priority` from the inbox page's store and respect it (aureol-inbox rule 5): a
   thread marked down stays out of the queue until a newer message; a thread marked up joins it while unread.
 - The inbox page has no Drop any more: a line leaves when it is read. On a queue line, Lower priority sends it to
-  the rest; on a line of the rest or of a label, Higher priority (in its actions, or the arrow on hover) brings it
+  the rest; on a line of the rest or of a label, Prioritise (in its actions, or the arrow on hover) brings it
   into the queue. Dismissals written before still hold.
 
 ## 0.12.8
