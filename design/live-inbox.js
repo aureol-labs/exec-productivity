@@ -631,8 +631,10 @@
         add(acts,a);
       });
       var lx=liveOf(r.l);
-      if(CAN_READ&&!r.state&&lx&&lx.kind==='mail'&&lx.unread){ var mr=el('a','lxa',L('lx_mark_read')); mr.setAttribute('href','#'); mr.setAttribute('role','button');
-        mr.onclick=function(e){ e.preventDefault(); markRead(lx); return false; }; add(acts,mr); }
+      if(CAN_READ&&!r.state&&lx&&lx.kind==='mail'&&lx.unread){
+        if(PENDING_READ[refOf(lx)]){ row.classList.add('lxpend'); add(acts,undoEl(refOf(lx))); }
+        else { var mr=el('a','lxa',L('lx_mark_read')); mr.setAttribute('href','#'); mr.setAttribute('role','button');
+          mr.onclick=function(e){ e.preventDefault(); markRead(lx); return false; }; add(acts,mr); } }
       if(ask) add(acts,ask); if(drop) add(acts,drop); src.appendChild(acts);
       if(p.thread) why.appendChild(p.thread); if(p.reply) why.appendChild(p.reply);
     });
@@ -686,7 +688,8 @@
     if(!m.box.hidden) d.classList.add('on');
     a.setAttribute('aria-expanded',m.box.hidden?'false':'true');
     a.onclick=function(e){ e.preventDefault(); m.box.hidden=!m.box.hidden; d.classList.toggle('on',!m.box.hidden); a.setAttribute('aria-expanded',m.box.hidden?'false':'true'); return false; };
-    if(CAN_READ&&x.kind==='mail'&&x.unread){ var rb=el('button','lxmr'); rb.type='button'; rb.title=L('lx_mark_read'); rb.setAttribute('aria-label',L('lx_mark_read')+' : '+(x.subject||''));
+    if(CAN_READ&&x.kind==='mail'&&x.unread&&PENDING_READ[refOf(x)]){ d.classList.add('pend'); d.appendChild(undoEl(refOf(x))); }
+    else if(CAN_READ&&x.kind==='mail'&&x.unread){ var rb=el('button','lxmr'); rb.type='button'; rb.title=L('lx_mark_read'); rb.setAttribute('aria-label',L('lx_mark_read')+' : '+(x.subject||''));
       rb.dataset.tip=L('lx_mark_read'); rb.removeAttribute('title');
       rb.appendChild(tick()); rb.onclick=function(e){ e.stopPropagation(); markRead(x); }; d.appendChild(rb); }
     d.appendChild(m.box);
@@ -702,20 +705,30 @@
   var pageSetFilter=setFilter;
   setFilter=function(f,keep){ pageSetFilter(f,keep); try{ decorateMinis(); }catch(e){} };
 
-  /* a toast: one line at the bottom of the screen, gone after a few seconds */
-  var TOAST=el('div','lxtoast'), TOAST_T=null; TOAST.setAttribute('role','status'); TOAST.setAttribute('aria-live','polite'); TOAST.hidden=true;
-  document.body.appendChild(TOAST);
-  function toast(text,bad){ TOAST.textContent=text; TOAST.classList.toggle('bad',!!bad); TOAST.hidden=false;
-    requestAnimationFrame(function(){ TOAST.classList.add('in'); });
-    clearTimeout(TOAST_T); TOAST_T=setTimeout(function(){ TOAST.classList.remove('in'); setTimeout(function(){ TOAST.hidden=true; },250); },bad?6000:4000); }
-
-  /* mark as read: the exec's own gesture, mail only; the line moves at once, the mailbox follows */
-  async function markRead(x){
+  /* mark as read: the exec's own gesture, mail only. The line stays in place for 5 s with Undo,
+     and nothing reaches the mailbox before that; then it is marked read and moves. */
+  var PENDING_READ={}, UNDO_TICK=null;
+  function secsLeft(r){ return Math.max(1,Math.ceil((PENDING_READ[r].until-Date.now())/1000)); }
+  function markRead(x){
     if(!CAN_READ||!x||x.kind!=='mail') return;
-    var r=refOf(x); READ_HERE[r]=1; LAST=''; redraw();
-    try{ await MAIL.markRead(x); toast(T('lx_marked',{x:cut(x.subject||x.from,60)}));
-      if(typeof LX.mcp.invalidate==='function') LX.mcp.invalidate(MAIL_CFG.server).catch(function(){}); }
-    catch(e){ delete READ_HERE[r]; LAST=''; redraw(); toast(T('lx_read_failed',{x:e&&e.code==='tool_error'?cut(e.message,140):mcpCopy(e,MAIL_CFG.server)}),true); }
+    var r=refOf(x); if(PENDING_READ[r]) return;
+    PENDING_READ[r]={x:x, until:Date.now()+5000, timer:setTimeout(function(){ commitRead(r); },5000)};
+    if(!UNDO_TICK) UNDO_TICK=setInterval(function(){
+      var keys=Object.keys(PENDING_READ);
+      keys.forEach(function(k){ Array.prototype.forEach.call(document.querySelectorAll('.lxundo'),function(u){ if(u.dataset.undo===k){ var b=u.querySelector('button'); if(b) b.textContent=T('lx_undo',{n:secsLeft(k)}); } }); });
+      if(!keys.length){ clearInterval(UNDO_TICK); UNDO_TICK=null; } },250);
+    LAST=''; redraw();
+  }
+  function cancelRead(r){ var p=PENDING_READ[r]; if(!p) return; clearTimeout(p.timer); delete PENDING_READ[r]; LAST=''; redraw(); }
+  async function commitRead(r){
+    var p=PENDING_READ[r]; if(!p) return; delete PENDING_READ[r]; READ_HERE[r]=1; LAST=''; redraw();
+    try{ await MAIL.markRead(p.x); if(typeof LX.mcp.invalidate==='function') LX.mcp.invalidate(MAIL_CFG.server).catch(function(){}); }
+    catch(e){ delete READ_HERE[r]; LAST=''; redraw(); runDone(T('lx_read_failed',{x:e&&e.code==='tool_error'?cut(e.message,140):mcpCopy(e,MAIL_CFG.server)})); }
+  }
+  function undoEl(r){
+    var u=el('span','lxundo'), b=el('button','lxq',T('lx_undo',{n:secsLeft(r)})); u.dataset.undo=r; b.type='button';
+    b.onclick=function(e){ e.preventDefault(); e.stopPropagation(); cancelRead(r); };
+    add(u, el('span',null,L('lx_marked_short')), b); return u;
   }
 
   /* ---------- the sort: what arrived since the run; the whole inbox when no run has passed today ---------- */
