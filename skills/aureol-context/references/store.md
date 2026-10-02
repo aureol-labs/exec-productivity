@@ -221,9 +221,11 @@ to `dropped` or `kept`: those two are the exec's, from the page. "Added this wee
 { "label": "Sales", "tint": "sales", "rule": "In the exec's words.", "order": 1, "archive": false }
 ```
 
-Seven at most, `tint` one of `sales | product | board | customers | hiring | later | arch`. `label` is the name as
-written in the mailbox, in the exec's language ("À archiver", not "To archive", for a French exec); `tint` is
-the colour slot and never shows. `archive: true` is the To archive label, drawn as an outline.
+Seven at most, three fixed (Read later, Receipts, To archive) and four work labels, `tint` one of
+`sales | product | board | customers | hiring | later | receipts | arch`. `label` is the name as written in the
+mailbox, in the exec's language ("Factures" and "À archiver", not "Receipts" and "To archive", for a French
+exec); `tint` is the colour slot and never shows. `receipts` is the Receipts label: invoices, payment receipts,
+order and delivery confirmations, never To archive. `archive: true` is the To archive label, drawn as an outline.
 
 ### `asks` and `suggestions`, the end-of-day review
 

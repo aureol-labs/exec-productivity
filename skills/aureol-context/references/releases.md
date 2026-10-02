@@ -17,6 +17,14 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.10.0
+
+- No task step: the skills and the store carry it. Install proposes three fixed labels, Read later, Receipts
+  ("Factures" in French) and To archive, and four work labels. Receipts files invoices, payment receipts, order
+  and delivery confirmations; anything carrying an amount, an order reference or an attachment never goes to
+  To archive. Installs already done keep their rules, in the exec's words; `exec-productivity-help` adds
+  Receipts on the exec's word.
+
 ## 0.9.1
 
 - No task step: the skills and the store carry it. Each mailbox's main inbox is checked on every run: Gmail's
