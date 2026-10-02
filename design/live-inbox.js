@@ -149,6 +149,10 @@
   var CAN_LABEL=!!(MAIL&&MAIL_CFG.label&&(CFG.rules||[]).length);
   var RULES=(CFG.rules||[]).filter(function(x){ return x&&x.label&&x.rule; });
   var MAIL_NAME='Gmail', CHAT_NAME=CHAT ? CHAT.server : L('f_chat');
+  /* the demo's context: which chat and mail tools it shows, the viewer's choice, kept in this browser */
+  var DEMO_CTX={chat:'slack', mail:'gmail'};
+  if(DEMO){ try{ var dc=JSON.parse(window.localStorage.getItem('aureol-inbox-demo-ctx')||'null'); if(dc) DEMO_CTX={chat:dc.chat==='teams'?'teams':'slack', mail:dc.mail==='outlook'?'outlook':'gmail'}; }catch(e){}
+    CHAT_NAME=DEMO_CTX.chat==='teams'?'Teams':'Slack'; MAIL_NAME=DEMO_CTX.mail==='outlook'?'Outlook':'Gmail'; }
 
   /* ---------- reading: watched, so the last result draws at once and then refreshes ---------- */
   var LIVE={mail:[], prim:[], minus:[], slack:{items:[],replied:{}}, labels:{}, errors:{}};
@@ -605,6 +609,7 @@
     if(typing()){ PENDING=true; return; }
     var data=buildData();
     MINI_FILED={}; (data.filed||[]).forEach(function(f){ if(f.lx){ MINI_FILED[f.label]=f.lx; delete f.lx; } });
+    if(DEMO&&DEMO_CTX.chat==='teams') demoTeams(data);
     var json=JSON.stringify(data);
     /* nothing moves when nothing changed: the clock in the header is not a change */
     var cmp=function(s){ return s.replace(/"time_label":"[^"]*"/,''); };
@@ -643,6 +648,7 @@
       for(var i=0;i<3;i++){ var sk=el('div','lxskel'); add(sk,el('i'),el('i'),el('i')); list.appendChild(sk); } }
     decorateMinis();
     var by=page.querySelector('.by'); page.insertBefore(LENS_A,by); page.insertBefore(LENS_BOX,by);
+    if(DEMO) page.insertBefore(demoSwitch(),by);
     if(openId){ var o=document.getElementById(openId), ob=o&&o.querySelector(':scope > button'); if(ob&&!o.classList.contains('open')) t(ob); }
     recount();
   }
@@ -895,6 +901,26 @@
         return {payload:{}};
       }
     };
+  }
+  /* the same page as a Teams house: the chat lines carry the Teams mark and name */
+  function demoTeams(d){
+    var sw=function(x){ return typeof x==='string' ? x.replace(/Slack/g,'Teams') : x; };
+    (d.queue||[]).forEach(function(r){ if(r.channel==='slack') r.channel='teams'; if(r.channels) r.channels=r.channels.map(function(c){ return c==='slack'?'teams':c; });
+      (r.sources||[]).forEach(function(x){ x.via=sw(x.via); x.label=sw(x.label); }); r.briefing=sw(r.briefing); });
+    ((d.others||{}).items||[]).forEach(function(x){ if(x.channel==='slack') x.channel='teams'; });
+  }
+  /* one quiet line under the footer: which tools the demo shows */
+  function demoSwitch(){
+    var p=el('p','lxdemo'), pick=function(key,val,label){ var b=el('button','lxq'+(DEMO_CTX[key]===val?' on':''),label); b.type='button';
+      b.setAttribute('aria-pressed',DEMO_CTX[key]===val?'true':'false');
+      b.onclick=function(){ if(DEMO_CTX[key]===val) return; DEMO_CTX[key]=val;
+        try{ window.localStorage.setItem('aureol-inbox-demo-ctx',JSON.stringify(DEMO_CTX)); }catch(e){}
+        CHAT_NAME=DEMO_CTX.chat==='teams'?'Teams':'Slack'; MAIL_NAME=DEMO_CTX.mail==='outlook'?'Outlook':'Gmail';
+        PANELS={}; MINI={}; LAST=''; redraw(); };
+      return b; };
+    add(p, el('span',null,L('lx_demo')+' \u00b7 '+L('lx_demo_chat')), pick('chat','slack','Slack'), pick('chat','teams','Teams'),
+        el('span',null,'\u00b7 '+L('lx_demo_mail')), pick('mail','gmail','Gmail'), pick('mail','outlook','Outlook'));
+    return p;
   }
   async function demoSort(items,max,toFile){
     await pause(2400);

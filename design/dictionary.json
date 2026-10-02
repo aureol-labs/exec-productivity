@@ -373,7 +373,10 @@
     "lx_mark_read": "Mark as read",
     "lx_read_failed": "Not marked as read: {x}",
     "lx_marked_short": "Marked as read",
-    "lx_undo": "Undo ({n} s)"
+    "lx_undo": "Undo ({n} s)",
+    "lx_demo": "Demo",
+    "lx_demo_chat": "Chat:",
+    "lx_demo_mail": "Mail:"
   },
   "fr": {
     "page_brief": "Brief du jour",
@@ -748,6 +751,9 @@
     "lx_mark_read": "Marquer comme lu",
     "lx_read_failed": "Non marqué comme lu : {x}",
     "lx_marked_short": "Marqué comme lu",
-    "lx_undo": "Annuler ({n} s)"
+    "lx_undo": "Annuler ({n} s)",
+    "lx_demo": "Démo",
+    "lx_demo_chat": "Messagerie :",
+    "lx_demo_mail": "Mail :"
   }
 }
