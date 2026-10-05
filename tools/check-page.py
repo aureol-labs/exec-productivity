@@ -357,7 +357,80 @@ def check_brief(d, r, others):
                 if not re.search(r'\d', str(tl.get('value', ''))):
                     r.bad('$.metrics.tiles[%d]' % i, 'a tile is a numeral')
     check_refs(d, r, 'brief', own, others)
+    check_brief_live(d, r)
     return own
+
+
+EMAIL = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+
+
+def check_live_conns(live, r, mail_apis=('aureol', 'gmail')):
+    """The connections a live page reads: each null or {server, api}, the connector as the exec named it."""
+    mail, cal, chat = live.get('mail'), live.get('calendar'), live.get('chat')
+    if mail is not None and (not isinstance(mail, dict) or not mail.get('server') or mail.get('api') not in mail_apis):
+        r.bad('$.live.mail', 'null, or {server, api: %s}' % '|'.join(mail_apis))
+    if cal is not None and (not isinstance(cal, dict) or not cal.get('server') or cal.get('api') not in ('aureol', 'gcal')):
+        r.bad('$.live.calendar', 'null, or {server, api: aureol|gcal}')
+    if chat is not None and (not isinstance(chat, dict) or not chat.get('server') or chat.get('api') != 'slack'):
+        r.bad('$.live.chat', 'null, or {server, api: slack}')
+    me = live.get('me')
+    if not isinstance(me, dict) or not me.get('name'):
+        r.bad('$.live.me', '{name, role}: who Claude writes for, from preferences')
+
+
+def check_row_live(path, row, r):
+    """Where a line sits, so the page finds its thread again: a mail thread with its account, a chat
+    conversation, or the addresses a new mail goes to."""
+    v = row.get('live')
+    if v is None:
+        return
+    if not isinstance(v, dict):
+        r.bad(path + '.live', '{thread, account} | {channel_id} | {to, subject, account}')
+        return
+    if v.get('thread') and not v.get('account'):
+        r.bad(path + '.live.account', 'a mail thread carries the account it sits in')
+    to = v.get('to')
+    if to is not None:
+        if not isinstance(to, list) or not to or any(not EMAIL.match(str(x)) for x in to):
+            r.bad(path + '.live.to', 'plain addresses a new mail goes to')
+        elif not v.get('account'):
+            r.bad(path + '.live.account', 'a new mail names the account it is written from')
+    if not (v.get('thread') or v.get('channel_id') or to):
+        r.bad(path + '.live', 'a thread, a chat conversation or the addresses of a new mail')
+
+
+def check_brief_live(d, r):
+    """The live block of the brief: optional. When present, the page reads the exec's connections
+    itself and asks Claude for a call's options and the message that acts it."""
+    for key in ('decisions', 'jobs'):
+        for i, row in enumerate(d.get(key) or []):
+            p = '$.%s[%d]' % (key, i)
+            ctx = row.get('context')
+            if ctx is not None and (not isinstance(ctx, str) or words(ctx) > 70):
+                r.bad(p + '.context', 'what the brief knows about the call, the routine\'s own facts, 70 words at most')
+            if row.get('to') is not None and not isinstance(row.get('to'), str):
+                r.bad(p + '.to', 'who the message goes to, by name')
+            check_row_live(p, row, r)
+    for i, m in enumerate((d.get('strip') or {}).get('meetings') or []):
+        p = '$.strip.meetings[%d]' % i
+        v = m.get('live')
+        if v is not None:
+            if not isinstance(v, dict):
+                r.bad(p + '.live', '{event_id, account, attendees}')
+            elif any(not EMAIL.match(str(x)) for x in v.get('attendees') or []):
+                r.bad(p + '.live.attendees', 'plain addresses')
+        for j, x in enumerate(m.get('meetings') or []):
+            if x.get('organizer') is not None and not EMAIL.match(str(x['organizer'])):
+                r.bad('%s.meetings[%d].organizer' % (p, j), 'the organiser\'s plain address')
+    live = d.get('live')
+    if live is None:
+        return
+    if not isinstance(live, dict):
+        r.bad('$.live', 'an object: me, mail, calendar, chat')
+        return
+    check_live_conns(live, r)
+    if not STAMP.match(str(d.get('generated') or '')):
+        r.bad('$.generated', 'the run\'s time, ISO with the hour: what the page reads is compared with it')
 
 
 # ---------- the inbox ----------
@@ -876,6 +949,13 @@ def selftest():
     broken('inbox', 'thirteen queue lines', lambda d: d['queue'].extend(read_line(d, n) for n in range(4)))
     broken('inbox', 'three notices', lambda d: (d['counts'].__setitem__('chat', None), d.__setitem__('notices', ['a', 'b', 'c'])))
     broken('brief', 'a sub past the word cap', lambda d: d.__setitem__('sub', ' '.join(['mot'] * 21)))
+    broken('brief', 'a live block without who Claude writes for', lambda d: d['live'].pop('me'))
+    broken('brief', 'a live block on an unknown calendar', lambda d: d['live'].__setitem__('calendar', {'server': 'Cal', 'api': 'ical'}))
+    broken('brief', 'a live page without the run time', lambda d: d.pop('generated'))
+    broken('brief', 'a thread without its account', lambda d: d['decisions'][0]['live'].pop('account'))
+    broken('brief', 'a new mail to a name', lambda d: d['jobs'][0].__setitem__('live', {'to': ['Julien'], 'account': 'work'}))
+    broken('brief', 'a call\'s context past 70 words', lambda d: d['decisions'][0].__setitem__('context', ' '.join(['mot'] * 71)))
+    passes('brief', 'a page without its live block', lambda d: (d.pop('live'), d.pop('generated')))
     broken('inbox', 'ref that is not a string', lambda d: d['queue'][0].__setitem__('ref', {'id': 'x'}))
     broken('context', 'ref that is not a string on a topic', lambda d: d['topics'][0].__setitem__('ref', ''))
     broken('inbox', 'untyped queue row', lambda d: d['queue'][8].__setitem__('type', None))

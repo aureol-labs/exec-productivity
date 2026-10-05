@@ -17,6 +17,14 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.14.0
+
+- `morning`: the Daily brief is live. The brief run writes `generated`, `live` and, on each call, `context`, `to` and
+  `live` (aureol-brief section 3), and publishes with `sample` and the `mcp` servers beside `db`. On the page a call
+  opens on its options as the sources state them; the exec settles it and Claude drafts the message that acts it.
+- `morning`: before judging, read `decided` from the brief page's store and log each settled call as a kept decision
+  (aureol-context section 2); the brief never proposes it again.
+
 ## 0.13.5
 
 - No task step. A line of the rest or of a label opens its panel only, no longer the mailbox as well; Open in the

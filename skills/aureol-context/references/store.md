@@ -3,7 +3,8 @@
 One artifact per exec, "Super Context", published at install with `capabilities: {db: {}}`. Its database is the
 plugin's only state. Every routine reads it with `read_db` and writes it with `write_db` on the artifact's link
 (`{{CONTEXT_URL}}` in the task prompts). The page itself writes three things from the browser: the priorities
-editor, keep and drop on decisions, decline on a suggestion. Nothing else on any page writes.
+editor, keep and drop on decisions, decline on a suggestion. Every other page writes only to its own store, on the
+exec's click (below).
 
 Rules that hold for every document:
 
@@ -214,6 +215,9 @@ the newer one gets `replaces`. `conflicts_with` names another kept decision and 
 question in brick. The routine sets `replaces` and `conflicts_with`, never merges them, and never sets `status`
 to `dropped` or `kept`: those two are the exec's, from the page. "Added this week" is computed at render from
 `kept_at`, never stored. A dropped priority produces a proposed decision with `against` = the priority's `ahead`.
+A call the exec settled on the Daily brief is already theirs: the morning pass logs it with `status: kept` at once,
+`decided_by: ["you"]` and `against` the options they did not pick (`decided`, below). It is the one `kept` a routine
+writes, because the exec made it on the page.
 
 ### `rules`, only where the mail role can write a label
 
@@ -299,6 +303,18 @@ reads none of them except `dismissals`.
 - `threads/<slug of ref>`: a thread's summary, `{ref, key, at, summary}`, kept until the thread moves.
 - `priority/<slug of ref>`: the exec's priority on a line, `{page: "inbox", ref, level: up|down, at}`. The inbox run
   reads it before ranking (aureol-inbox rule 5); the page writes it and nothing else does.
+
+### What the live Daily brief keeps in its own store
+
+The brief page writes these itself, in its own artifact's store, on the exec's click.
+
+- `decided/<slug of ref>`: a call the exec settled, `{page: "brief", kind: decision|clash, ref, id, say, choice,
+  who, against: [the options not picked], sources, date, at}`. Written when they pick an option or write their
+  own, deleted when they undo. The morning pass reads the collection (`read_db` on `connections/current.pages.brief`),
+  logs every document without `logged` as a kept decision, then writes `logged: <decision id>` on it; the brief run
+  never proposes a decided ref again.
+- `options/<slug of ref>`: the options Claude gave on a call, `{ref, key, at, options}`, kept until the next run
+  publishes; no routine reads them.
 
 ### `runs`, one per run
 

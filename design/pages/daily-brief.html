@@ -35,6 +35,17 @@
   meetings, the clashes and the strip are the calendar's and stay. A read that
   fails, or a store that is null, changes nothing and shows nothing.
 
+  LIVE
+  Opened in Claude with its capabilities (db, sample, mcp on the servers in `live`), the
+  page works the calls where they stand. A call opens on its options, as the sources
+  state them with who holds each, never ranked; the exec picks one or writes their own,
+  which writes decided/<slug of ref> to this page's store, greys the line ("Settled:
+  ...") and asks Claude for the message that acts it: a draft in the thread, a new mail,
+  or a chat message copied. A double booking is a call whose options are its meetings.
+  The morning run logs every decided document in Super Context as a kept decision. The
+  code is design/live-kit.js and design/live-brief.js; without `live`, or outside Claude,
+  the page is what the run published.
+
   HOW IT RENDERS
   The routine never hand-writes rows. It builds one JSON document and puts it in the
   <script id="data" type="application/json"> element in place of the DATA_JSON placeholder, with
@@ -105,6 +116,7 @@
 -->
 <style>
 {{CSS}}
+{{KIT_CSS}}
 </style>
 </head>
 <body>
@@ -305,6 +317,10 @@ var DICT={{DICT}};
     dbInit(function(){ hydrateDrops(recount); });
   }
   render();
+</script>
+<script>
+{{KIT_JS}}
+{{BRIEF_LIVE_JS}}
 </script>
 </body>
 </html>
