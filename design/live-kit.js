@@ -368,8 +368,10 @@ function lkKit(BASE){
     var at=function(hm){ var d=new Date(), p=String(hm).split(':'); d.setHours(+p[0],+p[1],0,0); return d.toISOString(); };
     var iso=function(x){ return /^\d{1,2}:\d{2}$/.test(String(x)) ? at(x) : x; };
     function threads(sent,q){
-      var to=(String(q).match(/to:(\S+)/)||[])[1];
+      var aft=+((String(q).match(/after:(\d+)/)||[])[1]||0)*1000, to=(String(q).match(/to:(\S+)/)||[])[1], who=(String(q).match(/from:[^\s}]+/g)||[]).map(function(x){ return x.slice(5).toLowerCase(); });
       return {threads:(D.mail||[]).filter(function(t){ return after()||!t.incoming; }).filter(function(t){
+          if(!sent&&who.length) return (t.messages||[]).some(function(m){ return who.indexOf(addrOf(m.from))>=0; });
+          if(!sent&&aft) return (t.messages||[]).some(function(m){ return !m.mine&&(after()||!m.later)&&Date.parse(iso(m.at))>aft; });
           if(!sent) return true;
           return (t.messages||[]).some(function(m){ return m.mine&&(after()||!m.later)&&(!to||String(m.to||'').toLowerCase().indexOf(to.toLowerCase())>=0); });
         }).map(function(t){
@@ -388,7 +390,7 @@ function lkKit(BASE){
           +'\nMessage_ts: '+(Date.parse(iso(c.at))/1000).toFixed(6)+'\nPermalink: [link](#)\nText: \n'+c.text+'\n---\n'; }).join('')};
     }
     function payload(tool,input){
-      if(tool==='gmail_search') return threads(/in:sent/.test(input.query||''),input.query||'');
+      if(tool==='gmail_search') return threads(/(^|\s)in:sent/.test(input.query||''),input.query||'');
       if(tool==='calendar_list_events') return events();
       if(tool==='slack_search_public_and_private') return slack();
       return {};
@@ -406,7 +408,8 @@ function lkKit(BASE){
         if(tool==='gmail_get_thread'&&t) return {payload:{messages:(t.messages||[]).filter(function(x){ return after()||!x.later; }).map(function(m){ return {from:m.from, date:iso(m.at), subject:t.subject, body:m.body}; })}};
         if(tool==='gmail_create_draft'||tool==='gmail_update_draft'){
           var last=t&&t.messages[t.messages.length-1];
-          return {payload:{draft_token:input.draft_token||'demo', gmail_url:'', to:input.to&&input.to.length?input.to:(last?[addrOf(last.from)]:[])}}; }
+          /* as Aureol Connect does: a reply goes to the last sender, or to its recipients when the exec wrote it */
+          return {payload:{draft_token:input.draft_token||'demo', gmail_url:'', to:input.to&&input.to.length?input.to:(last?[last.mine?last.to:addrOf(last.from)]:[])}}; }
         if(tool==='slack_read_channel'){ var c=(D.slack||[]).filter(function(y){ return y.channel===input.channel_id; })[0];
           return {payload:{messages:c ? (c.history||[]).concat([c.from+': '+c.text]).join('\n\n') : ''}}; }
         return {payload:{}};

@@ -73,6 +73,15 @@
   page greys where it stands on this render and moves to Closed on the next; the
   list is never hydrated from the store.
 
+  LIVE
+  Opened in Claude with its capabilities (db, sample, mcp on the servers in `live`), a topic
+  with threads opens on "Where it stands", Claude's factual summary of them, kept in the
+  store under summaries/<slug of topic> until the next run; a topic waiting on someone
+  offers "Follow up", a draft in its thread, never sent; and a topic whose thread moved
+  since the run says who wrote, and when. The code is design/live-kit.js and
+  design/live-context.js. Close, on a priority whose outcome looks done, needs only the
+  store: it writes what the editor writes for a line dropped as done.
+
   HOW IT RENDERS
   The routine never hand-writes rows. It builds one JSON document and puts it in the
   <script id="data" type="application/json"> element in place of the DATA_JSON placeholder, with
@@ -147,6 +156,7 @@
 -->
 <style>
 {{CSS}}
+{{KIT_CSS}}
 </style>
 </head>
 <body>
@@ -240,6 +250,12 @@ var DICT={{DICT}};
     if(!fresh){
       var w=el('div','why');
       if(src.lede) add(w, el('p',null,src.lede));
+      /* its outcome has happened: one click closes it, as the editor's Drop with Done would */
+      if(!gone && !mark && src.done_hint){
+        var act=el('div','act'), cb=el('button',null,L('close')); cb.type='button';
+        cb.onclick=function(){ closeDone(p,r); };
+        add(act, cb, el('span','note','')); add(w,act);
+      }
       if(src.yours || (src.history&&src.history.length)){
         var c=el('div','ctx');
         if(src.yours){ ctxTag(c,'in_your_words'); add(c, el('p','yours',L('q_open')+src.yours+L('q_close'))); }
@@ -422,6 +438,25 @@ var DICT={{DICT}};
       : open ? L('needs_ahead')
       : !ch.length ? L('no_change')
       : P('changes_n',ch.length);
+  }
+  /* Close: the line goes to the foot, greyed, Done; the store says so as the editor would. Without the
+     store, a briefing is copied and the line waits for Claude. */
+  function closeDone(p,row){
+    var act=row.querySelector('.act'), note=act&&act.querySelector('.note'), btn=act&&act.querySelector('button');
+    var setNote=function(s,bad){ if(note){ note.textContent=s; note.className='note'+(bad?' bad':''); } };
+    if(DRAFT) return;
+    if(DB){
+      btn.disabled=true;
+      DB.doc('priorities/'+p.id).update({status:'dropped', dropped_at:isoToday(), dropped_reason:'done'}).then(function(){
+        var f=find(p.id); FILE=FILE.filter(function(x){ return x.id!==p.id; }); LIST=LIST.filter(function(x){ return x.id!==p.id; });
+        STORE_GONE.push({p:f||p, reason:'done'}); renderPriorities(false); recount();
+      }, function(err){ btn.disabled=false; setNote(L('not_saved')+(err && err.message ? ' · '+err.message : ''), true); });
+    } else {
+      copyText(F(L('close_briefing'),{say:p.say, hint:(p.src||{}).done_hint||''}), function(){
+        btn.disabled=true; setNote(L('copied'));
+        add(row.querySelector('.dec'), el('span','rel nw',L('dropped_m')+', '+reasonWord('done')+', '+L('waiting')));
+      }, function(){ setNote(L('blocked'),true); });
+    }
   }
   function shut(){ DRAFT=null; document.body.classList.remove('editing'); }
   /* a discarded edit forgets the reasons it collected: every line it dropped is
@@ -897,6 +932,10 @@ var DICT={{DICT}};
     dbInit(function(){ $('ego').textContent = DB ? L('save') : L('copy_for_claude'); hydrate(); });
   }
   render();
+</script>
+<script>
+{{KIT_JS}}
+{{CONTEXT_LIVE_JS}}
 </script>
 </body>
 </html>

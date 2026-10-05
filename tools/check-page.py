@@ -841,7 +841,38 @@ def check_context(d, r, others):
         if c.get('note') is not None and (not isinstance(c['note'], str) or '\n' in c['note']):
             r.bad(cp + '.note', 'one line of text, or absent')
     check_refs(d, r, 'context', own, others)
+    check_context_live(d, r)
     return own
+
+
+def check_context_live(d, r):
+    """The live block of Super Context: optional. A topic with threads opens on Claude's summary of
+    them; a topic waiting on someone offers a follow-up drafted in its thread."""
+    for i, tp in enumerate(d.get('topics') or []):
+        v = tp.get('live')
+        if v is None:
+            continue
+        p = '$.topics[%d].live' % i
+        if not isinstance(v, dict):
+            r.bad(p, '{threads: [{thread, account}], waiting}')
+            continue
+        ts = v.get('threads') or []
+        if not isinstance(ts, list) or len(ts) > 3 or any(not isinstance(t, dict) or not t.get('thread') or not t.get('account') for t in ts):
+            r.bad(p + '.threads', 'three threads at most, each {thread, account}')
+        w = v.get('waiting')
+        if w is not None and (not isinstance(w, dict) or not w.get('name') or (w.get('email') and not EMAIL.match(str(w['email'])))):
+            r.bad(p + '.waiting', '{name, email}: who the topic waits on')
+        if w and not ts and not (w.get('email') and v.get('account')):
+            r.bad(p + '.waiting', 'a follow-up needs the thread, or the address and the account to write from')
+    live = d.get('live')
+    if live is None:
+        return
+    if not isinstance(live, dict):
+        r.bad('$.live', 'an object: me, mail, chat')
+        return
+    check_live_conns(live, r)
+    if not STAMP.match(str(d.get('generated') or '')):
+        r.bad('$.generated', 'the run\'s time, ISO with the hour: a thread that moved after it is new')
 
 
 CHECKS = {'brief': check_brief, 'inbox': check_inbox, 'context': check_context}
@@ -994,6 +1025,11 @@ def selftest():
     broken('context', 'closed row without its date', lambda d: d['closed'][1].pop('date'))
     broken('context', 'a suggestion without its prompt', lambda d: d['suggestions'][0].pop('prompt'))
     broken('context', 'a need without connected', lambda d: d['suggestions'][0]['needs'][0].pop('connected'))
+    broken('context', 'a live block without who Claude writes for', lambda d: d['live'].pop('me'))
+    broken('context', 'a topic thread without its account', lambda d: d['topics'][0]['live']['threads'][0].pop('account'))
+    broken('context', 'four threads on a topic', lambda d: d['topics'][0]['live']['threads'].extend([{'thread': 'x', 'account': 'work'}] * 3))
+    broken('context', 'waiting on nobody', lambda d: d['topics'][0]['live'].__setitem__('waiting', {'email': 'a@b.co'}))
+    passes('context', 'a page without its live block', lambda d: (d.pop('live'), d.pop('generated')))
     print('selftest: %s' % ('ok' if fails == 0 else '%d FAILED' % fails))
     return 0 if fails == 0 else 1
 

@@ -2,8 +2,10 @@
 
 One artifact per exec, "Super Context", published at install with `capabilities: {db: {}}`. Its database is the
 plugin's only state. Every routine reads it with `read_db` and writes it with `write_db` on the artifact's link
-(`{{CONTEXT_URL}}` in the task prompts). The page itself writes three things from the browser: the priorities
-editor, keep and drop on decisions, decline on a suggestion. Every other page writes only to its own store, on the
+(`{{CONTEXT_URL}}` in the task prompts). The page itself writes from the browser: the priorities editor (and
+Close on a priority that looks done, which writes what the editor writes for a line dropped as done), keep and drop
+on decisions, decline on a suggestion, and the topic summaries Claude makes on the page (`summaries/<slug of
+topic>`, `{key, at, summary}`, kept until the next run, read by no routine). Every other page writes only to its own store, on the
 exec's click (below).
 
 Rules that hold for every document:
@@ -315,6 +317,8 @@ The brief page writes these itself, in its own artifact's store, on the exec's c
   never proposes a decided ref again.
 - `options/<slug of ref>`: the options Claude gave on a call, `{ref, key, at, options}`, kept until the next run
   publishes; no routine reads them.
+- `prep/<slug of event>`: Claude's summary of the exec's recent exchanges with the people in a meeting, `{key, at,
+  summary}`, kept until the next run; no routine reads them.
 
 ### `runs`, one per run
 

@@ -128,9 +128,23 @@ DRAFTS['clash:m5|' + fr('Garder Avocat, pacte Vellmar')] = CLASH_DRAFT
 # today's calendar as the page reads it again: the lunch with Thomas is added after the brief, the Vellmar
 # point moves half an hour; every block of the morning carries its event id
 EVENT = {'m1': 'ev-comex', 'm2': 'ev-ostral', 'm3': 'ev-carmen', 'm4': 'ev-vellmar'}
+ATTENDEES = {'m2': ['hugo@halden.example', 'achats@ostral.example'], 'm3': ['julie@halden.example'],
+             'm4': ['marc.delorme@vellmar.example']}
 for m in doc['strip']['meetings']:
     if m['id'] in EVENT:
-        m['live'] = {'event_id': EVENT[m['id']], 'account': ME['alias']}
+        m['live'] = {'event_id': EVENT[m['id']], 'account': ME['alias'], 'attendees': ATTENDEES.get(m['id'], [])}
+# what Claude answers on "Sum up our exchanges" when the page may not ask it
+PREP = {
+    'ev-ostral': {'who': [
+        {'name': 'Hugo', 'date': '30 sept.', 'said': fr("Ostral demande 18 % sur 3 ans pour renouveler ; il peut signer demain si vous acceptez, c'est son trimestre.")},
+        {'name': 'Claire', 'date': '30 sept.', 'said': fr("Refuse au-delà de 12 % : la marge du compte passerait sous 60 %. Rappelle la règle de juin à 15 %.")}],
+        'open': [fr("Votre réponse sur la remise, demandée par Hugo avant ce call.")],
+        'decide': fr("18 % sur 3 ans, ou tenir 15 % ?")},
+    'ev-vellmar': {'who': [
+        {'name': 'Marc', 'date': '30 sept.', 'said': fr("Veut le budget 2027 arbitré et la rétention nette par cohorte sur 8 trimestres pour le comité du 8 octobre.")}],
+        'open': [fr("Les cohortes, que Marc a reçues la veille au dernier comité."), fr("Le budget 2027, que le Comex de mardi n'a pas tranché.")],
+        'decide': ''},
+}
 EVENTS = [
     {'id': 'ev-comex', 'title': 'Comex hebdomadaire', 'start': '09:00', 'end': '10:00'},
     {'id': 'ev-ostral', 'title': 'Call Ostral avec Hugo', 'start': '11:00', 'end': '11:45'},
@@ -160,7 +174,7 @@ doc['live'] = {
     'mail': {'server': 'Aureol Connect', 'api': 'aureol'},
     'calendar': {'server': 'Aureol Connect', 'api': 'aureol'},
     'chat': {'server': 'Slack', 'api': 'slack'},
-    'demo': {'now': '10:20', 'account': ME, 'me_id': 'U0CAMILLE', 'mail': MAIL, 'events': EVENTS,
+    'demo': {'now': '10:20', 'account': ME, 'me_id': 'U0CAMILLE', 'mail': MAIL, 'events': EVENTS, 'prep': PREP,
              'slack': [{'channel': 'D0THOMAS1', 'uid': 'U0THOMAS', 'from': 'Thomas Girard', 'at': '2026-09-30T18:40:00+02:00',
                         'text': fr("Camille, le budget du séminaire de direction, 18 k€, est-il validé ? Le lieu ne tient l'option que jusqu'à samedi.")}],
              'options': OPTIONS, 'drafts': DRAFTS},
