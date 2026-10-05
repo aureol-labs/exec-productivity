@@ -408,7 +408,28 @@
     "lb_write_msg": "Draft the message",
     "lb_keep": "Keep {x}",
     "lb_move": "Move {x}",
-    "lb_move_subject": "{x}: another time?"
+    "lb_move_subject": "{x}: another time?",
+    "lb_write": "Draft with Claude",
+    "lb_answered": "Answered since the brief",
+    "lb_sent": "Sent since the brief",
+    "lb_checking": "Checking your day",
+    "lb_uptodate": "Up to date at {t}",
+    "lb_added_n": [
+      "{n} meeting added",
+      "{n} meetings added"
+    ],
+    "lb_moved_n": [
+      "{n} moved",
+      "{n} moved"
+    ],
+    "lb_cancelled_n": [
+      "{n} cancelled",
+      "{n} cancelled"
+    ],
+    "lb_handled_n": [
+      "{n} line handled",
+      "{n} lines handled"
+    ]
   },
   "fr": {
     "page_brief": "Brief du jour",
@@ -818,6 +839,27 @@
     "lb_write_msg": "Rédiger le message",
     "lb_keep": "Garder {x}",
     "lb_move": "Déplacer {x}",
-    "lb_move_subject": "{x} : un autre créneau ?"
+    "lb_move_subject": "{x} : un autre créneau ?",
+    "lb_write": "Rédiger avec Claude",
+    "lb_answered": "Répondu depuis le brief",
+    "lb_sent": "Envoyé depuis le brief",
+    "lb_checking": "Vérification de votre journée",
+    "lb_uptodate": "À jour à {t}",
+    "lb_added_n": [
+      "{n} réunion ajoutée",
+      "{n} réunions ajoutées"
+    ],
+    "lb_moved_n": [
+      "{n} déplacée",
+      "{n} déplacées"
+    ],
+    "lb_cancelled_n": [
+      "{n} annulée",
+      "{n} annulées"
+    ],
+    "lb_handled_n": [
+      "{n} ligne traitée",
+      "{n} lignes traitées"
+    ]
   }
 }

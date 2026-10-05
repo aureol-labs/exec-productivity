@@ -36,6 +36,10 @@
        "href": ""
       }
      ]
+    },
+    "live": {
+     "event_id": "ev-comex",
+     "account": "pro"
     }
    },
    {
@@ -69,6 +73,10 @@
       }
      ],
      "briefing": "Prépare mon call de 11:00 avec Ostral et Hugo. Ostral demande 18 % sur 3 ans, la règle est 15 %.\n\nLis ces sources toi-même, ne te fie pas à mon résumé. Donne-moi la thèse de chaque côté et ce qui pèse d'autre. N'envoie rien, ne supprime rien."
+    },
+    "live": {
+     "event_id": "ev-ostral",
+     "account": "pro"
     }
    },
    {
@@ -102,6 +110,10 @@
       }
      ],
      "briefing": "Prépare mon dernier entretien avec Carmen Vidal à 14:00 : les trois questions qui départagent avec Pablo.\n\nLis ces sources toi-même, ne te fie pas à mon résumé. Donne-moi la thèse de chaque côté et ce qui pèse d'autre. N'envoie rien, ne supprime rien."
+    },
+    "live": {
+     "event_id": "ev-carmen",
+     "account": "pro"
     }
    },
    {
@@ -113,6 +125,7 @@
       "end": "16:15",
       "title": "Revue produit, Léa",
       "organizer": "lea@halden.example",
+      "event_id": "ev-lea",
       "cost": "La déplacer coûte peu : Léa a proposé jeudi."
      },
      {
@@ -120,6 +133,7 @@
       "end": "16:30",
       "title": "Avocat, pacte Vellmar",
       "organizer": "cabinet@roux-avocats.example",
+      "event_id": "ev-avocat",
       "cost": "Le déplacer coûte : sa signature est attendue avant le comité."
      }
     ],
@@ -174,6 +188,10 @@
       }
      ],
      "briefing": "Prépare mon point de 17:00 avec Marc Delorme avant le comité Vellmar du 8 octobre.\n\nLis ces sources toi-même, ne te fie pas à mon résumé. Donne-moi la thèse de chaque côté et ce qui pèse d'autre. N'envoie rien, ne supprime rien."
+    },
+    "live": {
+     "event_id": "ev-vellmar",
+     "account": "pro"
     }
    }
   ]
@@ -303,9 +321,14 @@
    ],
    "briefing": "Marc veut la rétention nette par cohorte sur 8 trimestres avant le comité du 8. Dis-moi qui la produit et pour quand, et rédige ma demande.\n\nLis ces sources toi-même, ne te fie pas à mon résumé. Donne-moi la thèse de chaque côté et ce qui pèse d'autre. N'envoie rien, ne supprime rien.",
    "live": {
-    "thread": "cohortes",
+    "to": [
+     "claire@halden.example"
+    ],
+    "subject": "Cohortes sur 8 trimestres pour le comité",
     "account": "pro"
-   }
+   },
+   "draft": true,
+   "to": "Claire"
   },
   {
    "id": "j2",
@@ -355,7 +378,9 @@
    "briefing": "Thomas demande si le budget du séminaire de direction, 18 k€, est validé. Rédige ma réponse.\n\nLis ces sources toi-même, ne te fie pas à mon résumé. Donne-moi la thèse de chaque côté et ce qui pèse d'autre. N'envoie rien, ne supprime rien.",
    "live": {
     "channel_id": "D0THOMAS1"
-   }
+   },
+   "draft": true,
+   "to": "Thomas"
   }
  ],
  "footer": [
@@ -468,6 +493,55 @@
      ]
     }
    ],
+   "events": [
+    {
+     "id": "ev-comex",
+     "title": "Comex hebdomadaire",
+     "start": "09:00",
+     "end": "10:00"
+    },
+    {
+     "id": "ev-ostral",
+     "title": "Call Ostral avec Hugo",
+     "start": "11:00",
+     "end": "11:45"
+    },
+    {
+     "id": "ev-thomas",
+     "title": "Déjeuner avec Thomas",
+     "start": "12:30",
+     "end": "13:30",
+     "later": true
+    },
+    {
+     "id": "ev-carmen",
+     "title": "Dernier entretien, Carmen Vidal",
+     "start": "14:00",
+     "end": "15:00"
+    },
+    {
+     "id": "ev-lea",
+     "title": "Revue produit, Léa",
+     "start": "15:30",
+     "end": "16:15"
+    },
+    {
+     "id": "ev-avocat",
+     "title": "Avocat, pacte Vellmar",
+     "start": "15:45",
+     "end": "16:30"
+    },
+    {
+     "id": "ev-vellmar",
+     "title": "Point avec Marc Delorme",
+     "start": "17:00",
+     "end": "17:45",
+     "moved": {
+      "start": "17:30",
+      "end": "18:15"
+     }
+    }
+   ],
    "slack": [
     {
      "channel": "D0THOMAS1",
@@ -537,7 +611,9 @@
     "thread:ostral|Tenir 15 % sur 3 ans": "Claire, Hugo,\n\nJe tranche : on tient 15 % sur 3 ans, comme la règle de juin et comme Brenner l’an dernier. Hugo, propose-le à Ostral au call de 11:00 ; si elles hésitent, reviens vers moi avant de bouger. Claire, merci de préparer l’avenant à 15 % pour demain.\n\nCamille",
     "thread:espagne|Recruter Carmen à 160 k€": "Julie,\n\nJe pars sur Carmen : son réseau grands comptes compte plus que l’écart de salaire pour le lancement de janvier. Peux-tu lui faire une offre d’ici demain, avant son autre offre ?\n\nCamille",
     "thread:budget|+16 %, 5 recrutements, 15 % d’EBITDA": "Claire, Hugo, Marc,\n\nNous présentons au comité le scénario à +16 % : 5 recrutements commerciaux et 15 % d’EBITDA fin 2027, en ligne avec le plan de valeur. Claire, peux-tu finaliser le budget pour lundi ?\n\nCamille",
-    "clash:m5|Garder Avocat, pacte Vellmar": "Bonjour Léa,\n\nJe dois prendre l’avocat sur le pacte Vellmar à 15:45. Peut-on décaler la revue produit à jeudi, comme tu l’avais proposé ?\n\nMerci,\nCamille"
+    "clash:m5|Garder Avocat, pacte Vellmar": "Bonjour Léa,\n\nJe dois prendre l’avocat sur le pacte Vellmar à 15:45. Peut-on décaler la revue produit à jeudi, comme tu l’avais proposé ?\n\nMerci,\nCamille",
+    "thread:cohortes": "Claire,\n\nMarc veut la rétention nette par cohorte sur 8 trimestres avant le comité du 8. Peux-tu me la produire pour lundi, avec le détail de la cohorte 2024 ?\n\nMerci,\nCamille",
+    "slack:D0THOMAS1": "Oui, budget validé à 18 k€. Tu peux confirmer le lieu."
    }
   }
  }

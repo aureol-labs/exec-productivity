@@ -109,9 +109,11 @@ events are drawn.
 
 ## 3. Check, publish, record
 
-**What the live page needs**, written into the same document. Opened in Claude, the page works the calls where
-they stand: a call opens on its options as the sources state them, the exec settles it, and Claude drafts the
-message that acts it.
+**What the live page needs**, written into the same document. Opened in Claude, the page keeps the day current
+and works the lines where they stand: it reads today's calendar again (a meeting added, moved or cancelled since
+the run redraws the strip; what has gone by dims; a call or a wall whose time passed says so), greys a line the
+exec answered since the run, opens a call on its options as the sources state them, records the one the exec
+settles and drafts the message that acts it, and drafts a job that is a message.
 
 - `generated`: this run's time, ISO with the hour and the offset.
 - `live.me`: `{name, role}`, the exec's first name and their role in a line ("CEO de Halden, 180 personnes"), from
@@ -122,13 +124,19 @@ message that acts it.
   "slack"}`. Any other tool, or none: `null`.
 - On every decision and job that has one, `live`: `{thread, account}` (the mail thread and the mailbox's alias or
   address), or `{channel_id}` for a chat conversation, or `{to, subject, account}` for a mail that does not exist
-  yet (plain addresses). A double booking carries `live.account` and, on each of its meetings, `organizer`.
+  yet (plain addresses). A double booking carries `live.account` and, on each of its meetings, `organizer` and
+  `event_id`.
+- On every block of the strip, `live: {event_id, account}`: the calendar event it was drawn from, so the page finds
+  it again.
+- `draft: true` on a job that is a message to write (a reply, a mail to someone, a chat answer), with its `live`
+  and `to` (who it goes to, by first name). Claude drafts it on the page; it is never sent.
 
 | `api` | Tools to declare |
 |---|---|
-| `aureol` | `gmail_search`, `gmail_get_thread`, `gmail_create_draft`, `gmail_update_draft` |
+| `aureol` | mail: `gmail_search`, `gmail_get_thread`, `gmail_create_draft`, `gmail_update_draft`; calendar: `calendar_list_events` |
 | `gmail` | `search_threads`, `get_thread`, `create_draft`, `update_draft` |
-| `slack` | `slack_read_channel` |
+| `gcal` | `list_events` |
+| `slack` | `slack_search_public_and_private`, `slack_read_channel` |
 
 Run `python3 tools/fill-page.py --kind brief skills/aureol-brief/references/daily-brief.html DATA.json OUT.html
 --links context=<link> inbox=<link>` from the plugin's root folder (the one holding `skills/` and `tools/`)

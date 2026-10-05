@@ -53,9 +53,9 @@ function lkKit(BASE){
     /* Aureol Connect: several Google accounts, threads by id per account */
     aureol:{
       tools:['gmail_search','gmail_get_thread','gmail_create_draft','gmail_update_draft'],
-      search:async function(q,n){
-        var r=await K.mcp.callTool(K.MAIL_CFG.server,'gmail_search',{account:'all',query:q,page_size:n||20});
-        return (((r||{}).payload||{}).threads||[]).map(function(t){
+      call:function(q,n){ return ['gmail_search',{account:'all',query:q,page_size:n||20}]; },
+      parse:function(p){
+        return ((p||{}).threads||[]).map(function(t){
           var a=t.account||{}, email=String(a.email||'').toLowerCase(), alias=a.alias||email; ACCT[alias]=email;
           var from=addrOf(t.from);
           return {id:'m:'+t.thread_id, thread:t.thread_id, account:alias, from:plainText(nameOf(t.from)), fromAddr:from,
@@ -80,9 +80,9 @@ function lkKit(BASE){
     /* the Gmail connector: one account */
     gmail:{
       tools:['search_threads','get_thread','create_draft','update_draft'],
-      search:async function(q,n){
-        var r=await K.mcp.callTool(K.MAIL_CFG.server,'search_threads',{query:q,pageSize:n||20,view:'THREAD_VIEW_MINIMAL'});
-        return (((r||{}).payload||{}).threads||[]).map(function(t){
+      call:function(q,n){ return ['search_threads',{query:q,pageSize:n||20,view:'THREAD_VIEW_MINIMAL'}]; },
+      parse:function(p){
+        return ((p||{}).threads||[]).map(function(t){
           var ms=(t.messages||[]).slice().sort(function(a,b){ return new Date(a.date)-new Date(b.date); }), m=ms[ms.length-1]||{};
           return {id:'m:'+t.id, thread:t.id, account:'gmail', lastId:m.id, from:plainText(nameOf(m.sender||'')), fromAddr:addrOf(m.sender),
             mine:(m.labelIds||[]).indexOf('SENT')>=0, subject:plainText(m.subject||L('lx_no_subject')), snippet:cut(plainText(m.snippet),240),
@@ -111,15 +111,14 @@ function lkKit(BASE){
       }
     }
   };
+  Object.keys(MAIL_ADAPTERS).forEach(function(k){ var a=MAIL_ADAPTERS[k];
+    a.search=async function(q,n){ var c=a.call(q,n), r=await K.mcp.callTool(K.MAIL_CFG.server,c[0],c[1]); return a.parse((r||{}).payload); }; });
   K.MAIL_CFG=CFG.mail||null;
   K.MAIL=K.MAIL_CFG&&MAIL_ADAPTERS[K.MAIL_CFG.api] ? MAIL_ADAPTERS[K.MAIL_CFG.api] : null;
   K.MAIL_NAME=DEMO&&DEMO.mail_name ? DEMO.mail_name : 'Gmail';
   /* the threads the exec wrote in since a time; a run's time in Gmail's own syntax */
   function epoch(iso){ return Math.floor(Date.parse(iso)/1000); }
-  K.sentSince=async function(iso,to){
-    if(!K.MAIL) return [];
-    return K.MAIL.search('in:sent'+(to?' to:'+to:'')+' after:'+epoch(iso),30);
-  };
+  K.sentQuery=function(iso,to){ return 'in:sent'+(to?' to:'+to:'')+' after:'+epoch(iso); };
   K.threadText=async function(g,last,chars){
     var ms=await K.MAIL.thread(g);
     return ms.slice(-(last||8)).map(function(m){ return 'From: '+m.from+(m.fromAddr?' <'+m.fromAddr+'>':'')+'\nDate: '+m.date+'\nSubject: '+m.subject+'\n\n'+String(m.body||'').slice(0,chars||3000); }).join('\n\n---\n\n');
@@ -129,10 +128,10 @@ function lkKit(BASE){
   var CAL_ADAPTERS={
     aureol:{
       tools:['calendar_list_events'],
-      today:async function(){
-        var d=now(), a=dayOf(d), b=dayOf(new Date(d.getTime()+864e5)), seen={};
-        var r=await K.mcp.callTool(K.CAL_CFG.server,'calendar_list_events',{account:'all',time_min:a,time_max:b,page_size:100});
-        return (((r||{}).payload||{}).events||[]).filter(function(e){
+      call:function(){ var d=now(); return ['calendar_list_events',{account:'all',time_min:dayOf(d),time_max:dayOf(new Date(d.getTime()+864e5)),page_size:100}]; },
+      parse:function(p){
+        var seen={};
+        return ((p||{}).events||[]).filter(function(e){
           var k=e.ical_uid||e.event_id; if(seen[k]) return false; seen[k]=1; return true;
         }).map(function(e){
           return {id:e.event_id, title:plainText(e.summary||''), start:new Date(e.start), end:new Date(e.end), allDay:!!e.all_day,
@@ -144,10 +143,10 @@ function lkKit(BASE){
     /* the Google Calendar connector: the primary calendar */
     gcal:{
       tools:['list_events'],
-      today:async function(){
-        var d=now(), a=new Date(d); a.setHours(0,0,0,0); var b=new Date(a.getTime()+864e5);
-        var r=await K.mcp.callTool(K.CAL_CFG.server,'list_events',{startTime:a.toISOString(),endTime:b.toISOString(),orderBy:'startTime',pageSize:100});
-        return (((r||{}).payload||{}).events||[]).map(function(e){
+      call:function(){ var a=new Date(now()); a.setHours(0,0,0,0); var b=new Date(a.getTime()+864e5);
+        return ['list_events',{startTime:a.toISOString(),endTime:b.toISOString(),orderBy:'startTime',pageSize:100}]; },
+      parse:function(p){
+        return ((p||{}).events||[]).map(function(e){
           var s=(e.start||{}), f=(e.end||{}), me=(e.attendees||[]).filter(function(x){ return x.self; })[0];
           return {id:e.id, title:plainText(e.summary||''), start:new Date(s.dateTime||s.date), end:new Date(f.dateTime||f.date), allDay:!s.dateTime,
             busy:e.transparency!=='transparent', declined:!!(me&&me.responseStatus==='declined'), cancelled:e.status==='cancelled',
@@ -165,6 +164,25 @@ function lkKit(BASE){
   K.slackText=async function(ch){
     var r=await K.mcp.callTool(K.CHAT_CFG.server,'slack_read_channel',{channel_id:ch,limit:20,response_format:'concise'});
     var p=(r||{}).payload; return typeof p==='string' ? p : String((p&&p.messages)||'');
+  };
+
+  /* the DMs the exec wrote in after a time, from Slack's search: {channel id: true}. The exec is the one
+     person in every conversation the search returns, or the one alone in a conversation with themselves */
+  K.slackCall=function(sinceIso){ var d=new Date(Date.parse(sinceIso)-864e5);
+    return ['slack_search_public_and_private',{filters:'is:dm after:'+dayOf(d),limit:20,sort:'timestamp',include_context:false,natural_language_query:''}]; };
+  K.slackMine=function(p,sinceIso){
+    var md=String((p&&typeof p==='object')?p.results:p||''), all=[], me=null, out={}, since=Date.parse(sinceIso)/1000;
+    md.split(/\n### Result /).slice(1).forEach(function(b){
+      var g=function(re){ var m=b.match(re); return m?m[1].trim():''; };
+      all.push({ch:g(/Channel:[^\n]*\(ID: ([A-Z0-9]+)\)/), from:g(/From:[^\n]*\(ID: ([A-Z0-9]+)\)/), ts:parseFloat(g(/Message_ts: ([0-9.]+)/))||0,
+        parts:(g(/Participants: ([^\n]+)/).match(/ID: [A-Z0-9]+/g)||[]).map(function(x){ return x.slice(4); })});
+    });
+    all.forEach(function(m){ var u=Array.from(new Set(m.parts)); if(u.length===1) me=me||u[0]; });
+    if(!me&&all.length>1){ var c={}; all.forEach(function(m){ (new Set(m.parts)).forEach(function(id){ c[id]=(c[id]||0)+1; }); });
+      Object.keys(c).forEach(function(id){ if(c[id]===all.length) me=me||id; }); }
+    if(DEMO&&DEMO.me_id) me=DEMO.me_id;
+    all.forEach(function(m){ if(me&&m.from===me&&m.ts>since&&m.ch) out[m.ch]=true; });
+    return out;
   };
 
   /* ---------- what to say when something could not be done ---------- */
@@ -365,8 +383,8 @@ function lkKit(BASE){
           busy:true, my_response:'accepted', organizer:e.organizer||'', html_link:'', account:acct}; })};
     }
     function slack(){
-      return {results:'# Results\n'+(D.slack||[]).map(function(c,i){
-        return '### Result '+(i+1)+'\nChannel: DM (ID: '+c.channel+')\nParticipants: '+(D.account||{}).name+' (ID: '+D.me_id+'), '+c.from+' (ID: '+c.uid+')\nFrom: '+c.from+' (ID: '+c.uid+')\nTime: '+iso(c.at)
+      return {results:'# Results\n'+(D.slack||[]).filter(function(c){ return after()||!c.later; }).map(function(c,i){
+        return '### Result '+(i+1)+'\nChannel: DM (ID: '+c.channel+')\nParticipants: '+(D.account||{}).name+' (ID: '+D.me_id+'), '+(c.peer||c.from)+' (ID: '+(c.peer_uid||c.uid)+')\nFrom: '+c.from+' (ID: '+c.uid+')\nTime: '+iso(c.at)
           +'\nMessage_ts: '+(Date.parse(iso(c.at))/1000).toFixed(6)+'\nPermalink: [link](#)\nText: \n'+c.text+'\n---\n'; }).join('')};
     }
     function payload(tool,input){

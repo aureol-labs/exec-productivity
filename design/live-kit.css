@@ -89,7 +89,7 @@
   .lkdec{margin-top:14px;padding-top:12px;border-top:1px solid rgba(46,107,98,.16)}
   .lkdec [hidden],.lxp [hidden]{display:none!important}
   .lkchosen+.lkhead{margin-top:14px}
-  .lkdecided .src a.drop,.lkdecided .src .dropq{display:none}
+  .lkdecided .src a.drop,.lkdecided .src .dropq,.lkdone .src a.drop,.lkdone .src .dropq{display:none}
   .lkdec .lkhead{display:flex;align-items:baseline;gap:12px;font-size:9.5px;letter-spacing:1.3px;text-transform:uppercase;
      font-weight:600;color:var(--pine);margin-bottom:8px}
   .lkdec .lkhead .lxq{margin-left:auto;letter-spacing:0;text-transform:none;font-weight:500}
