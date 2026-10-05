@@ -145,7 +145,15 @@ opens on `who`, the last three `so_far` and `next`; a person or an organisation 
 `with`. Neither carries a `lede`, an `argument` or a `go`: the store keeps the `read` for sessions. A priority's
 `lede` is one fact on how the week served it, and `done_hint` is rule 1's. A decision shows what it was decided
 against and, on a conflict, `land`; no `argument` or `plain`. A suggestion shows its evidence and its path or
-pattern, no `lede`. Titles are numerals: "4 priorities, 9 live topics. 2 serve none of them." Run
+pattern, no `lede`. Titles are numerals: "4 priorities, 9 live topics. 2 serve none of them."
+
+**What the live page needs**, in the same document. Opened in Claude, a topic opens on Claude's factual summary of
+its threads, a topic waiting on someone offers a follow-up drafted in its thread, and a topic whose thread moved
+since this run says who wrote. `generated`: this run's time, ISO with the hour and the offset. `live.me`: `{name,
+role}` from preferences. `live.mail` and `live.chat` exactly as the brief writes them (aureol-brief section 3). On
+each topic with threads, `live`: `threads`, three at most, the most recent first, each `{thread, account}`; and
+`waiting`, `{name, email}`, only when the exec is waiting on someone on that topic (they owe a reply, a document,
+a date), with `account` when the topic has no thread yet. Run
 `python3 tools/check-page.py --kind context DATA.json` from the plugin's root folder (the one holding `skills/`
 and `tools/`) when a shell exists; otherwise apply its list by hand.
 
@@ -153,7 +161,10 @@ Publish: fill the template with `python3 tools/fill-page.py --kind context
 skills/aureol-context/references/super-context.html DATA.json OUT.html --links brief=<link> inbox=<link>`,
 from the same root, when a shell exists (it checks the data and escapes the JSON);
 without a shell, replace the single `{{DATA_JSON}}` by hand with every `<` written as `\u003c`. In bootstrap mode publish new with
-`capabilities: {db: {}}` and return the link. Otherwise read the page at `connections/current.pages.context`
+`capabilities: {db: {}, sample: {}, mcp: {servers: [{server, tools}]}}` and return the link: the mail tools of
+aureol-brief section 3 (`gmail_search`, `gmail_get_thread`, `gmail_create_draft`, `gmail_update_draft` on Aureol
+Connect; `search_threads`, `get_thread`, `create_draft`, `update_draft` on the Gmail connector), `{db: {}}` alone
+when `live.mail` is `null`; the same capabilities on every publish. Otherwise read the page at `connections/current.pages.context`
 first, then publish to its `url` so the link holds; if the publish is refused because the page changed, re-read
 and publish again, never force.
 

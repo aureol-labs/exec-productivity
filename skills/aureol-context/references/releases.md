@@ -17,6 +17,16 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.16.0
+
+- `morning`: Super Context is live. The context pass writes `generated`, `live` and, on each topic with threads,
+  `live.threads` and `live.waiting` when the exec waits on someone (aureol-context section 4), and publishes with
+  `sample` and the mail tools beside `db`. On the page a topic opens on where it stands, a topic waiting on someone
+  offers a follow-up drafted in its thread, and a topic whose thread moved since the run says who wrote. A priority
+  whose outcome looks done closes in one click.
+- `morning`: the brief run writes `attendees` on each block of the strip; a meeting opens on a summary of the
+  exec's recent exchanges with the people in it.
+
 ## 0.15.0
 
 - `morning`: the brief run writes `live.event_id` on every block of the strip (and `event_id` on each meeting of a

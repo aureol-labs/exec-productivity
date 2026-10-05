@@ -126,8 +126,9 @@ settles and drafts the message that acts it, and drafts a job that is a message.
   address), or `{channel_id}` for a chat conversation, or `{to, subject, account}` for a mail that does not exist
   yet (plain addresses). A double booking carries `live.account` and, on each of its meetings, `organizer` and
   `event_id`.
-- On every block of the strip, `live: {event_id, account}`: the calendar event it was drawn from, so the page finds
-  it again.
+- On every block of the strip, `live: {event_id, account, attendees}`: the calendar event it was drawn from, so the
+  page finds it again, and the plain addresses of the other people invited, six at most, never the exec's own. A
+  meeting with attendees opens on Claude's summary of the exec's recent exchanges with them.
 - `draft: true` on a job that is a message to write (a reply, a mail to someone, a chat answer), with its `live`
   and `to` (who it goes to, by first name). Claude drafts it on the page; it is never sent.
 

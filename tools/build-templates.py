@@ -100,7 +100,7 @@ def build_all():
         'kit_css': read(os.path.join(DESIGN, 'live-kit.css')),
         'kit_js': read(os.path.join(DESIGN, 'live-kit.js')),
         'brief_live_js': read(os.path.join(DESIGN, 'live-brief.js')),
-        'context_live_js': read(os.path.join(DESIGN, 'live-context.js')) if os.path.exists(os.path.join(DESIGN, 'live-context.js')) else '',
+        'context_live_js': read(os.path.join(DESIGN, 'live-context.js')),
     }
     for key in ('css', 'js', 'glyphs', 'security', 'live_css', 'live_js', 'kit_css', 'kit_js', 'brief_live_js', 'context_live_js'):
         if EM_DASH in parts[key]:

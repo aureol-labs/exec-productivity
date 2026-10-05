@@ -39,7 +39,8 @@
     },
     "live": {
      "event_id": "ev-comex",
-     "account": "pro"
+     "account": "pro",
+     "attendees": []
     }
    },
    {
@@ -76,7 +77,11 @@
     },
     "live": {
      "event_id": "ev-ostral",
-     "account": "pro"
+     "account": "pro",
+     "attendees": [
+      "hugo@halden.example",
+      "achats@ostral.example"
+     ]
     }
    },
    {
@@ -113,7 +118,10 @@
     },
     "live": {
      "event_id": "ev-carmen",
-     "account": "pro"
+     "account": "pro",
+     "attendees": [
+      "julie@halden.example"
+     ]
     }
    },
    {
@@ -191,7 +199,10 @@
     },
     "live": {
      "event_id": "ev-vellmar",
-     "account": "pro"
+     "account": "pro",
+     "attendees": [
+      "marc.delorme@vellmar.example"
+     ]
     }
    }
   ]
@@ -542,6 +553,40 @@
      }
     }
    ],
+   "prep": {
+    "ev-ostral": {
+     "who": [
+      {
+       "name": "Hugo",
+       "date": "30 sept.",
+       "said": "Ostral demande 18 % sur 3 ans pour renouveler ; il peut signer demain si vous acceptez, c’est son trimestre."
+      },
+      {
+       "name": "Claire",
+       "date": "30 sept.",
+       "said": "Refuse au-delà de 12 % : la marge du compte passerait sous 60 %. Rappelle la règle de juin à 15 %."
+      }
+     ],
+     "open": [
+      "Votre réponse sur la remise, demandée par Hugo avant ce call."
+     ],
+     "decide": "18 % sur 3 ans, ou tenir 15 % ?"
+    },
+    "ev-vellmar": {
+     "who": [
+      {
+       "name": "Marc",
+       "date": "30 sept.",
+       "said": "Veut le budget 2027 arbitré et la rétention nette par cohorte sur 8 trimestres pour le comité du 8 octobre."
+      }
+     ],
+     "open": [
+      "Les cohortes, que Marc a reçues la veille au dernier comité.",
+      "Le budget 2027, que le Comex de mardi n’a pas tranché."
+     ],
+     "decide": ""
+    }
+   },
    "slack": [
     {
      "channel": "D0THOMAS1",

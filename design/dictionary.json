@@ -429,7 +429,16 @@
     "lb_handled_n": [
       "{n} line handled",
       "{n} lines handled"
-    ]
+    ],
+    "lb_prep": "Sum up our exchanges",
+    "lb_prep_none": "No recent exchange with them.",
+    "lb_open": "Open",
+    "lc_where": "Where it stands",
+    "lc_nudge": "Follow up",
+    "lc_new": "New: {x}, {t}",
+    "lc_none": "Nothing in its threads yet.",
+    "close": "Close",
+    "close_briefing": "In my Super Context, close this priority as done: “{say}” ({hint}). Change nothing else."
   },
   "fr": {
     "page_brief": "Brief du jour",
@@ -860,6 +869,15 @@
     "lb_handled_n": [
       "{n} ligne traitée",
       "{n} lignes traitées"
-    ]
+    ],
+    "lb_prep": "Résumer nos échanges",
+    "lb_prep_none": "Aucun échange récent avec eux.",
+    "lb_open": "En suspens",
+    "lc_where": "Où en est-on",
+    "lc_nudge": "Relancer",
+    "lc_new": "Nouveau : {x}, {t}",
+    "lc_none": "Rien dans ses échanges pour l’instant.",
+    "close": "Clore",
+    "close_briefing": "Dans mon Super Context, clos cette priorité comme atteinte : « {say} » ({hint}). Ne change rien d’autre."
   }
 }

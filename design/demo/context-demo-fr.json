@@ -1,0 +1,1325 @@
+{
+ "lang": "fr",
+ "first_name": "Camille",
+ "date_label": "jeudi 1 octobre",
+ "time_label": "06:45",
+ "today": "2026-10-01",
+ "gesture": "copy",
+ "links": {
+  "brief": "https://claude.ai/artifact/Tf9kkQkoDoC45EHKXLpDw5",
+  "inbox": "https://claude.ai/artifact/2XoTBsF5afeAHZY9zi1Dm5"
+ },
+ "priorities": [
+  {
+   "id": "p1",
+   "short": "Marge T4",
+   "say": "Renouveler les grands comptes du T4 sans passer sous 60 % de marge.",
+   "ahead": "les nouveaux logos",
+   "confirmed": "7 sept.",
+   "lede": "Ostral demande 18 %, Hugo veut signer demain.",
+   "yours": "",
+   "history": [
+    {
+     "date": "7 sept.",
+     "event": "Confirmée au séminaire de rentrée, rang 1"
+    }
+   ],
+   "go": [
+    {
+     "id": "t-ostral",
+     "text": "Ostral : remise de 18 % demandée, décision avant demain"
+    },
+    {
+     "id": "t-brenner",
+     "text": "Brenner : avenant relu, signature en attente"
+    }
+   ],
+   "sources": [
+    {
+     "kind": "you",
+     "label": "Votre note du 7 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "Ma première priorité est de renouveler les grands comptes du T4 sans passer sous 60 % de marge, avant les nouveaux logos.\n\nLis ces sources toi-même avant de proposer quoi que ce soit, ne te fie pas à mon résumé. N'envoie rien, ne supprime rien.",
+   "done_hint": ""
+  },
+  {
+   "id": "p2",
+   "short": "Espagne",
+   "say": "Lancer l'Espagne au 1er janvier avec un patron des ventes en poste.",
+   "ahead": "l'Italie",
+   "confirmed": "7 sept.",
+   "lede": "Deux finalistes, Carmen a une autre offre.",
+   "yours": "",
+   "history": [
+    {
+     "date": "7 sept.",
+     "event": "Confirmée, rang 2"
+    },
+    {
+     "date": "22 sept.",
+     "event": "Lancement décalé de novembre à janvier"
+    }
+   ],
+   "go": [
+    {
+     "id": "t-espagne",
+     "text": "Recrutement Espagne : Carmen ou Pablo, Julie attend"
+    }
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Julie Roux, finalistes Espagne, 29 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "Ma deuxième priorité est de lancer l'Espagne au 1er janvier avec un patron des ventes en poste, avant l'Italie.\n\nLis ces sources toi-même avant de proposer quoi que ce soit, ne te fie pas à mon résumé. N'envoie rien, ne supprime rien.",
+   "done_hint": ""
+  },
+  {
+   "id": "p3",
+   "short": "Plan de valeur",
+   "say": "Tenir le plan de valeur Vellmar : 15 % d'EBITDA fin 2027.",
+   "ahead": "les projets produit non financés",
+   "confirmed": "7 sept.",
+   "lede": "Comité le 8, budget 2027 pas encore arbitré.",
+   "yours": "",
+   "history": [
+    {
+     "date": "7 sept.",
+     "event": "Confirmée, rang 3"
+    }
+   ],
+   "go": [
+    {
+     "id": "t-budget",
+     "text": "Budget 2027 : deux scénarios, Claire et Hugo divergent"
+    },
+    {
+     "id": "t-comite",
+     "text": "Comité Vellmar du 8 : cohortes demandées par Marc"
+    }
+   ],
+   "sources": [
+    {
+     "kind": "doc",
+     "label": "Plan de valeur Vellmar, version de juin",
+     "href": ""
+    }
+   ],
+   "briefing": "Ma troisième priorité est de tenir le plan de valeur convenu avec Vellmar Capital, 15 % d'EBITDA fin 2027, avant les projets produit non financés.\n\nLis ces sources toi-même avant de proposer quoi que ce soit, ne te fie pas à mon résumé. N'envoie rien, ne supprime rien.",
+   "done_hint": ""
+  },
+  {
+   "id": "p4",
+   "short": "CRM",
+   "say": "Migrer le CRM avant la clôture annuelle.",
+   "ahead": "les nouveaux outils",
+   "confirmed": "7 sept.",
+   "lede": "Léa annonce trois semaines de décalage.",
+   "yours": "",
+   "history": [
+    {
+     "date": "7 sept.",
+     "event": "Confirmée, rang 4"
+    }
+   ],
+   "go": [
+    {
+     "id": "t-crm",
+     "text": "Migration CRM : retard de trois semaines"
+    }
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Léa Fontaine, point d'avancement, 30 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "Ma quatrième priorité est de migrer le CRM avant la clôture annuelle, avant d'ajouter de nouveaux outils.\n\nLis ces sources toi-même avant de proposer quoi que ce soit, ne te fie pas à mon résumé. N'envoie rien, ne supprime rien.",
+   "done_hint": ""
+  },
+  {
+   "id": "p5",
+   "short": "Assurance cyber",
+   "say": "Renouveler l’assurance cyber avant le 1er octobre.",
+   "ahead": "les autres achats",
+   "confirmed": "1 sept.",
+   "lede": "",
+   "yours": "",
+   "done_hint": "Contrat renouvelé le 28 sept.",
+   "history": [
+    {
+     "date": "1 sept.",
+     "event": "Ajoutée à la rentrée, rang 5"
+    }
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Courtier, contrat renouvelé, 28 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "Mon assurance cyber devait être renouvelée avant le 1er octobre. Vérifie le contrat reçu le 28 septembre et dis-moi ce qui a changé. N’envoie rien."
+  }
+ ],
+ "topics": [
+  {
+   "id": "t-ostral",
+   "name": "Renouvellement Ostral",
+   "state": "18 % demandés sur 3 ans. Hugo veut signer demain, Claire bloque à 12 %.",
+   "serves": "p1",
+   "last": "30 sept.",
+   "who": [
+    {
+     "ref": "e-hugo",
+     "name": "Hugo Lefèvre",
+     "note": "veut signer à 15-18 %"
+    },
+    {
+     "ref": "e-claire",
+     "name": "Claire Martin",
+     "note": "plafond à 12 %"
+    },
+    {
+     "ref": "e-ostral",
+     "name": "Ostral",
+     "note": "client, 240 k€ par an"
+    }
+   ],
+   "so_far": [
+    {
+     "date": "16 sept.",
+     "move": "Ostral ouvre le renouvellement à 3 ans"
+    },
+    {
+     "date": "24 sept.",
+     "move": "Demande de 18 % de remise"
+    },
+    {
+     "date": "30 sept.",
+     "move": "Hugo et Claire en désaccord par écrit"
+    }
+   ],
+   "next": [
+    {
+     "when": "11:00",
+     "today": true,
+     "late": false,
+     "event": "Call Ostral avec Hugo",
+     "decision": "d4"
+    }
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Claire Martin, échange Ostral, 30 sept.",
+     "href": ""
+    },
+    {
+     "kind": "mail",
+     "label": "Hugo Lefèvre, échange Ostral, 30 sept.",
+     "href": ""
+    },
+    {
+     "kind": "doc",
+     "label": "Contrat Brenner, 2025",
+     "href": ""
+    }
+   ],
+   "gesture": "ask",
+   "briefing": "Ostral demande 18 % de remise pour renouveler sur 3 ans, à 240 k€ par an. Hugo veut accepter, Claire refuse au-delà de 12 %. Aide-moi à trancher avant le call de 11:00.\n\nLis ces sources toi-même avant de proposer quoi que ce soit, ne te fie pas à mon résumé. N'envoie rien, ne supprime rien.",
+   "live": {
+    "threads": [
+     {
+      "thread": "ostral",
+      "account": "pro"
+     }
+    ]
+   }
+  },
+  {
+   "id": "t-brenner",
+   "name": "Avenant transport",
+   "state": "Relu par les juristes des deux côtés. Votre signature manque.",
+   "serves": "p1",
+   "last": "29 sept.",
+   "who": [
+    {
+     "ref": "e-etienne",
+     "name": "Étienne Morel",
+     "note": "attend la signature"
+    },
+    {
+     "ref": "e-brenner",
+     "name": "Brenner Logistique",
+     "note": "client"
+    }
+   ],
+   "so_far": [
+    {
+     "date": "15 sept.",
+     "move": "Avenant proposé par Brenner"
+    },
+    {
+     "date": "29 sept.",
+     "move": "Relecture juridique terminée"
+    }
+   ],
+   "next": null,
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Étienne Morel, avenant, 29 sept.",
+     "href": ""
+    }
+   ],
+   "gesture": "ask",
+   "briefing": "Brenner Logistique attend ma signature sur l'avenant au contrat de transport. Dis-moi ce qui change, en trois lignes.\n\nLis ces sources toi-même avant de proposer quoi que ce soit, ne te fie pas à mon résumé. N'envoie rien, ne supprime rien.",
+   "live": {
+    "threads": [
+     {
+      "thread": "brenner",
+      "account": "pro"
+     }
+    ]
+   }
+  },
+  {
+   "id": "t-espagne",
+   "name": "Recrutement Espagne",
+   "state": "Carmen (160 k€) ou Pablo (120 k€). L'équipe penche pour Carmen, Hugo pour Pablo.",
+   "serves": "p2",
+   "last": "29 sept.",
+   "who": [
+    {
+     "ref": "e-julie",
+     "name": "Julie Roux",
+     "note": "mène le recrutement"
+    },
+    {
+     "ref": "e-carmen",
+     "name": "Carmen Vidal",
+     "note": "finaliste, autre offre en cours"
+    },
+    {
+     "ref": "e-hugo",
+     "name": "Hugo Lefèvre",
+     "note": "préfère Pablo"
+    }
+   ],
+   "so_far": [
+    {
+     "date": "8 sept.",
+     "move": "Douze candidats rencontrés"
+    },
+    {
+     "date": "22 sept.",
+     "move": "Lancement décalé au 1er janvier"
+    },
+    {
+     "date": "29 sept.",
+     "move": "Deux finalistes"
+    }
+   ],
+   "next": [
+    {
+     "when": "14:00",
+     "today": true,
+     "late": false,
+     "event": "Dernier entretien avec Carmen",
+     "decision": null
+    }
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Julie Roux, finalistes Espagne, 29 sept.",
+     "href": ""
+    }
+   ],
+   "gesture": "ask",
+   "briefing": "Julie attend mon choix entre Carmen et Pablo pour diriger les ventes en Espagne. Donne-moi le meilleur argument pour chacun.\n\nLis ces sources toi-même avant de proposer quoi que ce soit, ne te fie pas à mon résumé. N'envoie rien, ne supprime rien.",
+   "live": {
+    "threads": [
+     {
+      "thread": "espagne",
+      "account": "pro"
+     }
+    ]
+   }
+  },
+  {
+   "id": "t-budget",
+   "name": "Budget 2027",
+   "state": "Deux scénarios : +22 % de croissance (Hugo) ou +16 % et 15 % d'EBITDA (Claire).",
+   "serves": "p3",
+   "last": "30 sept.",
+   "who": [
+    {
+     "ref": "e-claire",
+     "name": "Claire Martin",
+     "note": "scénario prudent"
+    },
+    {
+     "ref": "e-hugo",
+     "name": "Hugo Lefèvre",
+     "note": "scénario croissance"
+    },
+    {
+     "ref": "e-marc",
+     "name": "Marc Delorme",
+     "note": "le verra au comité"
+    }
+   ],
+   "so_far": [
+    {
+     "date": "18 sept.",
+     "move": "Premier jet de Claire"
+    },
+    {
+     "date": "25 sept.",
+     "move": "Contre-proposition d'Hugo"
+    },
+    {
+     "date": "30 sept.",
+     "move": "Comex sans arbitrage"
+    }
+   ],
+   "next": [
+    {
+     "when": "8 oct.",
+     "today": false,
+     "late": false,
+     "event": "Comité Vellmar",
+     "decision": null
+    }
+   ],
+   "sources": [
+    {
+     "kind": "doc",
+     "label": "Budget 2027, deux scénarios",
+     "href": ""
+    },
+    {
+     "kind": "meeting",
+     "label": "Comex, 30 sept.",
+     "href": ""
+    }
+   ],
+   "gesture": "ask",
+   "briefing": "Je dois arbitrer le budget 2027 avant le comité Vellmar du 8 octobre : +22 % de croissance ou +16 % avec 15 % d'EBITDA.\n\nLis ces sources toi-même avant de proposer quoi que ce soit, ne te fie pas à mon résumé. N'envoie rien, ne supprime rien.",
+   "live": {
+    "threads": [
+     {
+      "thread": "budget",
+      "account": "pro"
+     }
+    ]
+   }
+  },
+  {
+   "id": "t-comite",
+   "name": "Comité du 8 octobre",
+   "state": "Marc veut la rétention nette par cohorte sur 8 trimestres.",
+   "serves": "p3",
+   "last": "30 sept.",
+   "who": [
+    {
+     "ref": "e-marc",
+     "name": "Marc Delorme",
+     "note": "demande les cohortes"
+    },
+    {
+     "ref": "e-vellmar",
+     "name": "Vellmar Capital",
+     "note": "actionnaire majoritaire"
+    },
+    {
+     "ref": "e-claire",
+     "name": "Claire Martin",
+     "note": "prépare le pack"
+    }
+   ],
+   "so_far": [
+    {
+     "date": "2 juil.",
+     "move": "Dernier comité, cohortes envoyées la veille"
+    },
+    {
+     "date": "30 sept.",
+     "move": "Marc redemande les cohortes, regard sur 2024"
+    }
+   ],
+   "next": [
+    {
+     "when": "8 oct.",
+     "today": false,
+     "late": false,
+     "event": "Comité Vellmar, 9:00",
+     "decision": null
+    }
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Marc Delorme, cohortes, 30 sept.",
+     "href": ""
+    }
+   ],
+   "gesture": "ask",
+   "briefing": "Marc (Vellmar Capital) veut la rétention nette par cohorte sur 8 trimestres avant le comité du 8 octobre. Dis-moi qui peut la produire et pour quand.\n\nLis ces sources toi-même avant de proposer quoi que ce soit, ne te fie pas à mon résumé. N'envoie rien, ne supprime rien.",
+   "live": {
+    "threads": [
+     {
+      "thread": "cohortes",
+      "account": "pro"
+     }
+    ]
+   }
+  },
+  {
+   "id": "t-crm",
+   "name": "Migration CRM",
+   "state": "Trois semaines de décalage annoncées. La clôture annuelle tombe en plein milieu.",
+   "serves": "p4",
+   "last": "30 sept.",
+   "who": [
+    {
+     "ref": "e-lea",
+     "name": "Léa Fontaine",
+     "note": "pilote la migration"
+    }
+   ],
+   "so_far": [
+    {
+     "date": "1 sept.",
+     "move": "Lancement"
+    },
+    {
+     "date": "30 sept.",
+     "move": "Retard de trois semaines annoncé"
+    }
+   ],
+   "next": null,
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Léa Fontaine, point d'avancement, 30 sept.",
+     "href": ""
+    }
+   ],
+   "gesture": "ask",
+   "briefing": "La migration CRM a trois semaines de décalage et risque de tomber pendant la clôture. Aide-moi à décider si on décale après la clôture.\n\nLis ces sources toi-même avant de proposer quoi que ce soit, ne te fie pas à mon résumé. N'envoie rien, ne supprime rien.",
+   "live": {
+    "threads": [
+     {
+      "thread": "crm",
+      "account": "pro"
+     }
+    ],
+    "waiting": {
+     "name": "Léa",
+     "email": "lea@halden.example"
+    }
+   }
+  },
+  {
+   "id": "t-kerys",
+   "name": "Partenariat proposé",
+   "state": "Antoine relance pour la troisième fois sans dire ce qu'il attend.",
+   "serves": null,
+   "last": "30 sept.",
+   "who": [
+    {
+     "ref": "e-antoine",
+     "name": "Antoine Leroy",
+     "note": "relance"
+    },
+    {
+     "ref": "e-kerys",
+     "name": "Kerys",
+     "note": "partenaire possible"
+    }
+   ],
+   "so_far": [
+    {
+     "date": "15 sept.",
+     "move": "Premier mail"
+    },
+    {
+     "date": "30 sept.",
+     "move": "Troisième relance"
+    }
+   ],
+   "next": null,
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Antoine Leroy, Kerys, 30 sept.",
+     "href": ""
+    }
+   ],
+   "gesture": "ask",
+   "briefing": "Antoine (Kerys) m'a relancé trois fois sur un partenariat sans dire ce qu'il attend. Dis-moi ce qu'il propose réellement.\n\nLis ces sources toi-même avant de proposer quoi que ce soit, ne te fie pas à mon résumé. N'envoie rien, ne supprime rien.",
+   "live": {
+    "threads": [
+     {
+      "thread": "kerys",
+      "account": "pro"
+     }
+    ]
+   }
+  }
+ ],
+ "entities": [
+  {
+   "id": "e-claire",
+   "kind": "person",
+   "name": "Claire Martin",
+   "role": "CFO, Halden",
+   "state": "Bloque Ostral à 12 %. Prépare le pack du comité.",
+   "last": "30 sept.",
+   "cares_about": {
+    "text": "Garder la marge au-dessus de 60 %.",
+    "yours": false,
+    "date": "30 sept."
+   },
+   "so_far": [
+    {
+     "date": "30 sept.",
+     "move": "Refus écrit au-delà de 12 %"
+    }
+   ],
+   "ended": [],
+   "next": null,
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Claire Martin, échange Ostral, 30 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "",
+   "with": []
+  },
+  {
+   "id": "e-hugo",
+   "kind": "person",
+   "name": "Hugo Lefèvre",
+   "role": "VP Sales, Halden",
+   "state": "Veut signer Ostral demain. Préfère Pablo pour l'Espagne.",
+   "last": "30 sept.",
+   "cares_about": {
+    "text": "Faire son trimestre.",
+    "yours": false,
+    "date": "30 sept."
+   },
+   "so_far": [
+    {
+     "date": "30 sept.",
+     "move": "Propose 18 % à Ostral"
+    }
+   ],
+   "ended": [],
+   "next": [
+    {
+     "when": "11:00",
+     "today": true,
+     "late": false,
+     "event": "Call Ostral"
+    }
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Hugo Lefèvre, échange Ostral, 30 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "",
+   "with": []
+  },
+  {
+   "id": "e-julie",
+   "kind": "person",
+   "name": "Julie Roux",
+   "role": "DRH, Halden",
+   "state": "Attend votre choix pour l'Espagne.",
+   "last": "29 sept.",
+   "cares_about": {
+    "text": "Ne pas perdre Carmen.",
+    "yours": false,
+    "date": "29 sept."
+   },
+   "so_far": [
+    {
+     "date": "29 sept.",
+     "move": "Deux finalistes présentés"
+    }
+   ],
+   "ended": [],
+   "next": null,
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Julie Roux, finalistes Espagne, 29 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "",
+   "with": []
+  },
+  {
+   "id": "e-carmen",
+   "kind": "person",
+   "name": "Carmen Vidal",
+   "role": "Finaliste, ventes Espagne",
+   "state": "Dix ans chez un concurrent. Autre offre en cours.",
+   "last": "29 sept.",
+   "so_far": [],
+   "ended": [],
+   "next": [
+    {
+     "when": "14:00",
+     "today": true,
+     "late": false,
+     "event": "Dernier entretien"
+    }
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Julie Roux, finalistes Espagne, 29 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "",
+   "with": []
+  },
+  {
+   "id": "e-marc",
+   "kind": "person",
+   "name": "Marc Delorme",
+   "role": "Partner, Vellmar Capital",
+   "state": "Veut les cohortes avant le comité du 8.",
+   "last": "30 sept.",
+   "cares_about": {
+    "text": "La rétention nette, surtout la cohorte 2024.",
+    "yours": false,
+    "date": "30 sept."
+   },
+   "so_far": [
+    {
+     "date": "2 juil.",
+     "move": "Dernier comité"
+    },
+    {
+     "date": "30 sept.",
+     "move": "Redemande les cohortes"
+    }
+   ],
+   "ended": [],
+   "next": [
+    {
+     "when": "8 oct.",
+     "today": false,
+     "late": false,
+     "event": "Comité Vellmar"
+    }
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Marc Delorme, cohortes, 30 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "",
+   "with": [
+    {
+     "ref": "e-vellmar",
+     "type": "member_of",
+     "note": "siège au board"
+    }
+   ]
+  },
+  {
+   "id": "e-lea",
+   "kind": "person",
+   "name": "Léa Fontaine",
+   "role": "RevOps, Halden",
+   "state": "Annonce trois semaines de décalage sur le CRM.",
+   "last": "30 sept.",
+   "so_far": [
+    {
+     "date": "30 sept.",
+     "move": "Point d'avancement"
+    }
+   ],
+   "ended": [],
+   "next": null,
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Léa Fontaine, point d'avancement, 30 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "",
+   "with": []
+  },
+  {
+   "id": "e-etienne",
+   "kind": "person",
+   "name": "Étienne Morel",
+   "role": "Achats, Brenner Logistique",
+   "state": "Attend votre signature.",
+   "last": "29 sept.",
+   "so_far": [
+    {
+     "date": "29 sept.",
+     "move": "Avenant relu"
+    }
+   ],
+   "ended": [],
+   "next": null,
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Étienne Morel, avenant, 29 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "",
+   "with": [
+    {
+     "ref": "e-brenner",
+     "type": "member_of",
+     "note": "porte l'avenant"
+    }
+   ]
+  },
+  {
+   "id": "e-antoine",
+   "kind": "person",
+   "name": "Antoine Leroy",
+   "role": "Partenariats, Kerys",
+   "state": "Troisième relance, sans demande claire.",
+   "last": "30 sept.",
+   "so_far": [
+    {
+     "date": "30 sept.",
+     "move": "Troisième relance"
+    }
+   ],
+   "ended": [],
+   "next": null,
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Antoine Leroy, Kerys, 30 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "",
+   "with": [
+    {
+     "ref": "e-kerys",
+     "type": "member_of",
+     "note": "relance"
+    }
+   ]
+  },
+  {
+   "id": "e-ostral",
+   "kind": "entity",
+   "name": "Ostral",
+   "type": "company",
+   "relationship": "customer",
+   "state": "240 k€ par an. Renouvellement à 3 ans en cours.",
+   "last": "30 sept.",
+   "so_far": [],
+   "ended": [],
+   "next": null,
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Hugo Lefèvre, échange Ostral, 30 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "",
+   "with": []
+  },
+  {
+   "id": "e-brenner",
+   "kind": "entity",
+   "name": "Brenner Logistique",
+   "type": "company",
+   "relationship": "customer",
+   "state": "Signé à 15 % l'an dernier, sur 3 ans.",
+   "last": "29 sept.",
+   "so_far": [],
+   "ended": [],
+   "next": null,
+   "sources": [
+    {
+     "kind": "doc",
+     "label": "Contrat Brenner, 2025",
+     "href": ""
+    }
+   ],
+   "briefing": "",
+   "with": [
+    {
+     "ref": "e-etienne",
+     "type": "member",
+     "note": "porte l'avenant"
+    }
+   ]
+  },
+  {
+   "id": "e-vellmar",
+   "kind": "entity",
+   "name": "Vellmar Capital",
+   "type": "company",
+   "relationship": "investor",
+   "state": "Actionnaire majoritaire depuis 2024. Comité trimestriel.",
+   "last": "30 sept.",
+   "so_far": [],
+   "ended": [],
+   "next": null,
+   "sources": [
+    {
+     "kind": "doc",
+     "label": "Plan de valeur Vellmar, version de juin",
+     "href": ""
+    }
+   ],
+   "briefing": "",
+   "with": [
+    {
+     "ref": "e-marc",
+     "type": "member",
+     "note": "siège au board"
+    }
+   ]
+  },
+  {
+   "id": "e-kerys",
+   "kind": "entity",
+   "name": "Kerys",
+   "type": "company",
+   "relationship": "partner",
+   "state": "Propose un partenariat, contenu flou.",
+   "last": "30 sept.",
+   "so_far": [],
+   "ended": [],
+   "next": null,
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Antoine Leroy, Kerys, 30 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "",
+   "with": [
+    {
+     "ref": "e-antoine",
+     "type": "member",
+     "note": "relance"
+    }
+   ]
+  }
+ ],
+ "decisions": [
+  {
+   "id": "d4",
+   "say": "Ostral peut signer à 18 % de remise sur 3 ans.",
+   "decided_by": [
+    "Hugo"
+   ],
+   "when": "30 sept.",
+   "when_iso": "2026-09-30",
+   "against": "tenir la règle des 15 %",
+   "land": "Ostral à 18 %, ou la règle des 15 % ?",
+   "replaces": null,
+   "replaced_by": null,
+   "conflicts_with": {
+    "id": "d1",
+    "name": "Remise plafonnée à 15 %"
+   },
+   "status": "proposed",
+   "proposed_at": "2026-09-30",
+   "kept_at": null,
+   "go": [
+    {
+     "id": "t-ostral",
+     "text": "Renouvellement Ostral"
+    }
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Hugo Lefèvre, échange Ostral, 30 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "Hugo a écrit à Ostral qu'on pouvait aller à 18 % sur 3 ans, alors que la remise est plafonnée à 15 % depuis juin. Aide-moi à trancher.\n\nLis ces sources toi-même avant de proposer quoi que ce soit, ne te fie pas à mon résumé. N'envoie rien, ne supprime rien."
+  },
+  {
+   "id": "d3",
+   "say": "Le Comex passe sur un seul outil IA.",
+   "decided_by": [
+    "you",
+    "Sofia"
+   ],
+   "when": "24 sept.",
+   "when_iso": "2026-09-24",
+   "against": "laisser chacun choisir son outil",
+   "land": null,
+   "replaces": null,
+   "replaced_by": null,
+   "conflicts_with": null,
+   "status": "proposed",
+   "proposed_at": "2026-09-25",
+   "kept_at": null,
+   "go": [],
+   "sources": [
+    {
+     "kind": "meeting",
+     "label": "Sofia / Camille, 24 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "Décision du 24 septembre avec Sofia : un seul outil IA pour le Comex. Aide-moi à écrire la note qui l'annonce.\n\nLis ces sources toi-même avant de proposer quoi que ce soit, ne te fie pas à mon résumé. N'envoie rien, ne supprime rien."
+  },
+  {
+   "id": "d2",
+   "say": "Le lancement Espagne passe au 1er janvier.",
+   "decided_by": [
+    "you",
+    "Hugo",
+    "Julie"
+   ],
+   "when": "22 sept.",
+   "when_iso": "2026-09-22",
+   "against": "lancer en novembre sans patron des ventes",
+   "land": null,
+   "replaces": null,
+   "replaced_by": null,
+   "conflicts_with": null,
+   "status": "kept",
+   "proposed_at": "2026-09-22",
+   "kept_at": "2026-09-23",
+   "go": [
+    {
+     "id": "t-espagne",
+     "text": "Recrutement Espagne"
+    }
+   ],
+   "sources": [
+    {
+     "kind": "meeting",
+     "label": "Comex, 22 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": ""
+  },
+  {
+   "id": "d1",
+   "say": "La remise sur un renouvellement est plafonnée à 15 %.",
+   "decided_by": [
+    "you",
+    "Claire"
+   ],
+   "when": "12 juin",
+   "when_iso": "2026-06-12",
+   "against": "négocier au cas par cas",
+   "land": "Ostral à 18 %, ou la règle des 15 % ?",
+   "replaces": null,
+   "replaced_by": null,
+   "conflicts_with": {
+    "id": "d4",
+    "name": "Ostral à 18 %"
+   },
+   "status": "kept",
+   "proposed_at": "2026-06-12",
+   "kept_at": "2026-06-12",
+   "go": [],
+   "sources": [
+    {
+     "kind": "meeting",
+     "label": "Comex, 12 juin",
+     "href": ""
+    }
+   ],
+   "briefing": ""
+  }
+ ],
+ "closed": [
+  {
+   "id": "t-seminaire",
+   "name": "Séminaire de rentrée",
+   "kind": "topic",
+   "reason": "done",
+   "date": "8 sept.",
+   "note": "Priorités confirmées sur place."
+  },
+  {
+   "id": "t-audit",
+   "name": "Audit des comptes 2025",
+   "kind": "topic",
+   "reason": "settled",
+   "date": "2 sept.",
+   "note": "Comptes certifiés sans réserve."
+  },
+  {
+   "id": "t-salon",
+   "name": "Salon Tech Paris",
+   "kind": "topic",
+   "reason": "not_important",
+   "date": "24 sept.",
+   "note": ""
+  }
+ ],
+ "suggestions": [
+  {
+   "id": "s1",
+   "kind": "skill",
+   "say": "Préparer le pack du comité Vellmar",
+   "state": "Trois comités, la même course la veille : cohortes, budget, faits marquants.",
+   "proposed_label": "30 sept.",
+   "evidence": [
+    {
+     "date": "2 avr.",
+     "text": "Cohortes envoyées à Marc la veille du comité"
+    },
+    {
+     "date": "2 juil.",
+     "text": "Même demande, même délai"
+    },
+    {
+     "date": "30 sept.",
+     "text": "Marc redemande les cohortes sur 8 trimestres"
+    }
+   ],
+   "path": "Une skill, lancée dix jours avant chaque comité.",
+   "pattern": "Dix jours avant le comité : rassembler les cohortes, l'écart au budget et les faits marquants du trimestre, rédiger le pack et la note de Camille, et dire ce qui manque encore.",
+   "prompt": "Prépare le pack du comité Vellmar du 8 octobre : cohortes sur 8 trimestres, écart au budget, faits marquants, et ce qui manque.",
+   "attach": [
+    "le dernier pack de comité",
+    "l'export des cohortes"
+   ],
+   "needs": [
+    {
+     "name": "Gmail",
+     "connected": true
+    },
+    {
+     "name": "Google Drive",
+     "connected": true
+    },
+    {
+     "name": "Power BI",
+     "connected": false
+    }
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Marc Delorme, cohortes, 30 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "Prépare le pack du comité Vellmar du 8 octobre : cohortes sur 8 trimestres, écart au budget, faits marquants, et ce qui manque.",
+   "status": "proposed"
+  }
+ ],
+ "sub": "Démonstration : personnes, entreprises et messages fictifs.",
+ "generated": "2026-10-01T06:45:00+02:00",
+ "live": {
+  "me": {
+   "name": "Camille",
+   "role": "CEO de Halden, éditeur SaaS de facturation B2B, 180 personnes, détenu majoritairement par Vellmar Capital"
+  },
+  "mail": {
+   "server": "Aureol Connect",
+   "api": "aureol"
+  },
+  "chat": null,
+  "demo": {
+   "now": "10:20",
+   "account": {
+    "alias": "pro",
+    "email": "camille@halden.example",
+    "name": "Camille Durand"
+   },
+   "mail": [
+    {
+     "id": "ostral",
+     "subject": "Renouvellement Ostral : la remise",
+     "messages": [
+      {
+       "from": "Hugo Lefèvre <hugo@halden.example>",
+       "at": "2026-09-30T09:12:00+02:00",
+       "body": "Camille, Ostral demande 18 % sur 3 ans pour renouveler. Je peux signer demain si on accepte, ça me fait mon trimestre. Je pense qu’on peut y aller : c’est 240 k€ par an."
+      },
+      {
+       "from": "Claire Martin <claire@halden.example>",
+       "at": "2026-09-30T11:40:00+02:00",
+       "body": "Je ne suis pas d’accord. Au-delà de 12 %, la marge du compte passe sous 60 %. Et la règle de juin plafonne les renouvellements à 15 %. Brenner a signé à 15 % l’an dernier."
+      },
+      {
+       "from": "Hugo Lefèvre <hugo@halden.example>",
+       "at": "2026-09-30T17:05:00+02:00",
+       "body": "Si on tient 15 %, ils peuvent regarder ailleurs. Leur acheteuse me l’a dit au téléphone. Camille, il nous faut ta décision avant le call de 11:00."
+      },
+      {
+       "from": "Hugo Lefèvre <hugo@halden.example>",
+       "at": "10:05",
+       "later": true,
+       "body": "Camille, leur acheteuse vient d’appeler : elles acceptent 15 % si on ajoute trois mois offerts. Je peux le proposer au call ?"
+      }
+     ]
+    },
+    {
+     "id": "espagne",
+     "subject": "Finalistes Espagne",
+     "messages": [
+      {
+       "from": "Julie Roux <julie@halden.example>",
+       "at": "2026-09-29T16:30:00+02:00",
+       "body": "Camille, les deux finalistes pour diriger les ventes en Espagne : Carmen Vidal, 10 ans chez un concurrent espagnol, réseau grands comptes, 160 k€, et elle a une autre offre ; Pablo Ortega, startup, très bon en acquisition, 120 k€. L’équipe penche pour Carmen, Hugo pour Pablo. Le budget prévu est de 140 k€. Il me faut ton choix pour faire l’offre."
+      }
+     ]
+    },
+    {
+     "id": "budget",
+     "subject": "Budget 2027 et comité du 8 octobre",
+     "messages": [
+      {
+       "from": "Marc Delorme <marc.delorme@vellmar.example>",
+       "at": "2026-09-30T08:20:00+02:00",
+       "body": "Camille, pour le comité du 8 octobre j’aurai besoin du budget 2027 arbitré, et de la rétention nette par cohorte sur 8 trimestres. Le plan de valeur reste 15 % d’EBITDA fin 2027."
+      },
+      {
+       "from": "Claire Martin <claire@halden.example>",
+       "at": "2026-09-30T19:10:00+02:00",
+       "body": "Mon scénario : +16 % de croissance, 5 recrutements commerciaux, 15 % d’EBITDA. Celui de Hugo : +22 %, 14 recrutements, 9 % d’EBITDA. Le Comex de mardi n’a pas tranché."
+      }
+     ]
+    },
+    {
+     "id": "cohortes",
+     "subject": "Cohortes pour le comité",
+     "messages": [
+      {
+       "from": "Marc Delorme <marc.delorme@vellmar.example>",
+       "at": "2026-09-30T08:24:00+02:00",
+       "body": "Pouvez-vous m’envoyer la rétention nette par cohorte sur 8 trimestres avant le comité ? La dernière fois, je l’ai reçue la veille."
+      }
+     ]
+    },
+    {
+     "id": "brenner",
+     "subject": "Avenant au contrat de transport",
+     "messages": [
+      {
+       "from": "Étienne Morel <e.morel@brenner.example>",
+       "at": "2026-09-29T10:02:00+02:00",
+       "body": "Madame, vous trouverez l’avenant relu par nos juristes et les vôtres. Il ne manque que votre signature."
+      },
+      {
+       "from": "Camille Durand <camille@halden.example>",
+       "at": "10:05",
+       "body": "Bonjour Étienne, c’est signé, vous l’avez en retour. Bien à vous, Camille",
+       "mine": true,
+       "to": "e.morel@brenner.example",
+       "later": true
+      }
+     ]
+    },
+    {
+     "id": "crm",
+     "subject": "Migration CRM : nouveau planning",
+     "messages": [
+      {
+       "from": "Léa Fontaine <lea@halden.example>",
+       "at": "2026-09-24T15:20:00+02:00",
+       "body": "Camille, l’intégrateur décale la migration. Je reviens vers toi avec un planning révisé d’ici vendredi."
+      },
+      {
+       "from": "Camille Durand <camille@halden.example>",
+       "at": "2026-09-24T18:02:00+02:00",
+       "mine": true,
+       "to": "lea@halden.example",
+       "body": "Merci Léa. La clôture annuelle ne doit pas tomber en plein milieu : j’attends ton planning."
+      }
+     ]
+    },
+    {
+     "id": "kerys",
+     "subject": "Partenariat Kerys x Halden",
+     "messages": [
+      {
+       "from": "Antoine Leroy <antoine@kerys.example>",
+       "at": "2026-09-29T09:10:00+02:00",
+       "body": "Bonjour Camille, je reviens vers vous une troisième fois au sujet d’un partenariat. Avez-vous un créneau cette semaine ?"
+      }
+     ]
+    }
+   ],
+   "summaries": {
+    "t-ostral": {
+     "where": "Ostral veut 18 % sur 3 ans ; Hugo pousse, Claire bloque à 12 %, la règle dit 15 %.",
+     "who": [
+      {
+       "name": "Hugo",
+       "date": "30 sept.",
+       "said": "Veut accepter 18 % pour signer demain et faire son trimestre."
+      },
+      {
+       "name": "Claire",
+       "date": "30 sept.",
+       "said": "Refuse au-delà de 12 % pour garder la marge du compte au-dessus de 60 %."
+      }
+     ],
+     "open": [
+      "Votre réponse sur la remise, avant le call de 11:00."
+     ],
+     "next": "Call Ostral à 11:00."
+    },
+    "t-crm": {
+     "where": "L’intégrateur décale la migration ; le planning révisé de Léa n’est pas arrivé.",
+     "who": [
+      {
+       "name": "Léa",
+       "date": "24 sept.",
+       "said": "L’intégrateur décale la migration ; elle promet un planning révisé d’ici vendredi."
+      },
+      {
+       "name": "Vous",
+       "date": "24 sept.",
+       "said": "La clôture annuelle ne doit pas tomber en plein milieu ; vous attendez le planning."
+      }
+     ],
+     "open": [
+      "Le planning révisé, promis par Léa pour vendredi 26."
+     ],
+     "next": ""
+    }
+   },
+   "drafts": {
+    "t-crm": "Bonjour Léa,\n\nJe reviens vers toi sur le planning révisé de la migration CRM, que tu pensais m’envoyer vendredi. Peux-tu me le partager, en vérifiant que la clôture annuelle ne tombe pas en plein milieu ?\n\nMerci,\nCamille"
+   }
+  }
+ }
+}

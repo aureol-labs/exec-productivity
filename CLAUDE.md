@@ -65,4 +65,5 @@ in Cowork on a real account, then one cloud run of each habit.
 
 The inbox demo (`design/demo/build-inbox-demo.py`, then `tools/fill-page.py`) is the live page on simulated
 connections and fictional data: publish it with `capabilities: {sample: {}}` only; every reload replays it. The
-brief demo is the same (`design/demo/build-brief-demo.py`, from `brief-demo-base-fr.json`).
+brief and Super Context demos are the same (`design/demo/build-brief-demo.py`, then `build-context-demo.py`, which
+reads the brief demo's mailbox).

@@ -90,6 +90,7 @@
   "topics": [
     {
       "id": "t1",
+      "live": { "threads": [ { "thread": "elena-renewal-playbook", "account": "work" } ], "waiting": { "name": "Elena", "email": "elena@example.com" } },
       "name": "Renewal playbook",
       "state": "Unsigned. Elena has asked three times.",
       "serves": "p1",
@@ -1061,5 +1062,11 @@
         { "name": "HubSpot", "connected": false }
       ]
     }
-  ]
+  ],
+  "generated": "2026-09-14T06:45:00+02:00",
+  "live": {
+    "me": { "name": "Alex", "role": "CEO" },
+    "mail": { "server": "Gmail", "api": "gmail" },
+    "chat": { "server": "Slack", "api": "slack" }
+  }
 }
