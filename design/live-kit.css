@@ -1,0 +1,137 @@
+  /* ================ THE LIVE KIT ================
+     What the live Daily brief and Super Context add, in the live inbox's language: the
+     banner, the actions as pills on their own line, the panels Claude fills, the options
+     of a call, the day's clock on the strip. Only the design system's tokens and sizes. */
+  .lxrun{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;margin-top:16px;
+     padding:9px 14px;border-radius:5px;background:var(--wash);font-size:13px;line-height:1.5;
+     color:var(--ink-2);max-width:72ch}
+  .lxrun .lxbar{flex:1 1 90px;height:2px;align-self:center;background:var(--pine-pale);
+     position:relative;overflow:hidden;border-radius:2px}
+  .lxrun .lxbar i{position:absolute;top:0;bottom:0;left:-30%;width:30%;background:var(--pine);
+     animation:lxbar 1.3s ease-in-out infinite}
+  .lxrun .lxsecs{font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .lxrun.done .lxbar,.lxrun.done .lxsecs{display:none}
+  .lxrun.bad{background:var(--wash-brick);color:var(--brick-ink)}
+  .lxp .lxrun{margin-top:4px}
+  @keyframes lxbar{from{left:-30%}to{left:100%}}
+  /* all:unset on a gesture also unsets the hidden attribute's display: restate it */
+  .lxq[hidden],.lxgo[hidden],.lxref[hidden],.lkopt[hidden]{display:none!important}
+  .lxref{all:unset;cursor:pointer;margin-left:auto;align-self:center;display:inline-flex;padding:2px;border-radius:3px;color:var(--ink-3)}
+  .lxref svg{width:14px;height:14px;display:block}
+  .lxref:hover{color:var(--pine)}
+  .lxref:focus-visible{outline:2px solid var(--pine);outline-offset:2px}
+  .lxref.busy{color:var(--pine);cursor:default}
+  .lxref.busy svg{animation:lxspin 1s linear infinite}
+  @keyframes lxspin{to{transform:rotate(360deg)}}
+  .lxskel{display:grid;grid-template-columns:22px 1fr;column-gap:14px;align-items:center;
+     padding:15px 0;border-bottom:1px solid rgba(46,107,98,.11)}
+  .lxskel i{display:block;height:10px;border-radius:5px;background:var(--hair);animation:lxsk 1.4s ease-in-out infinite}
+  .lxskel i:nth-child(1){width:10px;justify-self:end}.lxskel i:nth-child(2){width:62%}
+  .lxskel:nth-child(3n) i:nth-child(2){width:48%}.lxskel:nth-child(3n+2) i:nth-child(2){width:74%}
+  @keyframes lxsk{0%,100%{opacity:.5}50%{opacity:1}}
+
+  /* ---- buttons, not links: the actions on their own line, as small outlined pills ---- */
+  .src .lxacts{flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:4px}
+  .lxacts{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+  .lxacts a.lxa,.lxacts a.ask{font-size:12.5px;line-height:1.3;font-weight:500;color:var(--pine-ink);
+     padding:4px 11px;border-radius:999px;border:1px solid rgba(46,107,98,.30);background:rgba(255,255,255,.55);
+     text-decoration:none;white-space:nowrap;transition:background .12s,border-color .12s}
+  .lxacts a.lxa:hover,.lxacts a.ask:hover{border-color:var(--pine);background:#fff}
+  .lxacts a.lxa[aria-expanded="true"]{background:var(--pine-pale);border-color:var(--pine-pale)}
+  .lxacts a.lxa.main{font-weight:600}
+  .src .lxacts a.ask{margin-left:0}
+  .lxacts a.ask.ok{color:var(--ink-3);border-color:var(--hair);font-weight:500}
+  .src .lxacts a.drop{margin-left:auto;padding:4px 2px;border:0;background:none}
+  .src .lxacts .dropq{flex-basis:100%;justify-content:flex-end}
+  .why.clash .lxacts a.lxa,.why.clash .lxacts a.ask{color:var(--brick-ink);border-color:rgba(162,72,58,.30)}
+  .why.clash .lxacts a.lxa[aria-expanded="true"]{background:#F3DED9;border-color:#F3DED9}
+
+  /* ---- a panel hangs under the sources row, inside the reveal ---- */
+  .lxp{margin-top:14px;padding-top:12px;border-top:1px solid rgba(46,107,98,.16)}
+  .brief .lxp,.brief .lkdec{grid-column:1/-1}
+  .why.clash .lxp{border-top-color:rgba(162,72,58,.16)}
+  .lxline{display:flex;flex-wrap:wrap;align-items:baseline;gap:7px 16px;font-size:12.5px;line-height:1.5;color:var(--ink-3)}
+  .lxline+.lxline,.lxta+.lxline{margin-top:10px}
+  .lxmeter{font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .lxline .lxmeter:last-child{margin-left:auto}
+  .lxq{all:unset;cursor:pointer;font-size:12.5px;color:var(--ink-3);white-space:nowrap;border-bottom:1px solid transparent}
+  .lxq:hover{color:var(--pine);border-bottom-color:var(--pine)}
+  .lxq:disabled{opacity:.45;cursor:default;border-bottom-color:transparent}
+  .lxq:focus-visible,.lxgo:focus-visible{outline:2px solid var(--pine);outline-offset:3px;border-radius:2px}
+  .lxgo{all:unset;cursor:pointer;font-size:12.5px;font-weight:600;line-height:1.4;color:#fff;
+     background:var(--pine);border:1px solid var(--pine);border-radius:999px;padding:4px 13px;white-space:nowrap}
+  .lxgo:hover{background:var(--pine-ink);border-color:var(--pine-ink)}
+  .lxgo:disabled{font-weight:500;color:var(--ink-3);background:none;border-color:var(--hair);cursor:default}
+  .lxta{display:block;box-sizing:border-box;width:100%;min-height:150px;margin-top:2px;padding:10px 12px;
+     font:14.5px/1.6 var(--sans);color:var(--ink);background:var(--paper);border:1px solid var(--hair);
+     border-radius:4px;resize:vertical}
+  .lxta:focus{outline:none;border-color:var(--pine-pale)}
+  .lxta::placeholder{color:var(--ink-3);opacity:1}
+  .lxin{flex:1 1 180px;min-width:0;font:12.5px var(--sans);padding:2px 0;color:var(--ink);background:transparent;
+     border:0;border-bottom:1px solid var(--hair);border-radius:0}
+  .lxin:focus{outline:none;border-bottom-color:var(--pine)}
+  .lxin::placeholder{color:var(--ink-3);opacity:1}
+  .lxnote{margin-top:8px;font-size:12px;font-weight:600;color:var(--pine)}
+  .lxnote:empty{display:none}
+  .lxnote.bad{color:var(--brick)}
+  .lxp a.lxout{font-size:12.5px;color:var(--pine);text-decoration:none;border-bottom:1px solid rgba(46,107,98,.22)}
+  .lxp a.lxout:hover{color:var(--pine-ink);border-bottom-color:var(--pine)}
+
+  /* a summary: the design system's typed rows */
+  .lxsum .ctx{margin-top:2px}
+  .lxsum .ctx ol li span{color:var(--ink-2)}
+  .lxsum .ctx .land{margin-top:0;color:var(--brick);font-weight:600}
+  .lxsum .ctx div p+p{margin-top:4px}
+  .lxsum:empty{display:none}
+  .lxp .lxsum~.lxline{margin-top:18px}
+
+  /* ---- the options of a call: typed lines on hairlines, no boxes ---- */
+  .lkdec{margin-top:14px;padding-top:12px;border-top:1px solid rgba(46,107,98,.16)}
+  .lkdec [hidden],.lxp [hidden]{display:none!important}
+  .lkchosen+.lkhead{margin-top:14px}
+  .lkdecided .src a.drop,.lkdecided .src .dropq{display:none}
+  .lkdec .lkhead{display:flex;align-items:baseline;gap:12px;font-size:9.5px;letter-spacing:1.3px;text-transform:uppercase;
+     font-weight:600;color:var(--pine);margin-bottom:8px}
+  .lkdec .lkhead .lxq{margin-left:auto;letter-spacing:0;text-transform:none;font-weight:500}
+  .lkopts{border-top:1px solid rgba(46,107,98,.11)}
+  .lkopt{all:unset;box-sizing:border-box;display:grid;grid-template-columns:22px 1fr;column-gap:14px;
+     width:100%;padding:11px 8px 11px 0;cursor:pointer;border-bottom:1px solid rgba(46,107,98,.11);transition:background .12s}
+  .lkopt:hover{background:rgba(255,255,255,.6)}
+  .lkopt:focus-visible{outline:2px solid var(--pine);outline-offset:2px;border-radius:2px}
+  .lkopt .on{font-family:var(--serif);font-size:16px;line-height:1.35;color:var(--ink-3);text-align:right}
+  .lkopt .ot{display:block;min-width:0}
+  .lkopt .ot b{display:block;font-size:14.5px;line-height:1.45;font-weight:500;color:var(--ink)}
+  .lkopt .ow{display:block;margin-top:1px;font-size:11.5px;letter-spacing:.2px;color:var(--ink-3)}
+  .lkopt .oe{display:block;margin-top:2px;font-size:13px;line-height:1.5;color:var(--ink-2)}
+  .lkopt .or{display:block;margin-top:2px;font-size:12px;line-height:1.45;color:var(--brick)}
+  .lkopt:hover .on,.lkopt:hover .ot b{color:var(--pine)}
+  .lkopt.sel{background:rgba(255,255,255,.6)}
+  .lkopt.sel .on,.lkopt.sel .ot b{color:var(--pine-ink)}
+  .lkopt.sel .ot b{font-weight:600}
+  .lkopt.other .ot b{color:var(--pine)}
+  .lkother{display:none;padding:2px 0 14px 36px;border-bottom:1px solid rgba(46,107,98,.11)}
+  .lkother.on{display:block}
+  .lkother .lxta{min-height:80px}
+  .lkother .lxline{justify-content:flex-end}
+  .lkchosen{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;font-size:14px;line-height:1.5;color:var(--pine-ink)}
+  .lkchosen b{font-weight:600}
+  .lkdec .lkmsg{margin-top:18px}
+  .lkdec .lkmsg .lxp{margin-top:0;padding-top:0;border-top:none}
+  .why.clash .lkopts,.why.clash .lkopt,.why.clash .lkother{border-color:rgba(162,72,58,.14)}
+  .why.clash .lkdec,.why.clash .lkdec .lkhead{border-top-color:rgba(162,72,58,.16);color:var(--brick)}
+  .why.clash .lkchosen{color:var(--brick-ink)}
+
+  /* ---- the day, live: the clock on the strip and what has gone by ---- */
+  .lknow{position:absolute;top:-6px;height:52px;width:0;border-left:2px solid var(--brick);pointer-events:none;z-index:2}
+  .lknow:before{content:"";position:absolute;top:-3px;left:-5px;width:8px;height:8px;border-radius:50%;background:var(--brick)}
+  .mt.past .blk{opacity:.45}
+  .mt.past .lbl,.mt.past .lbl b{color:var(--ink-3)}
+  .mt.lknew .blk{background-image:repeating-linear-gradient(135deg,transparent 0 5px,rgba(255,255,255,.35) 5px 8px)}
+
+  @media (max-width:660px){ .lkother{padding-left:0} }
+  @media (prefers-reduced-motion: reduce){
+    .lxrun .lxbar i{animation:none;left:0;width:100%;opacity:.35}
+    .lxskel i{animation:none}
+    .lxref.busy svg{animation-duration:3s}
+  }
+  @media print{ .lxrun,.lxp,.lkdec,.lxacts a.lxa,.lknow{display:none!important} }

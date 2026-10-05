@@ -68,7 +68,11 @@ def build_one(page, skill, parts, checker, examples):
               .replace('{{DICT}}', embed_json(parts['dict']))
               .replace('{{JS}}', parts['js'].rstrip('\n'))
               .replace('{{LIVE_CSS}}', parts['live_css'].rstrip('\n'))
-              .replace('{{LIVE_JS}}', parts['live_js'].rstrip('\n')))
+              .replace('{{LIVE_JS}}', parts['live_js'].rstrip('\n'))
+              .replace('{{KIT_CSS}}', parts['kit_css'].rstrip('\n'))
+              .replace('{{KIT_JS}}', parts['kit_js'].rstrip('\n'))
+              .replace('{{BRIEF_LIVE_JS}}', parts['brief_live_js'].rstrip('\n'))
+              .replace('{{CONTEXT_LIVE_JS}}', parts['context_live_js'].rstrip('\n')))
     left = set(re.findall(r'\{\{([A-Z_]+)\}\}', out)) - {'DATA_JSON'}
     if left:
         raise SystemExit('%s: placeholders left unfilled: %s' % (page, ', '.join(sorted(left))))
@@ -92,8 +96,13 @@ def build_all():
         # the inbox's live layer, inlined into the inbox page only
         'live_css': read(os.path.join(DESIGN, 'live-inbox.css')),
         'live_js': read(os.path.join(DESIGN, 'live-inbox.js')),
+        # the live kit the brief and Super Context share, and each page's own layer
+        'kit_css': read(os.path.join(DESIGN, 'live-kit.css')),
+        'kit_js': read(os.path.join(DESIGN, 'live-kit.js')),
+        'brief_live_js': read(os.path.join(DESIGN, 'live-brief.js')),
+        'context_live_js': read(os.path.join(DESIGN, 'live-context.js')) if os.path.exists(os.path.join(DESIGN, 'live-context.js')) else '',
     }
-    for key in ('css', 'js', 'glyphs', 'security', 'live_css', 'live_js'):
+    for key in ('css', 'js', 'glyphs', 'security', 'live_css', 'live_js', 'kit_css', 'kit_js', 'brief_live_js', 'context_live_js'):
         if EM_DASH in parts[key]:
             raise SystemExit('design/%s carries an em dash' % key)
     en, fr = parts['dict'].get('en', {}), parts['dict'].get('fr', {})

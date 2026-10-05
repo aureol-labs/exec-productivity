@@ -1,0 +1,302 @@
+{
+ "lang": "fr",
+ "date_label": "jeudi 1 octobre",
+ "time_label": "06:50",
+ "today": "2026-10-01",
+ "gesture": "copy",
+ "links": {
+  "context": "https://claude.ai/artifact/2gEYcuSAgnHfANCa5M54Pa",
+  "inbox": "https://claude.ai/artifact/2XoTBsF5afeAHZY9zi1Dm5"
+ },
+ "caps": {
+  "decisions": 3,
+  "jobs": 3
+ },
+ "metrics": null,
+ "strip": {
+  "start": "08:00",
+  "end": "19:00",
+  "meetings": [
+   {
+    "id": "m1",
+    "start": "09:00",
+    "end": "10:00",
+    "label": "Comex",
+    "key": false,
+    "brief": {
+     "title": "Comex hebdomadaire",
+     "note": "Claire, Hugo, Sofia, Julie, Thomas",
+     "in_mind": {
+      "text": "Le budget 2027 n'a pas été arbitré mardi."
+     },
+     "sources": [
+      {
+       "kind": "calendar",
+       "label": "1 oct. 09:00, Comex",
+       "href": ""
+      }
+     ]
+    }
+   },
+   {
+    "id": "m2",
+    "start": "11:00",
+    "end": "11:45",
+    "label": "Ostral",
+    "key": true,
+    "brief": {
+     "title": "Call Ostral avec Hugo",
+     "note": "Direction achats d'Ostral, Hugo Lefèvre",
+     "to_land": {
+      "go": {
+       "id": "c1",
+       "text": "Ostral : 18 % sur 3 ans, ou tenir 15 % ?"
+      }
+     },
+     "in_mind": {
+      "text": "Brenner a signé à 15 % l'an dernier, sur 3 ans."
+     },
+     "sources": [
+      {
+       "kind": "calendar",
+       "label": "1 oct. 11:00, Ostral",
+       "href": ""
+      },
+      {
+       "kind": "mail",
+       "label": "Hugo Lefèvre, échange Ostral, 30 sept.",
+       "href": ""
+      }
+     ],
+     "briefing": "Prépare mon call de 11:00 avec Ostral et Hugo. Ostral demande 18 % sur 3 ans, la règle est 15 %.\n\nLis ces sources toi-même, ne te fie pas à mon résumé. Donne-moi la thèse de chaque côté et ce qui pèse d'autre. N'envoie rien, ne supprime rien."
+    }
+   },
+   {
+    "id": "m3",
+    "start": "14:00",
+    "end": "15:00",
+    "label": "Carmen",
+    "key": true,
+    "brief": {
+     "title": "Dernier entretien, Carmen Vidal",
+     "note": "Finaliste pour diriger les ventes en Espagne",
+     "to_land": {
+      "go": {
+       "id": "c2",
+       "text": "Espagne : Carmen à 160 k€, ou Pablo à 120 k€ ?"
+      }
+     },
+     "in_mind": {
+      "text": "Carmen a une autre offre en cours."
+     },
+     "sources": [
+      {
+       "kind": "calendar",
+       "label": "1 oct. 14:00, Carmen Vidal",
+       "href": ""
+      },
+      {
+       "kind": "mail",
+       "label": "Julie Roux, finalistes Espagne, 29 sept.",
+       "href": ""
+      }
+     ],
+     "briefing": "Prépare mon dernier entretien avec Carmen Vidal à 14:00 : les trois questions qui départagent avec Pablo.\n\nLis ces sources toi-même, ne te fie pas à mon résumé. Donne-moi la thèse de chaque côté et ce qui pèse d'autre. N'envoie rien, ne supprime rien."
+    }
+   },
+   {
+    "id": "m4",
+    "start": "17:00",
+    "end": "17:45",
+    "label": "Vellmar",
+    "key": true,
+    "brief": {
+     "title": "Point avec Marc Delorme, Vellmar Capital",
+     "note": "Partner, siège au board",
+     "to_land": {
+      "go": {
+       "id": "c3",
+       "text": "Budget 2027 : +22 % de croissance, ou +16 % et 15 % d'EBITDA ?"
+      }
+     },
+     "in_mind": {
+      "text": "Comité le 8 octobre, cohortes demandées."
+     },
+     "sources": [
+      {
+       "kind": "calendar",
+       "label": "1 oct. 17:00, Marc Delorme",
+       "href": ""
+      },
+      {
+       "kind": "mail",
+       "label": "Marc Delorme, cohortes, 30 sept.",
+       "href": ""
+      }
+     ],
+     "briefing": "Prépare mon point de 17:00 avec Marc Delorme avant le comité Vellmar du 8 octobre.\n\nLis ces sources toi-même, ne te fie pas à mon résumé. Donne-moi la thèse de chaque côté et ce qui pèse d'autre. N'envoie rien, ne supprime rien."
+    }
+   }
+  ]
+ },
+ "decisions": [
+  {
+   "id": "c1",
+   "ref": "thread:ostral",
+   "say": "Ostral : 18 % sur 3 ans, ou tenir 15 % ?",
+   "meta": {
+    "kind": "time",
+    "value": "11:00"
+   },
+   "type": "precedent",
+   "argument": [
+    "Brenner a signé à 15 % l'an dernier, sur 3 ans."
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Claire Martin, échange Ostral, 30 sept.",
+     "href": ""
+    },
+    {
+     "kind": "mail",
+     "label": "Hugo Lefèvre, échange Ostral, 30 sept.",
+     "href": ""
+    },
+    {
+     "kind": "doc",
+     "label": "Contrat Brenner, 2025",
+     "href": ""
+    }
+   ],
+   "to": "Claire et Hugo",
+   "context": "Ostral, client à 240 k€ par an, demande 18 % de remise pour renouveler sur 3 ans. Hugo (VP Sales) a déjà écrit qu'on pouvait aller à 18 % et veut signer demain pour son trimestre. Claire (CFO) refuse au-delà de 12 % pour garder la marge du compte au-dessus de 60 %. La règle, décidée en juin, plafonne les remises de renouvellement à 15 %. Brenner Logistique a signé à 15 % sur 3 ans l'an dernier. Call avec Ostral à 11:00.",
+   "briefing": "Ostral demande 18 % de remise pour renouveler sur 3 ans, à 240 k€ par an. Hugo veut accepter pour signer demain ; Claire refuse au-delà de 12 %. La règle est 15 % depuis juin.\n\nLis ces sources toi-même, ne te fie pas à mon résumé. Donne-moi la thèse de chaque côté et ce qui pèse d'autre. N'envoie rien, ne supprime rien."
+  },
+  {
+   "id": "c2",
+   "ref": "thread:espagne",
+   "say": "Espagne : Carmen à 160 k€, ou Pablo à 120 k€ ?",
+   "meta": {
+    "kind": "time",
+    "value": "14:00"
+   },
+   "type": "knock_on",
+   "argument": [
+    "Carmen a une autre offre ; le lancement de janvier en dépend."
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Julie Roux, finalistes Espagne, 29 sept.",
+     "href": ""
+    }
+   ],
+   "to": "Julie",
+   "context": "Il faut un patron des ventes Espagne en poste pour le lancement du 1er janvier. Carmen : 10 ans chez un concurrent espagnol, réseau grands comptes, 160 k€, a une autre offre en cours. Pablo : vient d'une startup, plus junior, très bon en acquisition, 120 k€. L'équipe penche pour Carmen, Hugo pour Pablo. Budget du recrutement prévu : 140 k€. Dernier entretien avec Carmen à 14:00.",
+   "briefing": "Julie attend mon choix entre Carmen (160 k€) et Pablo (120 k€) pour diriger les ventes en Espagne. Carmen a une autre offre.\n\nLis ces sources toi-même, ne te fie pas à mon résumé. Donne-moi la thèse de chaque côté et ce qui pèse d'autre. N'envoie rien, ne supprime rien."
+  },
+  {
+   "id": "c3",
+   "ref": "thread:budget",
+   "say": "Budget 2027 : +22 % de croissance, ou +16 % et 15 % d'EBITDA ?",
+   "meta": {
+    "kind": "time",
+    "value": "17:00"
+   },
+   "type": "history",
+   "argument": [
+    "Le plan de valeur promet 15 % d'EBITDA fin 2027."
+   ],
+   "sources": [
+    {
+     "kind": "doc",
+     "label": "Budget 2027, deux scénarios",
+     "href": ""
+    },
+    {
+     "kind": "meeting",
+     "label": "Comex, 30 sept.",
+     "href": ""
+    },
+    {
+     "kind": "mail",
+     "label": "Marc Delorme, cohortes, 30 sept.",
+     "href": ""
+    }
+   ],
+   "to": "Claire, Hugo et Marc",
+   "context": "Halden est détenue majoritairement par Vellmar Capital depuis 2024 ; le plan de valeur vise 15 % d'EBITDA fin 2027. Scénario Hugo : +22 % de croissance, 14 recrutements commerciaux, EBITDA 9 %. Scénario Claire : +16 %, 5 recrutements, EBITDA 15 %. Le Comex de mardi n'a pas tranché. Comité Vellmar le 8 octobre, Marc veut aussi la rétention par cohorte. Point avec Marc à 17:00.",
+   "briefing": "Je dois arbitrer le budget 2027 avant le comité Vellmar du 8 octobre : +22 % de croissance (Hugo) ou +16 % et 15 % d'EBITDA (Claire).\n\nLis ces sources toi-même, ne te fie pas à mon résumé. Donne-moi la thèse de chaque côté et ce qui pèse d'autre. N'envoie rien, ne supprime rien."
+  }
+ ],
+ "jobs": [
+  {
+   "id": "j1",
+   "ref": "thread:cohortes",
+   "say": "Faire produire les cohortes sur 8 trimestres pour Marc.",
+   "meta": {
+    "kind": "before",
+    "value": "17:00"
+   },
+   "type": "pattern",
+   "argument": [
+    "Au dernier comité, envoyées la veille."
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Marc Delorme, cohortes, 30 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "Marc veut la rétention nette par cohorte sur 8 trimestres avant le comité du 8. Dis-moi qui la produit et pour quand, et rédige ma demande.\n\nLis ces sources toi-même, ne te fie pas à mon résumé. Donne-moi la thèse de chaque côté et ce qui pèse d'autre. N'envoie rien, ne supprime rien."
+  },
+  {
+   "id": "j2",
+   "ref": "thread:brenner",
+   "say": "Signer l'avenant Brenner Logistique.",
+   "meta": {
+    "kind": "asked",
+    "value": "29 sept."
+   },
+   "type": "history",
+   "argument": [
+    "Relu par les juristes des deux côtés."
+   ],
+   "sources": [
+    {
+     "kind": "mail",
+     "label": "Étienne Morel, avenant, 29 sept.",
+     "href": ""
+    }
+   ],
+   "briefing": "Brenner attend ma signature sur l'avenant au contrat de transport. Dis-moi ce qui change, en trois lignes.\n\nLis ces sources toi-même, ne te fie pas à mon résumé. Donne-moi la thèse de chaque côté et ce qui pèse d'autre. N'envoie rien, ne supprime rien."
+  },
+  {
+   "id": "j3",
+   "ref": "slack:thomas",
+   "say": "Répondre à Thomas sur le budget du séminaire.",
+   "meta": {
+    "kind": "asked",
+    "value": "30 sept."
+   },
+   "type": "knock_on",
+   "argument": [
+    "Le lieu ne tient l'option que jusqu'à samedi."
+   ],
+   "sources": [
+    {
+     "kind": "chat",
+     "via": "Slack",
+     "label": "Thomas Girard, message direct",
+     "href": ""
+    }
+   ],
+   "briefing": "Thomas demande si le budget du séminaire de direction, 18 k€, est validé. Rédige ma réponse.\n\nLis ces sources toi-même, ne te fie pas à mon résumé. Donne-moi la thèse de chaque côté et ce qui pèse d'autre. N'envoie rien, ne supprime rien."
+  }
+ ],
+ "footer": [
+  "Lu à 06:45 : 41 mails, 12 messages, 4 réunions"
+ ]
+}

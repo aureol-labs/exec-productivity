@@ -13,10 +13,11 @@ procedure, the plugin is how it reaches a session. Read `README.md` first, then 
   Primary, or its inbox minus the categories when tabs are off; Outlook's Focused inbox), defined once in the
   store and checked per mailbox on every run. The second is the live inbox page: a page can only call a connector
   by its tools, so `design/live-inbox.js` carries one adapter per connector it reads (Aureol Connect, the Gmail
-  connector, Slack), chosen from the `live` block the inbox run writes off the roles. A connector without an
-  adapter leaves the page as the run published it.
+  connector, Slack), chosen from the `live` block the inbox run writes off the roles. The live Daily brief and
+  Super Context share `design/live-kit.js`, with the same adapters plus the calendar (Aureol Connect, the Google
+  Calendar connector). A connector without an adapter leaves the page as the run published it.
 - **The exec's writes stay the exec's.** Priorities, keep and drop on decisions, declining a suggestion, the
-  words in a rule. A routine proposes, never decides.
+  words in a rule, a call settled on the Daily brief. A routine proposes, never decides.
 - **Zero writes outside the pages and their store**, except labels where the mail role can write them and only
   from confirmed rules, each listed, and one self-addressed email per habit run where the exec chose it at
   install and the mail role can send. Never send to anyone else, never delete, move, archive, mark as read. One
@@ -63,4 +64,5 @@ templates in a browser with the example data before shipping a design change. Th
 in Cowork on a real account, then one cloud run of each habit.
 
 The inbox demo (`design/demo/build-inbox-demo.py`, then `tools/fill-page.py`) is the live page on simulated
-connections and fictional data: publish it with `capabilities: {sample: {}}` only; every reload replays it.
+connections and fictional data: publish it with `capabilities: {sample: {}}` only; every reload replays it. The
+brief demo is the same (`design/demo/build-brief-demo.py`, from `brief-demo-base-fr.json`).

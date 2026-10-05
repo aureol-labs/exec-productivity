@@ -41,8 +41,9 @@ ones that bite are below.
    (Decide with Claude) asks for the case on each side and anything else that bears on it, options the page did
    not list included, never for an answer. A job's (Think it through with Claude) asks for the work and for anything the
    brief missed. Every briefing that drafts something ends "do not send".
-7. **A dropped line stays dropped.** Read `dismissals` from the brief page's own store
-   (`connections/current.pages.brief`) before selecting. A job or decision dropped as done or not important is
+7. **A dropped line stays dropped, a settled call stays settled.** Read `dismissals` and `decided` from the brief
+   page's own store (`connections/current.pages.brief`) before selecting. A call the exec settled on the page is
+   never proposed again: Super Context logs it. A job or decision dropped as done or not important is
    not proposed again on this run or any later one, because every run reads the whole collection. That only
    holds if the ref is the same across runs: give every decision and job the id of its source thread or
    calendar event as `ref`, and only when there is none `brief:<slug of the ask>`. A `done` also becomes a
@@ -90,7 +91,10 @@ events are drawn.
   WHO or BEFORE cells. A clash: each column ends on what moving that meeting costs; TO LAND says which call, and by
   when.
 - **Decisions**: the cap, ranked against the priorities; `say` the call with its options; `argument` one entry,
-  the fact; `type`; sources; briefing. No `lede`, `plain` or `go`: the page shows none of them.
+  the fact; `type`; sources; briefing. No `lede`, `plain` or `go`: the page shows none of them. For the live page
+  (section 3), also `context`: what the brief knows about the call in 70 words at most, your own facts (who holds
+  which option, the figures, the rule, the deadline), never a quoted message; `to`: who the message that acts it
+  goes to, by first name ("Claire et Hugo"); and `live`, where it sits (section 3).
 - **Jobs**: the cap; the wall on the strip; `argument` one entry, the fact; type. A job whose briefing would only
   summarise the thing it asks the exec to read has no Claude button.
 - **Footer**: what the assistant read this morning, in numerals ("Read at 06:52: 61 mails, 41 messages, 6
@@ -105,9 +109,31 @@ events are drawn.
 
 ## 3. Check, publish, record
 
+**What the live page needs**, written into the same document. Opened in Claude, the page works the calls where
+they stand: a call opens on its options as the sources state them, the exec settles it, and Claude drafts the
+message that acts it.
+
+- `generated`: this run's time, ISO with the hour and the offset.
+- `live.me`: `{name, role}`, the exec's first name and their role in a line ("CEO de Halden, 180 personnes"), from
+  `connections/preferences`: who Claude writes for.
+- `live.mail`, `live.calendar`, `live.chat`, from `connections/current.roles`: `Aureol Connect` is `{server:
+  "Aureol Connect", api: "aureol"}` for mail and for the calendar; the Gmail connector `{server: "Gmail", api:
+  "gmail"}`; the Google Calendar connector `{server: "Google Calendar", api: "gcal"}`; Slack `{server: "Slack", api:
+  "slack"}`. Any other tool, or none: `null`.
+- On every decision and job that has one, `live`: `{thread, account}` (the mail thread and the mailbox's alias or
+  address), or `{channel_id}` for a chat conversation, or `{to, subject, account}` for a mail that does not exist
+  yet (plain addresses). A double booking carries `live.account` and, on each of its meetings, `organizer`.
+
+| `api` | Tools to declare |
+|---|---|
+| `aureol` | `gmail_search`, `gmail_get_thread`, `gmail_create_draft`, `gmail_update_draft` |
+| `gmail` | `search_threads`, `get_thread`, `create_draft`, `update_draft` |
+| `slack` | `slack_read_channel` |
+
 Run `python3 tools/fill-page.py --kind brief skills/aureol-brief/references/daily-brief.html DATA.json OUT.html
 --links context=<link> inbox=<link>` from the plugin's root folder (the one holding `skills/` and `tools/`)
 when a shell exists (it checks the data, then fills the template with every `<` escaped); without a
 shell, apply check-page's list by hand and replace the single `{{DATA_JSON}}` yourself. Read the page at `connections/current.pages.brief` then publish to its `url` with
-`capabilities: {db: {}}`; no link yet, publish new the same way and write the link. Write a `runs` document. The task prompt says how the run ends: the link on its
+`capabilities: {db: {}, sample: {}, mcp: {servers: [{server, tools}]}}` from the table above, one entry per server
+(`{db: {}, sample: {}}` when every connection is `null`); no link yet, publish new the same way and write the link. Write a `runs` document. The task prompt says how the run ends: the link on its
 own line, and the counts.

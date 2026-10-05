@@ -31,7 +31,8 @@ organisations off the page once no live topic holds them; and flags every priori
 2. **Never retire a decision.** `decisions/*` is appended. You propose with `status: "proposed"`; keep and drop are
    the exec's, on the page. A newer decision that replaces an older one gets `replaces`; the older one gets
    `replaced_by`; both stay where they happened. A conflict is a suspicion, never a merge: set `conflicts_with`
-   on both and a `land` question, and let chronology show which is later.
+   on both and a `land` question, and let chronology show which is later. A call the exec settled on the Daily brief
+   is already theirs: you log it as kept (section 2), the one `kept` you ever write.
 3. **The entry test for a decision is the counterfactual.** It goes in only if it can say what it was decided
    against. Otherwise it was an announcement, and it does not go in.
 4. **A fact carries the date of its source and ends rather than disappears.** A newer source that contradicts
@@ -63,7 +64,8 @@ line in `data.notices`, saying what could not be read, never how it was checked,
 each; a tool that was never connected is not a notice. The run continues. Never a page that pretends.
 
 Then read: `priorities` (live and dropped), `topics`, `people`, `entities`, `decisions`, `suggestions`, and the
-last `runs` document of this task.
+last `runs` document of this task. Read `decided` from the brief page's own store (`read_db` on
+`connections/current.pages.brief`), when there is one.
 
 ## 1. Read the world
 
@@ -118,6 +120,12 @@ at what a morning can hold and write the counts to the run.
   September; propose it with its real `when`. Check every proposal against the kept ones for `replaces` and
   `conflicts_with`. In bootstrap mode expect five to fifteen proposals from a month; in morning mode zero to two.
 - **A dropped priority** in the store without a matching decision: propose one, `against` = its `ahead`.
+- **A call settled on the Daily brief** (`decided` without `logged`): append it to `decisions` with `say` the decision
+  as one sentence (the call's topic and the choice: "Ostral : 15 % sur 3 ans, la règle tient."), `decided_by:
+  ["you"]`, `when` and `when_iso` its `date`, `against` its `against` joined in the exec's language, `status:
+  "kept"`, `proposed_at` and `kept_at` its `date`, its `sources`, and `replaces` or `conflicts_with` as for any
+  proposal. Then write `logged: <the decision's id>` on the `decided` document. A topic the call served gets a
+  `so_far` entry the same day.
 
 ## 3. Write
 

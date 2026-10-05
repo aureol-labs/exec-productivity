@@ -126,6 +126,9 @@
       "meta": { "kind": "time", "value": "08:45" },
       "type": "precedent",
       "argument": [ "Bergen asked the same in July: you held, it closed at 79k." ],
+      "context": "Halden Mutual renews at 84k list and asks 19% off. Nadia, VP Sales, wants to grant it to close this month. Bergen asked the same in July; you held and it closed at 79k eleven days later.",
+      "to": "Nadia",
+      "live": { "thread": "halden-procurement-10sep", "account": "work" },
       "sources": [
         { "kind": "mail", "label": "Halden Mutual procurement, 10 Sept", "href": "" },
         { "kind": "mail", "label": "Bergen, 14 July", "href": "" }
@@ -139,6 +142,9 @@
       "meta": { "kind": "time", "value": "11:00" },
       "type": "knock_on",
       "argument": [ "November lands on 9 renewals." ],
+      "context": "Tomas proposes the 4 October weekend; the alternative is November, inside the renewal cycle of nine accounts. Support needs a week to staff either date. Elena has been told neither.",
+      "to": "Tomas",
+      "live": { "channel_id": "C0INFRAMIG" },
       "sources": [
         { "kind": "chat", "via": "Slack", "label": "#infra-migration", "href": "" },
         { "kind": "calendar", "label": "Renewal cycle, November", "href": "" }
@@ -180,6 +186,7 @@
       "meta": { "kind": "before", "value": "14:00" },
       "type": "pattern",
       "argument": [ "All 4 are in last quarter's cohort view." ],
+      "live": { "thread": "julien-cohort-numbers", "account": "work" },
       "sources": [
         { "kind": "mail", "label": "Julien, cohort request", "href": "" },
         { "kind": "doc", "label": "Cohort model, Q3", "href": "" }
@@ -200,5 +207,12 @@
       "briefing": "Give Priya the Q4 roadmap order. She asked on 3 September.\n\nFrom this morning’s brief:\n- This has slipped every week since 25 August. It waits on me, not on Priya.\n- It unblocks the moment the Halden Mutual discount is settled.\n\nRead Priya’s 3 September message and the draft order yourself. Then tell me which parts of the ordering genuinely depend on the Halden Mutual outcome and which I could confirm to her today regardless. Draft the reply that unblocks her on everything that is not actually blocked."
     }
   ],
-  "footer": [ "Read at 06:52: 61 mails, 41 messages, 6 invites" ]
+  "footer": [ "Read at 06:52: 61 mails, 41 messages, 6 invites" ],
+  "generated": "2026-09-14T07:00:00+02:00",
+  "live": {
+    "me": { "name": "Alex", "role": "CEO" },
+    "mail": { "server": "Gmail", "api": "gmail" },
+    "calendar": { "server": "Google Calendar", "api": "gcal" },
+    "chat": { "server": "Slack", "api": "slack" }
+  }
 }
