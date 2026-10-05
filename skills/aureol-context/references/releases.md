@@ -17,6 +17,15 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.15.0
+
+- `morning`: the brief run writes `live.event_id` on every block of the strip (and `event_id` on each meeting of a
+  double booking), and `draft: true` with `to` on a job that is a message to write; it declares `calendar_list_events`
+  (Aureol Connect) or `list_events` (Google Calendar) and `slack_search_public_and_private` (aureol-brief section 3).
+  On the page the day stays current: a clock on the strip, what has gone by dimmed, meetings added, moved or
+  cancelled since the run redrawn, a line the exec answered since the run greyed, and a job that is a message
+  drafted by Claude.
+
 ## 0.14.0
 
 - `morning`: the Daily brief is live. The brief run writes `generated`, `live` and, on each call, `context`, `to` and

@@ -410,6 +410,8 @@ def check_brief_live(d, r):
                 r.bad(p + '.context', 'what the brief knows about the call, the routine\'s own facts, 70 words at most')
             if row.get('to') is not None and not isinstance(row.get('to'), str):
                 r.bad(p + '.to', 'who the message goes to, by name')
+            if row.get('draft') is not None and (key != 'jobs' or not isinstance(row.get('draft'), bool)):
+                r.bad(p + '.draft', 'true on a job that is a message to write, nowhere else')
             check_row_live(p, row, r)
     for i, m in enumerate((d.get('strip') or {}).get('meetings') or []):
         p = '$.strip.meetings[%d]' % i
@@ -419,6 +421,8 @@ def check_brief_live(d, r):
                 r.bad(p + '.live', '{event_id, account, attendees}')
             elif any(not EMAIL.match(str(x)) for x in v.get('attendees') or []):
                 r.bad(p + '.live.attendees', 'plain addresses')
+            elif m.get('clash') and v.get('event_id'):
+                r.bad(p + '.live.event_id', 'a double booking carries an event_id on each of its meetings, not on itself')
         for j, x in enumerate(m.get('meetings') or []):
             if x.get('organizer') is not None and not EMAIL.match(str(x['organizer'])):
                 r.bad('%s.meetings[%d].organizer' % (p, j), 'the organiser\'s plain address')
@@ -955,6 +959,7 @@ def selftest():
     broken('brief', 'a thread without its account', lambda d: d['decisions'][0]['live'].pop('account'))
     broken('brief', 'a new mail to a name', lambda d: d['jobs'][0].__setitem__('live', {'to': ['Julien'], 'account': 'work'}))
     broken('brief', 'a call\'s context past 70 words', lambda d: d['decisions'][0].__setitem__('context', ' '.join(['mot'] * 71)))
+    broken('brief', 'draft on a call', lambda d: d['decisions'][0].__setitem__('draft', True))
     passes('brief', 'a page without its live block', lambda d: (d.pop('live'), d.pop('generated')))
     broken('inbox', 'ref that is not a string', lambda d: d['queue'][0].__setitem__('ref', {'id': 'x'}))
     broken('context', 'ref that is not a string on a topic', lambda d: d['topics'][0].__setitem__('ref', ''))

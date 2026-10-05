@@ -109,9 +109,9 @@ for row in doc['decisions'] + doc['jobs']:
 CLASH = {
     'id': 'm5', 'clash': True,
     'meetings': [
-        {'start': '15:30', 'end': '16:15', 'title': fr('Revue produit, Léa'), 'organizer': 'lea@halden.example',
+        {'start': '15:30', 'end': '16:15', 'title': fr('Revue produit, Léa'), 'organizer': 'lea@halden.example', 'event_id': 'ev-lea',
          'cost': fr("La déplacer coûte peu : Léa a proposé jeudi.")},
-        {'start': '15:45', 'end': '16:30', 'title': fr('Avocat, pacte Vellmar'), 'organizer': 'cabinet@roux-avocats.example',
+        {'start': '15:45', 'end': '16:30', 'title': fr('Avocat, pacte Vellmar'), 'organizer': 'cabinet@roux-avocats.example', 'event_id': 'ev-avocat',
          'cost': fr("Le déplacer coûte : sa signature est attendue avant le comité.")},
     ],
     'to_land': {'text': fr('Lequel vous gardez, avant midi.')},
@@ -125,6 +125,34 @@ doc['strip']['meetings'].sort(key=lambda m: m.get('start') or m['meetings'][0]['
 CLASH_DRAFT = fr("Bonjour Léa,\n\nJe dois prendre l'avocat sur le pacte Vellmar à 15:45. Peut-on décaler la revue produit à jeudi, comme tu l'avais proposé ?\n\nMerci,\nCamille")
 DRAFTS['clash:m5|' + fr('Garder Avocat, pacte Vellmar')] = CLASH_DRAFT
 
+# today's calendar as the page reads it again: the lunch with Thomas is added after the brief, the Vellmar
+# point moves half an hour; every block of the morning carries its event id
+EVENT = {'m1': 'ev-comex', 'm2': 'ev-ostral', 'm3': 'ev-carmen', 'm4': 'ev-vellmar'}
+for m in doc['strip']['meetings']:
+    if m['id'] in EVENT:
+        m['live'] = {'event_id': EVENT[m['id']], 'account': ME['alias']}
+EVENTS = [
+    {'id': 'ev-comex', 'title': 'Comex hebdomadaire', 'start': '09:00', 'end': '10:00'},
+    {'id': 'ev-ostral', 'title': 'Call Ostral avec Hugo', 'start': '11:00', 'end': '11:45'},
+    {'id': 'ev-thomas', 'title': fr('Déjeuner avec Thomas'), 'start': '12:30', 'end': '13:30', 'later': True},
+    {'id': 'ev-carmen', 'title': 'Dernier entretien, Carmen Vidal', 'start': '14:00', 'end': '15:00'},
+    {'id': 'ev-lea', 'title': fr('Revue produit, Léa'), 'start': '15:30', 'end': '16:15'},
+    {'id': 'ev-avocat', 'title': fr('Avocat, pacte Vellmar'), 'start': '15:45', 'end': '16:30'},
+    {'id': 'ev-vellmar', 'title': 'Point avec Marc Delorme', 'start': '17:00', 'end': '17:45', 'moved': {'start': '17:30', 'end': '18:15'}},
+]
+
+# the jobs that are a message: the cohorts asked of Claire in a new mail, the answer to Thomas on Slack
+for row in doc['jobs']:
+    if row['id'] == 'j1':
+        row['draft'] = True
+        row['to'] = 'Claire'
+        row['live'] = {'to': ['claire@halden.example'], 'subject': fr('Cohortes sur 8 trimestres pour le comité'), 'account': ME['alias']}
+    if row['id'] == 'j3':
+        row['draft'] = True
+        row['to'] = 'Thomas'
+DRAFTS['thread:cohortes'] = fr("Claire,\n\nMarc veut la rétention nette par cohorte sur 8 trimestres avant le comité du 8. Peux-tu me la produire pour lundi, avec le détail de la cohorte 2024 ?\n\nMerci,\nCamille")
+DRAFTS['slack:D0THOMAS1'] = fr("Oui, budget validé à 18 k€. Tu peux confirmer le lieu.")
+
 doc['sub'] = fr('Démonstration : personnes, entreprises et messages fictifs.')
 doc['generated'] = '2026-10-01T06:50:00+02:00'
 doc['live'] = {
@@ -132,7 +160,7 @@ doc['live'] = {
     'mail': {'server': 'Aureol Connect', 'api': 'aureol'},
     'calendar': {'server': 'Aureol Connect', 'api': 'aureol'},
     'chat': {'server': 'Slack', 'api': 'slack'},
-    'demo': {'now': '10:20', 'account': ME, 'me_id': 'U0CAMILLE', 'mail': MAIL,
+    'demo': {'now': '10:20', 'account': ME, 'me_id': 'U0CAMILLE', 'mail': MAIL, 'events': EVENTS,
              'slack': [{'channel': 'D0THOMAS1', 'uid': 'U0THOMAS', 'from': 'Thomas Girard', 'at': '2026-09-30T18:40:00+02:00',
                         'text': fr("Camille, le budget du séminaire de direction, 18 k€, est-il validé ? Le lieu ne tient l'option que jusqu'à samedi.")}],
              'options': OPTIONS, 'drafts': DRAFTS},
