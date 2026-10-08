@@ -79,14 +79,14 @@
                   It lists every channel the line stands for, contains channel, at
                   most one thread per channel; the sentence carries one mark per
                   channel and the title counts the line once per channel
-      ref         optional string, the stable key Drop is remembered under: the
-                  thread id ("thread:...") or its link; a bounce, its own id
-                  ("message:..."); a merged line joins its thread ids with "+",
-                  mail first; absent, the page falls back to the first source
-                  href, then to the row id
-      read        optional, true when the exec already opened what the line stands
-                  for: it still needs them (someone visibly waiting, a bounce) and
-                  is not counted as unread
+      ref         optional string, the stable key a priority is remembered under:
+                  the thread id ("thread:...") or its link, a bounce included; a
+                  merged line joins its thread ids with "+", mail first; absent,
+                  the page falls back to the first source href, then to the row id.
+                  Older pages keyed a bounce by its own id ("message:..."): the live
+                  page finds its thread through live.thread
+      read        never true: the queue is unread only (0.13.4) and a bounce is no
+                  exception (0.16.1); check-page refuses a line marked read
       type        precedent | knock_on | pattern | history      never absent
       meta        when the message arrived: a clock for today, a date before that
     filed         [ label ]  only where the mail role could write labels

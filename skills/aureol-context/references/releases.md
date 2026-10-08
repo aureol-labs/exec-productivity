@@ -17,6 +17,12 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.16.1
+
+- `inbox`: a bounce is mail like any other (aureol-inbox rule 4): a line while unread, wherever the mailbox filed it,
+  keyed by its thread; once read it leaves. No queue line carries `read: true`, and check-page refuses one. On the
+  page, bounces are read on their own, so a bounce line folds as read instead of archived.
+
 ## 0.16.0
 
 - `morning`: Super Context is live. The context pass writes `generated`, `live` and, on each topic with threads,
