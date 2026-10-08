@@ -485,7 +485,9 @@ def check_inbox(d, r, others):
         if row.get('meta') is None:
             r.bad(p + '.meta', 'the right column is when it arrived')
         if 'read' in row and not isinstance(row['read'], bool):
-            r.bad(p + '.read', 'true when the exec already opened what the line stands for, else absent')
+            r.bad(p + '.read', 'absent: the queue is unread only')
+        if row.get('read') is True:
+            r.bad(p + '.read', 'the queue is unread only: a line the exec has read leaves it, a bounce included')
         lb = row.get('label')
         if lb is not None and (not isinstance(lb, dict) or not lb.get('name')):
             r.bad(p + '.label', 'a label carries a name and a tint')
@@ -979,7 +981,7 @@ def selftest():
     broken('inbox', 'two queue lines on one ref', lambda d: d['queue'][1].__setitem__('ref', d['queue'][0]['ref']))
     broken('inbox', 'an ask past the word cap', lambda d: d['queue'][0].__setitem__('say', ' '.join(['word'] * 17)))
     broken('inbox', 'a notice when both channels were read', lambda d: d.__setitem__('notices', ['Main inbox at zero unread.']))
-    passes('inbox', 'a line on a message already read', lambda d: d['queue'].append(read_line(d, 1)))
+    broken('inbox', 'a line on a message already read', lambda d: d['queue'].append(read_line(d, 1)))
     broken('inbox', 'a line on a read message counted as unread', lambda d: d['queue'].append(read_line(d, 1, read=False)))
     broken('inbox', 'thirteen queue lines', lambda d: d['queue'].extend(read_line(d, n) for n in range(4)))
     broken('inbox', 'three notices', lambda d: (d['counts'].__setitem__('chat', None), d.__setitem__('notices', ['a', 'b', 'c'])))
