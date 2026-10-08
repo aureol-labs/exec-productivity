@@ -792,14 +792,14 @@
   var pageSetFilter=setFilter;
   setFilter=function(f,keep){ pageSetFilter(f,keep); try{ decorateMinis(); }catch(e){} };
 
-  /* mark as read: the exec's own gesture, mail only. The line stays in place for 5 s with Undo,
+  /* mark as read: the exec's own gesture, mail only. The line stays in place for 3 s with Undo,
      and nothing reaches the mailbox before that; then it is marked read and moves. */
-  var PENDING_READ={}, UNDO_TICK=null;
+  var PENDING_READ={}, UNDO_TICK=null, UNDO_MS=3000;
   function secsLeft(r){ return Math.max(1,Math.ceil((PENDING_READ[r].until-Date.now())/1000)); }
   function markRead(x){
     if(!CAN_READ||!x||x.kind!=='mail') return;
     var r=refOf(x); if(PENDING_READ[r]) return;
-    PENDING_READ[r]={x:x, until:Date.now()+5000, timer:setTimeout(function(){ commitRead(r); },5000)};
+    PENDING_READ[r]={x:x, until:Date.now()+UNDO_MS, timer:setTimeout(function(){ commitRead(r); },UNDO_MS)};
     if(!UNDO_TICK) UNDO_TICK=setInterval(function(){
       var keys=Object.keys(PENDING_READ);
       keys.forEach(function(k){ Array.prototype.forEach.call(document.querySelectorAll('.lxundo'),function(u){ if(u.dataset.undo===k){ var b=u.querySelector('button'); if(b) b.textContent=T('lx_undo',{n:secsLeft(k)}); } }); });

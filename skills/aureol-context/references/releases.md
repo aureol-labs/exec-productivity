@@ -17,6 +17,10 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.16.2
+
+- No task step. Mark as read on the inbox page waits 3 s with Undo instead of 5.
+
 ## 0.16.1
 
 - `inbox`: a bounce is mail like any other (aureol-inbox rule 4): a line while unread, wherever the mailbox filed it,
