@@ -68,10 +68,13 @@ and keeps every other field.
   "key_people": ["people/nadia", "people/tomas", "people/julien"],
   "caps": { "decisions": 3, "jobs": 3 }, "tiers": ["Now", "Today", "This week"],
   "mail_scope": "main", "mailboxes": ["camille@example.com"], "enrich": "public",
-  "gesture": "copy", "metrics": null,
+  "gesture": "copy", "metrics": null, "model": "Opus 5.5",
   "notify": { "brief": "push", "inbox": "push_now", "review": "push" },
   "installed": "2026-09-22", "plugin_version": "0.3.3" }
 ```
+
+`model` is the model the install conversation ran on, the one the exec picked at step 1: Sonnet 5.5 on Claude Pro,
+Opus 5.5 on Max. The habits are created on it; `exec-productivity-help` changes it with the tasks.
 
 `notify.<habit>` is `push` (the run ends by sending one notification with the session's notification tool, one
 line under 200 characters, desktop and phone when the Claude app is on the phone), `push_now` (inbox only: a

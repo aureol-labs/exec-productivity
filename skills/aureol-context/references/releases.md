@@ -17,6 +17,12 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.17.3
+
+- Install recommends Sonnet 5.5 on Claude Pro and Opus 5.5 on Max, instead of Opus 5.5 for everyone: Sonnet spares
+  Pro's usage limit. The habits are created on the model the exec picked, kept in `connections/preferences.model`.
+  Installed habits keep their model; nothing to do.
+
 ## 0.17.2
 
 - On the inbox page, each mailbox tag has its own colour, from the inks of the label palette, drawn as outline and

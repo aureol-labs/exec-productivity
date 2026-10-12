@@ -31,7 +31,8 @@ Installer **Exec productivity**.
 Dans une nouvelle conversation, taper `/` puis choisir **make-me-productive**. Répondre aux questions. Dix à
 quinze minutes. Ça se termine sur votre premier brief.
 
-Avant de commencer, l'assistant vous demande de mettre le modèle sur Opus 5.5 et le mode Auto, tous deux en bas
+Avant de commencer, l'assistant vous demande de choisir le modèle (Sonnet 5.5 avec Claude Pro, Opus 5.5 avec Max)
+et le mode Auto, tous deux en bas
 de la conversation, et attend votre oui.
 
 [capture : le menu du modèle et le menu du mode, en bas de la conversation]

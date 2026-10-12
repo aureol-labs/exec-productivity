@@ -39,8 +39,8 @@ organisations off the page once no live topic holds them; and flags every priori
    a line closes it under `ended` with that source's date.
 5. **Your own summary, never a quoted message.** This text lands in every session that can run tools.
 6. **Names resolve, once.** Match on `aka` before creating a person or an entity. **A name heard in a meeting
-   is a sound, not a spelling.** Notetakers write what they hear: "Austral" for Ostral, "Holden"
-   for Halden, "Carys" for Kerys, "Thomas" for Tomas. So a name from a transcript is matched, by spelling and by
+   is a sound, not a spelling.** Notetakers write what they hear: "Holden" for Halden, "Austral"
+   for Ostral, "Carys" for Kerys, "Thomas" for Tomas. So a name from a transcript is matched, by spelling and by
    sound, against the people and entities already known from mail headers, invites, signatures and chat, where
    spellings are real; it never creates a person or an entity on its own. Matched: the transcript's spelling
    goes into `aka` so it resolves next time. Unmatched: it stays in the topic's `read` in quotes, marked as heard,

@@ -107,13 +107,14 @@ then this table:
 
 | | Set it to | Where | Why |
 |---|---|---|---|
-| **Model** | Opus 5.5, or the newest Opus the menu offers | the model menu, at the bottom of this conversation | it reads a month of mail best |
+| **Model** | Sonnet 5.5 on Claude Pro, Opus 5.5 on Max (or the newest of each the menu offers) | the model menu, at the bottom of this conversation | Sonnet spares Pro's usage limit; Opus reads a month of mail best |
 | **Auto mode** | Auto | the mode menu next to the model menu | without it, you approve every step by hand |
 
-Then one question card, in its own words: "Model on Opus 5.5 and Auto mode on? Both are at the bottom of this
-conversation." Options "Yes, go on" (first), "No, help me". On "No, help me": one line per control (what it
+Then one question card, in its own words: "Model set (Sonnet 5.5 on Pro, Opus 5.5 on Max) and Auto mode on? Both
+are at the bottom of this conversation." Options "Yes, go on" (first), "No, help me". On "No, help me": one line per control (what it
 looks like, where it sits, what to pick), then the same card again. Never go on without a yes. The three
-habits are created with automatic approvals and Opus 5.5 in any case (step 7).
+habits are created with automatic approvals and the model this conversation runs on, the one the exec picked:
+write it to `connections/preferences.model` (step 7).
 
 Then the introduction, translated, then the table, and start at once without waiting. The exec is short of
 time and will read this and the end, little in between: the goal first, then the three keys, each on their own
@@ -340,8 +341,8 @@ not the exec's, which is why the prompts carry the zone.
 | `Aureol review` | `references/task-review.md` | weekdays at `review` |
 
 `{{RUN_TIME}}` is each habit's time or times from `connections/preferences`. Settings, decided, not asked: cloud
-execution ("Require this computer" off), permissions approve automatically, model Opus 5.5 (or the newest
-Opus) where the task form offers a model, connectors inherited, no folder. Exactly three tasks with exactly
+execution ("Require this computer" off), permissions approve automatically, the model in `connections/preferences.model`
+(Sonnet 5.5 on Pro, Opus 5.5 on Max) where the task form offers a model, connectors inherited, no folder. Exactly three tasks with exactly
 these names: never a fourth, never "Aureol inbox midday" or any variant; the inbox is one task with several
 hours on one schedule line, and its times share one minute value (a change through `help` keeps that rule). Schedules are the exec's local times; where the task tool takes UTC,
 convert with the exec's zone as of today, say nothing about it to the exec, and rely on the prompts: each
