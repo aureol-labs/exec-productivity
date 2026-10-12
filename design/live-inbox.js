@@ -89,6 +89,11 @@
           await LX.mcp.callTool(MAIL_CFG.server,'gmail_create_label',{account:account,name:name}); await call(); } else throw e; }
       },
       labelHref:function(account,name){ return 'https://mail.google.com/mail/?authuser='+encodeURIComponent(ACCT[account]||'')+'#label/'+encodeURIComponent(name); },
+      labelsOf:async function(x){
+        var r=await LX.mcp.callTool(MAIL_CFG.server,'gmail_get_thread',{account:x.account,thread_id:x.thread,format:'text',max_chars:2000});
+        var ms=((r||{}).payload||{}).messages||[], ls=[]; ms.forEach(function(m){ ls=ls.concat(m.labels||[]); });
+        return ms.length&&ms.some(function(m){ return Array.isArray(m.labels); }) ? {inbox:ls.indexOf('INBOX')>=0, unread:ls.indexOf('UNREAD')>=0} : null;
+      },
       /* the read state has its own tool on Aureol Connect: {account, thread_ids, read} (D22 there) */
       markRead:async function(x){ await LX.mcp.callTool(MAIL_CFG.server,'gmail_mark_read',{account:x.account,thread_ids:[x.thread]}); }
     },
@@ -138,6 +143,11 @@
         for(var i=0;i<threads.length;i++) await LX.mcp.callTool(MAIL_CFG.server,'label_thread',{threadId:threads[i],labelIds:[id]});
       },
       labelHref:function(account,name){ return 'https://mail.google.com/mail/#label/'+encodeURIComponent(name); },
+      labelsOf:async function(x){
+        var r=await LX.mcp.callTool(MAIL_CFG.server,'get_thread',{threadId:x.thread,messageFormat:'PLAIN_TEXT'});
+        var ms=((r||{}).payload||{}).messages||[], ls=[]; ms.forEach(function(m){ ls=ls.concat(m.labelIds||[]); });
+        return ms.length&&ms.some(function(m){ return Array.isArray(m.labelIds); }) ? {inbox:ls.indexOf('INBOX')>=0, unread:ls.indexOf('UNREAD')>=0} : null;
+      },
       /* the one system label this page ever removes: UNREAD. Never INBOX, which would archive. */
       markRead:async function(x){ await LX.mcp.callTool(MAIL_CFG.server,'unlabel_thread',{threadId:x.thread,labelIds:['UNREAD']}); }
     }
@@ -161,27 +171,28 @@
   }
 
   /* ---------- reading: watched, so the last result draws at once and then refreshes ---------- */
-  var LIVE={mail:[], prim:[], minus:[], bounce:[], slack:{items:[],replied:{}}, labels:{}, errors:{}};
-  var READY={mail:{}, prim:{}, minus:{}, bounce:{}, slack:{}, labels:{}};
+  var LIVE={mail:[], prim:[], minus:[], upd:[], slack:{items:[],replied:{}}, labels:{}, errors:{}};
+  var READY={mail:{}, prim:{}, minus:{}, upd:{}, slack:{}, labels:{}};
   if(!MAIL) READY.mail={failed:true, absent:true};
   if(!CHAT) READY.slack={failed:true, absent:true};
   var PRIM_Q='in:inbox category:primary newer_than:7d -from:me';
-  var MINUS_Q='in:inbox newer_than:7d -from:me -category:promotions -category:social -category:updates -category:forums';
-  /* bounces land outside the main inbox (Gmail files them under Updates): read on their own, so a bounce
-     line is found again, unread or read, and never taken for archived */
-  var BOUNCE_Q='in:inbox newer_than:7d from:(mailer-daemon OR postmaster)';
+  var MINUS_Q='in:inbox newer_than:7d -from:me -category:promotions -category:social -category:forums';
+  /* the main inbox includes Updates (0.17.0): receipts, renewals, trials, security notices, bounces. Unread
+     only: Updates holds dozens of read notices a week, more than a search returns */
+  var UPD_Q='in:inbox category:updates is:unread newer_than:7d -from:me';
   function weekStart(back){ var d=new Date(Date.now()-back*864e5); d.setDate(d.getDate()-((d.getDay()+6)%7)); return d.toISOString().slice(0,10); }
-  /* the main inbox, per account: Primary while it returns mail, else the inbox minus the categories */
+  /* the main inbox, per account: Primary and the unread of Updates while Primary returns mail, else the inbox
+     minus the bulk categories */
   function syncMail(){
     if(!MAIL) return;
-    var p=READY.prim, m=READY.minus, b=READY.bounce;
+    var p=READY.prim, m=READY.minus, b=READY.upd;
     if(!(p.any||p.failed)||!(m.any||m.failed)||!(b.any||b.failed)){ READY.mail={}; return; }
     if(p.failed&&m.failed){ READY.mail={failed:true}; LIVE.mail=[]; return; }
     var prim=p.failed?[]:LIVE.prim, minus=m.failed?[]:LIVE.minus, accts={}, withPrim={}, out=[], ids={};
     prim.concat(minus).forEach(function(x){ accts[x.account]=1; });
     prim.forEach(function(x){ withPrim[x.account]=1; });
     Object.keys(accts).forEach(function(a){ (withPrim[a]?prim:minus).forEach(function(x){ if(x.account===a){ out.push(x); ids[x.id]=1; } }); });
-    (b.failed?[]:LIVE.bounce).forEach(function(x){ if(!ids[x.id]){ out.push(x); ids[x.id]=1; } });
+    (b.failed?[]:LIVE.upd).forEach(function(x){ if(!ids[x.id]){ out.push(x); ids[x.id]=1; } });
     LIVE.mail=out;
     READY.mail={any:true, fresh:!!((p.fresh||p.failed)&&(m.fresh||m.failed)&&(b.fresh||b.failed)), at:Math.min(p.at||Infinity,m.at||Infinity)};
   }
@@ -277,6 +288,18 @@
   function candidate(x){ return !(x.kind==='mail'&&!x.unread) && !droppedIn(DISMISSED,x) && !x.mine && !prioOf(refOf(x),x); }
   var READ_HERE={};
   function liveItems(){ return LIVE.mail.map(function(x){ return READ_HERE[refOf(x)]&&x.unread ? Object.assign({},x,{unread:false}) : x; }).concat(LIVE.slack.items); }
+  /* a queue line whose thread no search returned: its labels, read once per thread, say whether it was read or
+     archived; until they answer, or when they cannot be read, the line stays as it is */
+  var CHECKED={};
+  function threadState(l){
+    var k=(l.account||'')+'|'+l.thread, c=CHECKED[k];
+    if(c) return c==='pending'||c.unknown ? null : c;
+    if(!MAIL||!MAIL.labelsOf||DEMO) return null;
+    CHECKED[k]='pending';
+    MAIL.labelsOf({thread:l.thread, account:l.account}).then(function(st){ CHECKED[k]=st||{unknown:true}; LAST=''; redraw(); },
+      function(){ CHECKED[k]={unknown:true}; });
+    return null;
+  }
   function itemFor(l,byRef){ var refs=String(l.ref||'').split('+'); for(var i=0;i<refs.length;i++) if(byRef[refs[i]]) return byRef[refs[i]];
     /* an older page keyed a bounce by its own id: its thread finds it */
     return l.thread&&byRef['thread:'+l.thread] ? byRef['thread:'+l.thread] : null; }
@@ -339,8 +362,9 @@
       if(x&&x.kind==='mail'&&!x.unread&&isAuto(x)) return;
       if(l.channel==='mail'||!l.channel){ if(mailFresh&&l.thread){
         if(x&&x.mine) state='answered';
-        else if(!x&&Date.now()-Date.parse(l.dateIso)<6*864e5) state='archived';
-        else if(x&&!x.unread) state='read'; } }
+        else if(x&&!x.unread) state='read';
+        /* not in what the page reads (read in Updates, archived, older than the week): its own labels say which */
+        else if(!x){ var c=threadState(l); if(c&&!c.inbox) state='archived'; else if(c&&!c.unread) state='read'; } } }
       else if(chatFresh&&LIVE.slack.replied[l.ref]) state='answered';
       if(!state&&droppedNow(l.ref)) state='dropped';
       String(l.ref).split('+').forEach(function(r){ taken[r]=1; });
@@ -422,7 +446,8 @@
   function refreshNow(){
     if(!RUN.classList.contains('done')||!LX.mcp) return;
     RUN_F.classList.add('busy');
-    var keys=['prim','minus','bounce','slack','labels'], back=function(){ keys.forEach(function(k){ if(READY[k]&&READY[k].any) READY[k]=Object.assign({},READY[k],{fresh:true}); }); syncMail(); maybeSort(); };
+    CHECKED={};
+    var keys=['prim','minus','upd','slack','labels'], back=function(){ keys.forEach(function(k){ if(READY[k]&&READY[k].any) READY[k]=Object.assign({},READY[k],{fresh:true}); }); syncMail(); maybeSort(); };
     keys.forEach(function(k){ if(READY[k]&&READY[k].any) READY[k]=Object.assign({},READY[k],{fresh:false}); });
     syncMail(); SORTED=false; runShow(L('lx_checking'));
     var servers=[MAIL_CFG&&MAIL?MAIL_CFG.server:null,CHAT?CHAT.server:null].filter(Boolean);
@@ -1037,10 +1062,10 @@
     if(!LAST) redrawNow();
     if(!LX.mcp){ runDone(L('lx_open_in_claude')); return; }
     if(MAIL){
-      var p=MAIL.search(PRIM_Q), m=MAIL.search(MINUS_Q), bq=MAIL.search(BOUNCE_Q);
+      var p=MAIL.search(PRIM_Q), m=MAIL.search(MINUS_Q), u=MAIL.search(UPD_Q);
       watch(MAIL_CFG.server,p[0],p[1],'prim',MAIL.parse);
       watch(MAIL_CFG.server,m[0],m[1],'minus',MAIL.parse);
-      watch(MAIL_CFG.server,bq[0],bq[1],'bounce',MAIL.parse);
+      watch(MAIL_CFG.server,u[0],u[1],'upd',MAIL.parse);
       var lb=MAIL.labels(); watch(MAIL_CFG.server,lb[0],lb[1],'labels',MAIL.parseLabels);
     }
     if(CHAT) watch(CHAT.server,'slack_search_public_and_private',{filters:'is:dm after:'+weekStart(14),limit:20,sort:'timestamp',include_context:false,natural_language_query:''},'slack',slackFrom);

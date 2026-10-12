@@ -17,6 +17,15 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.17.0
+
+- `morning`, `inbox`, `review`: the main inbox now includes Gmail's Updates tab (the store, `mail_scope`): receipts,
+  renewals, trials ending, security alerts and bounces are read, counted and ranked like the rest of the main
+  inbox. Promotions, Social and Forums stay out. The probe still decides the form on Primary alone. Nothing to ask
+  the exec.
+- On the inbox page, a queue line whose thread the page's reads do not return is checked on its own labels: read,
+  archived, or still waiting; never assumed archived.
+
 ## 0.16.2
 
 - No task step. Mark as read on the inbox page waits 3 s with Undo instead of 5.

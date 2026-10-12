@@ -10,7 +10,7 @@ procedure, the plugin is how it reaches a session. Read `README.md` first, then 
 - **Roles, never vendors.** Skills speak of mail, calendar, chat, documents, meetings. Capabilities are read off
   `connections/current.roles.<role>.can`, proven by a real call. Never branch on Gmail, Outlook, Slack or Teams.
   The one exception is the main-inbox scope, which needs the exact query each mailbox understands (Gmail's
-  Primary, or its inbox minus the categories when tabs are off; Outlook's Focused inbox), defined once in the
+  Primary and Updates, or its inbox minus the bulk categories when tabs are off; Outlook's Focused inbox), defined once in the
   store and checked per mailbox on every run. The second is the live inbox page: a page can only call a connector
   by its tools, so `design/live-inbox.js` carries one adapter per connector it reads (Aureol Connect, the Gmail
   connector, Slack), chosen from the `live` block the inbox run writes off the roles. The live Daily brief and

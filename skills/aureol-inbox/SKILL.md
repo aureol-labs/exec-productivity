@@ -33,10 +33,11 @@ published, nothing more.
    A label without a rule is not applied.
 3. **The main inbox only.** Unless `connections/preferences.mail_scope` is `all`, every read, every count and
    every queue line comes from each mailbox's main inbox, in the form `connections/current.roles.mail.main`
-   names for it, as the store defines both: Gmail's Primary while it returns mail, else the inbox without
-   Promotions, Social, Updates and Forums (tabs turned off leave Primary empty); Outlook's Focused inbox, else
-   the inbox without Other. The read is that form plus the date window; the unread count is the same form with
-   `is:unread`. Never Promotions, Social, Updates, Forums, Other, Junk or Clutter. The h1's unread count is
+   names for it, as the store defines both: Gmail's Primary and Updates while Primary returns mail, else the
+   inbox without Promotions, Social and Forums (tabs turned off leave Primary empty); Outlook's Focused inbox,
+   else the inbox without Other. The read is that form plus the date window; the unread count is the same form
+   with `is:unread`. Never Promotions, Social, Forums, Other, Junk or Clutter. Updates is in: a trial ending, a
+   renewal, a failed payment, a security alert or a bounce can need the exec, and the test below decides. The h1's unread count is
    that query's count, never the account's total. A page that says 4,000 unread to an exec who runs inbox zero
    has used the wrong query.
 4. **The test for the queue**: someone is blocked, a promise is late, or only the exec can
@@ -44,8 +45,8 @@ published, nothing more.
    is out. Check the thread before ranking it, not the snippet. **Unread only**: the queue is built from unread
    mail and unread messages; a thread the exec has read leaves the queue, whoever is waiting on it (the page
    folds it as read). The h1's counts are the real unread counts from the tools, never estimated. **A bounce is
-   mail like any other**: a message of the exec's that did not arrive is a line while the bounce is unread, wherever
-   the mailbox filed it (bounces land outside the main inbox), with its thread as `ref`; once read, it leaves.
+   mail like any other**: a message of the exec's that did not arrive is a line while the bounce is unread, with
+   its thread as `ref`; once read, it leaves.
    No line carries `read: true`: check-page refuses it.
 5. **The exec's priority holds.** A line leaves the inbox when it is read; the exec's one judgement on the page is
    its priority. Read `priority` from the inbox page's store before ranking (the store is the page's own, at

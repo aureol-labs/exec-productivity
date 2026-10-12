@@ -94,16 +94,20 @@ fires only on a day something worth it qualified. `mail_scope` is `"main"` (the
 default) or `"all"`. Under `main`, every skill that reads mail, context, brief, inbox and review, reads each
 mailbox's main inbox only, in the form `connections/current.roles.mail.main` names for that mailbox:
 
-- `primary`: the mailbox's own main view, what the exec sees first. Gmail: `in:inbox category:primary`, which
-  follows the tabs they turned on (an Updates mail shows there when they have no Updates tab). Outlook: the
-  Focused inbox.
+- `primary`: the mailbox's own main view, what the exec sees first, and the notices about their own accounts.
+  Gmail: Primary and Updates, `in:inbox {category:primary category:updates}`: Updates carries receipts,
+  renewals, trials ending, security alerts and bounces, which the exec must not miss (2026-10-12: a Google Cloud
+  trial and a Granola plan change sat unseen in Updates). Outlook: the Focused inbox.
 - `minus_categories`: the inbox without the mailbox's bulk categories. Gmail: `in:inbox -category:promotions
-  -category:social -category:updates -category:forums`. Outlook: the inbox without Other, Junk or Clutter.
+  -category:social -category:forums`. Outlook: the inbox without Other, Junk or Clutter.
 
-Every run's probe counts both forms over its window, per mailbox, and writes `main`: `primary` when it returns
-mail; `minus_categories` when it is empty while the other form is not (Gmail with its tabs turned off has an
-empty Primary, seen on 2026-10-01; Outlook with Focused off). The exec can change their settings any day, so the
-check is never cached across runs. Either way the bulk categories stay out: not read, not counted, not ranked.
+Every run's probe counts Primary alone (`in:inbox category:primary`) and the other form over its window, per
+mailbox, and writes `main`: `primary` when Primary returns mail; `minus_categories` when it is empty while the
+other form is not (Gmail with its tabs turned off has an empty Primary, seen on 2026-10-01; Outlook with Focused
+off). The exec can change their settings any day, so the check is never cached across runs. Either way the bulk
+categories stay out: Promotions, Social and Forums are not read, not counted, not ranked. Updates is read like the
+rest of the main inbox, and its automated mail meets the same test as any other: it needs the exec only when it
+blocks something or costs them something if missed.
 An exec who runs inbox zero on their main inbox must never see 4,182 unread on the page.
 `mailboxes` lists the connected mail accounts read; the page names any address the exec uses that is not
 connected. `metrics` is `null` until a business metric source is named and proven by a real call; the brief renders no
