@@ -50,6 +50,17 @@
 
   /* ---------- the mail connection: one adapter per connector the run named ---------- */
   var ACCT={};
+  /* the mailbox a mail line is from, when the page reads more than one: the last word of the
+     account's alias (personal-perso is "perso"), the whole alias when two accounts would share it */
+  function acctTag(acc){
+    var as=Object.keys(ACCT); if(as.length<2||!acc) return null;
+    var k=String(acc).toLowerCase(), alias=null;
+    as.forEach(function(a){ if(a.toLowerCase()===k||ACCT[a]===k) alias=a; });
+    if(!alias) return null;
+    var word=function(a){ var p=String(a).split('@')[0].split(/[-_\s]+/).filter(Boolean); return (p[p.length-1]||a).toLowerCase(); };
+    var s=word(alias); if(as.some(function(b){ return b!==alias&&word(b)===s; })) s=alias;
+    var t=el('span','lxacct',cut(s,12)); t.title=ACCT[alias]||alias; return t;
+  }
   var ADAPTERS={
     /* Aureol Connect: several Google accounts, labels and threads by name and id per account */
     aureol:{
@@ -704,7 +715,8 @@
     DONE.forEach(function(q){ var l=q.l, c=l.channel==='slack'?(DEMO&&DEMO_CTX.chat==='teams'?'teams':'slack'):'mail', r=el('div','lxdr'), t=el('span','lxds');
       r.dataset.ch=c==='mail'?'mail':'chat';
       add(t, el('span','say',l.say||''), el('span','rel',L(MARK[q.state])));
-      add(r, channel(c), t, el('span','meta',when(new Date(l.dateIso)))); add(list,r); });
+      var mt=el('span','meta',when(new Date(l.dateIso))), tg=c==='mail'&&acctTag(l.account); if(tg) mt.insertBefore(tg,mt.firstChild);
+      add(r, channel(c), t, mt); add(list,r); });
     b.onclick=function(){ DONE_OPEN=!DONE_OPEN; list.hidden=!DONE_OPEN; b.setAttribute('aria-expanded',DONE_OPEN?'true':'false'); };
     add(box,b,list); return box;
   }
@@ -715,6 +727,7 @@
     page.insertBefore(RUN, at.nextSibling);
     Array.prototype.forEach.call(page.querySelectorAll('.queue .row'),function(row){
       var r=ROWS[row.id]; if(!r) return;
+      var tg=r.l.channel!=='slack'&&acctTag(r.l.account), mt=tg&&row.querySelector(':scope > button .meta'); if(mt) mt.insertBefore(tg,mt.firstChild);
       var why=row.querySelector(':scope > .why'), src=why&&why.querySelector('.src'); if(!src) return;
       /* the actions on their own line, drawn as buttons; the sources above stay links */
       var ask=src.querySelector('.ask'), drop=src.querySelector('.drop'), p=PANELS[row.id]||{}, acts=el('div','lxacts');
@@ -790,6 +803,7 @@
     d.dataset.ch=a.dataset.ch||''; if(a.classList.contains('tk')) d.classList.add('tk'); if(a.hidden) d.hidden=true;
     a.classList.remove('tk'); a.hidden=false;
     a.parentNode.insertBefore(d,a); d.appendChild(a);
+    var tg=x.kind==='mail'&&acctTag(x.account), wn=tg&&a.querySelector('.when'); if(tg){ if(wn) a.insertBefore(tg,wn); else a.appendChild(tg); }
     if(!m.box.hidden) d.classList.add('on');
     /* the line opens its panel and nothing else: Claude's viewer opens an outside link before the page can stop
        it, so the line keeps no address; Open in the panel is the way to the mailbox */
@@ -816,6 +830,15 @@
   /* the filter rebuilds a label's lines: wrap them again after it */
   var pageSetFilter=setFilter;
   setFilter=function(f,keep){ pageSetFilter(f,keep); try{ decorateMinis(); }catch(e){} };
+  /* "show all" on the rest stays open once clicked: every redraw (a mark as read, an Undo, a new
+     mail) tucks the rest again, so it is opened again after the page's own tuck */
+  var OTHERS_OPEN=false, pageRetuck=retuck;
+  retuck=function(){
+    pageRetuck();
+    var more=OM&&OM.querySelector(':scope > a.more'); if(!more) return;
+    if(OTHERS_OPEN){ Array.prototype.forEach.call(OM.querySelectorAll(':scope > .tk'),function(a){ a.classList.remove('tk'); }); more.parentNode.removeChild(more); return; }
+    more.addEventListener('click',function(){ OTHERS_OPEN=true; });
+  };
 
   /* mark as read: the exec's own gesture, mail only. The line stays in place for 3 s with Undo,
      and nothing reaches the mailbox before that; then it is marked read and moves. */
@@ -969,7 +992,7 @@
         var ms=(t.messages||[]).filter(function(x){ return after||!x.later; }), m=ms[ms.length-1]||{};
         return {thread_id:t.id, subject:t.subject, from:m.from, date:m.at, snippet:cut(m.body,200),
           labels:(t.labels||[]).concat(['INBOX']).concat((after?t.unread[1]:t.unread[0])?['UNREAD']:[]),
-          unread:after?t.unread[1]:t.unread[0], message_count:ms.length, account:acct}; })};
+          unread:after?t.unread[1]:t.unread[0], message_count:ms.length, account:t.account||acct}; })};
     }
     function slack(){
       return {results:'# Results\n'+(D.slack||[]).filter(function(c){ return after||!c.incoming; }).map(function(c,i){

@@ -104,8 +104,15 @@
      white-space:nowrap;font:500 11.5px/1.3 var(--sans);color:#fff;background:var(--ink);padding:4px 8px;border-radius:4px;pointer-events:none}
   @media (hover:hover){
     .mini>.lxm:hover>.lxmh{display:inline-flex}
-    .mini>.lxm:hover>a .when{visibility:hidden}
+    .mini>.lxm:hover>a .when,.mini>.lxm:hover>a .lxacct{visibility:hidden}
   }
+  /* the mailbox a line is from, when the page reads several: an outline, like To archive,
+     because it says where the mail sits and nothing about what to do */
+  .lxacct{display:inline-block;font-size:9.5px;line-height:1.4;letter-spacing:1px;text-transform:uppercase;font-weight:600;
+     padding:1px 6px 0;border-radius:3px;box-shadow:inset 0 0 0 1px #D8DAD5;color:#6A6A61;margin-right:9px;vertical-align:1px}
+  .mini .lxacct{margin:0 0 0 auto;align-self:center}
+  .mini .lxacct+.when{margin-left:0;padding-left:9px}
+  .mini>.lxm.pend>a .lxacct{visibility:hidden}
 
   /* a panel hangs under the sources row, inside the reveal */
   .lxp{margin-top:14px;padding-top:12px;border-top:1px solid rgba(46,107,98,.16)}

@@ -17,6 +17,15 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.17.1
+
+- On the inbox page, "show all" on the other unread stays open once clicked: Mark as read, Undo or a new mail
+  redrew the page and folded the list back to three lines.
+- On the inbox page, a mail line says which mailbox it sits in when the page reads more than one (Aureol Connect
+  with several accounts): a small tag beside the time, the last word of the account's alias (`personal-perso` is
+  PERSO), the whole alias when two accounts would share it. Queue lines, the rest, the labels and the lines handled
+  since the sort. One mailbox, no tag.
+
 ## 0.17.0
 
 - `morning`, `inbox`, `review`: the main inbox now includes Gmail's Updates tab (the store, `mail_scope`): receipts,
