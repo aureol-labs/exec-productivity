@@ -107,9 +107,13 @@
     .mini>.lxm:hover>a .when,.mini>.lxm:hover>a .lxacct{visibility:hidden}
   }
   /* the mailbox a line is from, when the page reads several: an outline, like To archive,
-     because it says where the mail sits and nothing about what to do */
+     because it says where the mail sits and nothing about what to do. One colour per mailbox,
+     the inks of the label palette, drawn as outline and type so it never reads as a label */
   .lxacct{display:inline-block;font-size:9.5px;line-height:1.4;letter-spacing:1px;text-transform:uppercase;font-weight:600;
-     padding:1px 6px 0;border-radius:3px;box-shadow:inset 0 0 0 1px #D8DAD5;color:#6A6A61;margin-right:9px;vertical-align:1px}
+     padding:1px 6px 0;border-radius:3px;--ac:106,106,97;color:rgb(var(--ac));box-shadow:inset 0 0 0 1px rgba(var(--ac),.42);
+     margin-right:9px;vertical-align:1px}
+  .lxacct.t0{--ac:44,95,91}   .lxacct.t1{--ac:51,88,122}  .lxacct.t2{--ac:84,70,124}
+  .lxacct.t3{--ac:110,94,44}  .lxacct.t4{--ac:123,69,87}  .lxacct.t5{--ac:106,89,65}
   .mini .lxacct{margin:0 0 0 auto;align-self:center}
   .mini .lxacct+.when{margin-left:0;padding-left:9px}
   .mini>.lxm.pend>a .lxacct{visibility:hidden}

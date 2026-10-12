@@ -51,7 +51,16 @@
   /* ---------- the mail connection: one adapter per connector the run named ---------- */
   var ACCT={};
   /* the mailbox a mail line is from, when the page reads more than one: the last word of the
-     account's alias (personal-perso is "perso"), the whole alias when two accounts would share it */
+     account's alias (personal-perso is "perso"), the whole alias when two accounts would share it.
+     Each mailbox keeps its own colour: picked from its alias, the next free one on a clash. */
+  var ACCT_TINTS=6;
+  function acctTint(alias){
+    var used={}, out={};
+    Object.keys(ACCT).sort().forEach(function(a){ var h=0, i, c;
+      for(i=0;i<a.length;i++) h=(h*31+a.charCodeAt(i))>>>0;
+      c=h%ACCT_TINTS; for(i=0;used[c]&&i<ACCT_TINTS;i++) c=(c+1)%ACCT_TINTS; used[c]=1; out[a]=c; });
+    return out[alias]||0;
+  }
   function acctTag(acc){
     var as=Object.keys(ACCT); if(as.length<2||!acc) return null;
     var k=String(acc).toLowerCase(), alias=null;
@@ -59,7 +68,7 @@
     if(!alias) return null;
     var word=function(a){ var p=String(a).split('@')[0].split(/[-_\s]+/).filter(Boolean); return (p[p.length-1]||a).toLowerCase(); };
     var s=word(alias); if(as.some(function(b){ return b!==alias&&word(b)===s; })) s=alias;
-    var t=el('span','lxacct',cut(s,12)); t.title=ACCT[alias]||alias; return t;
+    var t=el('span','lxacct t'+acctTint(alias),cut(s,12)); t.title=ACCT[alias]||alias; return t;
   }
   var ADAPTERS={
     /* Aureol Connect: several Google accounts, labels and threads by name and id per account */
@@ -79,8 +88,11 @@
       },
       labels:function(){ return ['gmail_list_labels',{account:'all'}]; },
       parseLabels:function(p){
-        var m={}; ((p||{}).labels||[]).forEach(function(l){ if(l.type!=='user') return;
-          var a=l.account||{}, k=a.alias||String(a.email||'').toLowerCase(); (m[k]=m[k]||{})[l.id]=l.name; });
+        var m={}; ((p||{}).labels||[]).forEach(function(l){
+          var a=l.account||{}, k=a.alias||String(a.email||'').toLowerCase();
+          /* every linked account lists labels, so the mailbox tags know them all, mail or not */
+          if(k&&a.email) ACCT[k]=String(a.email).toLowerCase();
+          if(l.type!=='user') return; (m[k]=m[k]||{})[l.id]=l.name; });
         return m;
       },
       thread:async function(x){

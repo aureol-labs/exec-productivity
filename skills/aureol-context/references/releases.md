@@ -17,6 +17,12 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.17.2
+
+- On the inbox page, each mailbox tag has its own colour, from the inks of the label palette, drawn as outline and
+  type so it never reads as a label. The colour follows the account's alias, the next free one on a clash. The page
+  learns every linked account from its label list, so a mailbox with no recent mail does not shift the others.
+
 ## 0.17.1
 
 - On the inbox page, "show all" on the other unread stays open once clicked: Mark as read, Undo or a new mail

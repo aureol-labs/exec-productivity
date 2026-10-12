@@ -880,9 +880,13 @@
     .mini>.lxm:hover>a .when,.mini>.lxm:hover>a .lxacct{visibility:hidden}
   }
   /* the mailbox a line is from, when the page reads several: an outline, like To archive,
-     because it says where the mail sits and nothing about what to do */
+     because it says where the mail sits and nothing about what to do. One colour per mailbox,
+     the inks of the label palette, drawn as outline and type so it never reads as a label */
   .lxacct{display:inline-block;font-size:9.5px;line-height:1.4;letter-spacing:1px;text-transform:uppercase;font-weight:600;
-     padding:1px 6px 0;border-radius:3px;box-shadow:inset 0 0 0 1px #D8DAD5;color:#6A6A61;margin-right:9px;vertical-align:1px}
+     padding:1px 6px 0;border-radius:3px;--ac:106,106,97;color:rgb(var(--ac));box-shadow:inset 0 0 0 1px rgba(var(--ac),.42);
+     margin-right:9px;vertical-align:1px}
+  .lxacct.t0{--ac:44,95,91}   .lxacct.t1{--ac:51,88,122}  .lxacct.t2{--ac:84,70,124}
+  .lxacct.t3{--ac:110,94,44}  .lxacct.t4{--ac:123,69,87}  .lxacct.t5{--ac:106,89,65}
   .mini .lxacct{margin:0 0 0 auto;align-self:center}
   .mini .lxacct+.when{margin-left:0;padding-left:9px}
   .mini>.lxm.pend>a .lxacct{visibility:hidden}
@@ -1732,7 +1736,16 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
   /* ---------- the mail connection: one adapter per connector the run named ---------- */
   var ACCT={};
   /* the mailbox a mail line is from, when the page reads more than one: the last word of the
-     account's alias (personal-perso is "perso"), the whole alias when two accounts would share it */
+     account's alias (personal-perso is "perso"), the whole alias when two accounts would share it.
+     Each mailbox keeps its own colour: picked from its alias, the next free one on a clash. */
+  var ACCT_TINTS=6;
+  function acctTint(alias){
+    var used={}, out={};
+    Object.keys(ACCT).sort().forEach(function(a){ var h=0, i, c;
+      for(i=0;i<a.length;i++) h=(h*31+a.charCodeAt(i))>>>0;
+      c=h%ACCT_TINTS; for(i=0;used[c]&&i<ACCT_TINTS;i++) c=(c+1)%ACCT_TINTS; used[c]=1; out[a]=c; });
+    return out[alias]||0;
+  }
   function acctTag(acc){
     var as=Object.keys(ACCT); if(as.length<2||!acc) return null;
     var k=String(acc).toLowerCase(), alias=null;
@@ -1740,7 +1753,7 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
     if(!alias) return null;
     var word=function(a){ var p=String(a).split('@')[0].split(/[-_\s]+/).filter(Boolean); return (p[p.length-1]||a).toLowerCase(); };
     var s=word(alias); if(as.some(function(b){ return b!==alias&&word(b)===s; })) s=alias;
-    var t=el('span','lxacct',cut(s,12)); t.title=ACCT[alias]||alias; return t;
+    var t=el('span','lxacct t'+acctTint(alias),cut(s,12)); t.title=ACCT[alias]||alias; return t;
   }
   var ADAPTERS={
     /* Aureol Connect: several Google accounts, labels and threads by name and id per account */
@@ -1760,8 +1773,11 @@ var DICT={"_":"Every UI string on the three pages, in English and French. Data (
       },
       labels:function(){ return ['gmail_list_labels',{account:'all'}]; },
       parseLabels:function(p){
-        var m={}; ((p||{}).labels||[]).forEach(function(l){ if(l.type!=='user') return;
-          var a=l.account||{}, k=a.alias||String(a.email||'').toLowerCase(); (m[k]=m[k]||{})[l.id]=l.name; });
+        var m={}; ((p||{}).labels||[]).forEach(function(l){
+          var a=l.account||{}, k=a.alias||String(a.email||'').toLowerCase();
+          /* every linked account lists labels, so the mailbox tags know them all, mail or not */
+          if(k&&a.email) ACCT[k]=String(a.email).toLowerCase();
+          if(l.type!=='user') return; (m[k]=m[k]||{})[l.id]=l.name; });
         return m;
       },
       thread:async function(x){
