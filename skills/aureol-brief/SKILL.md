@@ -113,7 +113,7 @@ events are drawn.
 and works the lines where they stand: it reads today's calendar again (a meeting added, moved or cancelled since
 the run redraws the strip; what has gone by dims; a call or a wall whose time passed says so), greys a line the
 exec answered since the run, opens a call on its options as the sources state them, records the one the exec
-settles and drafts the message that acts it, and drafts a job that is a message.
+settles (and drafts the message that acts it only when they ask), and drafts a job that is a message.
 
 - `generated`: this run's time, ISO with the hour and the offset.
 - `live.me`: `{name, role}`, the exec's first name and their role in a line ("CEO de Halden, 180 personnes"), from

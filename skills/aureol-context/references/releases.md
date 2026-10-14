@@ -17,6 +17,12 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.17.4
+
+- On the Daily brief page, picking an option settles the call and nothing more: no message is drafted on its own.
+  A call is often the exec's alone, with nobody waiting for the answer. "Write to X" (or "Draft a message" when
+  the brief names nobody) drafts it on the exec's click, as it already did when a settled call was opened again.
+
 ## 0.17.3
 
 - Install recommends Sonnet 5.5 on Claude Pro and Opus 5.5 on Max, instead of Opus 5.5 for everyone: Sonnet spares

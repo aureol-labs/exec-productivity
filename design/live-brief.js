@@ -13,8 +13,9 @@
      the decision. It is written to this page's store, decided/<slug of ref> {page,
      kind, ref, id, say, choice, who, against, sources, date, at}, the line greys and
      says "Settled: ...", and the morning run logs it in Super Context as a kept decision,
-     what it was decided against being the options not picked. Then Claude drafts the
-     message that acts it. A double booking is a call too: its options are its meetings.
+     what it was decided against being the options not picked. Nothing else happens: a
+     message that acts it is drafted only when the exec asks ("Write to X"). A double
+     booking is a call too: its options are its meetings.
      WRITE. A job that is a message (draft: true) is drafted by Claude in the page.
      PREPARE. A meeting with people opens on a summary of the exec's recent exchanges with
      them: who said what, what is still open, a choice only when one is asked. Kept in
@@ -260,7 +261,15 @@
       showChosen(choice); head.hidden=true; opts.hidden=true;
       note.textContent=said; note.className=said?'lxnote bad':'lxnote';
       item.keep=keepIdx;
-      write(choice);
+      offerWrite(choice);
+    }
+    /* the pick is the decision and nothing more: a message is one follow-up among others, drafted
+       only when the exec asks for it (a call is often theirs alone, and nobody waits for the answer) */
+    function offerWrite(choice){
+      msg.textContent='';
+      var to=item.d&&item.d.to, w=K.pill(to?T('lb_write_to',{x:to}):L('lb_write_msg'),true);
+      w.onclick=function(e){ e.preventDefault(); write(choice); };
+      var acts=el('div','lxacts'); add(acts,w); msg.appendChild(acts);
     }
     function write(choice){
       msg.textContent='';
@@ -274,8 +283,7 @@
       var dn=DECIDED[keyOf()];
       if(dn){ showChosen(dn.choice); head.hidden=true; opts.hidden=true;
         if(item.keep==null&&dn.keep!=null) item.keep=dn.keep;
-        var w=K.pill(L('lb_write_msg'),true); w.onclick=function(e){ e.preventDefault(); w.parentNode.removeChild(w); write(dn.choice); };
-        var acts=el('div','lxacts'); add(acts,w); msg.appendChild(acts); }
+        offerWrite(dn.choice); }
       else load(false);
     };
     again.onclick=function(){ load(true); };
