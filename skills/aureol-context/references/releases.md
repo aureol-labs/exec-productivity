@@ -17,6 +17,14 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.17.5
+
+- On the inbox page, « Reply with Claude » knows who the exec is: the draft prompt names them and their linked
+  addresses, marks their own messages, and keeps who each message went to. In a thread with several people it
+  answers each one who wrote since the exec's last message, by first name, in one reply, and (on Aureol Connect)
+  the draft goes to all of them. It used to take a co-recipient for the exec. The Gmail connector's thread carries
+  no recipients, so its reply still goes to the last sender.
+
 ## 0.17.4
 
 - On the Daily brief page, picking an option settles the call and nothing more: no message is drafted on its own.
