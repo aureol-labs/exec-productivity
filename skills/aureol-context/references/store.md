@@ -68,10 +68,14 @@ and keeps every other field.
   "key_people": ["people/nadia", "people/tomas", "people/julien"],
   "caps": { "decisions": 3, "jobs": 3 }, "tiers": ["Now", "Today", "This week"],
   "mail_scope": "main", "mailboxes": ["camille@example.com"], "enrich": "public",
-  "gesture": "copy", "metrics": null, "model": "Opus 5.5",
+  "gesture": "copy", "metrics": null, "model": "Opus 5.5", "booking_link": null,
   "notify": { "brief": "push", "inbox": "push_now", "review": "push" },
   "installed": "2026-09-22", "plugin_version": "0.3.3" }
 ```
+
+`booking_link` is the exec's own scheduling page (a Google Calendar booking page, Calendly), an `https://` link
+they gave, or `null`. Set only by the exec, through `exec-productivity-help`. A reply drafted on the inbox page that
+proposes a meeting gives it as written.
 
 `model` is the model the install conversation ran on, the one the exec picked at step 1: Sonnet 5.5 on Claude Pro,
 Opus 5.5 on Max. The habits are created on it; `exec-productivity-help` changes it with the tasks.

@@ -586,8 +586,9 @@
      or one sent to them, carries. Without it the model took a co-recipient for them. */
   function myAddrs(){ var a={}; Object.keys(ACCT).forEach(function(k){ if(ACCT[k]) a[ACCT[k]]=1; }); return a; }
   function addrList(s){ return String(s||'').split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/).map(function(x){ return x.trim(); }).filter(Boolean); }
+  var MY=CFG.me||{}, BOOKING=/^https:\/\/[^\s"<>]+$/.test(String(MY.booking||''))?String(MY.booking):'';
   function draftAsk(me){
-    var first=String(me.name||'').split(/\s+/)[0]||'';
+    var first=String(me.name||'').split(/\s+/)[0]||String(MY.first_name||'');
     return [
       'You draft a reply for '+(me.name||'the owner of this mailbox')+(me.addrs.length?' ('+me.addrs.join(', ')+')':'')+'. Write as them:',
       'first person, in the language of the thread, in the register it shows (tu or vous, how long, how formal).',
@@ -595,6 +596,8 @@
       'Answer the thread as a whole, not only its last message: in one reply, speak by first name to each person who wrote',
       'after their last message and still waits, one short paragraph each, in the order they wrote.',
       me.to.length ? 'The reply goes to '+me.to.join(', ')+'.' : '',
+      BOOKING ? 'When the reply proposes a meeting or answers a request for one, give their booking link, exactly as written,'+
+        ' so the other person picks a time: '+BOOKING+' . Never another link.' : '',
       'Short: what the reply needs, nothing more. No subject line, no Markdown.'+(first?' Sign "'+first+'".':''),
       'Reply with the reply text only.',
       'If the thread needs no reply from them (an automated notice, a newsletter, a receipt, something already',

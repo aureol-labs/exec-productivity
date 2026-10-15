@@ -380,6 +380,7 @@
       { "label": "Receipts", "rule": "Invoices, payment receipts, order and delivery confirmations go to Receipts." },
       { "label": "To archive", "rule": "Zendesk alerts with no mention of me; Event invites from vendors I have never bought from; Calendar accepts with no message" }
     ],
+    "me": {"first_name": "Alex", "booking": null},
     "lens": "Priorities, in order: close Halden Mutual at a price that does not set every renewal; ship the Q4 roadmap; a clean board pack on Thursday. Live: Halden Mutual (Nadia), Q4 roadmap (Priya), migration (Tomas), board pack (Marc), Corvid Capital term sheet. Key people: Nadia, Tomas, Julien."
   }
 }

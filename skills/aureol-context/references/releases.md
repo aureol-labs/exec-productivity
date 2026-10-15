@@ -17,6 +17,13 @@ filled from the store: `{{LANGUAGE}}`, `{{FIRST_NAME}}` and `{{TIMEZONE}}` from 
 `{{CONTEXT_URL}}` from `connections/current.pages.context`, `{{RUN_TIME}}` from the habit's times in
 `connections/preferences`.
 
+## 0.17.6
+
+- `inbox`: the page's `live` block carries `me`: `{first_name, booking}` from `connections/preferences`
+  (`first_name`, `booking_link`). A reply drafted on the page signs with the first name and, when it proposes a
+  meeting or answers a request for one, gives the exec's booking link as written. `booking_link` is new in
+  preferences, `null` until the exec gives one through `exec-productivity-help`.
+
 ## 0.17.5
 
 - On the inbox page, « Reply with Claude » knows who the exec is: the draft prompt names them and their linked

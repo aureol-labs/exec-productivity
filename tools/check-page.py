@@ -626,6 +626,9 @@ def check_live(d, q, r):
         r.bad('$.live.rules', 'the exec\'s confirmed rules, each {label, rule} in their words')
     if isinstance(mail, dict) and mail.get('label') and not rules:
         r.warn('$.live.rules', 'the mail connection can label but no rule is given: the page will file nothing')
+    me = live.get('me')
+    if me is not None and (not isinstance(me, dict) or (me.get('booking') is not None and not str(me.get('booking')).startswith('https://'))):
+        r.bad('$.live.me', '{first_name, booking}: booking is the exec\'s https:// scheduling link, or null')
     lens = live.get('lens')
     if lens is not None and (not isinstance(lens, str) or len(lens) > 2500):
         r.bad('$.live.lens', 'one text, 2500 characters at most')

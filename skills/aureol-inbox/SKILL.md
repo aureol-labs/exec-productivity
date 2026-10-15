@@ -172,6 +172,8 @@ run.
     does. Any other tool: `null`.
   - `chat`: `Slack` is `{server: "Slack", api: "slack"}`; any other tool, or none: `null`.
   - `rules`: the exec's confirmed `rules`, each `{label, rule}` in their words; `[]` without `label`.
+  - `me`: `{first_name, booking}` from `connections/preferences`: `first_name`, and `booking_link` or `null`. A
+    reply drafted on the page signs with the first name and, when it proposes a meeting, gives the booking link.
   - `lens`: what the page's sort knows about the exec, rebuilt on every run from the store, in the exec's
     language, 2,500 characters at most: the priorities in order with what each comes before, the live topics with
     their state and people, `key_people` by name, the exec's own names for their world, and what never enters the
